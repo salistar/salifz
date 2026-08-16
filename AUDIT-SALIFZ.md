@@ -1,5 +1,18 @@
 # Audit Salifz — 16 août 2026
 
+> ## ✅ État au 16 août 2026, 17h00
+>
+> **Corrigé et vérifié en conditions réelles** : les 7 failles critiques (S1–S7),
+> les failles élevées S8–S17, la conformité S18–S19, les 9 fonctionnalités
+> simulées du §2, les valeurs en dur du §4, et le code mort du §5.
+>
+> **Reste à faire** : la section §3 (design) — le `ThemeContext` n'est toujours
+> câblé dans aucun écran, les 1 586 couleurs en dur et l'absence totale
+> d'accessibilité sont inchangées. Et les manques concurrentiels du §6.
+>
+> Le détail ci-dessous décrit l'état **avant** correction : il est conservé
+> comme trace de ce qui a été trouvé et pourquoi.
+
 Périmètre : `C:\Users\21266\Desktop\sdk52\salifz`
 Cible de l'audit : **v2** (`backendv2` + `mobilev2`), la génération active (dernière modif 15/05/2026).
 Volume : ~48 000 lignes de code, ~33 Go sur disque, **aucun dépôt git**.
