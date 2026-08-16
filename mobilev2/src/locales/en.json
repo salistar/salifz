@@ -1525,7 +1525,8 @@
   "quran": {
     "juz": "Juz",
     "hizb": "Hizb",
-    "ayahs": "verses"
+    "ayahs": "verses",
+    "ayah": "Verse"
   },
   "downloads": {
     "title": "Offline",
@@ -1573,5 +1574,13 @@
     "playFailed": "Playback failed",
     "openSubmit": "Recite for review",
     "openReview": "Review recitations"
+  },
+  "wordByWord": {
+    "title": "Word by word",
+    "hint": "Tap a word to hear it",
+    "words": "words",
+    "previousAyah": "Previous verse",
+    "nextAyah": "Next verse",
+    "open": "Word-by-word translation"
   }
 }

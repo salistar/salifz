@@ -44,6 +44,7 @@ import LessonCompleteScreen from '../screens/quran/LessonCompleteScreen';
 import ReviewScreen from '../screens/quran/ReviewScreen';
 import MushafScreen from '../screens/quran/MushafScreen';
 import DownloadsScreen from '../screens/quran/DownloadsScreen';
+import WordByWordScreen from '../screens/quran/WordByWordScreen';
 import SubmitRecitationScreen from '../screens/social/SubmitRecitationScreen';
 import TeacherReviewScreen from '../screens/social/TeacherReviewScreen';
 import AudioPlayerScreen from '../screens/quran/AudioPlayerScreen';
@@ -239,6 +240,7 @@ export default function RootNavigator() {
         <Stack.Screen name="GoalSetup" component={GoalSetupScreen} />
         <Stack.Screen name="Mushaf" component={MushafScreen} />
         <Stack.Screen name="Downloads" component={DownloadsScreen} />
+        <Stack.Screen name="WordByWord" component={WordByWordScreen} />
         <Stack.Screen name="SubmitRecitation" component={SubmitRecitationScreen} />
         <Stack.Screen name="TeacherReview" component={TeacherReviewScreen} />
         

@@ -1525,7 +1525,8 @@
   "quran": {
     "juz": "Juz",
     "hizb": "Hizb",
-    "ayahs": "versets"
+    "ayahs": "versets",
+    "ayah": "Verset"
   },
   "downloads": {
     "title": "Hors ligne",
@@ -1573,5 +1574,13 @@
     "playFailed": "Lecture impossible",
     "openSubmit": "Réciter pour validation",
     "openReview": "Valider les récitations"
+  },
+  "wordByWord": {
+    "title": "Mot à mot",
+    "hint": "Touchez un mot pour l’entendre",
+    "words": "mots",
+    "previousAyah": "Verset précédent",
+    "nextAyah": "Verset suivant",
+    "open": "Traduction mot à mot"
   }
 }

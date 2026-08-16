@@ -171,6 +171,16 @@ export default function MushafScreen({ navigation, route }: any) {
     return parts.join(' · ');
   }, [data]);
 
+  /**
+   * Un appui long sur un mot ouvre la traduction mot à mot de son verset :
+   * c'est le geste naturel quand on bute sur un sens en récitant.
+   */
+  const openWordByWord = (verseKey: string) => {
+    const [s, a] = verseKey.split(':').map(Number);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    navigation.navigate('WordByWord', { surahNumber: s, ayahNumber: a });
+  };
+
   const renderWord = (word: MushafWord, indexInLine: number) => {
     const key = `${word.verseKey}-${word.position}`;
 
@@ -192,6 +202,7 @@ export default function MushafScreen({ navigation, route }: any) {
           key={key}
           style={styles.word}
           onPress={() => toggleWord(key)}
+          onLongPress={() => openWordByWord(word.verseKey)}
           suppressHighlighting
         >
           {word.text}{' '}
@@ -209,6 +220,7 @@ export default function MushafScreen({ navigation, route }: any) {
         key={key}
         style={[styles.word, styles.maskedWord]}
         onPress={() => toggleWord(key)}
+        onLongPress={() => openWordByWord(word.verseKey)}
         suppressHighlighting
         accessibilityLabel={t('mushaf.revealWord') || 'Dévoiler le mot'}
       >
