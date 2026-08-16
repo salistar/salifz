@@ -561,6 +561,24 @@ export const quranAPI = {
     console.log(`${FILE_NAME} 📥 quranAPI.getReciters() called`);
     return api.get('/quran/reciters');
   },
+
+  /** Page du Mushaf de Médine (1 à 604), découpée ligne par ligne. */
+  getPage: (page: number): Promise<any> => {
+    console.log(`${FILE_NAME} 📖 quranAPI.getPage(${page}) called`);
+    return api.get(`/quran/page/${page}`);
+  },
+
+  /** Page sur laquelle se trouve un verset donné. */
+  getPageOfVerse: (surah: number, ayah: number): Promise<any> => {
+    console.log(`${FILE_NAME} 📖 quranAPI.getPageOfVerse(${surah}:${ayah}) called`);
+    return api.get(`/quran/page-of/${surah}/${ayah}`);
+  },
+
+  /** Traduction mot-à-mot d'un verset. */
+  getWordByWord: (surah: number, ayah: number): Promise<any> => {
+    console.log(`${FILE_NAME} 🔤 quranAPI.getWordByWord(${surah}:${ayah}) called`);
+    return api.get(`/quran/word-by-word/${surah}/${ayah}`);
+  },
 };
 
 // ============================================

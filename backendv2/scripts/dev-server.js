@@ -10,6 +10,11 @@
  * environnement de démonstration et de développement, pas de production.
  */
 
+// Chargé ici, avant toute lecture de process.env : sans cela, les secrets du
+// .env n'étaient pas encore visibles et le serveur en générait de nouveaux à
+// chaque démarrage — ce qui invalidait toutes les sessions déjà ouvertes.
+require('dotenv').config();
+
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const crypto = require('crypto');
 

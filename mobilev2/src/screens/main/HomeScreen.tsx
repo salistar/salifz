@@ -317,6 +317,11 @@ export default function HomeScreen({ navigation }: any) {
             <View style={[styles.actionIcon, { backgroundColor: colors.primarySoft }]}><Text style={styles.actionEmoji}>📚</Text></View>
             <Text style={styles.actionText}>{t('khatam.title') || 'ختم'}</Text>
           </TouchableOpacity>
+          {/* Mushaf : vue page par page, repère de mémorisation des hafiz */}
+          <TouchableOpacity accessible accessibilityRole="button" accessibilityLabel={t('mushaf.openMushaf')} style={styles.actionButton} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('Mushaf', { page: 1 }); }}>
+            <View style={[styles.actionIcon, { backgroundColor: colors.successSoft }]}><Text style={styles.actionEmoji}>📗</Text></View>
+            <Text style={styles.actionText}>{t('mushaf.title')}</Text>
+          </TouchableOpacity>
           <TouchableOpacity accessible accessibilityRole="button" style={styles.actionButton} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('SocialTab'); }}>
             <View style={[styles.actionIcon, { backgroundColor: colors.accentSoft }]}><Text style={styles.actionEmoji}>💬</Text></View>
             <Text style={styles.actionText}>{t('home.actions.social')}</Text>

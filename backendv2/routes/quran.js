@@ -3,7 +3,52 @@
  */
 const express = require('express');
 const { SURAH_DATA, TOTAL_AYAHS } = require('../models/Quran');
+const quranApi = require('../services/quranApi');
 const router = express.Router();
+
+/**
+ * GET /api/v1/quran/page/:number
+ * Une page du Mushaf de Médine, découpée ligne par ligne.
+ */
+router.get('/page/:number', async (req, res, next) => {
+  try {
+    const data = await quranApi.getPage(req.params.number);
+    res.json({ success: true, data });
+  } catch (error) {
+    if (error.status === 400) {
+      return res.status(400).json({ success: false, error: error.message });
+    }
+    next(error);
+  }
+});
+
+/** GET /api/v1/quran/page-of/:surah/:ayah — ouvrir le Mushaf sur un verset. */
+router.get('/page-of/:surah/:ayah', async (req, res, next) => {
+  try {
+    const page = await quranApi.getPageForVerse(req.params.surah, req.params.ayah);
+    if (!page) return res.status(404).json({ success: false, error: 'Verset introuvable' });
+    res.json({ success: true, data: { page } });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * GET /api/v1/quran/word-by-word/:surah/:ayah
+ * `getWordByWord` existait dans le service mais n'était exposé par aucune
+ * route : la traduction mot-à-mot annoncée au README était inaccessible.
+ */
+router.get('/word-by-word/:surah/:ayah', async (req, res, next) => {
+  try {
+    const words = await quranApi.getWordByWord(
+      parseInt(req.params.surah, 10),
+      parseInt(req.params.ayah, 10)
+    );
+    res.json({ success: true, data: { words } });
+  } catch (error) {
+    next(error);
+  }
+});
 
 router.get('/surahs', (req, res) => {
   res.json({ success: true, data: { surahs: SURAH_DATA, totalAyahs: TOTAL_AYAHS } });

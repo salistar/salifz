@@ -81,7 +81,11 @@
     "usernameRequired": "Nom d'utilisateur requis",
     "termsRequired": "Vous devez accepter les conditions"
   },
-  "password": { "weak": "Faible", "medium": "Moyen", "strong": "Fort" },
+  "password": {
+    "weak": "Faible",
+    "medium": "Moyen",
+    "strong": "Fort"
+  },
   "onboarding": {
     "welcome": "Bienvenue sur Salifz",
     "subtitle": "Votre chemin vers la mémorisation du Coran",
@@ -93,14 +97,46 @@
     "getStarted": "Commencer gratuitement",
     "haveAccount": "J'ai déjà un compte",
     "startNow": "Commencer",
-    "slide1": { "title": "Mémorisez facilement", "subtitle": "Une méthode innovante et amusante", "description": "Un système d'apprentissage complet pour mémoriser et réviser" },
-    "slide2": { "title": "Défis quotidiens", "subtitle": "Restez motivé avec des défis et récompenses", "description": "Complétez les défis quotidiens et gagnez des points et gemmes" },
-    "slide3": { "title": "Gardez votre série", "subtitle": "Pratiquez quotidiennement et suivez vos progrès", "description": "Le système de série vous motive à pratiquer chaque jour" },
-    "slide4": { "title": "Rivalisez avec vos amis", "subtitle": "Rejoignez les ligues et grimpez au classement", "description": "Affrontez les autres dans les ligues hebdomadaires" },
-    "slide5": { "title": "Propulsé par l'IA", "subtitle": "Plans personnalisés pour vous", "description": "L'IA analyse vos performances et crée un plan de mémorisation personnalisé" }
+    "slide1": {
+      "title": "Mémorisez facilement",
+      "subtitle": "Une méthode innovante et amusante",
+      "description": "Un système d'apprentissage complet pour mémoriser et réviser"
+    },
+    "slide2": {
+      "title": "Défis quotidiens",
+      "subtitle": "Restez motivé avec des défis et récompenses",
+      "description": "Complétez les défis quotidiens et gagnez des points et gemmes"
+    },
+    "slide3": {
+      "title": "Gardez votre série",
+      "subtitle": "Pratiquez quotidiennement et suivez vos progrès",
+      "description": "Le système de série vous motive à pratiquer chaque jour"
+    },
+    "slide4": {
+      "title": "Rivalisez avec vos amis",
+      "subtitle": "Rejoignez les ligues et grimpez au classement",
+      "description": "Affrontez les autres dans les ligues hebdomadaires"
+    },
+    "slide5": {
+      "title": "Propulsé par l'IA",
+      "subtitle": "Plans personnalisés pour vous",
+      "description": "L'IA analyse vos performances et crée un plan de mémorisation personnalisé"
+    }
   },
-  "splash": { "learnWithGames": "Apprenez en jouant", "competeWithFriends": "Rivalisez avec vos amis", "trackProgress": "Suivez vos progrès" },
-  "forgotPassword": { "title": "Mot de passe oublié ?", "subtitle": "Entrez votre email et nous vous enverrons un lien de réinitialisation", "sendLink": "Envoyer le lien", "sent": "Envoyé !", "sentDescription": "Le lien de réinitialisation a été envoyé", "backToLogin": "Retour à la connexion", "resend": "Renvoyer" },
+  "splash": {
+    "learnWithGames": "Apprenez en jouant",
+    "competeWithFriends": "Rivalisez avec vos amis",
+    "trackProgress": "Suivez vos progrès"
+  },
+  "forgotPassword": {
+    "title": "Mot de passe oublié ?",
+    "subtitle": "Entrez votre email et nous vous enverrons un lien de réinitialisation",
+    "sendLink": "Envoyer le lien",
+    "sent": "Envoyé !",
+    "sentDescription": "Le lien de réinitialisation a été envoyé",
+    "backToLogin": "Retour à la connexion",
+    "resend": "Renvoyer"
+  },
   "home": {
     "greeting": "Assalamu Alaikum",
     "greetingWithName": "Bonjour {{name}} ! 👋",
@@ -120,21 +156,21 @@
     "unlimitedHearts": "Cœurs illimités",
     "surahBaqarahAyah25": "Sourate Al-Baqara - Verset 25",
     "defaultUsername": "Utilisateur",
-    "actions": { 
-      "learn": "Apprendre", 
-      "review": "Réviser", 
-      "challenges": "Défis", 
+    "actions": {
+      "learn": "Apprendre",
+      "review": "Réviser",
+      "challenges": "Défis",
       "social": "Social",
       "khatam": "Khatam"
     },
-    "social": { 
+    "social": {
       "title": "Social",
-      "conversations": "Conversations", 
-      "conversationCount": "{{count}} conversations", 
-      "halaqat": "Halaqat", 
-      "halaqaCount": "{{count}} halaqat", 
-      "friends": "Amis", 
-      "addFriend": "Ajouter un ami" 
+      "conversations": "Conversations",
+      "conversationCount": "{{count}} conversations",
+      "halaqat": "Halaqat",
+      "halaqaCount": "{{count}} halaqat",
+      "friends": "Amis",
+      "addFriend": "Ajouter un ami"
     },
     "recentConversations": "Conversations récentes",
     "seeAll": "Voir tout",
@@ -148,19 +184,19 @@
     "ayahsProgress": "Versets : {{current}}/{{target}}",
     "todaysChallenges": "Défis du jour",
     "challenge": "Défi",
-    "challenges": { 
-      "memorize5": "Mémoriser 5 versets", 
-      "review10": "Réviser 10 versets", 
-      "practice15": "Pratiquer 15 minutes" 
+    "challenges": {
+      "memorize5": "Mémoriser 5 versets",
+      "review10": "Réviser 10 versets",
+      "practice15": "Pratiquer 15 minutes"
     },
-    "leagues": { 
-      "bronze": "Bronze", 
-      "silver": "Argent", 
-      "gold": "Or", 
+    "leagues": {
+      "bronze": "Bronze",
+      "silver": "Argent",
+      "gold": "Or",
       "platinum": "Platine",
-      "diamond": "Diamant", 
+      "diamond": "Diamant",
       "master": "Hafiz",
-      "hafiz": "Hafiz" 
+      "hafiz": "Hafiz"
     },
     "rankNumber": "Rang #{{rank}}",
     "islamicFeatures": "Fonctionnalités islamiques",
@@ -369,223 +405,1124 @@
       "paused": "En pause"
     }
   },
-  "learn": { "title": "Apprendre", "juzAmma": "Juz Amma", "verses": "versets", "completed": "Terminé", "inProgress": "En cours", "notStarted": "Non commencé", "start": "Commencer", "continue": "Continuer", "review": "Réviser", "memorize": "Mémoriser", "listen": "Écouter", "record": "Enregistrer" },
+  "learn": {
+    "title": "Apprendre",
+    "juzAmma": "Juz Amma",
+    "verses": "versets",
+    "completed": "Terminé",
+    "inProgress": "En cours",
+    "notStarted": "Non commencé",
+    "start": "Commencer",
+    "continue": "Continuer",
+    "review": "Réviser",
+    "memorize": "Mémoriser",
+    "listen": "Écouter",
+    "record": "Enregistrer"
+  },
   "leaderboard": {
-    "title": "Classement", "league": "Ligue", "friends": "Amis", "global": "Mondial", "rank": "Rang", "daysLeft": "jours restants",
-    "promotionZone": "Zone de promotion", "demotionZone": "Zone de relégation", "bronze": "Bronze", "silver": "Argent", "gold": "Or", "diamond": "Diamant", "hafiz": "Hafiz",
-    "promotionInfo": "Top 5 promus • 5 derniers relégués", "endsIn": "Fin dans : {{days}} jours", "relegationZone": "Zone de relégation", "you": "Vous", "levelX": "Niveau {{level}}", "noData": "Pas de données", "startLearning": "Commencez à apprendre pour apparaître au classement !",
-    "tabs": { "league": "Ligue", "global": "Mondial", "friends": "Amis" },
-    "leagues": { "bronze": "Bronze", "silver": "Argent", "gold": "Or", "diamond": "Diamant", "hafiz": "Hafiz" }
+    "title": "Classement",
+    "league": "Ligue",
+    "friends": "Amis",
+    "global": "Mondial",
+    "rank": "Rang",
+    "daysLeft": "jours restants",
+    "promotionZone": "Zone de promotion",
+    "demotionZone": "Zone de relégation",
+    "bronze": "Bronze",
+    "silver": "Argent",
+    "gold": "Or",
+    "diamond": "Diamant",
+    "hafiz": "Hafiz",
+    "promotionInfo": "Top 5 promus • 5 derniers relégués",
+    "endsIn": "Fin dans : {{days}} jours",
+    "relegationZone": "Zone de relégation",
+    "you": "Vous",
+    "levelX": "Niveau {{level}}",
+    "noData": "Pas de données",
+    "startLearning": "Commencez à apprendre pour apparaître au classement !",
+    "tabs": {
+      "league": "Ligue",
+      "global": "Mondial",
+      "friends": "Amis"
+    },
+    "leagues": {
+      "bronze": "Bronze",
+      "silver": "Argent",
+      "gold": "Or",
+      "diamond": "Diamant",
+      "hafiz": "Hafiz"
+    }
   },
   "profile": {
-    "title": "Mon profil", "settings": "Paramètres", "dailyGoal": "Objectif quotidien", "notifications": "Notifications", "premium": "Salifz+ Premium", "language": "Langue", "about": "À propos", "help": "Aide", "totalVerses": "Versets mémorisés", "achievements": "Succès",
-    "defaultUsername": "Utilisateur", "levelX": "Niveau {{level}}", "memorizationStats": "📖 Stats de mémorisation", "ayahsMemorized": "Versets mémorisés", "surahsCompleted": "Sourates complétées", "juz": "Juz", "seeAll": "Voir tout", "logout": "Déconnexion", "logoutConfirm": "Êtes-vous sûr de vouloir vous déconnecter ?", "logoutButton": "Déconnexion",
-    "stats": { "streak": "Série", "xp": "XP", "gems": "Gemmes", "coins": "Pièces", "hearts": "Cœurs", "league": "Ligue" },
-    "menu": { "settings": "Paramètres", "insights": "Analyses", "friends": "Amis", "achievements": "Succès", "notifications": "Notifications", "help": "Aide" },
-    "leagues": { "bronze": "Bronze", "silver": "Argent", "gold": "Or", "diamond": "Diamant", "hafiz": "Hafiz" }
+    "title": "Mon profil",
+    "settings": "Paramètres",
+    "dailyGoal": "Objectif quotidien",
+    "notifications": "Notifications",
+    "premium": "Salifz+ Premium",
+    "language": "Langue",
+    "about": "À propos",
+    "help": "Aide",
+    "totalVerses": "Versets mémorisés",
+    "achievements": "Succès",
+    "defaultUsername": "Utilisateur",
+    "levelX": "Niveau {{level}}",
+    "memorizationStats": "📖 Stats de mémorisation",
+    "ayahsMemorized": "Versets mémorisés",
+    "surahsCompleted": "Sourates complétées",
+    "juz": "Juz",
+    "seeAll": "Voir tout",
+    "logout": "Déconnexion",
+    "logoutConfirm": "Êtes-vous sûr de vouloir vous déconnecter ?",
+    "logoutButton": "Déconnexion",
+    "stats": {
+      "streak": "Série",
+      "xp": "XP",
+      "gems": "Gemmes",
+      "coins": "Pièces",
+      "hearts": "Cœurs",
+      "league": "Ligue"
+    },
+    "menu": {
+      "settings": "Paramètres",
+      "insights": "Analyses",
+      "friends": "Amis",
+      "achievements": "Succès",
+      "notifications": "Notifications",
+      "help": "Aide"
+    },
+    "leagues": {
+      "bronze": "Bronze",
+      "silver": "Argent",
+      "gold": "Or",
+      "diamond": "Diamant",
+      "hafiz": "Hafiz"
+    }
   },
-  "gamification": { "streakFreeze": "Gel de série", "available": "disponible", "getMore": "Obtenir plus", "questComplete": "Quête terminée !", "levelUp": "Niveau supérieur !", "newAchievement": "Nouveau succès !", "xpEarned": "XP gagnés" },
-  "quests": { "memorize": "Mémorisez {{count}} nouveaux versets", "review": "Révisez {{count}} versets", "lesson": "Complétez une leçon", "tajwid": "Obtenez 80%+ en Tajwid" },
-  "call": { "title": "Appel", "connecting": "Connexion...", "ringing": "Sonnerie...", "incomingAudio": "Appel audio entrant", "incomingVideo": "Appel vidéo entrant...", "ended": "Appel terminé", "rejected": "Appel refusé", "encrypted": "Appel chiffré", "accept": "Accepter", "reject": "Refuser", "end": "Terminer", "mute": "Muet", "unmute": "Activer le son", "speakerOn": "Haut-parleur", "speakerOff": "HP désactivé", "enableVideo": "Activer la vidéo", "cameraOff": "Caméra désactivée", "videoOn": "Vidéo activée", "videoOff": "Vidéo désactivée", "flip": "Inverser", "speaker": "Haut-parleur" },
-  "permissions": { "cameraTitle": "Permission caméra", "cameraMessage": "L'application a besoin de la caméra" },
-  "chat": { "typing": "écrit...", "isTyping": "écrit...", "online": "En ligne", "offline": "Hors ligne", "placeholder": "Écrivez un message...", "send": "Envoyer", "noMessages": "Pas de messages", "startConversation": "Démarrer une conversation" },
-  "conversations": { "title": "Conversations", "conversation": "Conversation", "group": "Groupe", "noMessages": "Pas de messages", "noResults": "Aucun résultat", "empty": "Pas de conversations", "emptySubtitle": "Trouvez des amis pour démarrer une conversation", "findFriends": "Trouver des amis", "searchPlaceholder": "Rechercher quelqu'un..." },
+  "gamification": {
+    "streakFreeze": "Gel de série",
+    "available": "disponible",
+    "getMore": "Obtenir plus",
+    "questComplete": "Quête terminée !",
+    "levelUp": "Niveau supérieur !",
+    "newAchievement": "Nouveau succès !",
+    "xpEarned": "XP gagnés"
+  },
+  "quests": {
+    "memorize": "Mémorisez {{count}} nouveaux versets",
+    "review": "Révisez {{count}} versets",
+    "lesson": "Complétez une leçon",
+    "tajwid": "Obtenez 80%+ en Tajwid"
+  },
+  "call": {
+    "title": "Appel",
+    "connecting": "Connexion...",
+    "ringing": "Sonnerie...",
+    "incomingAudio": "Appel audio entrant",
+    "incomingVideo": "Appel vidéo entrant...",
+    "ended": "Appel terminé",
+    "rejected": "Appel refusé",
+    "encrypted": "Appel chiffré",
+    "accept": "Accepter",
+    "reject": "Refuser",
+    "end": "Terminer",
+    "mute": "Muet",
+    "unmute": "Activer le son",
+    "speakerOn": "Haut-parleur",
+    "speakerOff": "HP désactivé",
+    "enableVideo": "Activer la vidéo",
+    "cameraOff": "Caméra désactivée",
+    "videoOn": "Vidéo activée",
+    "videoOff": "Vidéo désactivée",
+    "flip": "Inverser",
+    "speaker": "Haut-parleur"
+  },
+  "permissions": {
+    "cameraTitle": "Permission caméra",
+    "cameraMessage": "L'application a besoin de la caméra"
+  },
+  "chat": {
+    "typing": "écrit...",
+    "isTyping": "écrit...",
+    "online": "En ligne",
+    "offline": "Hors ligne",
+    "placeholder": "Écrivez un message...",
+    "send": "Envoyer",
+    "noMessages": "Pas de messages",
+    "startConversation": "Démarrer une conversation"
+  },
+  "conversations": {
+    "title": "Conversations",
+    "conversation": "Conversation",
+    "group": "Groupe",
+    "noMessages": "Pas de messages",
+    "noResults": "Aucun résultat",
+    "empty": "Pas de conversations",
+    "emptySubtitle": "Trouvez des amis pour démarrer une conversation",
+    "findFriends": "Trouver des amis",
+    "searchPlaceholder": "Rechercher quelqu'un..."
+  },
   "achievements": {
-    "title": "Succès", "unlocked": "Débloqué", "xpEarned": "XP gagnés", "reward": "Récompense", "unlockedStatus": "Débloqué", "lockedStatus": "Verrouillé",
-    "categories": { "all": "Tous", "memorization": "Mémorisation", "streak": "Série", "social": "Social", "special": "Spécial" },
-    "rarity": { "common": "Commun", "uncommon": "Peu commun", "rare": "Rare", "epic": "Épique", "legendary": "Légendaire" },
-    "items": { "firstAyah": "Premier verset", "surahFatiha": "Sourate Al-Fatiha", "firstJuz": "Premier Juz", "hafiz100": "Hafiz 100", "streak7": "7 jours", "streak30": "30 jours", "streak100": "100 jours", "firstFriend": "Premier ami", "leagueGold": "Ligue Or", "earlyBird": "Lève-tôt", "nightOwl": "Noctambule", "perfectWeek": "Semaine parfaite" }
+    "title": "Succès",
+    "unlocked": "Débloqué",
+    "xpEarned": "XP gagnés",
+    "reward": "Récompense",
+    "unlockedStatus": "Débloqué",
+    "lockedStatus": "Verrouillé",
+    "categories": {
+      "all": "Tous",
+      "memorization": "Mémorisation",
+      "streak": "Série",
+      "social": "Social",
+      "special": "Spécial"
+    },
+    "rarity": {
+      "common": "Commun",
+      "uncommon": "Peu commun",
+      "rare": "Rare",
+      "epic": "Épique",
+      "legendary": "Légendaire"
+    },
+    "items": {
+      "firstAyah": "Premier verset",
+      "surahFatiha": "Sourate Al-Fatiha",
+      "firstJuz": "Premier Juz",
+      "hafiz100": "Hafiz 100",
+      "streak7": "7 jours",
+      "streak30": "30 jours",
+      "streak100": "100 jours",
+      "firstFriend": "Premier ami",
+      "leagueGold": "Ligue Or",
+      "earlyBird": "Lève-tôt",
+      "nightOwl": "Noctambule",
+      "perfectWeek": "Semaine parfaite"
+    }
   },
   "challenges": {
-    "title": "Défis", "empty": "Pas de défis disponibles", "defaultTitle": "Défi", "congratulations": "🎉 Félicitations !", "rewardMessage": "Vous avez gagné {{xp}} XP et {{gems}} gemmes", "claimed": "✓ Réclamé", "claimReward": "Réclamer 🎁", "inProgress": "En cours...", "start": "Commencer le défi",
-    "tabs": { "daily": "Quotidien", "weekly": "Hebdomadaire", "special": "Spécial" },
-    "difficulty": { "easy": "Facile", "medium": "Moyen", "hard": "Difficile" }
+    "title": "Défis",
+    "empty": "Pas de défis disponibles",
+    "defaultTitle": "Défi",
+    "congratulations": "🎉 Félicitations !",
+    "rewardMessage": "Vous avez gagné {{xp}} XP et {{gems}} gemmes",
+    "claimed": "✓ Réclamé",
+    "claimReward": "Réclamer 🎁",
+    "inProgress": "En cours...",
+    "start": "Commencer le défi",
+    "tabs": {
+      "daily": "Quotidien",
+      "weekly": "Hebdomadaire",
+      "special": "Spécial"
+    },
+    "difficulty": {
+      "easy": "Facile",
+      "medium": "Moyen",
+      "hard": "Difficile"
+    }
   },
   "insights": {
-    "title": "Analyses de performance", "ayahsMemorized": "versets mémorisés", "reviews": "révisions", "minutes": "minutes", "weeklyActivity": "Activité de la semaine", "memorizationAccuracy": "Précision de mémorisation", "averageAccuracy": "Précision moyenne", "correctAnswers": "Bonnes réponses", "wrongAnswers": "Mauvaises réponses", "bestDay": "Meilleur jour", "needsImprovement": "À améliorer", "aiRecommendations": "Recommandations IA",
-    "recommendation1": "Vos performances sont excellentes le vendredi !", "recommendation2": "Votre précision de mémorisation est élevée. Essayez d'augmenter le nombre de versets.", "recommendation3": "Votre série actuelle est de {{streak}} jours !",
-    "progressSummary": "Résumé des progrès", "currentLevel": "Niveau actuel", "levelX": "Niveau {{level}}", "totalPoints": "Total des points", "gemsEarned": "Gemmes gagnées", "longestStreak": "Plus longue série", "daysStreak": "{{days}} jours", "memorizationStats": "Stats de mémorisation", "ayah": "Verset", "surah": "Sourate", "juz": "Juz",
-    "days": { "sat": "Sam", "sun": "Dim", "mon": "Lun", "tue": "Mar", "wed": "Mer", "thu": "Jeu", "fri": "Ven" },
-    "fullDays": { "friday": "Vendredi", "monday": "Lundi", "tuesday": "Mardi", "wednesday": "Mercredi", "thursday": "Jeudi", "saturday": "Samedi", "sunday": "Dimanche" }
+    "title": "Analyses de performance",
+    "ayahsMemorized": "versets mémorisés",
+    "reviews": "révisions",
+    "minutes": "minutes",
+    "weeklyActivity": "Activité de la semaine",
+    "memorizationAccuracy": "Précision de mémorisation",
+    "averageAccuracy": "Précision moyenne",
+    "correctAnswers": "Bonnes réponses",
+    "wrongAnswers": "Mauvaises réponses",
+    "bestDay": "Meilleur jour",
+    "needsImprovement": "À améliorer",
+    "aiRecommendations": "Recommandations IA",
+    "recommendation1": "Vos performances sont excellentes le vendredi !",
+    "recommendation2": "Votre précision de mémorisation est élevée. Essayez d'augmenter le nombre de versets.",
+    "recommendation3": "Votre série actuelle est de {{streak}} jours !",
+    "progressSummary": "Résumé des progrès",
+    "currentLevel": "Niveau actuel",
+    "levelX": "Niveau {{level}}",
+    "totalPoints": "Total des points",
+    "gemsEarned": "Gemmes gagnées",
+    "longestStreak": "Plus longue série",
+    "daysStreak": "{{days}} jours",
+    "memorizationStats": "Stats de mémorisation",
+    "ayah": "Verset",
+    "surah": "Sourate",
+    "juz": "Juz",
+    "days": {
+      "sat": "Sam",
+      "sun": "Dim",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven"
+    },
+    "fullDays": {
+      "friday": "Vendredi",
+      "monday": "Lundi",
+      "tuesday": "Mardi",
+      "wednesday": "Mercredi",
+      "thursday": "Jeudi",
+      "saturday": "Samedi",
+      "sunday": "Dimanche"
+    }
   },
   "shop": {
-    "title": "🏪 Boutique", "dailyReward": "🎁 Récompense quotidienne", "collectDaily": "Collectez des récompenses chaque jour !", "dayX": "Jour {{day}}", "claimed": "✓ Réclamé", "claimReward": "Réclamer", "items": "🛒 Articles", "congratulations": "🎉 Félicitations !", "dailyRewardMessage": "Vous avez obtenu {{gems}} gemmes !", "notEnoughGems": "Pas assez de gemmes !", "needGemsMessage": "Vous avez besoin de {{price}} gemmes pour acheter {{item}}", "confirmPurchase": "Confirmer l'achat", "buy": "Acheter", "done": "Terminé !", "purchaseSuccessMessage": "{{item}} acheté avec succès !",
-    "itemsList": { "heartRefill": "Recharge de cœurs", "streakFreeze": "Gel de série", "xpBoost": "Boost XP", "avatarGold": "Cadre doré", "gems100": "100 Gemmes", "gems500": "500 Gemmes" }
+    "title": "🏪 Boutique",
+    "dailyReward": "🎁 Récompense quotidienne",
+    "collectDaily": "Collectez des récompenses chaque jour !",
+    "dayX": "Jour {{day}}",
+    "claimed": "✓ Réclamé",
+    "claimReward": "Réclamer",
+    "items": "🛒 Articles",
+    "congratulations": "🎉 Félicitations !",
+    "dailyRewardMessage": "Vous avez obtenu {{gems}} gemmes !",
+    "notEnoughGems": "Pas assez de gemmes !",
+    "needGemsMessage": "Vous avez besoin de {{price}} gemmes pour acheter {{item}}",
+    "confirmPurchase": "Confirmer l'achat",
+    "buy": "Acheter",
+    "done": "Terminé !",
+    "purchaseSuccessMessage": "{{item}} acheté avec succès !",
+    "itemsList": {
+      "heartRefill": "Recharge de cœurs",
+      "streakFreeze": "Gel de série",
+      "xpBoost": "Boost XP",
+      "avatarGold": "Cadre doré",
+      "gems100": "100 Gemmes",
+      "gems500": "500 Gemmes"
+    }
   },
   "streak": {
-    "consecutiveDays": "jours consécutifs", "longestStreak": "Plus longue série : {{days}} jours", "nextGoal": "Prochain objectif : {{days}} jours", "progressDays": "{{current}}/{{total}} jours", "reward": "Récompense", "streakFreeze": "Gel de série", "availableCount": "{{count}} disponible(s)", "use": "Utiliser", "buyPrice": "Acheter ({{price}} 💎)", "milestones": "🏆 Jalons", "last30Days": "📅 30 derniers jours", "benefits": "🎁 Avantages de la série", "dailyXPBonus": "Bonus XP quotidien : +{{xp}} XP", "gemsMultiplier": "Multiplicateur de gemmes : x{{multiplier}}", "exclusiveBadges": "Badges exclusifs à chaque jalon", "noFreeze": "Pas de gel disponible !", "buyFreezeFromShop": "Vous pouvez acheter un gel dans la boutique", "shop": "Boutique", "useFreeze": "Utiliser le gel", "useFreezeConfirm": "Voulez-vous utiliser un gel pour garder votre série ?", "freezeUsedSuccess": "Gel utilisé avec succès", "notEnoughGems": "Pas assez de gemmes !", "need200Gems": "Vous avez besoin de 200 gemmes pour acheter un gel"
+    "consecutiveDays": "jours consécutifs",
+    "longestStreak": "Plus longue série : {{days}} jours",
+    "nextGoal": "Prochain objectif : {{days}} jours",
+    "progressDays": "{{current}}/{{total}} jours",
+    "reward": "Récompense",
+    "streakFreeze": "Gel de série",
+    "availableCount": "{{count}} disponible(s)",
+    "use": "Utiliser",
+    "buyPrice": "Acheter ({{price}} 💎)",
+    "milestones": "🏆 Jalons",
+    "last30Days": "📅 30 derniers jours",
+    "benefits": "🎁 Avantages de la série",
+    "dailyXPBonus": "Bonus XP quotidien : +{{xp}} XP",
+    "gemsMultiplier": "Multiplicateur de gemmes : x{{multiplier}}",
+    "exclusiveBadges": "Badges exclusifs à chaque jalon",
+    "noFreeze": "Pas de gel disponible !",
+    "buyFreezeFromShop": "Vous pouvez acheter un gel dans la boutique",
+    "shop": "Boutique",
+    "useFreeze": "Utiliser le gel",
+    "useFreezeConfirm": "Voulez-vous utiliser un gel pour garder votre série ?",
+    "freezeUsedSuccess": "Gel utilisé avec succès",
+    "notEnoughGems": "Pas assez de gemmes !",
+    "need200Gems": "Vous avez besoin de 200 gemmes pour acheter un gel"
   },
   "notifications": {
-    "title": "Notifications", "newCount": "{{count}} nouvelles", "markAllAsRead": "Tout marquer comme lu", "empty": "Pas de notifications", "emptySubtitle": "Les nouvelles notifications apparaîtront ici",
-    "groups": { "today": "Aujourd'hui", "yesterday": "Hier", "older": "Plus ancien" },
-    "timeAgo": { "now": "Maintenant", "minutes": "Il y a {{count}} min", "hours": "Il y a {{count}} h", "days": "Il y a {{count}} j" }
+    "title": "Notifications",
+    "newCount": "{{count}} nouvelles",
+    "markAllAsRead": "Tout marquer comme lu",
+    "empty": "Pas de notifications",
+    "emptySubtitle": "Les nouvelles notifications apparaîtront ici",
+    "groups": {
+      "today": "Aujourd'hui",
+      "yesterday": "Hier",
+      "older": "Plus ancien"
+    },
+    "timeAgo": {
+      "now": "Maintenant",
+      "minutes": "Il y a {{count}} min",
+      "hours": "Il y a {{count}} h",
+      "days": "Il y a {{count}} j"
+    }
   },
-  "audioPlayer": { "ayahNumber": "Verset {{number}}", "ayahX": "Verset {{number}}", "ayahsList": "Liste des versets", "selectReciter": "Choisir le récitateur", "reciters": { "mishary": "Mishary Al-Afasy", "sudais": "Abdulrahman Al-Sudais", "husary": "Mahmoud Al-Husary" } },
-  "dailyVerse": { "title": "Verset du jour", "ayahNumber": "Verset {{number}}", "listen": "Écouter", "stop": "Arrêter", "share": "Partager", "copy": "Copier", "memorize": "Mémoriser", "verses": { "ayatulKursi": "Allah - il n'y a de divinité que Lui, le Vivant", "ikhlas1": "Dis : Il est Allah, Unique", "basmala": "Au nom d'Allah, le Tout Miséricordieux, le Très Miséricordieux", "sharh5": "Certes, avec la difficulté il y a une facilité", "raad28": "C'est par le rappel d'Allah que les cœurs s'apaisent" } },
-  "lessonComplete": { "excellent": "Excellent !", "wellDone": "Bien joué !", "completedSurah": "Vous avez terminé la Sourate {{surahName}} !", "completedBlocks": "Vous avez complété {{completed}} sur {{total}} blocs dans {{surahName}}", "surahProgress": "{{percent}}% de la Sourate", "gems": "Gemmes", "streak": "Série", "milestone": "Jalon : {{days}} jours consécutifs !", "accuracy": "Précision", "exercises": "Exercices", "blocks": "Blocs", "share": "Partager", "continueSurah": "Continuer la Sourate", "newSurah": "Nouvelle Sourate", "lessons": "Leçons", "shareMessage": "🎉 J'ai terminé une leçon de {{surahName}} dans Salifz !\n📖 J'ai mémorisé {{ayahsCount}} versets\n🔥 Ma série : {{streak}} jours\n\n#Salifz" },
+  "audioPlayer": {
+    "ayahNumber": "Verset {{number}}",
+    "ayahX": "Verset {{number}}",
+    "ayahsList": "Liste des versets",
+    "selectReciter": "Choisir le récitateur",
+    "reciters": {
+      "mishary": "Mishary Al-Afasy",
+      "sudais": "Abdulrahman Al-Sudais",
+      "husary": "Mahmoud Al-Husary"
+    }
+  },
+  "dailyVerse": {
+    "title": "Verset du jour",
+    "ayahNumber": "Verset {{number}}",
+    "listen": "Écouter",
+    "stop": "Arrêter",
+    "share": "Partager",
+    "copy": "Copier",
+    "memorize": "Mémoriser",
+    "verses": {
+      "ayatulKursi": "Allah - il n'y a de divinité que Lui, le Vivant",
+      "ikhlas1": "Dis : Il est Allah, Unique",
+      "basmala": "Au nom d'Allah, le Tout Miséricordieux, le Très Miséricordieux",
+      "sharh5": "Certes, avec la difficulté il y a une facilité",
+      "raad28": "C'est par le rappel d'Allah que les cœurs s'apaisent"
+    }
+  },
+  "lessonComplete": {
+    "excellent": "Excellent !",
+    "wellDone": "Bien joué !",
+    "completedSurah": "Vous avez terminé la Sourate {{surahName}} !",
+    "completedBlocks": "Vous avez complété {{completed}} sur {{total}} blocs dans {{surahName}}",
+    "surahProgress": "{{percent}}% de la Sourate",
+    "gems": "Gemmes",
+    "streak": "Série",
+    "milestone": "Jalon : {{days}} jours consécutifs !",
+    "accuracy": "Précision",
+    "exercises": "Exercices",
+    "blocks": "Blocs",
+    "share": "Partager",
+    "continueSurah": "Continuer la Sourate",
+    "newSurah": "Nouvelle Sourate",
+    "lessons": "Leçons",
+    "shareMessage": "🎉 J'ai terminé une leçon de {{surahName}} dans Salifz !\n📖 J'ai mémorisé {{ayahsCount}} versets\n🔥 Ma série : {{streak}} jours\n\n#Salifz"
+  },
   "lessonDetail": {
-    "loadingLesson": "Chargement de la leçon...", "ayahsRange": "Versets {{start}} - {{end}}", "blockProgress": "Bloc {{current}} sur {{total}}", "check": "Vérifier", "listen": "Écouter", "stop": "Arrêter", "audioLoading": "Chargement audio...", "doneListening": "Écouté ✓", "doneReading": "J'ai lu le verset", "tryReciteFromMemory": "Essayez de réciter de mémoire",
-    "exercises": { "listenRepeat": "Écouter et répéter 🎧", "chooseCorrectMeaning": "Choisir le bon sens", "fillTheBlank": "Remplir le blanc ✏️", "arrangeAyahs": "Ranger les versets", "reciteFromMemory": "Réciter de mémoire 🎤" },
-    "feedback": { "correct": "Bien joué ! +{{xp}} XP", "tryAgain": "Réessayez" },
-    "alerts": { "noHeartsTitle": "Plus de cœurs ! ❤️", "noHeartsMessage": "Attendez que les cœurs se rechargent ou achetez-en dans la boutique", "wait": "Attendre", "goToShop": "Boutique", "leaveLesson": "Quitter la leçon ?", "leaveMessage": "Votre progression sera sauvegardée", "stay": "Rester", "leave": "Quitter" }
+    "loadingLesson": "Chargement de la leçon...",
+    "ayahsRange": "Versets {{start}} - {{end}}",
+    "blockProgress": "Bloc {{current}} sur {{total}}",
+    "check": "Vérifier",
+    "listen": "Écouter",
+    "stop": "Arrêter",
+    "audioLoading": "Chargement audio...",
+    "doneListening": "Écouté ✓",
+    "doneReading": "J'ai lu le verset",
+    "tryReciteFromMemory": "Essayez de réciter de mémoire",
+    "exercises": {
+      "listenRepeat": "Écouter et répéter 🎧",
+      "chooseCorrectMeaning": "Choisir le bon sens",
+      "fillTheBlank": "Remplir le blanc ✏️",
+      "arrangeAyahs": "Ranger les versets",
+      "reciteFromMemory": "Réciter de mémoire 🎤"
+    },
+    "feedback": {
+      "correct": "Bien joué ! +{{xp}} XP",
+      "tryAgain": "Réessayez"
+    },
+    "alerts": {
+      "noHeartsTitle": "Plus de cœurs ! ❤️",
+      "noHeartsMessage": "Attendez que les cœurs se rechargent ou achetez-en dans la boutique",
+      "wait": "Attendre",
+      "goToShop": "Boutique",
+      "leaveLesson": "Quitter la leçon ?",
+      "leaveMessage": "Votre progression sera sauvegardée",
+      "stay": "Rester",
+      "leave": "Quitter"
+    }
   },
   "lessons": {
     "juzNumber": "Juz {{number}}",
-    "stats": { "memorized": "Mémorisé", "inProgress": "En cours", "toReview": "À réviser", "ayah": "Verset", "surah": "Sourate", "juz": "Juz", "hizb": "Hizb" },
-    "tabs": { "all": "Tous", "memorized": "Mémorisé", "inProgress": "En cours", "toReview": "À réviser", "path": "Parcours", "juz": "Juz", "hizb": "Hizb" },
-    "alerts": { "lockedTitle": "Sourate verrouillée 🔒", "lockedMessage": "Terminez d'abord les sourates précédentes", "ok": "OK" }
+    "stats": {
+      "memorized": "Mémorisé",
+      "inProgress": "En cours",
+      "toReview": "À réviser",
+      "ayah": "Verset",
+      "surah": "Sourate",
+      "juz": "Juz",
+      "hizb": "Hizb"
+    },
+    "tabs": {
+      "all": "Tous",
+      "memorized": "Mémorisé",
+      "inProgress": "En cours",
+      "toReview": "À réviser",
+      "path": "Parcours",
+      "juz": "Juz",
+      "hizb": "Hizb"
+    },
+    "alerts": {
+      "lockedTitle": "Sourate verrouillée 🔒",
+      "lockedMessage": "Terminez d'abord les sourates précédentes",
+      "ok": "OK"
+    }
   },
-  "review": { "title": "Révision", "subtitle": "Révisez ce que vous avez mémorisé", "dueForReview": "À réviser", "ayahCount": "{{count}} versets", "surahAyah": "{{surah}} - {{ayah}}", "startReview": "Commencer la révision", "weakAreas": "Points faibles", "weakAreasCount": "{{count}} points à améliorer", "strengthen": "Renforcer", "quickReview": "Révision rapide", "minutes": "{{count}} minutes", "stats": { "title": "Stats de révision", "todayReviews": "Révisions du jour", "weeklyAccuracy": "Précision de la semaine", "consecutiveDays": "Jours consécutifs", "totalReviews": "Total des révisions" } },
+  "review": {
+    "title": "Révision",
+    "subtitle": "Révisez ce que vous avez mémorisé",
+    "dueForReview": "À réviser",
+    "ayahCount": "{{count}} versets",
+    "surahAyah": "{{surah}} - {{ayah}}",
+    "startReview": "Commencer la révision",
+    "weakAreas": "Points faibles",
+    "weakAreasCount": "{{count}} points à améliorer",
+    "strengthen": "Renforcer",
+    "quickReview": "Révision rapide",
+    "minutes": "{{count}} minutes",
+    "stats": {
+      "title": "Stats de révision",
+      "todayReviews": "Révisions du jour",
+      "weeklyAccuracy": "Précision de la semaine",
+      "consecutiveDays": "Jours consécutifs",
+      "totalReviews": "Total des révisions"
+    }
+  },
   "goalSetup": {
-    "stepOf": "Étape {{current}} sur {{total}}", "step1": { "title": "Définissez votre objectif quotidien", "subtitle": "Combien de temps voulez-vous consacrer à la mémorisation chaque jour ?" }, "step2": { "title": "Choisissez l'heure du rappel", "subtitle": "Quand souhaitez-vous être rappelé ?" },
-    "goals": { "beginner": "Débutant", "regular": "Régulier", "serious": "Sérieux", "advanced": "Avancé", "time5min": "5 minutes", "time10min": "10 minutes", "time20min": "20 minutes", "time30min": "30 minutes", "beginnerDesc": "Bon début pour la mémorisation", "regularDesc": "Progression régulière", "seriousDesc": "Progrès notables", "advancedDesc": "Pour les mémorisateurs expérimentés", "ayahsDaily": "{{count}} versets par jour" },
-    "reminders": { "afterFajr": "Après Fajr", "morning": "Matin", "afternoon": "Après-midi", "evening": "Soir", "night": "Nuit" },
-    "tip": "💡 Vous pourrez modifier ces paramètres plus tard", "skipReminder": "Passer le rappel", "startMemorizing": "Commencer à mémoriser"
+    "stepOf": "Étape {{current}} sur {{total}}",
+    "step1": {
+      "title": "Définissez votre objectif quotidien",
+      "subtitle": "Combien de temps voulez-vous consacrer à la mémorisation chaque jour ?"
+    },
+    "step2": {
+      "title": "Choisissez l'heure du rappel",
+      "subtitle": "Quand souhaitez-vous être rappelé ?"
+    },
+    "goals": {
+      "beginner": "Débutant",
+      "regular": "Régulier",
+      "serious": "Sérieux",
+      "advanced": "Avancé",
+      "time5min": "5 minutes",
+      "time10min": "10 minutes",
+      "time20min": "20 minutes",
+      "time30min": "30 minutes",
+      "beginnerDesc": "Bon début pour la mémorisation",
+      "regularDesc": "Progression régulière",
+      "seriousDesc": "Progrès notables",
+      "advancedDesc": "Pour les mémorisateurs expérimentés",
+      "ayahsDaily": "{{count}} versets par jour"
+    },
+    "reminders": {
+      "afterFajr": "Après Fajr",
+      "morning": "Matin",
+      "afternoon": "Après-midi",
+      "evening": "Soir",
+      "night": "Nuit"
+    },
+    "tip": "💡 Vous pourrez modifier ces paramètres plus tard",
+    "skipReminder": "Passer le rappel",
+    "startMemorizing": "Commencer à mémoriser"
   },
   "settings": {
-    "title": "Paramètres", "language": "Langue", "appearance": "Apparence", "reciter": "Récitateur",
-    "theme": { "light": "Clair", "dark": "Sombre", "auto": "Auto" },
-    "notifications": { "title": "Notifications", "dailyReminder": "Rappel quotidien", "streakReminder": "Rappel de série", "leagueUpdates": "Mises à jour de ligue", "friendActivity": "Activité des amis" },
-    "account": { "title": "Compte", "editProfile": "Modifier le profil", "changePassword": "Changer le mot de passe", "subscription": "Abonnement", "free": "Gratuit", "deleteAccount": "Supprimer le compte" },
-    "footer": { "copyright": "© 2026 Salifz - Tous droits réservés" }
+    "title": "Paramètres",
+    "language": "Langue",
+    "appearance": "Apparence",
+    "reciter": "Récitateur",
+    "theme": {
+      "light": "Clair",
+      "dark": "Sombre",
+      "auto": "Auto"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "dailyReminder": "Rappel quotidien",
+      "streakReminder": "Rappel de série",
+      "leagueUpdates": "Mises à jour de ligue",
+      "friendActivity": "Activité des amis"
+    },
+    "account": {
+      "title": "Compte",
+      "editProfile": "Modifier le profil",
+      "changePassword": "Changer le mot de passe",
+      "subscription": "Abonnement",
+      "free": "Gratuit",
+      "deleteAccount": "Supprimer le compte"
+    },
+    "footer": {
+      "copyright": "© 2026 Salifz - Tous droits réservés"
+    }
   },
   "subscriptions": {
-    "mySubscription": "Mon abonnement", "youAreSubscribed": "Vous êtes abonné à", "availableFeatures": "Fonctionnalités disponibles", "cancelSubscription": "Annuler l'abonnement", "subscribeNow": "S'abonner", "restorePurchases": "Restaurer les achats", "mostPopular": "Le plus populaire", "save": "Économisez {{percent}}%",
-    "hero": { "title": "Salifz Plus", "subtitle": "Débloquez toutes les fonctionnalités et mémorisez le Coran sans limites" },
-    "plans": { "monthly": { "name": "Mensuel", "period": "/mois" }, "yearly": { "name": "Annuel", "period": "/an" }, "lifetime": { "name": "À vie", "period": "unique" } },
-    "features": { "unlimitedHearts": "Cœurs illimités", "noAds": "Sans publicité", "streakFreeze2": "Gel de série (2 gratuits/mois)", "progressInsights": "Analyses avancées", "everythingMonthly": "Tout le mensuel", "unlimitedStreakFreeze": "Gel de série illimité", "prioritySupport": "Support prioritaire", "earlyAccess": "Accès anticipé aux nouvelles fonctionnalités", "familySharing": "Partage familial (jusqu'à 6)", "everythingYearly": "Tout l'annuel", "oneTimePayment": "Paiement unique à vie", "allFutureUpdates": "Toutes les futures mises à jour", "vipBadge": "Badge VIP", "exclusiveContent": "Contenu exclusif" },
-    "comparison": { "title": "Comparer les offres", "feature": "Fonctionnalité", "free": "Gratuit", "hearts5Daily": "5 cœurs par jour", "lessonAccess": "Accès aux leçons", "streakTracking": "Suivi de série", "leagues": "Ligues", "streakFreeze": "Gel de série", "advancedAnalytics": "Analyses avancées", "noAds": "Sans publicité", "familySharing": "Partage familial", "unlimitedHearts": "Cœurs illimités" },
-    "alerts": { "subscribe": "S'abonner", "redirectPayment": "Vous serez redirigé vers la page de paiement", "subscribeSuccess": "Abonnement réussi !", "subscribeFailed": "Échec de l'abonnement", "restoreSuccess": "Achats restaurés", "restoreFailed": "Échec de la restauration", "cancelTitle": "Annuler l'abonnement", "cancelConfirm": "Êtes-vous sûr de vouloir annuler votre abonnement ?", "yesCancel": "Oui, annuler", "cancelSuccess": "Abonnement annulé", "cancelFailed": "Échec de l'annulation" },
+    "mySubscription": "Mon abonnement",
+    "youAreSubscribed": "Vous êtes abonné à",
+    "availableFeatures": "Fonctionnalités disponibles",
+    "cancelSubscription": "Annuler l'abonnement",
+    "subscribeNow": "S'abonner",
+    "restorePurchases": "Restaurer les achats",
+    "mostPopular": "Le plus populaire",
+    "save": "Économisez {{percent}}%",
+    "hero": {
+      "title": "Salifz Plus",
+      "subtitle": "Débloquez toutes les fonctionnalités et mémorisez le Coran sans limites"
+    },
+    "plans": {
+      "monthly": {
+        "name": "Mensuel",
+        "period": "/mois"
+      },
+      "yearly": {
+        "name": "Annuel",
+        "period": "/an"
+      },
+      "lifetime": {
+        "name": "À vie",
+        "period": "unique"
+      }
+    },
+    "features": {
+      "unlimitedHearts": "Cœurs illimités",
+      "noAds": "Sans publicité",
+      "streakFreeze2": "Gel de série (2 gratuits/mois)",
+      "progressInsights": "Analyses avancées",
+      "everythingMonthly": "Tout le mensuel",
+      "unlimitedStreakFreeze": "Gel de série illimité",
+      "prioritySupport": "Support prioritaire",
+      "earlyAccess": "Accès anticipé aux nouvelles fonctionnalités",
+      "familySharing": "Partage familial (jusqu'à 6)",
+      "everythingYearly": "Tout l'annuel",
+      "oneTimePayment": "Paiement unique à vie",
+      "allFutureUpdates": "Toutes les futures mises à jour",
+      "vipBadge": "Badge VIP",
+      "exclusiveContent": "Contenu exclusif"
+    },
+    "comparison": {
+      "title": "Comparer les offres",
+      "feature": "Fonctionnalité",
+      "free": "Gratuit",
+      "hearts5Daily": "5 cœurs par jour",
+      "lessonAccess": "Accès aux leçons",
+      "streakTracking": "Suivi de série",
+      "leagues": "Ligues",
+      "streakFreeze": "Gel de série",
+      "advancedAnalytics": "Analyses avancées",
+      "noAds": "Sans publicité",
+      "familySharing": "Partage familial",
+      "unlimitedHearts": "Cœurs illimités"
+    },
+    "alerts": {
+      "subscribe": "S'abonner",
+      "redirectPayment": "Vous serez redirigé vers la page de paiement",
+      "subscribeSuccess": "Abonnement réussi !",
+      "subscribeFailed": "Échec de l'abonnement",
+      "restoreSuccess": "Achats restaurés",
+      "restoreFailed": "Échec de la restauration",
+      "cancelTitle": "Annuler l'abonnement",
+      "cancelConfirm": "Êtes-vous sûr de vouloir annuler votre abonnement ?",
+      "yesCancel": "Oui, annuler",
+      "cancelSuccess": "Abonnement annulé",
+      "cancelFailed": "Échec de l'annulation"
+    },
     "terms": "En vous abonnant, vous acceptez les Conditions d'utilisation et la Politique de confidentialité."
   },
   "friends": {
-    "title": "Amis", "friendCount": "{{count}} amis", "level": "Niveau {{level}}", "streakDays": "{{days}} jours 🔥", "unknownUser": "Utilisateur",
-    "tabs": { "friends": "Amis", "requests": "Demandes", "search": "Recherche" },
-    "actions": { "accept": "Accepter", "reject": "Refuser", "add": "Ajouter", "remove": "Supprimer" },
-    "status": { "friend": "Ami", "sent": "Envoyé" },
-    "search": { "placeholder": "Rechercher par nom d'utilisateur...", "minChars": "Entrez au moins 3 caractères" },
-    "incomingRequests": "Demandes reçues", "searchResults": "Résultats de recherche",
-    "empty": { "noFriendsTitle": "Pas encore d'amis", "noFriendsSubtitle": "Trouvez des amis et ajoutez-les pour rivaliser", "searchFriends": "Trouver des amis", "noRequestsTitle": "Pas de demandes", "noRequestsSubtitle": "Les demandes d'amitié apparaîtront ici", "searchTitle": "Trouver des amis", "searchSubtitle": "Entrez un nom d'utilisateur pour rechercher", "noResultsTitle": "Aucun résultat", "noResultsSubtitle": "Essayez avec un autre nom d'utilisateur" },
-    "alerts": { "requestSentTo": "Demande d'amitié envoyée à {{name}}", "nowFriendsWith": "Vous êtes maintenant ami avec {{name}}", "acceptError": "Échec de l'acceptation", "removeFriendTitle": "Supprimer un ami", "removeFriendConfirm": "Voulez-vous supprimer {{name}} de vos amis ?" }
+    "title": "Amis",
+    "friendCount": "{{count}} amis",
+    "level": "Niveau {{level}}",
+    "streakDays": "{{days}} jours 🔥",
+    "unknownUser": "Utilisateur",
+    "tabs": {
+      "friends": "Amis",
+      "requests": "Demandes",
+      "search": "Recherche"
+    },
+    "actions": {
+      "accept": "Accepter",
+      "reject": "Refuser",
+      "add": "Ajouter",
+      "remove": "Supprimer"
+    },
+    "status": {
+      "friend": "Ami",
+      "sent": "Envoyé"
+    },
+    "search": {
+      "placeholder": "Rechercher par nom d'utilisateur...",
+      "minChars": "Entrez au moins 3 caractères"
+    },
+    "incomingRequests": "Demandes reçues",
+    "searchResults": "Résultats de recherche",
+    "empty": {
+      "noFriendsTitle": "Pas encore d'amis",
+      "noFriendsSubtitle": "Trouvez des amis et ajoutez-les pour rivaliser",
+      "searchFriends": "Trouver des amis",
+      "noRequestsTitle": "Pas de demandes",
+      "noRequestsSubtitle": "Les demandes d'amitié apparaîtront ici",
+      "searchTitle": "Trouver des amis",
+      "searchSubtitle": "Entrez un nom d'utilisateur pour rechercher",
+      "noResultsTitle": "Aucun résultat",
+      "noResultsSubtitle": "Essayez avec un autre nom d'utilisateur"
+    },
+    "alerts": {
+      "requestSentTo": "Demande d'amitié envoyée à {{name}}",
+      "nowFriendsWith": "Vous êtes maintenant ami avec {{name}}",
+      "acceptError": "Échec de l'acceptation",
+      "removeFriendTitle": "Supprimer un ami",
+      "removeFriendConfirm": "Voulez-vous supprimer {{name}} de vos amis ?"
+    }
   },
   "halaqaChat": {
-    "defaultTitle": "Halaqa", "member": "membre", "you": "Vous", "typing": "{{names}} écrit...",
-    "status": { "connected": "Connecté", "disconnected": "Déconnecté" },
-    "dates": { "today": "Aujourd'hui", "yesterday": "Hier" },
-    "input": { "placeholder": "Écrivez un message..." },
-    "empty": { "title": "Pas encore de messages", "subtitle": "Soyez le premier à démarrer la conversation !" },
-    "errors": { "noHalaqaId": "ID de Halaqa non trouvé", "sendFailed": "Échec de l'envoi" }
+    "defaultTitle": "Halaqa",
+    "member": "membre",
+    "you": "Vous",
+    "typing": "{{names}} écrit...",
+    "status": {
+      "connected": "Connecté",
+      "disconnected": "Déconnecté"
+    },
+    "dates": {
+      "today": "Aujourd'hui",
+      "yesterday": "Hier"
+    },
+    "input": {
+      "placeholder": "Écrivez un message..."
+    },
+    "empty": {
+      "title": "Pas encore de messages",
+      "subtitle": "Soyez le premier à démarrer la conversation !"
+    },
+    "errors": {
+      "noHalaqaId": "ID de Halaqa non trouvé",
+      "sendFailed": "Échec de l'envoi"
+    }
   },
   "halaqaDetail": {
-    "activityTypes": { "memorize": "Nouvelle mémorisation", "memorizeDesc": "Mémoriser de nouveaux versets", "review": "Révision", "reviewDesc": "Réviser les versets mémorisés", "tajwid": "Tajwid", "tajwidDesc": "Apprendre les règles de Tajwid", "tafsir": "Tafsir", "tafsirDesc": "Étudier les significations des versets", "discussion": "Discussion", "discussionDesc": "Discussion de groupe", "competition": "Compétition", "competitionDesc": "Rivaliser avec les membres", "recitation": "Récitation", "recitationDesc": "Récitation de groupe", "dua": "Dua", "duaDesc": "Duas et Adhkar", "quiz": "Quiz", "quizDesc": "Tester votre mémorisation", "lecture": "Conférence", "lectureDesc": "Leçon ou conférence", "challenge": "Défi", "challengeDesc": "Défi de groupe", "other": "Autre", "otherDesc": "Autre activité" },
-    "tabs": { "activities": "Activités", "members": "Membres", "leaderboard": "Classement" },
-    "stats": { "member": "membre", "verse": "verset", "activity": "activité" },
-    "time": { "now": "Maintenant", "minutesAgo": "Il y a {{count}} min", "hoursAgo": "Il y a {{count}} h", "daysAgo": "Il y a {{count}} j" },
-    "empty": { "activities": "Pas encore d'activités", "activitiesAdmin": "Créez une nouvelle activité pour commencer", "members": "Pas de membres", "leaderboard": "Pas encore de points" },
-    "inviteCode": { "title": "Code d'invitation", "shareMessage": "Rejoignez la halaqa {{name}} sur Salifz !\n\nCode : {{code}}\n\n#Salifz" },
-    "createActivity": { "title": "Créer une nouvelle activité", "selectType": "Sélectionner le type d'activité", "create": "Créer l'activité" },
-    "completeActivity": { "title": "Terminer l'activité", "message": "Bien joué ! Vous avez gagné {{xp}} XP", "alreadyCompleted": "Cette activité est déjà terminée" },
-    "alerts": { "loadError": "Échec du chargement des données", "createError": "Échec de la création de l'activité", "completeError": "Échec de la complétion de l'activité", "leaveTitle": "Quitter la Halaqa", "leaveConfirm": "Voulez-vous quitter cette halaqa ?", "leaveButton": "Quitter", "leftSuccess": "Quitté avec succès" }
+    "activityTypes": {
+      "memorize": "Nouvelle mémorisation",
+      "memorizeDesc": "Mémoriser de nouveaux versets",
+      "review": "Révision",
+      "reviewDesc": "Réviser les versets mémorisés",
+      "tajwid": "Tajwid",
+      "tajwidDesc": "Apprendre les règles de Tajwid",
+      "tafsir": "Tafsir",
+      "tafsirDesc": "Étudier les significations des versets",
+      "discussion": "Discussion",
+      "discussionDesc": "Discussion de groupe",
+      "competition": "Compétition",
+      "competitionDesc": "Rivaliser avec les membres",
+      "recitation": "Récitation",
+      "recitationDesc": "Récitation de groupe",
+      "dua": "Dua",
+      "duaDesc": "Duas et Adhkar",
+      "quiz": "Quiz",
+      "quizDesc": "Tester votre mémorisation",
+      "lecture": "Conférence",
+      "lectureDesc": "Leçon ou conférence",
+      "challenge": "Défi",
+      "challengeDesc": "Défi de groupe",
+      "other": "Autre",
+      "otherDesc": "Autre activité"
+    },
+    "tabs": {
+      "activities": "Activités",
+      "members": "Membres",
+      "leaderboard": "Classement"
+    },
+    "stats": {
+      "member": "membre",
+      "verse": "verset",
+      "activity": "activité"
+    },
+    "time": {
+      "now": "Maintenant",
+      "minutesAgo": "Il y a {{count}} min",
+      "hoursAgo": "Il y a {{count}} h",
+      "daysAgo": "Il y a {{count}} j"
+    },
+    "empty": {
+      "activities": "Pas encore d'activités",
+      "activitiesAdmin": "Créez une nouvelle activité pour commencer",
+      "members": "Pas de membres",
+      "leaderboard": "Pas encore de points"
+    },
+    "inviteCode": {
+      "title": "Code d'invitation",
+      "shareMessage": "Rejoignez la halaqa {{name}} sur Salifz !\n\nCode : {{code}}\n\n#Salifz"
+    },
+    "createActivity": {
+      "title": "Créer une nouvelle activité",
+      "selectType": "Sélectionner le type d'activité",
+      "create": "Créer l'activité"
+    },
+    "completeActivity": {
+      "title": "Terminer l'activité",
+      "message": "Bien joué ! Vous avez gagné {{xp}} XP",
+      "alreadyCompleted": "Cette activité est déjà terminée"
+    },
+    "alerts": {
+      "loadError": "Échec du chargement des données",
+      "createError": "Échec de la création de l'activité",
+      "completeError": "Échec de la complétion de l'activité",
+      "leaveTitle": "Quitter la Halaqa",
+      "leaveConfirm": "Voulez-vous quitter cette halaqa ?",
+      "leaveButton": "Quitter",
+      "leftSuccess": "Quitté avec succès"
+    }
   },
   "halaqa": {
     "title": "Halaqat",
     "activityTypes": {
-      "memorize": "Nouvelle mémorisation", "memorizeDesc": "Mémoriser de nouveaux versets",
-      "review": "Révision", "reviewDesc": "Réviser les versets mémorisés",
-      "tajwid": "Tajwid", "tajwidDesc": "Apprendre les règles de Tajwid",
-      "tajweed": "Tajweed", "tajweedDesc": "Apprendre les règles de Tajweed",
-      "tafsir": "Tafsir", "tafsirDesc": "Étudier les significations des versets",
-      "tafseer": "Tafseer", "tafseerDesc": "Étudier les significations des versets",
-      "discussion": "Discussion", "discussionDesc": "Discussion de groupe",
-      "competition": "Compétition", "competitionDesc": "Rivaliser avec les membres",
-      "recitation": "Récitation", "recitationDesc": "Récitation de groupe",
-      "dua": "Dua", "duaDesc": "Duas et Adhkar",
-      "quiz": "Quiz", "quizDesc": "Tester votre mémorisation",
-      "lecture": "Conférence", "lectureDesc": "Leçon ou conférence",
-      "lesson": "Leçon", "lessonDesc": "Session éducative",
-      "challenge": "Défi", "challengeDesc": "Défi de groupe",
-      "workshop": "Atelier", "workshopDesc": "Atelier de formation",
-      "achievement": "Succès", "achievementDesc": "Célébrer les succès",
-      "other": "Autre", "otherDesc": "Autre activité"
+      "memorize": "Nouvelle mémorisation",
+      "memorizeDesc": "Mémoriser de nouveaux versets",
+      "review": "Révision",
+      "reviewDesc": "Réviser les versets mémorisés",
+      "tajwid": "Tajwid",
+      "tajwidDesc": "Apprendre les règles de Tajwid",
+      "tajweed": "Tajweed",
+      "tajweedDesc": "Apprendre les règles de Tajweed",
+      "tafsir": "Tafsir",
+      "tafsirDesc": "Étudier les significations des versets",
+      "tafseer": "Tafseer",
+      "tafseerDesc": "Étudier les significations des versets",
+      "discussion": "Discussion",
+      "discussionDesc": "Discussion de groupe",
+      "competition": "Compétition",
+      "competitionDesc": "Rivaliser avec les membres",
+      "recitation": "Récitation",
+      "recitationDesc": "Récitation de groupe",
+      "dua": "Dua",
+      "duaDesc": "Duas et Adhkar",
+      "quiz": "Quiz",
+      "quizDesc": "Tester votre mémorisation",
+      "lecture": "Conférence",
+      "lectureDesc": "Leçon ou conférence",
+      "lesson": "Leçon",
+      "lessonDesc": "Session éducative",
+      "challenge": "Défi",
+      "challengeDesc": "Défi de groupe",
+      "workshop": "Atelier",
+      "workshopDesc": "Atelier de formation",
+      "achievement": "Succès",
+      "achievementDesc": "Célébrer les succès",
+      "other": "Autre",
+      "otherDesc": "Autre activité"
     },
-    "tabs": { "my": "Mes Halaqat", "public": "Halaqat publiques", "join": "Rejoindre avec code" },
+    "tabs": {
+      "my": "Mes Halaqat",
+      "public": "Halaqat publiques",
+      "join": "Rejoindre avec code"
+    },
     "empty": {
-      "myTitle": "Pas de halaqat", "mySubtitle": "Créez une nouvelle halaqa ou rejoignez-en une",
-      "publicTitle": "Pas de halaqat publiques", "publicSubtitle": "Aucune halaqa publique disponible pour le moment",
-      "joinTitle": "Rejoindre une Halaqa", "joinSubtitle": "Entrez le code pour accéder à une halaqa privée",
-      "createHalaqa": "Créer une Halaqa", "refreshButton": "Actualiser",
-      "createButton": "Créer une Halaqa", "joinButton": "Rejoindre une Halaqa",
-      "my": { "title": "Pas de halaqat", "subtitle": "Créez une nouvelle halaqa ou rejoignez-en une" },
-      "public": { "title": "Pas de halaqat publiques", "subtitle": "Aucune halaqa publique disponible pour le moment" },
-      "join": { "title": "Rejoindre une Halaqa", "subtitle": "Entrez le code pour accéder à une halaqa privée" }
+      "myTitle": "Pas de halaqat",
+      "mySubtitle": "Créez une nouvelle halaqa ou rejoignez-en une",
+      "publicTitle": "Pas de halaqat publiques",
+      "publicSubtitle": "Aucune halaqa publique disponible pour le moment",
+      "joinTitle": "Rejoindre une Halaqa",
+      "joinSubtitle": "Entrez le code pour accéder à une halaqa privée",
+      "createHalaqa": "Créer une Halaqa",
+      "refreshButton": "Actualiser",
+      "createButton": "Créer une Halaqa",
+      "joinButton": "Rejoindre une Halaqa",
+      "my": {
+        "title": "Pas de halaqat",
+        "subtitle": "Créez une nouvelle halaqa ou rejoignez-en une"
+      },
+      "public": {
+        "title": "Pas de halaqat publiques",
+        "subtitle": "Aucune halaqa publique disponible pour le moment"
+      },
+      "join": {
+        "title": "Rejoindre une Halaqa",
+        "subtitle": "Entrez le code pour accéder à une halaqa privée"
+      }
     },
     "join": {
-      "placeholder": "Entrez le code", "button": "Rejoindre", "joining": "Connexion...",
-      "privateTitle": "Rejoindre une Halaqa privée", "privateSubtitle": "Entrez le code d'invitation pour rejoindre",
-      "codePlaceholder": "Entrez le code ici", "browsePublic": "Parcourir les Halaqat publiques"
+      "placeholder": "Entrez le code",
+      "button": "Rejoindre",
+      "joining": "Connexion...",
+      "privateTitle": "Rejoindre une Halaqa privée",
+      "privateSubtitle": "Entrez le code d'invitation pour rejoindre",
+      "codePlaceholder": "Entrez le code ici",
+      "browsePublic": "Parcourir les Halaqat publiques"
     },
     "create": {
-      "title": "Créer une nouvelle Halaqa", "name": "Nom de la Halaqa", "namePlaceholder": "ex: Halaqa du Fajr",
-      "description": "Description", "descriptionPlaceholder": "Brève description...",
-      "privacy": "Type de Halaqa", "public": "Publique", "publicDesc": "Tout le monde peut rejoindre",
-      "private": "Privée", "privateDesc": "Code d'invitation uniquement",
-      "activities": "Activités disponibles", "createButton": "Créer la Halaqa", "creating": "Création...",
-      "basicInfo": "Infos de base", "settings": "Paramètres",
-      "publicHalaqa": "Halaqa publique", "publicDescription": "Tout le monde peut rejoindre et participer",
-      "allowChat": "Activer le chat", "allowChatDescription": "Permettre aux membres de communiquer",
-      "allowVoice": "Activer la voix", "allowVoiceDescription": "Permettre les appels vocaux",
-      "dailyGoal": "Objectif quotidien", "maxMembers": "Nombre max de membres",
-      "activityTypesTitle": "Types d'activités", "activityTypesSubtitle": "Choisissez les activités disponibles dans la halaqa"
+      "title": "Créer une nouvelle Halaqa",
+      "name": "Nom de la Halaqa",
+      "namePlaceholder": "ex: Halaqa du Fajr",
+      "description": "Description",
+      "descriptionPlaceholder": "Brève description...",
+      "privacy": "Type de Halaqa",
+      "public": "Publique",
+      "publicDesc": "Tout le monde peut rejoindre",
+      "private": "Privée",
+      "privateDesc": "Code d'invitation uniquement",
+      "activities": "Activités disponibles",
+      "createButton": "Créer la Halaqa",
+      "creating": "Création...",
+      "basicInfo": "Infos de base",
+      "settings": "Paramètres",
+      "publicHalaqa": "Halaqa publique",
+      "publicDescription": "Tout le monde peut rejoindre et participer",
+      "allowChat": "Activer le chat",
+      "allowChatDescription": "Permettre aux membres de communiquer",
+      "allowVoice": "Activer la voix",
+      "allowVoiceDescription": "Permettre les appels vocaux",
+      "dailyGoal": "Objectif quotidien",
+      "maxMembers": "Nombre max de membres",
+      "activityTypesTitle": "Types d'activités",
+      "activityTypesSubtitle": "Choisissez les activités disponibles dans la halaqa"
     },
-    "card": { "member": "membre", "admin": "Admin", "join": "Rejoindre" },
-    "alerts": { "joinSuccess": "Halaqa rejointe avec succès !", "joinError": "Échec pour rejoindre la halaqa", "invalidCode": "Code d'invitation invalide", "createSuccess": "Halaqa créée avec succès !", "createError": "Échec de la création de la halaqa", "nameRequired": "Nom de la halaqa requis", "selectActivity": "Sélectionnez au moins une activité" }
+    "card": {
+      "member": "membre",
+      "admin": "Admin",
+      "join": "Rejoindre"
+    },
+    "alerts": {
+      "joinSuccess": "Halaqa rejointe avec succès !",
+      "joinError": "Échec pour rejoindre la halaqa",
+      "invalidCode": "Code d'invitation invalide",
+      "createSuccess": "Halaqa créée avec succès !",
+      "createError": "Échec de la création de la halaqa",
+      "nameRequired": "Nom de la halaqa requis",
+      "selectActivity": "Sélectionnez au moins une activité"
+    }
   },
   "socialHub": {
-    "title": "Social", "subtitle": "Connectez-vous avec vos amis et halaqat",
-    "quickActions": { "conversations": "Conversations", "halaqat": "Halaqat", "friends": "Amis", "leaderboard": "Classement" },
-    "sections": { "friendRequests": "📬 Demandes d'amitié", "recentConversations": "💬 Conversations récentes", "myHalaqat": "🕌 Mes Halaqat", "friends": "👥 Amis" },
-    "seeAll": "Voir tout", "seeAllCount": "Voir tout ({{count}})", "accept": "Accepter", "user": "Utilisateur", "conversation": "conversation", "noMessages": "Pas de messages", "member": "membre", "joinOrCreate": "Rejoindre ou créer", "newHalaqa": "Nouvelle Halaqa", "startNewConversation": "Démarrer une nouvelle conversation", "exploreHalaqat": "Explorer les Halaqat",
-    "time": { "yesterday": "Hier", "daysAgo": "{{count}} jours" },
-    "empty": { "conversations": "Pas encore de conversations", "halaqat": "Vous n'avez rejoint aucune halaqa" }
+    "title": "Social",
+    "subtitle": "Connectez-vous avec vos amis et halaqat",
+    "quickActions": {
+      "conversations": "Conversations",
+      "halaqat": "Halaqat",
+      "friends": "Amis",
+      "leaderboard": "Classement"
+    },
+    "sections": {
+      "friendRequests": "📬 Demandes d'amitié",
+      "recentConversations": "💬 Conversations récentes",
+      "myHalaqat": "🕌 Mes Halaqat",
+      "friends": "👥 Amis"
+    },
+    "seeAll": "Voir tout",
+    "seeAllCount": "Voir tout ({{count}})",
+    "accept": "Accepter",
+    "user": "Utilisateur",
+    "conversation": "conversation",
+    "noMessages": "Pas de messages",
+    "member": "membre",
+    "joinOrCreate": "Rejoindre ou créer",
+    "newHalaqa": "Nouvelle Halaqa",
+    "startNewConversation": "Démarrer une nouvelle conversation",
+    "exploreHalaqat": "Explorer les Halaqat",
+    "time": {
+      "yesterday": "Hier",
+      "daysAgo": "{{count}} jours"
+    },
+    "empty": {
+      "conversations": "Pas encore de conversations",
+      "halaqat": "Vous n'avez rejoint aucune halaqa"
+    }
   },
   "userProfile": {
-    "leagues": { "bronze": "Bronze", "silver": "Argent", "gold": "Or", "diamond": "Diamant", "hafiz": "Hafiz" },
-    "stats": { "streak": "Série", "verse": "verset", "versesMemorized": "versets mémorisés", "surahCompleted": "sourates complétées", "longestStreak": "Plus longue série", "achievements": "succès" },
-    "actions": { "chat": "Discussion", "remove": "Supprimer", "pending": "En attente", "acceptRequest": "Accepter la demande", "addFriend": "Ajouter comme ami" },
-    "sections": { "statistics": "📊 Statistiques", "info": "📅 Infos" },
-    "info": { "joinDate": "Date d'inscription", "country": "Pays" },
-    "friendRequest": { "sent": "Demande d'amitié envoyée", "accepted": "Vous êtes maintenant amis" },
-    "removeFriend": { "title": "Supprimer un ami", "confirm": "Voulez-vous supprimer {{name}} de vos amis ?", "remove": "Supprimer" },
-    "errors": { "notFound": "Utilisateur non trouvé" }
+    "leagues": {
+      "bronze": "Bronze",
+      "silver": "Argent",
+      "gold": "Or",
+      "diamond": "Diamant",
+      "hafiz": "Hafiz"
+    },
+    "stats": {
+      "streak": "Série",
+      "verse": "verset",
+      "versesMemorized": "versets mémorisés",
+      "surahCompleted": "sourates complétées",
+      "longestStreak": "Plus longue série",
+      "achievements": "succès"
+    },
+    "actions": {
+      "chat": "Discussion",
+      "remove": "Supprimer",
+      "pending": "En attente",
+      "acceptRequest": "Accepter la demande",
+      "addFriend": "Ajouter comme ami"
+    },
+    "sections": {
+      "statistics": "📊 Statistiques",
+      "info": "📅 Infos"
+    },
+    "info": {
+      "joinDate": "Date d'inscription",
+      "country": "Pays"
+    },
+    "friendRequest": {
+      "sent": "Demande d'amitié envoyée",
+      "accepted": "Vous êtes maintenant amis"
+    },
+    "removeFriend": {
+      "title": "Supprimer un ami",
+      "confirm": "Voulez-vous supprimer {{name}} de vos amis ?",
+      "remove": "Supprimer"
+    },
+    "errors": {
+      "notFound": "Utilisateur non trouvé"
+    }
   },
   "biometric": {
-    "names": { "facial": "Face ID", "fingerprint": "Empreinte digitale", "default": "Authentification biométrique" },
-    "prompts": { "facial": "Utilisez Face ID pour continuer", "fingerprint": "Utilisez votre empreinte pour continuer", "default": "Vérifiez votre identité pour continuer" },
-    "subtitle": { "setup": "Appuyez pour activer et configurer", "verify": "Appuyez pour vérifier votre identité" },
-    "usePIN": "Utiliser le PIN", "usePINInstead": "Utiliser le PIN à la place", "authenticating": "Authentification...", "startAuth": "Commencer l'authentification",
-    "setup": { "success": "✅ Configuration terminée", "successMessage": "Authentification biométrique activée avec succès !" },
-    "locked": { "title": "🔒 Verrouillé", "message": "Trop de tentatives.", "usePIN": "Verrouillé - Utilisez le PIN" },
-    "failed": { "title": "Authentification échouée", "attempt": "Tentative {{current}} sur {{max}}", "retry": "Réessayer" },
-    "errors": { "notSupported": "Non supporté", "deviceNotSupported": "Votre appareil ne supporte pas l'authentification biométrique", "notSetup": "Non configuré", "notEnrolled": "L'authentification biométrique n'est pas configurée sur votre appareil." }
+    "names": {
+      "facial": "Face ID",
+      "fingerprint": "Empreinte digitale",
+      "default": "Authentification biométrique"
+    },
+    "prompts": {
+      "facial": "Utilisez Face ID pour continuer",
+      "fingerprint": "Utilisez votre empreinte pour continuer",
+      "default": "Vérifiez votre identité pour continuer"
+    },
+    "subtitle": {
+      "setup": "Appuyez pour activer et configurer",
+      "verify": "Appuyez pour vérifier votre identité"
+    },
+    "usePIN": "Utiliser le PIN",
+    "usePINInstead": "Utiliser le PIN à la place",
+    "authenticating": "Authentification...",
+    "startAuth": "Commencer l'authentification",
+    "setup": {
+      "success": "✅ Configuration terminée",
+      "successMessage": "Authentification biométrique activée avec succès !"
+    },
+    "locked": {
+      "title": "🔒 Verrouillé",
+      "message": "Trop de tentatives.",
+      "usePIN": "Verrouillé - Utilisez le PIN"
+    },
+    "failed": {
+      "title": "Authentification échouée",
+      "attempt": "Tentative {{current}} sur {{max}}",
+      "retry": "Réessayer"
+    },
+    "errors": {
+      "notSupported": "Non supporté",
+      "deviceNotSupported": "Votre appareil ne supporte pas l'authentification biométrique",
+      "notSetup": "Non configuré",
+      "notEnrolled": "L'authentification biométrique n'est pas configurée sur votre appareil."
+    }
   },
   "emailVerification": {
-    "title": "Vérification de l'email", "verify": "Vérifier",
-    "subtitle": { "otp": "Entrez le code de vérification envoyé à", "link": "Un lien de vérification a été envoyé à" },
-    "success": { "title": "Vérification réussie !", "redirecting": "Redirection vers l'accueil..." },
-    "resend": { "code": "Renvoyer le code", "link": "Renvoyer le lien", "timer": "Renvoyer dans {{seconds}} secondes", "newCodeTitle": "📧 Nouveau code", "newCodeMessage": "Nouveau code de vérification : {{code}}", "linkSentTitle": "📧 Envoyé", "linkSentMessage": "Lien de vérification envoyé à votre email" },
-    "simulation": { "title": "📧 Code de vérification (Démo)", "message": "Code de vérification envoyé :\n\n{{code}}", "badge": "Mode Démo - Code : {{code}}" },
-    "errors": { "invalidCode": "Code de vérification invalide" }
+    "title": "Vérification de l'email",
+    "verify": "Vérifier",
+    "subtitle": {
+      "otp": "Entrez le code de vérification envoyé à",
+      "link": "Un lien de vérification a été envoyé à"
+    },
+    "success": {
+      "title": "Vérification réussie !",
+      "redirecting": "Redirection vers l'accueil..."
+    },
+    "resend": {
+      "code": "Renvoyer le code",
+      "link": "Renvoyer le lien",
+      "timer": "Renvoyer dans {{seconds}} secondes",
+      "newCodeTitle": "📧 Nouveau code",
+      "newCodeMessage": "Nouveau code de vérification : {{code}}",
+      "linkSentTitle": "📧 Envoyé",
+      "linkSentMessage": "Lien de vérification envoyé à votre email"
+    },
+    "simulation": {
+      "title": "📧 Code de vérification (Démo)",
+      "message": "Code de vérification envoyé :\n\n{{code}}",
+      "badge": "Mode Démo - Code : {{code}}"
+    },
+    "errors": {
+      "invalidCode": "Code de vérification invalide"
+    }
   },
   "phoneVerification": {
-    "title": "Vérification du téléphone", "subtitle": "Entrez le code de vérification envoyé à", "verify": "Vérifier",
-    "success": { "title": "✅ Vérifié", "message": "Numéro de téléphone vérifié avec succès !" },
-    "resend": { "code": "Renvoyer le code", "timer": "Renvoyer dans {{seconds}} secondes", "newCodeTitle": "📱 Nouveau code", "newCodeMessage": "Nouveau code de vérification : {{code}}" },
-    "simulation": { "title": "🔐 Code de vérification (Démo)", "message": "Votre code de vérification est : {{code}}", "badge": "Mode Démo - Code : {{code}}" },
-    "errors": { "invalidCode": "Code de vérification invalide" }
+    "title": "Vérification du téléphone",
+    "subtitle": "Entrez le code de vérification envoyé à",
+    "verify": "Vérifier",
+    "success": {
+      "title": "✅ Vérifié",
+      "message": "Numéro de téléphone vérifié avec succès !"
+    },
+    "resend": {
+      "code": "Renvoyer le code",
+      "timer": "Renvoyer dans {{seconds}} secondes",
+      "newCodeTitle": "📱 Nouveau code",
+      "newCodeMessage": "Nouveau code de vérification : {{code}}"
+    },
+    "simulation": {
+      "title": "🔐 Code de vérification (Démo)",
+      "message": "Votre code de vérification est : {{code}}",
+      "badge": "Mode Démo - Code : {{code}}"
+    },
+    "errors": {
+      "invalidCode": "Code de vérification invalide"
+    }
   },
   "quranData": {
-    "milestones": { "ayah5": { "name": "5 Versets", "description": "Première étape" }, "ayah25": { "name": "25 Versets", "description": "Quart de Hizb" }, "ayah75": { "name": "75 Versets", "description": "Trois-quarts de Hizb" }, "ayah150": { "name": "150 Versets", "description": "Un Hizb et demi" }, "surah2": { "name": "2 Sourates", "description": "Deux sourates complètes" }, "surah4": { "name": "4 Sourates", "description": "Quatre sourates" }, "hizb8": { "name": "⅛ Hizb", "description": "Un huitième de Hizb" }, "hizb4": { "name": "¼ Hizb", "description": "Quart de Hizb" }, "hizb2": { "name": "½ Hizb", "description": "Demi Hizb" }, "hizb1": { "name": "Hizb", "description": "Hizb complet" }, "juz1": { "name": "Juz", "description": "Juz complet" }, "juz3": { "name": "3 Juz", "description": "Trois Juz" }, "juz15": { "name": "15 Juz", "description": "Moitié du Coran" }, "juz30": { "name": "30 Juz", "description": "Coran complet" } },
-    "exercises": { "listenRepeat": "Écouter et répéter", "chooseCorrectMeaning": "Choisir le sens", "fillTheBlank": "Remplir le blanc", "arrangeAyahs": "Ranger les versets", "reciteFromMemory": "Réciter de mémoire", "matchWords": "Associer les mots", "findTheMistake": "Trouver l'erreur", "completeTheAyah": "Compléter le verset", "writeFromMemory": "Écrire de mémoire", "tajwidRules": "Règles de Tajwid" },
-    "instructions": { "listenRepeat": "Écoutez le verset puis répétez", "fillTheBlank": "Remplissez le mot manquant", "chooseCorrectMeaning": "Choisissez le bon sens", "arrangeAyahs": "Rangez les mots dans le bon ordre", "reciteFromMemory": "Récitez le verset de mémoire" }
+    "milestones": {
+      "ayah5": {
+        "name": "5 Versets",
+        "description": "Première étape"
+      },
+      "ayah25": {
+        "name": "25 Versets",
+        "description": "Quart de Hizb"
+      },
+      "ayah75": {
+        "name": "75 Versets",
+        "description": "Trois-quarts de Hizb"
+      },
+      "ayah150": {
+        "name": "150 Versets",
+        "description": "Un Hizb et demi"
+      },
+      "surah2": {
+        "name": "2 Sourates",
+        "description": "Deux sourates complètes"
+      },
+      "surah4": {
+        "name": "4 Sourates",
+        "description": "Quatre sourates"
+      },
+      "hizb8": {
+        "name": "⅛ Hizb",
+        "description": "Un huitième de Hizb"
+      },
+      "hizb4": {
+        "name": "¼ Hizb",
+        "description": "Quart de Hizb"
+      },
+      "hizb2": {
+        "name": "½ Hizb",
+        "description": "Demi Hizb"
+      },
+      "hizb1": {
+        "name": "Hizb",
+        "description": "Hizb complet"
+      },
+      "juz1": {
+        "name": "Juz",
+        "description": "Juz complet"
+      },
+      "juz3": {
+        "name": "3 Juz",
+        "description": "Trois Juz"
+      },
+      "juz15": {
+        "name": "15 Juz",
+        "description": "Moitié du Coran"
+      },
+      "juz30": {
+        "name": "30 Juz",
+        "description": "Coran complet"
+      }
+    },
+    "exercises": {
+      "listenRepeat": "Écouter et répéter",
+      "chooseCorrectMeaning": "Choisir le sens",
+      "fillTheBlank": "Remplir le blanc",
+      "arrangeAyahs": "Ranger les versets",
+      "reciteFromMemory": "Réciter de mémoire",
+      "matchWords": "Associer les mots",
+      "findTheMistake": "Trouver l'erreur",
+      "completeTheAyah": "Compléter le verset",
+      "writeFromMemory": "Écrire de mémoire",
+      "tajwidRules": "Règles de Tajwid"
+    },
+    "instructions": {
+      "listenRepeat": "Écoutez le verset puis répétez",
+      "fillTheBlank": "Remplissez le mot manquant",
+      "chooseCorrectMeaning": "Choisissez le bon sens",
+      "arrangeAyahs": "Rangez les mots dans le bon ordre",
+      "reciteFromMemory": "Récitez le verset de mémoire"
+    }
+  },
+  "mushaf": {
+    "title": "Mushaf",
+    "page": "Page {{page}}",
+    "tapToReveal": "touchez un mot pour le dévoiler",
+    "revealWord": "Dévoiler le mot",
+    "previousPage": "Page précédente",
+    "nextPage": "Page suivante",
+    "openMushaf": "Ouvrir le Mushaf",
+    "mask": {
+      "full": "Texte complet",
+      "firstWord": "Premier mot de chaque ligne",
+      "hints": "Indices seulement",
+      "hidden": "Tout masqué",
+      "hint": "Change le niveau de masquage"
+    }
+  },
+  "quran": {
+    "juz": "Juz",
+    "hizb": "Hizb"
   }
 }

@@ -135,6 +135,88 @@ class QuranApiService {
     });
   }
 
+  /**
+   * Page du Mushaf de Médine (604 pages).
+   *
+   * C'est la vue par défaut de tous les concurrents et le repère mental des
+   * hafiz : ils mémorisent la *position* des mots sur la page. L'application
+   * n'avait aucune vue par page.
+   *
+   * Les mots sont renvoyés avec leur `line_number`, ce qui permet de
+   * reproduire la mise en page réelle ligne par ligne plutôt que d'afficher
+   * un bloc de texte continu.
+   */
+  async getPage(pageNumber) {
+    const page = Number(pageNumber);
+    if (!Number.isInteger(page) || page < 1 || page > 604) {
+      const error = new Error('Numéro de page hors des 604 pages du Mushaf');
+      error.status = 400;
+      throw error;
+    }
+
+    return this.getCached(`page:${page}`, async () => {
+      const response = await axios.get(`${QURAN_COM_API}/verses/by_page/${page}`, {
+        params: {
+          words: true,
+          word_fields: 'text_uthmani,line_number,position,char_type_name',
+          fields: 'text_uthmani,verse_key,juz_number,hizb_number,page_number',
+          per_page: 50,
+        },
+        timeout: 10000,
+      });
+
+      const verses = (response.data?.verses || []).map((v) => ({
+        verseKey: v.verse_key,
+        surahNumber: Number(v.verse_key.split(':')[0]),
+        ayahNumber: Number(v.verse_key.split(':')[1]),
+        text: v.text_uthmani,
+        juz: v.juz_number,
+        hizb: v.hizb_number,
+        words: (v.words || [])
+          // `char_type_name === 'end'` est le rond de fin de verset : il porte
+          // le numéro, pas un mot à mémoriser.
+          .map((w) => ({
+            position: w.position,
+            line: w.line_number,
+            text: w.text_uthmani || w.text,
+            isEnd: w.char_type_name === 'end',
+          })),
+      }));
+
+      // Regroupement par ligne pour un rendu fidèle au Mushaf imprimé.
+      const lines = {};
+      for (const verse of verses) {
+        for (const word of verse.words) {
+          const key = word.line || 0;
+          (lines[key] = lines[key] || []).push({ ...word, verseKey: verse.verseKey });
+        }
+      }
+
+      return {
+        page,
+        juz: verses[0]?.juz ?? null,
+        hizb: verses[0]?.hizb ?? null,
+        surahs: [...new Set(verses.map((v) => v.surahNumber))],
+        verses,
+        lines: Object.keys(lines)
+          .map(Number)
+          .sort((a, b) => a - b)
+          .map((n) => ({ line: n, words: lines[n] })),
+      };
+    });
+  }
+
+  /** Page où commence une sourate — pour ouvrir le Mushaf au bon endroit. */
+  async getPageForVerse(surahNumber, ayahNumber) {
+    return this.getCached(`pageof:${surahNumber}:${ayahNumber}`, async () => {
+      const response = await axios.get(
+        `${QURAN_COM_API}/verses/by_key/${surahNumber}:${ayahNumber}`,
+        { params: { fields: 'page_number' }, timeout: 8000 }
+      );
+      return response.data?.verse?.page_number ?? null;
+    });
+  }
+
   // Get juz data
   async getJuz(juzNumber) {
     return this.getCached(`juz:${juzNumber}`, async () => {
