@@ -4,6 +4,31 @@
  */
 
 // ============================================
+// QUÊTES QUOTIDIENNES
+// ============================================
+// `DailyQuests` était référencé par l'interface User sans avoir jamais été
+// défini. La forme ci-dessous reprend celle produite par le serveur
+// (`generateDailyQuests()` dans backendv2/routes/auth.js).
+
+export type DailyQuestType = 'memorize' | 'review' | 'streak' | 'listen' | 'social';
+
+export interface DailyQuest {
+  questId: string;
+  type: DailyQuestType;
+  description: string;
+  target: number;
+  current: number;
+  xpReward: number;
+  completed: boolean;
+}
+
+export interface DailyQuests {
+  /** Date de génération du lot, au format ISO. */
+  date: string;
+  quests: DailyQuest[];
+}
+
+// ============================================
 // USER TYPES
 // ============================================
 export interface User {

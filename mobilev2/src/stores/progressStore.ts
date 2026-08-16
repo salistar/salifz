@@ -4,7 +4,7 @@
  */
 
 import { create } from 'zustand';
-import { progressAPI, quranAPI } from '../services/api';
+import { progressAPI, quranAPI, unwrapProgress } from '../services/api';
 
 interface SurahProgress {
   surahNumber: number;
@@ -81,8 +81,12 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await progressAPI.getProgress();
-      const { progress, quranProgress } = response.data;
-      
+      // `response.data` peut être un tableau ou un objet selon l'endpoint :
+      // la déstructuration directe donnait `undefined` puis un crash sur
+      // `progress.totalVersesMemorized`.
+      const { overview } = unwrapProgress(response);
+      const progress = overview ?? {};
+
       set({
         totalVersesMemorized: progress.totalVersesMemorized || 0,
         totalVersesMastered: progress.totalVersesMastered || 0,
@@ -90,8 +94,8 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         surahsCompleted: progress.surahsCompleted || 0,
         surahsMastered: progress.surahsMastered || 0,
         totalTimeSpent: progress.totalTimeSpent || 0,
-        currentSurah: quranProgress?.currentSurah || 1,
-        currentAyah: quranProgress?.currentAyah || 1,
+        currentSurah: progress.currentSurah || 1,
+        currentAyah: progress.currentAyah || 1,
         isLoading: false,
       });
     } catch (error: any) {
@@ -122,16 +126,23 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await progressAPI.getSurahProgress(surahNumber);
-      const progress = response.data.progress;
-      
+      // Le serveur renvoie la progression d'une seule sourate ; `ProgressData`
+      // est la forme brute de l'API, `SurahProgress` la vue qu'en a l'écran.
+      const progress = unwrapProgress(response).list[0] as unknown as SurahProgress | undefined;
+
+      if (!progress) {
+        set({ isLoading: false });
+        return null;
+      }
+
       const { surahProgress } = get();
       surahProgress.set(surahNumber, progress);
-      
+
       set({
         surahProgress: new Map(surahProgress),
         isLoading: false,
       });
-      
+
       return progress;
     } catch (error: any) {
       set({

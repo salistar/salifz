@@ -57,10 +57,14 @@ class AIService {
         // Performance Analysis
         performance: {
           averageAccuracy: stats.averageAccuracy,
-          bestTime: this.determineBestTime(stats),
+          bestTime: this.determineBestTime(stats, progress),
           strongestSurahs: stats.strongestSurahs,
           needsReview: stats.needsReview
         },
+
+        // Permet à l'interface de distinguer « zéro cette semaine » de
+        // « pas encore assez de données pour dire quoi que ce soit ».
+        hasData: stats.hasData,
         
         // Streaks Analysis
         streakAnalysis: {
@@ -205,29 +209,66 @@ class AIService {
     };
   }
 
-  // Explain ayah meaning
+  /**
+   * Tafsir d'un verset, récupéré auprès de quran.com.
+   *
+   * Cette méthode renvoyait le même texte bouchon — « Brief explanation of the
+   * verse » — pour les 6 236 versets du Coran.
+   *
+   * Sources : Tafsir Muyassar en arabe (id 16, concis et accessible, adapté à
+   * une application de mémorisation) et Ibn Kathir abrégé en anglais (id 169).
+   * Ce sont des textes savants : ils sont servis tels quels, sans
+   * reformulation par un modèle de langue.
+   *
+   * quran.com ne propose aucun tafsir en français : l'interface francophone
+   * affiche l'arabe, avec l'anglais en second.
+   */
   async explainAyah(surahNumber, ayahNumber) {
-    // Mock tafsir data - in production, fetch from tafsir API
-    return {
-      explanation: {
-        surah: surahNumber,
-        ayah: ayahNumber,
-        brief: {
-          ar: 'تفسير مختصر للآية',
-          en: 'Brief explanation of the verse'
-        },
-        detailed: {
-          ar: 'تفسير مفصل للآية يشمل السياق والمعنى العام والدروس المستفادة',
-          en: 'Detailed explanation including context, general meaning, and lessons'
-        },
-        keywords: [],
-        relatedVerses: [],
-        lessonsLearned: {
-          ar: ['درس أول', 'درس ثاني'],
-          en: ['First lesson', 'Second lesson']
-        }
+    const verseKey = `${surahNumber}:${ayahNumber}`;
+    const cacheKey = `tafsir:${verseKey}`;
+
+    if (this._tafsirCache?.has(cacheKey)) {
+      return this._tafsirCache.get(cacheKey);
+    }
+
+    const TAFSIR_SOURCES = { ar: 16, en: 169 };
+    const explanation = { surah: surahNumber, ayah: ayahNumber, source: 'quran.com' };
+
+    try {
+      const fetched = await Promise.all(
+        Object.entries(TAFSIR_SOURCES).map(async ([lang, tafsirId]) => {
+          const response = await fetch(
+            `https://api.quran.com/api/v4/tafsirs/${tafsirId}/by_ayah/${verseKey}`,
+            { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(8000) }
+          );
+          if (!response.ok) return [lang, null];
+          const body = await response.json();
+          const text = body?.tafsir?.text;
+          return [lang, text ? stripHtml(text) : null];
+        })
+      );
+
+      for (const [lang, text] of fetched) {
+        if (text) explanation[lang] = text;
       }
-    };
+
+      if (!explanation.ar && !explanation.en) {
+        return { explanation: { ...explanation, available: false } };
+      }
+
+      explanation.available = true;
+      const result = { explanation };
+
+      this._tafsirCache = this._tafsirCache || new Map();
+      if (this._tafsirCache.size > 500) this._tafsirCache.clear();
+      this._tafsirCache.set(cacheKey, result);
+
+      return result;
+    } catch (error) {
+      console.error(`[TAFSIR] ${verseKey} indisponible :`, error.message);
+      // On indique l'indisponibilité au lieu de renvoyer un texte inventé.
+      return { explanation: { ...explanation, available: false } };
+    }
   }
 
   // Helper methods
@@ -286,20 +327,118 @@ class AIService {
     return tips.slice(0, 3);
   }
 
+  /**
+   * Statistiques réelles de l'utilisateur, calculées à partir de sa
+   * progression enregistrée.
+   *
+   * Cette méthode renvoyait `Math.random()` pour les versets de la semaine, le
+   * nombre de révisions, le temps passé et la précision. Ces valeurs étaient
+   * affichées à l'utilisateur comme étant *sa* progression : un utilisateur
+   * n'ayant rien fait de la semaine voyait « 23 versets mémorisés ».
+   */
   async calculateStats(user, progress) {
+    const oneWeekAgo = new Date(Date.now() - 7 * 86400000);
+    const surahs = Array.isArray(progress) ? progress : [];
+
+    let weeklyVerses = 0;
+    let weeklyReviews = 0;
+    let tajwidSum = 0;
+    let tajwidCount = 0;
+
+    const perSurah = [];
+
+    for (const surah of surahs) {
+      const verses = surah.verses || [];
+      let memorizedHere = 0;
+      let confidenceSum = 0;
+      let confidenceCount = 0;
+      const weakVerses = [];
+
+      for (const verse of verses) {
+        if (verse.memorizedAt && new Date(verse.memorizedAt) >= oneWeekAgo) weeklyVerses++;
+        if (verse.lastReviewedAt && new Date(verse.lastReviewedAt) >= oneWeekAgo) weeklyReviews++;
+
+        if (verse.status === 'memorized' || verse.status === 'mastered') memorizedHere++;
+
+        if (typeof verse.confidence === 'number' && verse.confidence > 0) {
+          confidenceSum += verse.confidence;
+          confidenceCount++;
+          if (verse.confidence < 60) weakVerses.push(verse.ayahNumber);
+        }
+
+        for (const entry of verse.tajwidScores || []) {
+          if (entry.timestamp && new Date(entry.timestamp) >= oneWeekAgo && typeof entry.score === 'number') {
+            tajwidSum += entry.score;
+            tajwidCount++;
+          }
+        }
+      }
+
+      if (confidenceCount > 0 || memorizedHere > 0) {
+        perSurah.push({
+          number: surah.surahNumber,
+          name: surah.surahName,
+          memorized: memorizedHere,
+          avgConfidence: confidenceCount > 0 ? Math.round(confidenceSum / confidenceCount) : 0,
+          weakVerses: weakVerses.slice(0, 10),
+        });
+      }
+    }
+
+    // Estimation du temps : ~2 min par verset mémorisé, ~30 s par révision.
+    // C'est une estimation assumée, pas une mesure — tant que l'application
+    // n'instrumente pas la durée réelle des sessions.
+    const weeklyTime = Math.round(weeklyVerses * 2 + weeklyReviews * 0.5);
+
+    const strongestSurahs = perSurah
+      .filter((s) => s.avgConfidence >= 80)
+      .sort((a, b) => b.avgConfidence - a.avgConfidence)
+      .slice(0, 3)
+      .map((s) => ({ number: s.number, name: s.name, confidence: s.avgConfidence }));
+
+    const needsReview = perSurah
+      .filter((s) => s.weakVerses.length > 0)
+      .sort((a, b) => a.avgConfidence - b.avgConfidence)
+      .slice(0, 3)
+      .map((s) => ({ number: s.number, name: s.name, verses: s.weakVerses }));
+
     return {
-      weeklyVerses: Math.floor(Math.random() * 30) + 10,
-      weeklyReviews: Math.floor(Math.random() * 50) + 20,
-      weeklyTime: Math.floor(Math.random() * 180) + 60, // minutes
-      averageAccuracy: 75 + Math.floor(Math.random() * 20),
-      strongestSurahs: [{ number: 112, name: 'الإخلاص' }, { number: 114, name: 'الناس' }],
-      needsReview: [{ number: 2, name: 'البقرة', verses: [10, 15, 23] }]
+      weeklyVerses,
+      weeklyReviews,
+      weeklyTime,
+      // `null` quand aucune récitation n'a été notée : l'interface doit
+      // afficher « pas encore de données », pas un score inventé.
+      averageAccuracy: tajwidCount > 0 ? Math.round(tajwidSum / tajwidCount) : null,
+      strongestSurahs,
+      needsReview,
+      hasData: weeklyVerses > 0 || weeklyReviews > 0,
     };
   }
 
-  determineBestTime(stats) {
-    const times = ['morning', 'afternoon', 'evening'];
-    return times[Math.floor(Math.random() * times.length)];
+  /**
+   * Moment de la journée où l'utilisateur révise le plus, déduit de l'heure
+   * de ses révisions passées. Renvoie `null` tant qu'il n'y a pas assez
+   * d'historique — au lieu de tirer un créneau au hasard.
+   */
+  determineBestTime(stats, progress) {
+    const buckets = { morning: 0, afternoon: 0, evening: 0, night: 0 };
+    let total = 0;
+
+    for (const surah of Array.isArray(progress) ? progress : []) {
+      for (const verse of surah.verses || []) {
+        if (!verse.lastReviewedAt) continue;
+        const hour = new Date(verse.lastReviewedAt).getHours();
+        if (hour >= 5 && hour < 12) buckets.morning++;
+        else if (hour >= 12 && hour < 17) buckets.afternoon++;
+        else if (hour >= 17 && hour < 22) buckets.evening++;
+        else buckets.night++;
+        total++;
+      }
+    }
+
+    if (total < 5) return null;
+
+    return Object.entries(buckets).sort((a, b) => b[1] - a[1])[0][0];
   }
 
   calculateConsistency(streakData) {
@@ -391,6 +530,21 @@ class AIService {
     
     return Math.max(0, priority);
   }
+}
+
+/** Les tafsirs de quran.com contiennent du balisage HTML. */
+function stripHtml(html) {
+  return String(html)
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 
 module.exports = new AIService();

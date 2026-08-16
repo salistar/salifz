@@ -4,8 +4,76 @@
 
 const express = require('express');
 const Notification = require('../models/Notification');
+const { isExpoToken } = require('../services/pushService');
 
 const router = express.Router();
+
+/**
+ * POST /api/v1/notifications/register-device
+ * Enregistre le jeton push de l'appareil courant.
+ *
+ * Sans cette route, `devices[].pushToken` restait toujours vide et aucune
+ * notification distante ne pouvait être envoyée — la fonctionnalité 39 était
+ * annoncée mais n'existait ni côté mobile ni côté serveur.
+ */
+router.post('/register-device', async (req, res, next) => {
+  try {
+    const { token, platform, deviceId } = req.body;
+
+    if (!isExpoToken(token)) {
+      return res.status(400).json({ success: false, error: 'Jeton push invalide' });
+    }
+
+    const user = req.user;
+    user.devices = user.devices || [];
+
+    const existing = user.devices.find((d) => d.pushToken === token);
+
+    if (existing) {
+      existing.lastActive = new Date();
+    } else {
+      user.devices.push({
+        deviceId: deviceId || token.slice(-12),
+        deviceType: platform === 'ios' ? 'ios' : 'android',
+        pushToken: token,
+        lastActive: new Date(),
+      });
+    }
+
+    // Un même appareil réinstallé change de jeton : on borne la liste pour
+    // éviter qu'elle ne grossisse indéfiniment.
+    if (user.devices.length > 10) {
+      user.devices = user.devices
+        .sort((a, b) => new Date(b.lastActive || 0) - new Date(a.lastActive || 0))
+        .slice(0, 10);
+    }
+
+    await user.save();
+    res.json({ success: true, message: 'Appareil enregistré' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * POST /api/v1/notifications/unregister-device
+ * Retire le jeton push — à la déconnexion.
+ */
+router.post('/unregister-device', async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    const user = req.user;
+
+    user.devices = (user.devices || []).filter((d) =>
+      token ? d.pushToken !== token : false
+    );
+
+    await user.save();
+    res.json({ success: true, message: 'Appareil retiré' });
+  } catch (error) {
+    next(error);
+  }
+});
 
 /**
  * GET /api/v1/notifications

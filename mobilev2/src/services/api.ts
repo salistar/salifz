@@ -36,7 +36,54 @@ interface ProgressResponse {
   progress?: ProgressData[];
   total?: number;
   saved?: number;
-  data?: ProgressData[] | { progress?: ProgressData[] };
+  // Le serveur renvoie plusieurs formes selon l'endpoint : la liste des
+  // sourates pour /progress, un agrégat pour l'aperçu, un seul élément pour
+  // /progress/:surah. Le type ne décrivait que deux d'entre elles, ce qui
+  // faisait échouer la compilation des stores qui lisent `data.quranProgress`
+  // ou `data.progress`.
+  data?:
+    | ProgressData[]
+    | {
+        progress?: ProgressData[] | ProgressData | ProgressOverview;
+        quranProgress?: ProgressOverview;
+      };
+}
+
+/** Agrégat de progression affiché sur l'accueil et le profil. */
+export interface ProgressOverview {
+  totalVersesMemorized?: number;
+  totalVersesMastered?: number;
+  surahsStarted?: number;
+  surahsCompleted?: number;
+  [key: string]: any;
+}
+
+/**
+ * Normalise les formes de réponse de /progress en une structure unique.
+ * Les stores lisaient `response.data.progress` sans vérifier que `data`
+ * n'était pas déjà un tableau — ce qui donnait `undefined` selon l'endpoint.
+ */
+export function unwrapProgress(response: ProgressResponse): {
+  list: ProgressData[];
+  overview: ProgressOverview | null;
+} {
+  const payload = response?.data;
+
+  if (Array.isArray(payload)) {
+    return { list: payload, overview: null };
+  }
+
+  if (payload && typeof payload === 'object') {
+    const inner = payload.progress;
+    return {
+      list: Array.isArray(inner) ? inner : inner ? [inner as ProgressData] : [],
+      overview:
+        (payload.quranProgress as ProgressOverview) ??
+        (!Array.isArray(inner) && inner ? (inner as ProgressOverview) : null),
+    };
+  }
+
+  return { list: response?.progress ?? [], overview: null };
 }
 
 interface CustomAxiosInstance extends AxiosInstance {

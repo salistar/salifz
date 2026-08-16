@@ -4,7 +4,9 @@
  */
 
 import { create } from 'zustand';
-import { api } from '../services/api';
+// pi.social et pi.halaqa n'existent pas : les exports d'api.ts
+// s'appellent socialAPI et halaqaAPI. Ces appels echouaient a l'execution.
+import { socialAPI, halaqaAPI } from '../services/api';
 
 interface Friend {
   id: string;
@@ -60,7 +62,7 @@ export const useSocialStore = create<SocialState>((set, get) => ({
   fetchFriends: async () => {
     set({ isLoading: true, error: null });
     try {
-      const response = await api.social.getFriends();
+      const response = await socialAPI.getFriends();
       if (response.success) {
         set({ friends: response.data.friends || [] });
       }
@@ -73,7 +75,7 @@ export const useSocialStore = create<SocialState>((set, get) => ({
 
   fetchFriendRequests: async () => {
     try {
-      const response = await api.social.getFriendRequests();
+      const response = await socialAPI.getFriendRequests();
       if (response.success) {
         set({ friendRequests: response.data.requests || [] });
       }
@@ -84,7 +86,7 @@ export const useSocialStore = create<SocialState>((set, get) => ({
 
   fetchHalaqat: async () => {
     try {
-      const response = await api.halaqa.getMyHalaqat();
+      const response = await halaqaAPI.getMyHalaqat();
       if (response.success) {
         set({ halaqat: response.data.halaqat || [] });
       }
@@ -95,7 +97,7 @@ export const useSocialStore = create<SocialState>((set, get) => ({
 
   sendFriendRequest: async (userId: string) => {
     try {
-      const response = await api.social.sendFriendRequest(userId);
+      const response = await socialAPI.sendFriendRequest(userId);
       return response.success;
     } catch {
       return false;
@@ -104,7 +106,7 @@ export const useSocialStore = create<SocialState>((set, get) => ({
 
   acceptFriendRequest: async (requestId: string) => {
     try {
-      const response = await api.social.acceptFriendRequest(requestId);
+      const response = await socialAPI.acceptFriendRequest(requestId);
       if (response.success) {
         await get().fetchFriends();
         await get().fetchFriendRequests();
@@ -117,7 +119,7 @@ export const useSocialStore = create<SocialState>((set, get) => ({
 
   rejectFriendRequest: async (requestId: string) => {
     try {
-      const response = await api.social.rejectFriendRequest(requestId);
+      const response = await socialAPI.rejectFriendRequest(requestId);
       if (response.success) {
         await get().fetchFriendRequests();
       }
@@ -129,7 +131,7 @@ export const useSocialStore = create<SocialState>((set, get) => ({
 
   removeFriend: async (friendId: string) => {
     try {
-      const response = await api.social.removeFriend(friendId);
+      const response = await socialAPI.removeFriend(friendId);
       if (response.success) {
         set({ friends: get().friends.filter(f => f.id !== friendId) });
       }
@@ -141,7 +143,7 @@ export const useSocialStore = create<SocialState>((set, get) => ({
 
   joinHalaqa: async (halaqaId: string) => {
     try {
-      const response = await api.halaqa.join(halaqaId);
+      const response = await halaqaAPI.join(halaqaId);
       if (response.success) {
         await get().fetchHalaqat();
       }
@@ -153,7 +155,7 @@ export const useSocialStore = create<SocialState>((set, get) => ({
 
   leaveHalaqa: async (halaqaId: string) => {
     try {
-      const response = await api.halaqa.leave(halaqaId);
+      const response = await halaqaAPI.leave(halaqaId);
       if (response.success) {
         set({ halaqat: get().halaqat.filter(h => h.id !== halaqaId) });
       }

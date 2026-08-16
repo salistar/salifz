@@ -67,7 +67,7 @@ export const Card: React.FC<CardProps> = ({
   if (variant === 'gradient') {
     const gradientContent = (
       <LinearGradient
-        colors={gradientColors}
+        colors={gradientColors as [string, string, ...string[]]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[{ borderRadius, padding }, style]}

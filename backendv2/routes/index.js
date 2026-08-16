@@ -70,7 +70,18 @@ router.use('/notifications', authMiddleware, safeRequire('./notifications'));
 // Routes coûteuses (upload audio, analyse) : limitées plus strictement.
 router.use('/ai', authMiddleware, heavyLimiter, safeRequire('./ai'));
 router.use('/audio', optionalAuth, safeRequire('./audio'));
-router.use('/face', authMiddleware, safeRequire('./face'));
+// S18 : les routes /face sont supprimées.
+//
+// Elles traitaient une donnée biométrique (RGPD art. 9, catégorie
+// particulière) pour déduire le genre, dans une application à finalité
+// religieuse — sans consentement explicite, sans durée de conservation et
+// sans analyse d'impact. Apple (règle 5.1.2) et le formulaire Google Play
+// Data Safety refusent ce traitement en l'état.
+//
+// Elles ne fonctionnaient de toute façon pas : la détection était un
+// `Math.random() > 0.5`, et l'application mobile ne les appelait jamais.
+// Le champ `gender` du profil est déclaratif, choisi par l'utilisateur.
+// L'accès à l'espace femmes s'appuie dessus, complété par la modération.
 router.use('/parental', authMiddleware, safeRequire('./parental'));
 router.use('/tajwid', authMiddleware, heavyLimiter, safeRequire('./tajwid'));
 router.use('/analytics', authMiddleware, safeRequire('./analytics'));
@@ -81,6 +92,8 @@ router.use('/reminders', authMiddleware, safeRequire('./reminders'));
 router.use('/bookmarks', authMiddleware, safeRequire('./bookmarks'));
 router.use('/export', authMiddleware, safeRequire('./export'));
 router.use('/settings', authMiddleware, safeRequire('./settings'));
+// Export et suppression des données personnelles (RGPD, App Store, Play Store).
+router.use('/account', authMiddleware, require('./account'));
 // Envoi et vérification de codes OTP : cible privilégiée du bourrinage (S8).
 router.use('/verification', authMiddleware, otpLimiter, safeRequire('./verification'));
 

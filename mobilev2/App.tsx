@@ -13,6 +13,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import RootNavigator from './src/navigation/RootNavigator';
 import { ThemeProvider } from './src/contexts/ThemeContext';
+import { registerForPushNotifications, addNotificationListeners } from './src/services/pushNotifications';
+import { useAuthStore } from './src/stores/authStore';
 import './src/services/i18n';
 
 // Prevent auto-hide of native splash
@@ -48,6 +50,23 @@ export default function App() {
 
     prepare();
   }, []);
+
+  // Notifications push : l'enregistrement n'a de sens qu'une fois connecté,
+  // puisque le jeton est rattaché au compte côté serveur.
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    registerForPushNotifications().catch((e) =>
+      console.warn('[PUSH] Enregistrement ignoré :', e?.message)
+    );
+
+    return addNotificationListeners(
+      (notification) => console.log('[PUSH] Reçue :', notification.request.content.title),
+      (response) => console.log('[PUSH] Ouverte :', response.notification.request.content.data)
+    );
+  }, [isAuthenticated]);
 
   if (!appIsReady) {
     return null;

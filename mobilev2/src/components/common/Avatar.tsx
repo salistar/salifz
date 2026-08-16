@@ -96,7 +96,7 @@ export const Avatar: React.FC<AvatarProps> = ({
         />
       ) : (
         <LinearGradient
-          colors={getGradientColors()}
+          colors={getGradientColors() as [string, string, ...string[]]}
           style={[
             styles.placeholder,
             {

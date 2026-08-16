@@ -4,7 +4,8 @@
  */
 
 import { create } from 'zustand';
-import { api } from '../services/api';
+// Meme correction : les exports reels sont quranAPI et progressAPI.
+import { quranAPI, progressAPI, unwrapProgress } from '../services/api';
 
 interface Surah {
   number: number;
@@ -59,7 +60,7 @@ export const useQuranStore = create<QuranState>((set, get) => ({
   fetchSurahs: async () => {
     set({ isLoading: true, error: null });
     try {
-      const response = await api.quran.getSurahs();
+      const response = await quranAPI.getSurahs();
       if (response.success) {
         set({ surahs: response.data.surahs || response.data });
       }
@@ -73,7 +74,7 @@ export const useQuranStore = create<QuranState>((set, get) => ({
   fetchSurah: async (number: number) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await api.quran.getSurah(number);
+      const response = await quranAPI.getSurah(number);
       if (response.success) {
         set({
           currentSurah: response.data.surah || response.data,
@@ -89,10 +90,11 @@ export const useQuranStore = create<QuranState>((set, get) => ({
 
   fetchProgress: async () => {
     try {
-      const response = await api.progress.getAll();
-      if (response.success && response.data.progress) {
+      const response = await progressAPI.getProgress();
+      const { list } = unwrapProgress(response);
+      if (list.length > 0) {
         const progressMap: { [key: number]: SurahProgress } = {};
-        response.data.progress.forEach((p: any) => {
+        list.forEach((p: any) => {
           progressMap[p.surahNumber] = p;
         });
         set({ surahProgress: progressMap });

@@ -63,11 +63,23 @@ export { offlineService } from './offline';
 // ============================================
 // I18N EXPORTS
 // ============================================
-export { 
-  i18n, 
-  t, 
-  setLanguage, 
-  getCurrentLanguage, 
-  getCurrentLocale, 
-  isRTL 
+// Quatre des six noms réexportés ici n'existaient pas dans ./i18n
+// (`i18n`, `setLanguage`, `getCurrentLanguage`, `getCurrentLocale`) :
+// tout import passant par ce baril échouait. Les noms réels sont repris
+// ci-dessous, avec des alias pour ceux qui étaient attendus.
+export {
+  t,
+  isRTL,
+  initI18n,
+  getLocale,
+  getLocale as getCurrentLocale,
+  getLocale as getCurrentLanguage,
+  changeLanguage,
+  changeLanguage as setLanguage,
+  getTextDirection,
+  getSupportedLocales,
+  getLocaleName,
+  hasTranslation,
 } from './i18n';
+
+export { default as i18n } from './i18n';

@@ -516,4 +516,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export { StreakCard, XPProgress, HeartsDisplay, GemsDisplay, AchievementBadge, ChallengeCard, LeagueBadge };
+// Ces sept composants sont déjà exportés à leur déclaration (`export const`).
+// Cette ligne les réexportait une seconde fois : doublon d'export, refusé au
+// bundle. Elle est supprimée.

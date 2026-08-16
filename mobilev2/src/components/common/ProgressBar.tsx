@@ -63,7 +63,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       return (
         <Animated.View style={{ width, height, overflow: 'hidden', borderRadius: height / 2 }}>
           <LinearGradient
-            colors={gradientColors}
+            colors={gradientColors as [string, string, ...string[]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={{ flex: 1 }}
