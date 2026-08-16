@@ -80,7 +80,8 @@
     "usernameTooShort": "Au moins 3 caractères",
     "usernameInvalid": "Lettres, chiffres et _ uniquement",
     "usernameRequired": "Nom d'utilisateur requis",
-    "termsRequired": "Vous devez accepter les conditions"
+    "termsRequired": "Vous devez accepter les conditions",
+    "passwordMismatch": "Les mots de passe ne correspondent pas"
   },
   "password": {
     "weak": "Faible",
@@ -688,7 +689,8 @@
       "avatarGold": "Cadre doré",
       "gems100": "100 Gemmes",
       "gems500": "500 Gemmes"
-    }
+    },
+    "confirmPurchaseMessage": "Confirmer cet achat ?"
   },
   "streak": {
     "consecutiveDays": "jours consécutifs",
@@ -776,7 +778,9 @@
     "continueSurah": "Continuer la Sourate",
     "newSurah": "Nouvelle Sourate",
     "lessons": "Leçons",
-    "shareMessage": "🎉 J'ai terminé une leçon de {{surahName}} dans Salifz !\n📖 J'ai mémorisé {{ayahsCount}} versets\n🔥 Ma série : {{streak}} jours\n\n#Salifz"
+    "shareMessage": "🎉 J'ai terminé une leçon de {{surahName}} dans Salifz !\n📖 J'ai mémorisé {{ayahsCount}} versets\n🔥 Ma série : {{streak}} jours\n\n#Salifz",
+    "quran": "Coran",
+    "memorization": "Mémorisation"
   },
   "lessonDetail": {
     "loadingLesson": "Chargement de la leçon...",
@@ -794,7 +798,8 @@
       "chooseCorrectMeaning": "Choisir le bon sens",
       "fillTheBlank": "Remplir le blanc ✏️",
       "arrangeAyahs": "Ranger les versets",
-      "reciteFromMemory": "Réciter de mémoire 🎤"
+      "reciteFromMemory": "Réciter de mémoire 🎤",
+      "whatIsTheMeaning": "Quel est le sens de ce verset ?"
     },
     "feedback": {
       "correct": "Bien joué ! +{{xp}} XP",
@@ -808,8 +813,26 @@
       "leaveLesson": "Quitter la leçon ?",
       "leaveMessage": "Votre progression sera sauvegardée",
       "stay": "Rester",
-      "leave": "Quitter"
-    }
+      "leave": "Quitter",
+      "error": "Erreur",
+      "audioError": "Lecture audio impossible",
+      "wellDone": "Bravo !",
+      "completedAyahs": "Versets terminés",
+      "continue": "Continuer",
+      "finish": "Terminer",
+      "later": "Plus tard",
+      "loseProgress": "Vous perdrez votre progression sur cette leçon.",
+      "shop": "Boutique"
+    },
+    "theAyahs": "Les versets",
+    "ayahFallback": "Verset",
+    "ayahFromSurah": "Verset {{ayah}} — sourate {{surah}}",
+    "correctMeaning": "Bonne réponse",
+    "wrong": "Incorrect",
+    "wrongMeaning1": "Ce n’est pas le sens de ce verset",
+    "wrongMeaning2": "Relisez le verset attentivement",
+    "wrongMeaning3": "Un autre verset porte ce sens",
+    "revealForReview": "Afficher pour réviser"
   },
   "lessons": {
     "juzNumber": "Juz {{number}}",
@@ -1090,7 +1113,17 @@
       "challenge": "Défi",
       "challengeDesc": "Défi de groupe",
       "other": "Autre",
-      "otherDesc": "Autre activité"
+      "otherDesc": "Autre activité",
+      "tajweed": "Tajwid",
+      "tajweedDesc": "Travail des règles de récitation",
+      "tafseer": "Tafsir",
+      "tafseerDesc": "Explication du sens des versets",
+      "lesson": "Leçon",
+      "lessonDesc": "Cours donné par un enseignant",
+      "workshop": "Atelier",
+      "workshopDesc": "Séance pratique en groupe",
+      "achievement": "Objectif",
+      "achievementDesc": "Palier à atteindre ensemble"
     },
     "tabs": {
       "activities": "Activités",
@@ -1100,7 +1133,9 @@
     "stats": {
       "member": "membre",
       "verse": "verset",
-      "activity": "activité"
+      "activity": "activité",
+      "verses": "versets",
+      "activities": "activités"
     },
     "time": {
       "now": "Maintenant",
@@ -1116,12 +1151,25 @@
     },
     "inviteCode": {
       "title": "Code d'invitation",
-      "shareMessage": "Rejoignez la halaqa {{name}} sur Salifz !\n\nCode : {{code}}\n\n#Salifz"
+      "shareMessage": "Rejoignez la halaqa {{name}} sur Salifz !\n\nCode : {{code}}\n\n#Salifz",
+      "label": "Code d’invitation",
+      "copied": "Code copié"
     },
     "createActivity": {
       "title": "Créer une nouvelle activité",
       "selectType": "Sélectionner le type d'activité",
-      "create": "Créer l'activité"
+      "create": "Créer l'activité",
+      "button": "Créer une activité",
+      "newButton": "Nouvelle activité",
+      "modalTitle": "Nouvelle activité",
+      "typeLabel": "Type d’activité",
+      "detailsLabel": "Détails",
+      "titlePlaceholder": "Titre de l’activité",
+      "descriptionPlaceholder": "Description (facultatif)",
+      "success": "Activité créée",
+      "errors": {
+        "fillRequired": "Remplissez les champs obligatoires"
+      }
     },
     "completeActivity": {
       "title": "Terminer l'activité",
@@ -1136,6 +1184,34 @@
       "leaveConfirm": "Voulez-vous quitter cette halaqa ?",
       "leaveButton": "Quitter",
       "leftSuccess": "Quitté avec succès"
+    },
+    "title": "Halaqa",
+    "defaultName": "Halaqa",
+    "defaultDescription": "Groupe d’étude",
+    "admin": "Responsable",
+    "member": "membre",
+    "activity": "activité",
+    "chat": "Discussion",
+    "leave": "Quitter",
+    "public": "Publique",
+    "private": "Privée",
+    "createdBy": "Créée par",
+    "createdByLabel": "Créée par",
+    "errors": {
+      "chatDisabled": "La discussion est désactivée",
+      "creatorCannotLeave": "Le créateur ne peut pas quitter sa halaqa",
+      "noHalaqaId": "Halaqa introuvable"
+    },
+    "leaveHalaqa": {
+      "title": "Quitter la halaqa ?",
+      "confirm": "Vous perdrez l’accès à ses activités.",
+      "leave": "Quitter",
+      "success": "Vous avez quitté la halaqa"
+    },
+    "deleteHalaqa": {
+      "title": "Supprimer la halaqa ?",
+      "confirm": "Cette action est définitive.",
+      "success": "Halaqa supprimée"
     }
   },
   "halaqa": {
@@ -1212,7 +1288,15 @@
       "privateTitle": "Rejoindre une Halaqa privée",
       "privateSubtitle": "Entrez le code d'invitation pour rejoindre",
       "codePlaceholder": "Entrez le code ici",
-      "browsePublic": "Parcourir les Halaqat publiques"
+      "browsePublic": "Parcourir les Halaqat publiques",
+      "title": "Rejoindre avec un code",
+      "success": "Vous avez rejoint la halaqa",
+      "confirmMessage": "Rejoindre cette halaqa ?",
+      "errors": {
+        "codeRequired": "Le code est requis",
+        "invalidCode": "Code invalide",
+        "failed": "Impossible de rejoindre"
+      }
     },
     "create": {
       "title": "Créer une nouvelle Halaqa",
@@ -1239,7 +1323,14 @@
       "dailyGoal": "Objectif quotidien",
       "maxMembers": "Nombre max de membres",
       "activityTypesTitle": "Types d'activités",
-      "activityTypesSubtitle": "Choisissez les activités disponibles dans la halaqa"
+      "activityTypesSubtitle": "Choisissez les activités disponibles dans la halaqa",
+      "success": "Halaqa créée",
+      "viewHalaqa": "Voir la halaqa",
+      "errors": {
+        "failed": "Création impossible",
+        "nameRequired": "Le nom est requis",
+        "selectActivity": "Choisissez au moins une activité"
+      }
     },
     "card": {
       "member": "membre",
@@ -1254,6 +1345,12 @@
       "createError": "Échec de la création de la halaqa",
       "nameRequired": "Nom de la halaqa requis",
       "selectActivity": "Sélectionnez au moins une activité"
+    },
+    "admin": "Responsable",
+    "defaultName": "Halaqa",
+    "defaultDescription": "Groupe d’étude",
+    "stats": {
+      "verse": "versets"
     }
   },
   "socialHub": {
@@ -1582,5 +1679,8 @@
     "previousAyah": "Verset précédent",
     "nextAyah": "Verset suivant",
     "open": "Traduction mot à mot"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue"
   }
 }

@@ -80,7 +80,8 @@
     "usernameTooShort": "At least 3 characters",
     "usernameInvalid": "Letters, numbers and _ only",
     "usernameRequired": "Username is required",
-    "termsRequired": "You must agree to the terms"
+    "termsRequired": "You must agree to the terms",
+    "passwordMismatch": "Passwords do not match"
   },
   "password": {
     "weak": "Weak",
@@ -688,7 +689,8 @@
       "avatarGold": "Gold Frame",
       "gems100": "100 Gems",
       "gems500": "500 Gems"
-    }
+    },
+    "confirmPurchaseMessage": "Confirm this purchase?"
   },
   "streak": {
     "consecutiveDays": "consecutive days",
@@ -776,7 +778,9 @@
     "continueSurah": "Continue Surah",
     "newSurah": "New Surah",
     "lessons": "Lessons",
-    "shareMessage": "🎉 I completed a lesson of {{surahName}} in Salifz!\n📖 I memorized {{ayahsCount}} ayahs\n🔥 My streak: {{streak}} days\n\n#Salifz"
+    "shareMessage": "🎉 I completed a lesson of {{surahName}} in Salifz!\n📖 I memorized {{ayahsCount}} ayahs\n🔥 My streak: {{streak}} days\n\n#Salifz",
+    "quran": "Quran",
+    "memorization": "Memorization"
   },
   "lessonDetail": {
     "loadingLesson": "Loading lesson...",
@@ -794,7 +798,8 @@
       "chooseCorrectMeaning": "Choose the Correct Meaning",
       "fillTheBlank": "Fill in the Blank ✏️",
       "arrangeAyahs": "Arrange the Ayahs in Order",
-      "reciteFromMemory": "Recite from Memory 🎤"
+      "reciteFromMemory": "Recite from Memory 🎤",
+      "whatIsTheMeaning": "What does this verse mean?"
     },
     "feedback": {
       "correct": "Well done! +{{xp}} XP",
@@ -808,8 +813,26 @@
       "leaveLesson": "Leave Lesson?",
       "leaveMessage": "Your progress will be saved",
       "stay": "Stay",
-      "leave": "Leave"
-    }
+      "leave": "Leave",
+      "error": "Error",
+      "audioError": "Audio playback failed",
+      "wellDone": "Well done!",
+      "completedAyahs": "Verses completed",
+      "continue": "Continue",
+      "finish": "Finish",
+      "later": "Later",
+      "loseProgress": "You will lose your progress on this lesson.",
+      "shop": "Shop"
+    },
+    "theAyahs": "The verses",
+    "ayahFallback": "Verse",
+    "ayahFromSurah": "Verse {{ayah}} — surah {{surah}}",
+    "correctMeaning": "Correct",
+    "wrong": "Incorrect",
+    "wrongMeaning1": "That is not what this verse means",
+    "wrongMeaning2": "Read the verse again carefully",
+    "wrongMeaning3": "Another verse carries that meaning",
+    "revealForReview": "Show for review"
   },
   "lessons": {
     "juzNumber": "Juz {{number}}",
@@ -1090,7 +1113,17 @@
       "challenge": "Challenge",
       "challengeDesc": "Group challenge",
       "other": "Other",
-      "otherDesc": "Other activity"
+      "otherDesc": "Other activity",
+      "tajweed": "Tajwid",
+      "tajweedDesc": "Practising recitation rules",
+      "tafseer": "Tafsir",
+      "tafseerDesc": "Explaining the meaning of verses",
+      "lesson": "Lesson",
+      "lessonDesc": "A teacher-led class",
+      "workshop": "Workshop",
+      "workshopDesc": "Hands-on group session",
+      "achievement": "Achievement",
+      "achievementDesc": "A milestone to reach together"
     },
     "tabs": {
       "activities": "Activities",
@@ -1100,7 +1133,9 @@
     "stats": {
       "member": "member",
       "verse": "verse",
-      "activity": "activity"
+      "activity": "activity",
+      "verses": "verses",
+      "activities": "activities"
     },
     "time": {
       "now": "Now",
@@ -1116,12 +1151,25 @@
     },
     "inviteCode": {
       "title": "Join Code",
-      "shareMessage": "Join {{name}} halaqa in Salifz!\n\nCode: {{code}}\n\n#Salifz"
+      "shareMessage": "Join {{name}} halaqa in Salifz!\n\nCode: {{code}}\n\n#Salifz",
+      "label": "Invite code",
+      "copied": "Code copied"
     },
     "createActivity": {
       "title": "Create New Activity",
       "selectType": "Select Activity Type",
-      "create": "Create Activity"
+      "create": "Create Activity",
+      "button": "Create activity",
+      "newButton": "New activity",
+      "modalTitle": "New activity",
+      "typeLabel": "Activity type",
+      "detailsLabel": "Details",
+      "titlePlaceholder": "Activity title",
+      "descriptionPlaceholder": "Description (optional)",
+      "success": "Activity created",
+      "errors": {
+        "fillRequired": "Fill in the required fields"
+      }
     },
     "completeActivity": {
       "title": "Complete Activity",
@@ -1136,6 +1184,34 @@
       "leaveConfirm": "Do you want to leave this halaqa?",
       "leaveButton": "Leave",
       "leftSuccess": "Successfully left"
+    },
+    "title": "Halaqa",
+    "defaultName": "Halaqa",
+    "defaultDescription": "Study group",
+    "admin": "Admin",
+    "member": "member",
+    "activity": "activity",
+    "chat": "Chat",
+    "leave": "Leave",
+    "public": "Public",
+    "private": "Private",
+    "createdBy": "Created by",
+    "createdByLabel": "Created by",
+    "errors": {
+      "chatDisabled": "Chat is disabled",
+      "creatorCannotLeave": "The creator cannot leave",
+      "noHalaqaId": "Halaqa not found"
+    },
+    "leaveHalaqa": {
+      "title": "Leave halaqa?",
+      "confirm": "You will lose access to its activities.",
+      "leave": "Leave",
+      "success": "You left the halaqa"
+    },
+    "deleteHalaqa": {
+      "title": "Delete halaqa?",
+      "confirm": "This cannot be undone.",
+      "success": "Halaqa deleted"
     }
   },
   "halaqa": {
@@ -1212,7 +1288,15 @@
       "privateTitle": "Join Private Halaqa",
       "privateSubtitle": "Enter the invitation code to join",
       "codePlaceholder": "Enter code here",
-      "browsePublic": "Browse Public Halaqat"
+      "browsePublic": "Browse Public Halaqat",
+      "title": "Join with a code",
+      "success": "You joined the halaqa",
+      "confirmMessage": "Join this halaqa?",
+      "errors": {
+        "codeRequired": "Code is required",
+        "invalidCode": "Invalid code",
+        "failed": "Could not join"
+      }
     },
     "create": {
       "title": "Create New Halaqa",
@@ -1239,7 +1323,14 @@
       "dailyGoal": "Daily Goal",
       "maxMembers": "Maximum Members",
       "activityTypesTitle": "Activity Types",
-      "activityTypesSubtitle": "Choose available activities in the halaqa"
+      "activityTypesSubtitle": "Choose available activities in the halaqa",
+      "success": "Halaqa created",
+      "viewHalaqa": "View halaqa",
+      "errors": {
+        "failed": "Could not create",
+        "nameRequired": "Name is required",
+        "selectActivity": "Pick at least one activity"
+      }
     },
     "card": {
       "member": "member",
@@ -1254,6 +1345,12 @@
       "createError": "Failed to create halaqa",
       "nameRequired": "Halaqa name is required",
       "selectActivity": "Select at least one activity"
+    },
+    "admin": "Admin",
+    "defaultName": "Halaqa",
+    "defaultDescription": "Study group",
+    "stats": {
+      "verse": "verses"
     }
   },
   "socialHub": {
@@ -1582,5 +1679,8 @@
     "previousAyah": "Previous verse",
     "nextAyah": "Next verse",
     "open": "Word-by-word translation"
+  },
+  "errors": {
+    "generic": "Something went wrong"
   }
 }

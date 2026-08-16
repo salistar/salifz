@@ -238,8 +238,26 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
   const getInviteCode = (): string => halaqa?.inviteCode || 'N/A';
   // ✅ AVANT: 'مدير'
   const getCreatorName = (): string => halaqa?.creator?.displayName || halaqa?.creator?.username || t('halaqaDetail.admin');
-  const isCreatorUser = (): boolean => halaqa?.creator?._id === user?._id;
-  const isAdminUser = (): boolean => isCreatorUser() || (halaqa?.admins?.includes(user?._id || '') || false);
+  // `creator` et les entrées de `admins` arrivent tantôt peuplés (objet),
+  // tantôt sous forme d'identifiant brut selon l'endpoint appelé. Comparer
+  // seulement `creator._id` faisait passer le créateur lui-même pour un simple
+  // membre : il voyait « Réciter » au lieu de « Valider les récitations ».
+  const sameId = (a: any, b: any): boolean => {
+    const idOf = (v: any) => (typeof v === 'string' ? v : v?._id ?? v?.id);
+    const left = idOf(a);
+    const right = idOf(b);
+    return Boolean(left && right && String(left) === String(right));
+  };
+
+  const currentUserId = user?._id || (user as any)?.id;
+  const isCreatorUser = (): boolean => sameId(halaqa?.creator, currentUserId);
+  const isAdminUser = (): boolean =>
+    isCreatorUser() ||
+    (halaqa?.admins || []).some((a: any) => sameId(a, currentUserId)) ||
+    (halaqa?.members || []).some(
+      (m: any) => sameId(m?.user ?? m?.userId ?? m, currentUserId) &&
+        ['admin', 'moderator', 'teacher', 'creator'].includes(m?.role)
+    );
   const isPublicHalaqa = (): boolean => halaqa?.settings?.isPublic !== false;
   const isChatAllowed = (): boolean => halaqa?.settings?.allowChat !== false;
   const getHalaqaActivityTypes = (): string[] => halaqa?.settings?.activityTypes || ['memorize', 'review'];

@@ -80,7 +80,8 @@
     "usernameTooShort": "3 أحرف على الأقل",
     "usernameInvalid": "أحرف وأرقام و _ فقط",
     "usernameRequired": "اسم المستخدم مطلوب",
-    "termsRequired": "يجب الموافقة على الشروط والأحكام"
+    "termsRequired": "يجب الموافقة على الشروط والأحكام",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين"
   },
   "password": {
     "weak": "ضعيفة",
@@ -688,7 +689,8 @@
       "avatarGold": "إطار ذهبي",
       "gems100": "100 جوهرة",
       "gems500": "500 جوهرة"
-    }
+    },
+    "confirmPurchaseMessage": "تأكيد عملية الشراء؟"
   },
   "streak": {
     "consecutiveDays": "يوم متتالي",
@@ -776,7 +778,9 @@
     "continueSurah": "متابعة السورة",
     "newSurah": "سورة جديدة",
     "lessons": "الدروس",
-    "shareMessage": "🎉 أكملت درس {{surahName}} في Salifz!\n📖 حفظت {{ayahsCount}} آيات\n🔥 سلسلتي: {{streak}} يوم\n\n#Salifz"
+    "shareMessage": "🎉 أكملت درس {{surahName}} في Salifz!\n📖 حفظت {{ayahsCount}} آيات\n🔥 سلسلتي: {{streak}} يوم\n\n#Salifz",
+    "quran": "القرآن",
+    "memorization": "الحفظ"
   },
   "lessonDetail": {
     "loadingLesson": "جاري تحميل الدرس...",
@@ -794,7 +798,8 @@
       "chooseCorrectMeaning": "اختر المعنى الصحيح",
       "fillTheBlank": "أكمل الفراغ ✏️",
       "arrangeAyahs": "رتب الآيات بالترتيب الصحيح",
-      "reciteFromMemory": "اقرأ من الذاكرة 🎤"
+      "reciteFromMemory": "اقرأ من الذاكرة 🎤",
+      "whatIsTheMeaning": "ما معنى هذه الآية؟"
     },
     "feedback": {
       "correct": "أحسنت! +{{xp}} XP",
@@ -808,8 +813,26 @@
       "leaveLesson": "مغادرة الدرس؟",
       "leaveMessage": "سيتم حفظ تقدمك الحالي",
       "stay": "ابقَ",
-      "leave": "غادر"
-    }
+      "leave": "غادر",
+      "error": "خطأ",
+      "audioError": "تعذّر تشغيل الصوت",
+      "wellDone": "أحسنت!",
+      "completedAyahs": "الآيات المكتملة",
+      "continue": "متابعة",
+      "finish": "إنهاء",
+      "later": "لاحقاً",
+      "loseProgress": "ستفقد تقدّمك في هذا الدرس.",
+      "shop": "المتجر"
+    },
+    "theAyahs": "الآيات",
+    "ayahFallback": "آية",
+    "ayahFromSurah": "الآية {{ayah}} — سورة {{surah}}",
+    "correctMeaning": "إجابة صحيحة",
+    "wrong": "إجابة خاطئة",
+    "wrongMeaning1": "ليس هذا معنى الآية",
+    "wrongMeaning2": "أعد قراءة الآية بتمعّن",
+    "wrongMeaning3": "هذا المعنى لآية أخرى",
+    "revealForReview": "إظهار للمراجعة"
   },
   "lessons": {
     "juzNumber": "الجزء {{number}}",
@@ -1090,7 +1113,17 @@
       "challenge": "تحدي",
       "challengeDesc": "تحدي جماعي",
       "other": "أخرى",
-      "otherDesc": "نشاط آخر"
+      "otherDesc": "نشاط آخر",
+      "tajweed": "تجويد",
+      "tajweedDesc": "تدريب على أحكام التلاوة",
+      "tafseer": "تفسير",
+      "tafseerDesc": "شرح معاني الآيات",
+      "lesson": "درس",
+      "lessonDesc": "درس يقدّمه المعلم",
+      "workshop": "ورشة",
+      "workshopDesc": "جلسة تطبيقية جماعية",
+      "achievement": "إنجاز",
+      "achievementDesc": "هدف نبلغه معاً"
     },
     "tabs": {
       "activities": "الأنشطة",
@@ -1100,7 +1133,9 @@
     "stats": {
       "member": "عضو",
       "verse": "آية",
-      "activity": "نشاط"
+      "activity": "نشاط",
+      "verses": "آية",
+      "activities": "نشاط"
     },
     "time": {
       "now": "الآن",
@@ -1116,12 +1151,25 @@
     },
     "inviteCode": {
       "title": "كود الانضمام",
-      "shareMessage": "انضم إلى حلقة {{name}} في Salifz!\n\nكود: {{code}}\n\n#Salifz"
+      "shareMessage": "انضم إلى حلقة {{name}} في Salifz!\n\nكود: {{code}}\n\n#Salifz",
+      "label": "رمز الدعوة",
+      "copied": "تم نسخ الرمز"
     },
     "createActivity": {
       "title": "إنشاء نشاط جديد",
       "selectType": "اختر نوع النشاط",
-      "create": "إنشاء النشاط"
+      "create": "إنشاء النشاط",
+      "button": "إنشاء نشاط",
+      "newButton": "نشاط جديد",
+      "modalTitle": "نشاط جديد",
+      "typeLabel": "نوع النشاط",
+      "detailsLabel": "التفاصيل",
+      "titlePlaceholder": "عنوان النشاط",
+      "descriptionPlaceholder": "الوصف (اختياري)",
+      "success": "تم إنشاء النشاط",
+      "errors": {
+        "fillRequired": "يرجى ملء الحقول المطلوبة"
+      }
     },
     "completeActivity": {
       "title": "إتمام النشاط",
@@ -1136,6 +1184,34 @@
       "leaveConfirm": "هل تريد مغادرة هذه الحلقة؟",
       "leaveButton": "مغادرة",
       "leftSuccess": "تمت المغادرة بنجاح"
+    },
+    "title": "الحلقة",
+    "defaultName": "حلقة",
+    "defaultDescription": "مجموعة دراسة",
+    "admin": "مشرف",
+    "member": "عضو",
+    "activity": "نشاط",
+    "chat": "المحادثة",
+    "leave": "مغادرة",
+    "public": "عامة",
+    "private": "خاصة",
+    "createdBy": "أنشأها",
+    "createdByLabel": "أنشأها",
+    "errors": {
+      "chatDisabled": "المحادثة معطّلة",
+      "creatorCannotLeave": "لا يمكن للمنشئ مغادرة حلقته",
+      "noHalaqaId": "الحلقة غير موجودة"
+    },
+    "leaveHalaqa": {
+      "title": "مغادرة الحلقة؟",
+      "confirm": "ستفقد الوصول إلى أنشطتها.",
+      "leave": "مغادرة",
+      "success": "غادرت الحلقة"
+    },
+    "deleteHalaqa": {
+      "title": "حذف الحلقة؟",
+      "confirm": "لا يمكن التراجع عن هذا.",
+      "success": "تم حذف الحلقة"
     }
   },
   "halaqa": {
@@ -1212,7 +1288,15 @@
       "privateTitle": "انضم لحلقة خاصة",
       "privateSubtitle": "أدخل كود الدعوة للانضمام",
       "codePlaceholder": "أدخل الكود هنا",
-      "browsePublic": "تصفح الحلقات العامة"
+      "browsePublic": "تصفح الحلقات العامة",
+      "title": "الانضمام برمز",
+      "success": "تم الانضمام إلى الحلقة",
+      "confirmMessage": "الانضمام إلى هذه الحلقة؟",
+      "errors": {
+        "codeRequired": "الرمز مطلوب",
+        "invalidCode": "رمز غير صالح",
+        "failed": "تعذّر الانضمام"
+      }
     },
     "create": {
       "title": "إنشاء حلقة جديدة",
@@ -1239,7 +1323,14 @@
       "dailyGoal": "الهدف اليومي",
       "maxMembers": "الحد الأقصى للأعضاء",
       "activityTypesTitle": "أنواع الأنشطة",
-      "activityTypesSubtitle": "اختر الأنشطة المتاحة في الحلقة"
+      "activityTypesSubtitle": "اختر الأنشطة المتاحة في الحلقة",
+      "success": "تم إنشاء الحلقة",
+      "viewHalaqa": "عرض الحلقة",
+      "errors": {
+        "failed": "تعذّر الإنشاء",
+        "nameRequired": "الاسم مطلوب",
+        "selectActivity": "اختر نشاطاً واحداً على الأقل"
+      }
     },
     "card": {
       "member": "عضو",
@@ -1254,6 +1345,12 @@
       "createError": "فشل إنشاء الحلقة",
       "nameRequired": "اسم الحلقة مطلوب",
       "selectActivity": "اختر نشاطاً واحداً على الأقل"
+    },
+    "admin": "مشرف",
+    "defaultName": "حلقة",
+    "defaultDescription": "مجموعة دراسة",
+    "stats": {
+      "verse": "آية"
     }
   },
   "socialHub": {
@@ -1582,5 +1679,8 @@
     "previousAyah": "الآية السابقة",
     "nextAyah": "الآية التالية",
     "open": "الترجمة كلمة بكلمة"
+  },
+  "errors": {
+    "generic": "حدث خطأ"
   }
 }
