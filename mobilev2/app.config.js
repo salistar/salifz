@@ -76,8 +76,11 @@ export default {
     // ✅ Variables d'environnement accessibles via Constants.expoConfig.extra
     extra: {
       // API URLs
-      apiUrl: process.env.API_URL || 'http://192.168.1.4:8088/api/v1',
-      wsUrl: process.env.WS_URL || 'http://192.168.1.4:8088',
+      // Repli seulement : en developpement, l'IP est detectee depuis l'hote Metro
+      // (voir src/config/env.ts). Une IP figee ici etait fausse des qu'on
+      // changeait de reseau, et differait de celle du backend.
+      apiUrl: process.env.API_URL || 'http://localhost:8088/api/v1',
+      wsUrl: process.env.WS_URL || 'http://localhost:8088',
       
       // Production URLs
       apiProdUrl: process.env.API_PROD_URL || 'https://api.salifz.com/api/v1',

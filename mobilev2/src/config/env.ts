@@ -15,19 +15,55 @@ const extra = Constants.expoConfig?.extra || {};
 const isProduction = extra.nodeEnv === 'production' || (typeof __DEV__ !== 'undefined' ? !__DEV__ : false);
 
 /**
+ * Adresse du serveur de développement, déduite de l'hôte Metro.
+ *
+ * L'URL de l'API était figée sur une IP de réseau local — `192.168.1.4` ici,
+ * `10.46.202.130` côté serveur : deux valeurs différentes, et toutes deux
+ * fausses dès qu'on change de réseau ou de machine. Expo connaît déjà l'IP
+ * depuis laquelle le téléphone charge le bundle : c'est la même machine que
+ * le backend en développement.
+ */
+function detectDevHost(): string | null {
+  const candidates = [
+    Constants.expoConfig?.hostUri,
+    (Constants as any).expoGoConfig?.debuggerHost,
+    (Constants as any).manifest2?.extra?.expoGo?.debuggerHost,
+  ].filter(Boolean) as string[];
+
+  for (const candidate of candidates) {
+    const host = candidate.split(':')[0];
+    if (host && host !== 'localhost' && host !== '127.0.0.1') return host;
+  }
+  return null;
+}
+
+const devHost = isProduction ? null : detectDevHost();
+const devApiPort = extra.devApiPort || 8088;
+
+// L'IP détectée l'emporte sur la valeur du .env, qui ne sert plus que de
+// repli lorsque Metro n'expose pas d'hôte (build autonome, simulateur).
+const devApiUrl = devHost
+  ? `http://${devHost}:${devApiPort}/api/v1`
+  : extra.apiUrl || 'http://localhost:8088/api/v1';
+
+const devWsUrl = devHost
+  ? `http://${devHost}:${devApiPort}`
+  : extra.wsUrl || 'http://localhost:8088';
+
+/**
  * Configuration de l'environnement
  */
 export const ENV = {
   // ============================================
   // API URLs
   // ============================================
-  API_URL: isProduction 
+  API_URL: isProduction
     ? (extra.apiProdUrl || 'https://api.salifz.com/api/v1')
-    : (extra.apiUrl || 'http://192.168.1.4:8088/api/v1'),
-  
-  WS_URL: isProduction 
+    : devApiUrl,
+
+  WS_URL: isProduction
     ? (extra.wsProdUrl || 'wss://api.salifz.com')
-    : (extra.wsUrl || 'http://192.168.1.4:8088'),
+    : devWsUrl,
   
   // ============================================
   // Environment
@@ -45,7 +81,11 @@ export const ENV = {
   // ============================================
   // Feature Flags
   // ============================================
-  ENABLE_SIMULATION_MODE: extra.enableSimulationMode ?? true,
+  // Par défaut à `true` auparavant : une partie de l'application affichait
+  // donc des données simulées sans que rien ne le signale. Les simulations
+  // ayant été remplacées par de vraies données, le mode est désactivé par
+  // défaut et doit être demandé explicitement.
+  ENABLE_SIMULATION_MODE: extra.enableSimulationMode ?? false,
   ENABLE_ANALYTICS: extra.enableAnalytics ?? false,
   ENABLE_CRASH_REPORTING: extra.enableCrashReporting ?? false,
   
@@ -64,6 +104,11 @@ export const ENV = {
   // ============================================
   // Gamification
   // ============================================
+  // ⚠️ Valeurs d'affichage uniquement. L'économie du jeu (XP réellement
+  // accordé, cœurs consommés, rechargement) est calculée par le serveur, qui
+  // en est la seule source de vérité. Ces constantes servent à afficher un
+  // barème avant la réponse du serveur — elles ne doivent jamais servir à
+  // créditer quoi que ce soit côté client.
   XP_PER_VERSE: extra.xpPerVerse || 10,
   XP_PER_LESSON: extra.xpPerLesson || 50,
   MAX_HEARTS: extra.maxHearts || 5,
