@@ -86,7 +86,11 @@ services:
     depends_on:
       coturn-certs:
         condition: service_completed_successfully
-    command: ["-c", "/etc/coturn/turnserver.conf"]
+    command:
+      - "-c"
+      - "/etc/coturn/turnserver.conf"
+      # Fourni au démarrage plutôt qu'écrit dans le fichier versionné.
+      - "--static-auth-secret=${TURN_STATIC_SECRET:?TURN_STATIC_SECRET est obligatoire}"
 
   minio:
     image: minio/minio:latest

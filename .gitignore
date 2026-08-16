@@ -80,3 +80,6 @@ backendv2/uploads/
 # Application web
 web/node_modules/
 web/dist/
+
+# Certificats TURN (generes localement)
+infra/coturn/certs/

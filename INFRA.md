@@ -123,6 +123,13 @@ curl -s localhost:8088/api/v1/rtc/ice-servers -H "Authorization: Bearer <jeton>"
 # → "mode": "ephemeral", username "1786961955:<userId>", expire dans 12 h
 ```
 
+**Le secret TURN n'est pas versionné.** `static-auth-secret` n'apparaît pas
+dans `infra/coturn/turnserver.conf`, qui est suivi par git : il est passé au
+démarrage par docker-compose depuis `.env`. Un secret dans un fichier suivi
+est un secret public, et un relais TURN dont le secret fuite devient un proxy
+gratuit pour n'importe qui. Les certificats sont eux aussi générés localement
+et exclus du dépôt.
+
 **Clé privée TURN.** Une clé lisible par tous n'est plus une clé. coturn
 tourne en `nobody` : un conteneur d'initialisation recopie les certificats
 dans un volume avec `chown nobody:nogroup` et `chmod 640`, plutôt que d'ouvrir
