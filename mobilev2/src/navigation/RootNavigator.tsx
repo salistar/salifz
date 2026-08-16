@@ -70,6 +70,8 @@ import ConversationsListScreen from '../screens/chat/ConversationsListScreen';
 // ============ SETTINGS SCREENS ============
 import SettingsScreen from '../screens/settings/SettingsScreen';
 import SubscriptionsScreen from '../screens/settings/SubscriptionsScreen';
+import { useThemedStyles } from '../hooks/useThemedStyles';
+import { useTheme, ThemeColors, fixedColors } from '../contexts/ThemeContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -79,6 +81,9 @@ const Tab = createBottomTabNavigator();
 // ============================================
 
 function MainTabs() {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const { streak } = useGamificationStore();
   const [unreadMessages, setUnreadMessages] = useState(0);
 
@@ -127,15 +132,15 @@ function MainTabs() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#fff',
+          backgroundColor: colors.surface,
           borderTopWidth: 1,
-          borderTopColor: '#f0f0f0',
+          borderTopColor: colors.backgroundAlt,
           height: 65,
           paddingBottom: 10,
           paddingTop: 10,
         },
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: '#999',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
       }}
     >
@@ -212,6 +217,9 @@ function MainTabs() {
 // ============================================
 
 export default function RootNavigator() {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   return (
     <NavigationContainer>
       <Stack.Navigator 
@@ -280,7 +288,7 @@ export default function RootNavigator() {
 // STYLES
 // ============================================
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   streakTabIcon: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -289,7 +297,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -5,
     right: -12,
-    backgroundColor: '#FF6B35',
+    backgroundColor: fixedColors.streak,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -298,10 +306,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   streakBadgeActive: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
   },
   streakBadgeText: {
-    color: '#fff',
+    color: c.surface,
     fontSize: 10,
     fontWeight: 'bold',
   },
@@ -313,7 +321,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -5,
     right: -12,
-    backgroundColor: '#F44336',
+    backgroundColor: c.error,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -322,10 +330,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   messageBadgeActive: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
   },
   messageBadgeText: {
-    color: '#fff',
+    color: c.surface,
     fontSize: 10,
     fontWeight: 'bold',
   },

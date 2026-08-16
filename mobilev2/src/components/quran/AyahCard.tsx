@@ -11,6 +11,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 interface AyahCardProps {
   ayahNumber: number;
@@ -45,12 +47,15 @@ export const AyahCard: React.FC<AyahCardProps> = ({
   isPlaying = false,
   isRTL = true,
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const getStatusColor = (): string => {
     switch (status) {
-      case 'mastered': return '#4CAF50';
+      case 'mastered': return colors.primary;
       case 'memorized': return '#8BC34A';
-      case 'learning': return '#FF9800';
-      default: return '#E0E0E0';
+      case 'learning': return colors.warning;
+      default: return colors.border;
     }
   };
 
@@ -64,7 +69,7 @@ export const AyahCard: React.FC<AyahCardProps> = ({
   };
 
   return (
-    <TouchableOpacity
+    <TouchableOpacity accessible accessibilityRole="button"
       style={styles.container}
       onPress={onPress}
       activeOpacity={onPress ? 0.7 : 1}
@@ -77,27 +82,27 @@ export const AyahCard: React.FC<AyahCardProps> = ({
         
         <View style={styles.actions}>
           {onPlayAudio && (
-            <TouchableOpacity onPress={onPlayAudio} style={styles.actionButton}>
+            <TouchableOpacity accessible accessibilityRole="button" onPress={onPlayAudio} style={styles.actionButton}>
               <Ionicons
                 name={isPlaying ? 'pause-circle' : 'play-circle'}
                 size={28}
-                color={isPlaying ? '#4CAF50' : '#666'}
+                color={isPlaying ? colors.primary : colors.textSecondary}
               />
             </TouchableOpacity>
           )}
           
           {onBookmark && (
-            <TouchableOpacity onPress={onBookmark} style={styles.actionButton}>
+            <TouchableOpacity accessible accessibilityRole="button" onPress={onBookmark} style={styles.actionButton}>
               <Ionicons
                 name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
                 size={24}
-                color={isBookmarked ? '#FF9800' : '#666'}
+                color={isBookmarked ? colors.warning : colors.textSecondary}
               />
             </TouchableOpacity>
           )}
           
           <View style={[styles.statusIndicator, { backgroundColor: getStatusColor() }]}>
-            <Ionicons name={getStatusIcon() as any} size={16} color="#FFFFFF" />
+            <Ionicons name={getStatusIcon() as any} size={16} color={colors.onDeep} />
           </View>
         </View>
       </View>
@@ -127,7 +132,7 @@ export const AyahCard: React.FC<AyahCardProps> = ({
                 styles.confidenceFill,
                 {
                   width: `${confidence}%`,
-                  backgroundColor: confidence >= 80 ? '#4CAF50' : confidence >= 50 ? '#FF9800' : '#F44336',
+                  backgroundColor: confidence >= 80 ? colors.primary : confidence >= 50 ? colors.warning : colors.error,
                 },
               ]}
             />
@@ -139,9 +144,9 @@ export const AyahCard: React.FC<AyahCardProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -161,14 +166,14 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#E8F5E9',
+    backgroundColor: c.primarySoft,
     justifyContent: 'center',
     alignItems: 'center',
   },
   ayahNumberText: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#4CAF50',
+    color: c.primary,
   },
   actions: {
     flexDirection: 'row',
@@ -198,7 +203,7 @@ const styles = StyleSheet.create({
   },
   transliteration: {
     fontSize: 14,
-    color: '#666',
+    color: c.textSecondary,
     fontStyle: 'italic',
     marginBottom: 8,
   },
@@ -213,17 +218,17 @@ const styles = StyleSheet.create({
     marginTop: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
+    borderTopColor: c.backgroundAlt,
   },
   confidenceLabel: {
     fontSize: 12,
-    color: '#999',
+    color: c.textMuted,
     marginRight: 8,
   },
   confidenceBar: {
     flex: 1,
     height: 6,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: c.border,
     borderRadius: 3,
     overflow: 'hidden',
   },
@@ -234,7 +239,7 @@ const styles = StyleSheet.create({
   confidenceValue: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#666',
+    color: c.textSecondary,
     marginLeft: 8,
     minWidth: 35,
     textAlign: 'right',

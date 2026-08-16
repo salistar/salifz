@@ -15,6 +15,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[BiometricVerificationScreen.tsx]';
 
@@ -23,6 +25,9 @@ console.log(`${LOG_PREFIX} 📁 File loaded`);
 type BiometricType = 'fingerprint' | 'facial' | 'iris' | 'none';
 
 export default function BiometricVerificationScreen({ route, navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
   
   const { mode = 'verify', onSuccess, fallbackToPIN = true } = route.params || {};
@@ -235,17 +240,17 @@ export default function BiometricVerificationScreen({ route, navigation }: any) 
   };
 
   return (
-    <LinearGradient colors={['#1a1a2e', '#16213e', '#0f3460']} style={styles.container}>
+    <LinearGradient colors={[colors.canvasDeep, colors.canvasDeepAlt, colors.canvasDeepAlt]} style={styles.container}>
       <View style={styles.bgDecor1} />
       <View style={styles.bgDecor2} />
       
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => navigation.goBack()}>
         <Text style={styles.backIcon}>←</Text>
       </TouchableOpacity>
       
       <View style={styles.content}>
         <Animated.View style={[styles.iconContainer, { transform: [{ scale: pulseAnim }, { translateX: shakeAnim }] }]}>
-          <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.iconGradient}>
+          <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.iconGradient}>
             <Text style={styles.icon}>{getBiometricIcon()}</Text>
             {isAuthenticating && (
               <Animated.View style={[styles.scanLine, { transform: [{ translateY: scanLineAnim.interpolate({ inputRange: [0, 1], outputRange: [-60, 60] }) }] }]} />
@@ -267,13 +272,13 @@ export default function BiometricVerificationScreen({ route, navigation }: any) 
           </View>
         )}
         
-        <TouchableOpacity 
+        <TouchableOpacity accessible accessibilityRole="button" 
           style={[styles.authButton, isLocked && styles.authButtonDisabled]} 
           onPress={authenticate} 
           disabled={isLocked || isAuthenticating}
         >
           <LinearGradient 
-            colors={isLocked ? ['#666', '#444'] : [COLORS.primary, '#2E7D32']} 
+            colors={isLocked ? [colors.textSecondary, '#444'] : [colors.primary, colors.primaryDark]} 
             style={styles.authButtonGradient}
           >
             <Text style={styles.authButtonIcon}>{getBiometricIcon()}</Text>
@@ -285,7 +290,7 @@ export default function BiometricVerificationScreen({ route, navigation }: any) 
         </TouchableOpacity>
         
         {fallbackToPIN && (
-          <TouchableOpacity style={styles.fallbackButton} onPress={handleFallback}>
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.fallbackButton} onPress={handleFallback}>
             {/* ✅ AVANT: 'استخدام رمز PIN بدلاً من ذلك' */}
             <Text style={styles.fallbackText}>{t('biometric.usePINInstead')}</Text>
           </TouchableOpacity>
@@ -295,27 +300,27 @@ export default function BiometricVerificationScreen({ route, navigation }: any) 
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { flex: 1 },
   bgDecor1: { position: 'absolute', width: 300, height: 300, borderRadius: 150, backgroundColor: 'rgba(76, 175, 80, 0.05)', top: -100, right: -100 },
   bgDecor2: { position: 'absolute', width: 200, height: 200, borderRadius: 100, backgroundColor: 'rgba(76, 175, 80, 0.05)', bottom: -50, left: -50 },
   backButton: { position: 'absolute', top: 50, left: 20, zIndex: 10, padding: 10 },
-  backIcon: { color: '#fff', fontSize: 28 },
+  backIcon: { color: c.onDeep, fontSize: 28 },
   content: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 30 },
   iconContainer: { marginBottom: 30 },
   iconGradient: { width: 150, height: 150, borderRadius: 75, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' },
   icon: { fontSize: 70 },
   scanLine: { position: 'absolute', width: '100%', height: 3, backgroundColor: 'rgba(255,255,255,0.8)' },
-  title: { color: '#fff', fontSize: 28, fontWeight: 'bold', marginBottom: 10 },
+  title: { color: c.onDeep, fontSize: 28, fontWeight: 'bold', marginBottom: 10 },
   subtitle: { color: '#aaa', fontSize: 16, textAlign: 'center', marginBottom: 40 },
   lockedBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(244, 67, 54, 0.2)', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, marginBottom: 20 },
   lockedIcon: { fontSize: 18, marginRight: 8 },
-  lockedText: { color: '#F44336', fontSize: 14 },
+  lockedText: { color: c.error, fontSize: 14 },
   authButton: { width: '100%', borderRadius: 15, overflow: 'hidden', marginBottom: 20 },
   authButtonDisabled: { opacity: 0.5 },
   authButtonGradient: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16 },
   authButtonIcon: { fontSize: 24, marginRight: 10 },
-  authButtonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  authButtonText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   fallbackButton: { padding: 15 },
-  fallbackText: { color: COLORS.primary, fontSize: 14 },
+  fallbackText: { color: c.primary, fontSize: 14 },
 });

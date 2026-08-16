@@ -16,6 +16,8 @@ import { useAuthStore } from '../../stores';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 
 // ✅ Constante pour les logs
 const LOG_PREFIX = '[LeaderboardScreen.tsx]';
@@ -33,15 +35,18 @@ interface League {
 // ✅ AVANT: name: 'البرونزي' hardcodé
 // ✅ APRÈS: nameKey pour i18n
 const LEAGUES: League[] = [
-  { id: 'bronze', nameKey: 'leaderboard.leagues.bronze', nameEn: 'Bronze', icon: '🥉', color: '#CD7F32', minXP: 0 },
-  { id: 'silver', nameKey: 'leaderboard.leagues.silver', nameEn: 'Silver', icon: '🥈', color: '#C0C0C0', minXP: 1000 },
-  { id: 'gold', nameKey: 'leaderboard.leagues.gold', nameEn: 'Gold', icon: '🥇', color: '#FFD700', minXP: 5000 },
-  { id: 'platinum', nameKey: 'leaderboard.leagues.platinum', nameEn: 'Platinum', icon: '💎', color: '#E5E4E2', minXP: 15000 },
-  { id: 'diamond', nameKey: 'leaderboard.leagues.diamond', nameEn: 'Diamond', icon: '💠', color: '#B9F2FF', minXP: 30000 },
-  { id: 'master', nameKey: 'leaderboard.leagues.master', nameEn: 'Master', icon: '👑', color: '#9B59B6', minXP: 50000 },
+  { id: 'bronze', nameKey: 'leaderboard.leagues.bronze', nameEn: 'Bronze', icon: '🥉', color: fixedColors.bronze, minXP: 0 },
+  { id: 'silver', nameKey: 'leaderboard.leagues.silver', nameEn: 'Silver', icon: '🥈', color: fixedColors.silver, minXP: 1000 },
+  { id: 'gold', nameKey: 'leaderboard.leagues.gold', nameEn: 'Gold', icon: '🥇', color: fixedColors.gold, minXP: 5000 },
+  { id: 'platinum', nameKey: 'leaderboard.leagues.platinum', nameEn: 'Platinum', icon: '💎', color: fixedColors.silver, minXP: 15000 },
+  { id: 'diamond', nameKey: 'leaderboard.leagues.diamond', nameEn: 'Diamond', icon: '💠', color: fixedColors.diamond, minXP: 30000 },
+  { id: 'master', nameKey: 'leaderboard.leagues.master', nameEn: 'Master', icon: '👑', color: fixedColors.master, minXP: 50000 },
 ];
 
 export default function LeaderboardScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
   
   const { user } = useAuthStore();
@@ -152,7 +157,7 @@ export default function LeaderboardScreen({ navigation }: any) {
       {/* Tabs */}
       <View style={styles.tabsContainer}>
         {tabs.map((tab) => (
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             key={tab.id} 
             style={[styles.tab, activeTab === tab.id && styles.tabActive]} 
             onPress={() => handleTabChange(tab.id)}
@@ -212,12 +217,12 @@ export default function LeaderboardScreen({ navigation }: any) {
         {/* Zone Indicators */}
         <View style={styles.zoneIndicators}>
           <View style={styles.zoneIndicator}>
-            <View style={[styles.zoneDot, { backgroundColor: '#4CAF50' }]} />
+            <View style={[styles.zoneDot, { backgroundColor: colors.primary }]} />
             {/* ✅ AVANT: 'منطقة الصعود' */}
             <Text style={styles.zoneText}>{t('leaderboard.promotionZone')}</Text>
           </View>
           <View style={styles.zoneIndicator}>
-            <View style={[styles.zoneDot, { backgroundColor: '#F44336' }]} />
+            <View style={[styles.zoneDot, { backgroundColor: colors.error }]} />
             {/* ✅ AVANT: 'منطقة الهبوط' */}
             <Text style={styles.zoneText}>{t('leaderboard.relegationZone')}</Text>
           </View>
@@ -304,70 +309,70 @@ export default function LeaderboardScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   header: { paddingTop: 50, paddingBottom: 30, alignItems: 'center' },
   leagueIcon: { fontSize: 60 },
-  leagueName: { color: '#fff', fontSize: 28, fontWeight: 'bold', marginTop: 10 },
+  leagueName: { color: c.onDeep, fontSize: 28, fontWeight: 'bold', marginTop: 10 },
   leagueNameEn: { color: 'rgba(255,255,255,0.8)', fontSize: 14, marginTop: 2 },
   leagueSubtitle: { color: 'rgba(255,255,255,0.7)', marginTop: 10, fontSize: 12 },
   timerContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.2)', paddingHorizontal: 15, paddingVertical: 8, borderRadius: 20, marginTop: 15 },
   timerIcon: { fontSize: 14, marginRight: 5 },
-  timerText: { color: '#fff', fontSize: 12 },
-  tabsContainer: { flexDirection: 'row', backgroundColor: '#fff', marginHorizontal: 20, marginTop: -15, borderRadius: 15, padding: 5, elevation: 3 },
+  timerText: { color: c.onDeep, fontSize: 12 },
+  tabsContainer: { flexDirection: 'row', backgroundColor: c.surface, marginHorizontal: 20, marginTop: -15, borderRadius: 15, padding: 5, elevation: 3 },
   tab: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 12 },
-  tabActive: { backgroundColor: COLORS.primary },
+  tabActive: { backgroundColor: c.primary },
   tabIcon: { fontSize: 16, marginRight: 5 },
-  tabLabel: { color: '#666', fontWeight: '600' },
-  tabLabelActive: { color: '#fff' },
+  tabLabel: { color: c.textSecondary, fontWeight: '600' },
+  tabLabelActive: { color: c.onDeep },
   content: { padding: 20 },
   podium: { flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', marginBottom: 30, paddingTop: 40 },
   podiumItem: { alignItems: 'center', marginHorizontal: 8, width: 90 },
   podiumFirst: { marginBottom: 20 },
   crownContainer: { position: 'absolute', top: -35, zIndex: 10 },
   crownEmoji: { fontSize: 30 },
-  podiumAvatar: { width: 60, height: 60, borderRadius: 30, backgroundColor: '#E0E0E0', justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
-  podiumFirstAvatar: { width: 75, height: 75, borderRadius: 37.5, borderWidth: 3, borderColor: '#FFD700' },
-  podiumSecond: { borderWidth: 3, borderColor: '#C0C0C0' },
-  podiumThird: { borderWidth: 3, borderColor: '#CD7F32' },
+  podiumAvatar: { width: 60, height: 60, borderRadius: 30, backgroundColor: c.border, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
+  podiumFirstAvatar: { width: 75, height: 75, borderRadius: 37.5, borderWidth: 3, borderColor: fixedColors.gold },
+  podiumSecond: { borderWidth: 3, borderColor: fixedColors.silver },
+  podiumThird: { borderWidth: 3, borderColor: fixedColors.bronze },
   avatarEmoji: { fontSize: 28 },
-  podiumName: { fontWeight: 'bold', color: '#333', fontSize: 13, textAlign: 'center' },
-  podiumXp: { color: '#666', fontSize: 11, marginTop: 2 },
-  podiumBase: { backgroundColor: '#E0E0E0', paddingHorizontal: 20, paddingVertical: 5, borderRadius: 10, marginTop: 8 },
-  podiumBaseFirst: { backgroundColor: '#FFD700' },
-  podiumRank: { fontWeight: 'bold', color: '#333' },
+  podiumName: { fontWeight: 'bold', color: c.text, fontSize: 13, textAlign: 'center' },
+  podiumXp: { color: c.textSecondary, fontSize: 11, marginTop: 2 },
+  podiumBase: { backgroundColor: c.border, paddingHorizontal: 20, paddingVertical: 5, borderRadius: 10, marginTop: 8 },
+  podiumBaseFirst: { backgroundColor: fixedColors.gold },
+  podiumRank: { fontWeight: 'bold', color: c.text },
   podiumMedal: { fontSize: 28, marginTop: 8 },
   zoneIndicators: { flexDirection: 'row', justifyContent: 'center', marginBottom: 15 },
   zoneIndicator: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 15 },
   zoneDot: { width: 10, height: 10, borderRadius: 5, marginRight: 5 },
-  zoneText: { color: '#666', fontSize: 12 },
-  rankItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', padding: 15, borderRadius: 15, marginBottom: 10, elevation: 1 },
-  rankItemCurrent: { borderWidth: 2, borderColor: COLORS.primary, backgroundColor: '#E8F5E9' },
-  rankItemPromoted: { borderLeftWidth: 4, borderLeftColor: '#4CAF50' },
-  rankItemRelegated: { borderLeftWidth: 4, borderLeftColor: '#F44336' },
+  zoneText: { color: c.textSecondary, fontSize: 12 },
+  rankItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.surface, padding: 15, borderRadius: 15, marginBottom: 10, elevation: 1 },
+  rankItemCurrent: { borderWidth: 2, borderColor: c.primary, backgroundColor: c.primarySoft },
+  rankItemPromoted: { borderLeftWidth: 4, borderLeftColor: c.primary },
+  rankItemRelegated: { borderLeftWidth: 4, borderLeftColor: c.error },
   rankNumberContainer: { width: 40, alignItems: 'center' },
-  arrowUp: { color: '#4CAF50', fontSize: 10, marginBottom: -2 },
-  arrowDown: { color: '#F44336', fontSize: 10, marginBottom: -2 },
-  rankNumber: { fontSize: 16, fontWeight: 'bold', color: '#333' },
-  rankNumberPromoted: { color: '#4CAF50' },
-  rankNumberRelegated: { color: '#F44336' },
-  rankAvatar: { width: 45, height: 45, borderRadius: 22.5, backgroundColor: '#E0E0E0', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  arrowUp: { color: c.primary, fontSize: 10, marginBottom: -2 },
+  arrowDown: { color: c.error, fontSize: 10, marginBottom: -2 },
+  rankNumber: { fontSize: 16, fontWeight: 'bold', color: c.text },
+  rankNumberPromoted: { color: c.primary },
+  rankNumberRelegated: { color: c.error },
+  rankAvatar: { width: 45, height: 45, borderRadius: 22.5, backgroundColor: c.border, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
   rankInfo: { flex: 1 },
-  rankName: { fontWeight: 'bold', color: '#333', fontSize: 15 },
-  rankNameCurrent: { color: COLORS.primary },
-  rankLevel: { color: '#666', fontSize: 12, marginTop: 2 },
+  rankName: { fontWeight: 'bold', color: c.text, fontSize: 15 },
+  rankNameCurrent: { color: c.primary },
+  rankLevel: { color: c.textSecondary, fontSize: 12, marginTop: 2 },
   rankStats: { alignItems: 'flex-end' },
-  rankXp: { fontWeight: 'bold', color: COLORS.primary, fontSize: 14 },
-  rankStreak: { color: '#FF6B35', fontSize: 12, marginTop: 4 },
+  rankXp: { fontWeight: 'bold', color: c.primary, fontSize: 14 },
+  rankStreak: { color: fixedColors.streak, fontSize: 12, marginTop: 4 },
   emptyState: { alignItems: 'center', paddingVertical: 50 },
   emptyIcon: { fontSize: 60, marginBottom: 15 },
-  emptyTitle: { fontSize: 18, fontWeight: 'bold', color: '#333' },
-  emptySubtitle: { color: '#666', marginTop: 5 },
-  userRankBar: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.primary, padding: 15, paddingBottom: 30, elevation: 10 },
-  userRankNumber: { color: '#fff', fontSize: 20, fontWeight: 'bold', width: 50 },
+  emptyTitle: { fontSize: 18, fontWeight: 'bold', color: c.text },
+  emptySubtitle: { color: c.textSecondary, marginTop: 5 },
+  userRankBar: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', alignItems: 'center', backgroundColor: c.primary, padding: 15, paddingBottom: 30, elevation: 10 },
+  userRankNumber: { color: c.onDeep, fontSize: 20, fontWeight: 'bold', width: 50 },
   userRankAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center', marginRight: 10 },
   userRankAvatarEmoji: { fontSize: 20 },
-  userRankName: { color: '#fff', fontWeight: '600', flex: 1 },
+  userRankName: { color: c.onDeep, fontWeight: '600', flex: 1 },
   userRankStats: { alignItems: 'flex-end' },
-  userRankXp: { color: '#fff', fontWeight: 'bold', fontSize: 16 }
+  userRankXp: { color: c.onDeep, fontWeight: 'bold', fontSize: 16 }
 });

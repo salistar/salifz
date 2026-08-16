@@ -24,6 +24,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
@@ -51,6 +53,9 @@ interface Khatam {
 }
 
 const KhatamScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const { t, i18n } = useTranslation();
   const navigation = useNavigation<any>();
   const isRTL = i18n.language === 'ar';
@@ -151,13 +156,13 @@ const KhatamScreen: React.FC = () => {
     const progress = item.dashboard?.progress?.percentage || item.progress?.currentKhatamProgress || 0;
     
     return (
-      <TouchableOpacity
+      <TouchableOpacity accessible accessibilityRole="button"
         style={styles.khatamCard}
         onPress={() => navigation.navigate('KhatamDetail', { khatamId: item._id })}
         activeOpacity={0.8}
       >
         <LinearGradient
-          colors={item.type === 'group' ? ['#667eea', '#764ba2'] : ['#11998e', '#38ef7d']}
+          colors={item.type === 'group' ? [colors.accent, colors.accentDeep] : ['#11998e', '#38ef7d']}
           style={styles.cardGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -167,7 +172,7 @@ const KhatamScreen: React.FC = () => {
               <Ionicons 
                 name={item.type === 'group' ? 'people' : 'person'} 
                 size={20} 
-                color="#fff" 
+                color={colors.onDeep} 
               />
               <Text style={[styles.cardTitle, isRTL && styles.rtlText]}>{item.title}</Text>
             </View>
@@ -175,7 +180,7 @@ const KhatamScreen: React.FC = () => {
               <Ionicons 
                 name={item.readingMode === 'realtime' ? 'videocam' : 'book'} 
                 size={14} 
-                color="#fff" 
+                color={colors.onDeep} 
               />
               <Text style={styles.modeText}>
                 {item.readingMode === 'realtime' ? 'Live' : 'Offline'}
@@ -205,7 +210,7 @@ const KhatamScreen: React.FC = () => {
             </View>
             {item.readingConfig?.isInfinite && (
               <View style={styles.infiniteBadge}>
-                <Ionicons name="infinite" size={14} color="#fff" />
+                <Ionicons name="infinite" size={14} color={colors.onDeep} />
               </View>
             )}
           </View>
@@ -215,7 +220,7 @@ const KhatamScreen: React.FC = () => {
   };
 
   const renderUnitOption = (unit: string, label: string, labelAr: string) => (
-    <TouchableOpacity
+    <TouchableOpacity accessible accessibilityRole="button"
       key={unit}
       style={[
         styles.unitOption,
@@ -235,7 +240,7 @@ const KhatamScreen: React.FC = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#667eea" />
+        <ActivityIndicator size="large" color={colors.accent} />
         <Text style={styles.loadingText}>Loading Khatams...</Text>
       </View>
     );
@@ -245,23 +250,23 @@ const KhatamScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <LinearGradient
-        colors={['#667eea', '#764ba2']}
+        colors={[colors.accent, colors.accentDeep]}
         style={styles.header}
       >
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color="#fff" />
+        <TouchableOpacity accessible accessibilityRole="button" onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color={colors.onDeep} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>
           {isRTL ? 'ختم القرآن' : 'Khatam Quran'}
         </Text>
-        <TouchableOpacity onPress={() => setShowCreateModal(true)} style={styles.addButton}>
-          <Ionicons name="add-circle" size={28} color="#fff" />
+        <TouchableOpacity accessible accessibilityRole="button" onPress={() => setShowCreateModal(true)} style={styles.addButton}>
+          <Ionicons name="add-circle" size={28} color={colors.onDeep} />
         </TouchableOpacity>
       </LinearGradient>
 
       {/* Tabs */}
       <View style={styles.tabContainer}>
-        <TouchableOpacity
+        <TouchableOpacity accessible accessibilityRole="button"
           style={[styles.tab, activeTab === 'my' && styles.tabActive]}
           onPress={() => setActiveTab('my')}
         >
@@ -269,7 +274,7 @@ const KhatamScreen: React.FC = () => {
             {isRTL ? 'ختماتي' : 'My Khatams'}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        <TouchableOpacity accessible accessibilityRole="button"
           style={[styles.tab, activeTab === 'discover' && styles.tabActive]}
           onPress={() => setActiveTab('discover')}
         >
@@ -290,7 +295,7 @@ const KhatamScreen: React.FC = () => {
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Ionicons name="book-outline" size={64} color="#ccc" />
+            <Ionicons name="book-outline" size={64} color={colors.textMuted} />
             <Text style={styles.emptyText}>
               {activeTab === 'my' 
                 ? (isRTL ? 'لا توجد ختمات بعد' : 'No khatams yet')
@@ -298,7 +303,7 @@ const KhatamScreen: React.FC = () => {
               }
             </Text>
             {activeTab === 'my' && (
-              <TouchableOpacity
+              <TouchableOpacity accessible accessibilityRole="button"
                 style={styles.createButton}
                 onPress={() => setShowCreateModal(true)}
               >
@@ -350,20 +355,20 @@ const KhatamScreen: React.FC = () => {
               {/* Type */}
               <Text style={styles.inputLabel}>{isRTL ? 'النوع' : 'Type'}</Text>
               <View style={styles.typeContainer}>
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   style={[styles.typeButton, formData.type === 'solo' && styles.typeButtonActive]}
                   onPress={() => setFormData({ ...formData, type: 'solo' })}
                 >
-                  <Ionicons name="person" size={24} color={formData.type === 'solo' ? '#fff' : '#667eea'} />
+                  <Ionicons name="person" size={24} color={formData.type === 'solo' ? colors.surface : colors.accent} />
                   <Text style={[styles.typeButtonText, formData.type === 'solo' && styles.typeButtonTextActive]}>
                     {isRTL ? 'فردي' : 'Solo'}
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   style={[styles.typeButton, formData.type === 'group' && styles.typeButtonActive]}
                   onPress={() => setFormData({ ...formData, type: 'group' })}
                 >
-                  <Ionicons name="people" size={24} color={formData.type === 'group' ? '#fff' : '#667eea'} />
+                  <Ionicons name="people" size={24} color={formData.type === 'group' ? colors.surface : colors.accent} />
                   <Text style={[styles.typeButtonText, formData.type === 'group' && styles.typeButtonTextActive]}>
                     {isRTL ? 'جماعي' : 'Group'}
                   </Text>
@@ -373,20 +378,20 @@ const KhatamScreen: React.FC = () => {
               {/* Reading Mode */}
               <Text style={styles.inputLabel}>{isRTL ? 'طريقة القراءة' : 'Reading Mode'}</Text>
               <View style={styles.typeContainer}>
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   style={[styles.typeButton, formData.readingMode === 'offline' && styles.typeButtonActive]}
                   onPress={() => setFormData({ ...formData, readingMode: 'offline' })}
                 >
-                  <Ionicons name="book" size={24} color={formData.readingMode === 'offline' ? '#fff' : '#667eea'} />
+                  <Ionicons name="book" size={24} color={formData.readingMode === 'offline' ? colors.surface : colors.accent} />
                   <Text style={[styles.typeButtonText, formData.readingMode === 'offline' && styles.typeButtonTextActive]}>
                     {isRTL ? 'ذاتي' : 'Offline'}
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   style={[styles.typeButton, formData.readingMode === 'realtime' && styles.typeButtonActive]}
                   onPress={() => setFormData({ ...formData, readingMode: 'realtime' })}
                 >
-                  <Ionicons name="videocam" size={24} color={formData.readingMode === 'realtime' ? '#fff' : '#667eea'} />
+                  <Ionicons name="videocam" size={24} color={formData.readingMode === 'realtime' ? colors.surface : colors.accent} />
                   <Text style={[styles.typeButtonText, formData.readingMode === 'realtime' && styles.typeButtonTextActive]}>
                     {isRTL ? 'مباشر' : 'Live'}
                   </Text>
@@ -406,28 +411,28 @@ const KhatamScreen: React.FC = () => {
               {/* Amount per day */}
               <Text style={styles.inputLabel}>{isRTL ? 'الكمية اليومية' : 'Amount per Day'}</Text>
               <View style={styles.amountContainer}>
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   style={styles.amountButton}
                   onPress={() => setFormData({ ...formData, amountPerDay: Math.max(1, formData.amountPerDay - 1) })}
                 >
-                  <Ionicons name="remove" size={24} color="#667eea" />
+                  <Ionicons name="remove" size={24} color={colors.accent} />
                 </TouchableOpacity>
                 <Text style={styles.amountText}>{formData.amountPerDay}</Text>
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   style={styles.amountButton}
                   onPress={() => setFormData({ ...formData, amountPerDay: formData.amountPerDay + 1 })}
                 >
-                  <Ionicons name="add" size={24} color="#667eea" />
+                  <Ionicons name="add" size={24} color={colors.accent} />
                 </TouchableOpacity>
               </View>
               
               {/* Infinite toggle */}
-              <TouchableOpacity
+              <TouchableOpacity accessible accessibilityRole="button"
                 style={styles.infiniteToggle}
                 onPress={() => setFormData({ ...formData, isInfinite: !formData.isInfinite })}
               >
                 <View style={[styles.checkbox, formData.isInfinite && styles.checkboxActive]}>
-                  {formData.isInfinite && <Ionicons name="checkmark" size={16} color="#fff" />}
+                  {formData.isInfinite && <Ionicons name="checkmark" size={16} color={colors.onDeep} />}
                 </View>
                 <Text style={styles.infiniteText}>
                   {isRTL ? 'تكرار لا نهائي (ختمات متعددة)' : 'Infinite repeat (multiple khatams)'}
@@ -436,18 +441,18 @@ const KhatamScreen: React.FC = () => {
               
               {/* Actions */}
               <View style={styles.modalActions}>
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   style={styles.cancelButton}
                   onPress={() => setShowCreateModal(false)}
                 >
                   <Text style={styles.cancelButtonText}>{isRTL ? 'إلغاء' : 'Cancel'}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   style={styles.submitButton}
                   onPress={handleCreateKhatam}
                 >
                   <LinearGradient
-                    colors={['#667eea', '#764ba2']}
+                    colors={[colors.accent, colors.accentDeep]}
                     style={styles.submitGradient}
                   >
                     <Text style={styles.submitButtonText}>{isRTL ? 'إنشاء' : 'Create'}</Text>
@@ -462,21 +467,21 @@ const KhatamScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: c.surfaceAlt,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
+    backgroundColor: c.surfaceAlt,
   },
   loadingText: {
     marginTop: 12,
     fontSize: 16,
-    color: '#666',
+    color: c.textSecondary,
   },
   header: {
     flexDirection: 'row',
@@ -491,14 +496,14 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#fff',
+    color: c.onDeep,
   },
   addButton: {
     padding: 8,
   },
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     padding: 4,
     margin: 16,
     borderRadius: 12,
@@ -515,15 +520,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   tabActive: {
-    backgroundColor: '#667eea',
+    backgroundColor: c.accent,
   },
   tabText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666',
+    color: c.textSecondary,
   },
   tabTextActive: {
-    color: '#fff',
+    color: c.onDeep,
   },
   listContent: {
     padding: 16,
@@ -556,7 +561,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: c.onDeep,
     marginLeft: 8,
   },
   rtlText: {
@@ -573,7 +578,7 @@ const styles = StyleSheet.create({
   },
   modeText: {
     fontSize: 12,
-    color: '#fff',
+    color: c.onDeep,
     marginLeft: 4,
     fontWeight: '500',
   },
@@ -588,12 +593,12 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 4,
   },
   progressText: {
     fontSize: 14,
-    color: '#fff',
+    color: c.onDeep,
     fontWeight: '600',
     marginTop: 6,
     textAlign: 'right',
@@ -625,18 +630,18 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#999',
+    color: c.textMuted,
     marginTop: 16,
     marginBottom: 24,
   },
   createButton: {
-    backgroundColor: '#667eea',
+    backgroundColor: c.accent,
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 25,
   },
   createButtonText: {
-    color: '#fff',
+    color: c.onDeep,
     fontWeight: '600',
     fontSize: 16,
   },
@@ -647,7 +652,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -656,24 +661,24 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
     textAlign: 'center',
     marginBottom: 24,
   },
   inputLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666',
+    color: c.textSecondary,
     marginBottom: 8,
     marginTop: 16,
   },
   input: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: c.background,
     borderRadius: 12,
     padding: 14,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: c.border,
   },
   rtlInput: {
     textAlign: 'right',
@@ -694,20 +699,20 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#667eea',
-    backgroundColor: '#fff',
+    borderColor: c.accent,
+    backgroundColor: c.surface,
   },
   typeButtonActive: {
-    backgroundColor: '#667eea',
+    backgroundColor: c.accent,
   },
   typeButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#667eea',
+    color: c.accent,
     marginLeft: 8,
   },
   typeButtonTextActive: {
-    color: '#fff',
+    color: c.onDeep,
   },
   unitContainer: {
     flexDirection: 'row',
@@ -718,21 +723,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: c.backgroundAlt,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: c.border,
   },
   unitOptionActive: {
-    backgroundColor: '#667eea',
-    borderColor: '#667eea',
+    backgroundColor: c.accent,
+    borderColor: c.accent,
   },
   unitOptionText: {
     fontSize: 13,
-    color: '#666',
+    color: c.textSecondary,
     fontWeight: '500',
   },
   unitOptionTextActive: {
-    color: '#fff',
+    color: c.onDeep,
   },
   amountContainer: {
     flexDirection: 'row',
@@ -744,16 +749,16 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: c.backgroundAlt,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#667eea',
+    borderColor: c.accent,
   },
   amountText: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
     minWidth: 40,
     textAlign: 'center',
   },
@@ -762,7 +767,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
     padding: 12,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: c.surfaceAlt,
     borderRadius: 12,
   },
   checkbox: {
@@ -770,17 +775,17 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: '#667eea',
+    borderColor: c.accent,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
   },
   checkboxActive: {
-    backgroundColor: '#667eea',
+    backgroundColor: c.accent,
   },
   infiniteText: {
     fontSize: 14,
-    color: '#666',
+    color: c.textSecondary,
     flex: 1,
   },
   modalActions: {
@@ -800,7 +805,7 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#666',
+    color: c.textSecondary,
   },
   submitButton: {
     flex: 1,
@@ -814,7 +819,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
+    color: c.onDeep,
   },
 });
 

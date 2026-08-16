@@ -43,6 +43,8 @@ import { useAuthStore } from '../../stores';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[HalaqaDetailScreen.tsx]';
 
@@ -130,6 +132,9 @@ interface Halaqa {
 type TabType = 'activities' | 'members' | 'leaderboard';
 
 export default function HalaqaDetailScreen({ route, navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
   
   const { halaqaId, halaqaData } = route.params || {};
@@ -434,11 +439,11 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
             <Text style={styles.activityXPLabel}>{'XP'}</Text>
           </View>
           {!isCompleted ? (
-            <TouchableOpacity style={styles.completeButton} onPress={() => handleCompleteActivity(item)}>
-              <Ionicons name="checkmark" size={16} color="#fff" />
+            <TouchableOpacity accessible accessibilityRole="button" style={styles.completeButton} onPress={() => handleCompleteActivity(item)}>
+              <Ionicons name="checkmark" size={16} color={colors.onDeep} />
             </TouchableOpacity>
           ) : (
-            <Ionicons name="checkmark-circle" size={24} color={COLORS.primary} />
+            <Ionicons name="checkmark-circle" size={24} color={colors.primary} />
           )}
         </View>
       </View>
@@ -523,8 +528,8 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
         <Text style={styles.emptyIcon}>{msg.icon}</Text>
         <Text style={styles.emptyTitle}>{msg.title}</Text>
         {type === 'activities' && isAdminUser() && (
-          <TouchableOpacity style={styles.createActivityButton} onPress={() => setShowCreateActivityModal(true)}>
-            <Ionicons name="add" size={20} color="#fff" />
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.createActivityButton} onPress={() => setShowCreateActivityModal(true)}>
+            <Ionicons name="add" size={20} color={colors.onDeep} />
             {/* ✅ AVANT: 'إنشاء نشاط' */}
             <Text style={styles.createActivityButtonText}>{t('halaqaDetail.createActivity.button')}</Text>
           </TouchableOpacity>
@@ -539,8 +544,8 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
       return (
         <View>
           {isAdminUser() && (
-            <TouchableOpacity style={styles.addActivityButton} onPress={() => setShowCreateActivityModal(true)}>
-              <Ionicons name="add-circle" size={24} color={COLORS.primary} />
+            <TouchableOpacity accessible accessibilityRole="button" style={styles.addActivityButton} onPress={() => setShowCreateActivityModal(true)}>
+              <Ionicons name="add-circle" size={24} color={colors.primary} />
               {/* ✅ AVANT: 'إنشاء نشاط جديد' */}
               <Text style={styles.addActivityButtonText}>{t('halaqaDetail.createActivity.newButton')}</Text>
             </TouchableOpacity>
@@ -595,16 +600,16 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
-        <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color="#fff" />
+        <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={24} color={colors.onDeep} />
           </TouchableOpacity>
           {/* ✅ AVANT: 'تفاصيل الحلقة' */}
           <Text style={styles.headerTitle}>{t('halaqaDetail.title')}</Text>
           <View style={{ width: 40 }} />
         </LinearGradient>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           {/* ✅ AVANT: 'جاري التحميل...' */}
           <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
@@ -614,9 +619,9 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+      <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color={colors.onDeep} />
         </TouchableOpacity>
         <Text style={styles.headerTitle} numberOfLines={1}>{getName()}</Text>
         <View style={{ width: 40 }} />
@@ -624,7 +629,7 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
 
       <ScrollView
         style={styles.scrollView}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
       >
         {/* Header Content */}
         <View style={styles.headerContent}>
@@ -692,12 +697,12 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
           <View style={styles.inviteSection}>
             {/* ✅ AVANT: 'رمز الدعوة' */}
             <Text style={styles.inviteLabel}>{t('halaqaDetail.inviteCode.label')}</Text>
-            <TouchableOpacity onPress={copyInviteCode} style={styles.inviteCodeBox}>
+            <TouchableOpacity accessible accessibilityRole="button" onPress={copyInviteCode} style={styles.inviteCodeBox}>
               <Text style={styles.inviteCode}>{getInviteCode()}</Text>
-              <Ionicons name="copy-outline" size={20} color={COLORS.primary} />
+              <Ionicons name="copy-outline" size={20} color={colors.primary} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.shareButton} onPress={shareInviteCode}>
-              <Ionicons name="share-social-outline" size={18} color="#fff" />
+            <TouchableOpacity accessible accessibilityRole="button" style={styles.shareButton} onPress={shareInviteCode}>
+              <Ionicons name="share-social-outline" size={18} color={colors.onDeep} />
               {/* ✅ AVANT: 'مشاركة' */}
               <Text style={styles.shareButtonText}>{t('common.share')}</Text>
             </TouchableOpacity>
@@ -707,23 +712,23 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
           <View style={styles.actionsRow}>
             {/* Chat Button - Always visible if allowed */}
             {isChatAllowed() && (
-              <TouchableOpacity style={styles.chatButton} onPress={navigateToChat}>
-                <Ionicons name="chatbubbles-outline" size={18} color="#fff" />
+              <TouchableOpacity accessible accessibilityRole="button" style={styles.chatButton} onPress={navigateToChat}>
+                <Ionicons name="chatbubbles-outline" size={18} color={colors.onDeep} />
                 {/* ✅ AVANT: 'محادثة' */}
                 <Text style={styles.chatButtonText}>{t('halaqaDetail.chat')}</Text>
               </TouchableOpacity>
             )}
             
             {!isCreatorUser() && (
-              <TouchableOpacity style={styles.leaveButton} onPress={handleLeaveHalaqa}>
-                <Ionicons name="exit-outline" size={18} color="#F44336" />
+              <TouchableOpacity accessible accessibilityRole="button" style={styles.leaveButton} onPress={handleLeaveHalaqa}>
+                <Ionicons name="exit-outline" size={18} color={colors.error} />
                 {/* ✅ AVANT: 'مغادرة' */}
                 <Text style={styles.leaveButtonText}>{t('halaqaDetail.leave')}</Text>
               </TouchableOpacity>
             )}
             {isCreatorUser() && (
-              <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteHalaqa}>
-                <Ionicons name="trash-outline" size={18} color="#F44336" />
+              <TouchableOpacity accessible accessibilityRole="button" style={styles.deleteButton} onPress={handleDeleteHalaqa}>
+                <Ionicons name="trash-outline" size={18} color={colors.error} />
                 {/* ✅ AVANT: 'حذف' */}
                 <Text style={styles.deleteButtonText}>{t('common.delete')}</Text>
               </TouchableOpacity>
@@ -734,7 +739,7 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
         {/* Tabs */}
         <View style={styles.tabsContainer}>
           {(['activities', 'members', 'leaderboard'] as TabType[]).map((tab) => (
-            <TouchableOpacity
+            <TouchableOpacity accessible accessibilityRole="button"
               key={tab}
               style={[styles.tab, activeTab === tab && styles.activeTab]}
               onPress={() => setActiveTab(tab)}
@@ -742,7 +747,7 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
               <Ionicons
                 name={tab === 'activities' ? 'pulse-outline' : tab === 'members' ? 'people-outline' : 'trophy-outline'}
                 size={18}
-                color={activeTab === tab ? COLORS.primary : '#999'}
+                color={activeTab === tab ? colors.primary : colors.textMuted}
               />
               {/* ✅ AVANT: 'الأنشطة' / 'الأعضاء' / 'المتصدرين' */}
               <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
@@ -773,8 +778,8 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
               <View style={styles.modalHeader}>
                 {/* ✅ AVANT: 'إنشاء نشاط جديد' */}
                 <Text style={styles.modalTitle}>{t('halaqaDetail.createActivity.modalTitle')}</Text>
-                <TouchableOpacity onPress={() => setShowCreateActivityModal(false)}>
-                  <Ionicons name="close" size={24} color="#666" />
+                <TouchableOpacity accessible accessibilityRole="button" onPress={() => setShowCreateActivityModal(false)}>
+                  <Ionicons name="close" size={24} color={colors.textSecondary} />
                 </TouchableOpacity>
               </View>
 
@@ -782,7 +787,7 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
               <Text style={styles.sectionTitle}>{t('halaqaDetail.createActivity.typeLabel')}</Text>
               <View style={styles.activityTypesGrid}>
                 {ACTIVITY_TYPES.filter((actType) => getHalaqaActivityTypes().includes(actType.id)).map((type) => (
-                  <TouchableOpacity
+                  <TouchableOpacity accessible accessibilityRole="button"
                     key={type.id}
                     style={[
                       styles.activityTypeOption,
@@ -805,7 +810,7 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
                     <Text style={styles.activityTypeOptionXP}>{'+' + type.xpReward}</Text>
                     {selectedActivityType === type.id && (
                       <View style={styles.selectedCheck}>
-                        <Ionicons name="checkmark" size={12} color="#fff" />
+                        <Ionicons name="checkmark" size={12} color={colors.onDeep} />
                       </View>
                     )}
                   </TouchableOpacity>
@@ -818,7 +823,7 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
                 style={styles.input}
                 // ✅ AVANT: 'عنوان النشاط *'
                 placeholder={t('halaqaDetail.createActivity.titlePlaceholder')}
-                placeholderTextColor="#999"
+                placeholderTextColor={colors.textMuted}
                 value={activityTitle}
                 onChangeText={setActivityTitle}
                 maxLength={100}
@@ -827,7 +832,7 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
                 style={[styles.input, styles.textArea]}
                 // ✅ AVANT: 'وصف (اختياري)'
                 placeholder={t('halaqaDetail.createActivity.descriptionPlaceholder')}
-                placeholderTextColor="#999"
+                placeholderTextColor={colors.textMuted}
                 value={activityDescription}
                 onChangeText={setActivityDescription}
                 multiline
@@ -835,7 +840,7 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
               />
 
               <View style={styles.modalButtons}>
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   style={styles.cancelButton}
                   onPress={() => {
                     setShowCreateActivityModal(false);
@@ -847,16 +852,16 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
                   {/* ✅ AVANT: 'إلغاء' */}
                   <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   style={[styles.confirmButton, isCreatingActivity && styles.buttonDisabled]}
                   onPress={handleCreateActivity}
                   disabled={isCreatingActivity || !selectedActivityType || !activityTitle.trim()}
                 >
                   {isCreatingActivity ? (
-                    <ActivityIndicator size="small" color="#fff" />
+                    <ActivityIndicator size="small" color={colors.onDeep} />
                   ) : (
                     <>
-                      <Ionicons name="add" size={20} color="#fff" />
+                      <Ionicons name="add" size={20} color={colors.onDeep} />
                       {/* ✅ AVANT: 'إنشاء' */}
                       <Text style={styles.confirmButtonText}>{t('common.create')}</Text>
                     </>
@@ -871,120 +876,120 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 15, paddingHorizontal: 20 },
   backButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
-  headerTitle: { color: '#fff', fontSize: 18, fontWeight: 'bold', flex: 1, textAlign: 'center' },
+  headerTitle: { color: c.onDeep, fontSize: 18, fontWeight: 'bold', flex: 1, textAlign: 'center' },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { marginTop: 10, fontSize: 14, color: '#666' },
+  loadingText: { marginTop: 10, fontSize: 14, color: c.textSecondary },
   scrollView: { flex: 1 },
-  headerContent: { backgroundColor: '#fff', padding: 20, alignItems: 'center', borderBottomLeftRadius: 25, borderBottomRightRadius: 25, marginBottom: 10 },
-  halaqaAvatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: COLORS.primary, justifyContent: 'center', alignItems: 'center', marginBottom: 15, position: 'relative' },
-  halaqaAvatarText: { color: '#fff', fontSize: 32, fontWeight: 'bold' },
+  headerContent: { backgroundColor: c.surface, padding: 20, alignItems: 'center', borderBottomLeftRadius: 25, borderBottomRightRadius: 25, marginBottom: 10 },
+  halaqaAvatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center', marginBottom: 15, position: 'relative' },
+  halaqaAvatarText: { color: c.onDeep, fontSize: 32, fontWeight: 'bold' },
   adminCrown: { position: 'absolute', top: -8, right: -8 },
-  halaqaName: { fontSize: 24, fontWeight: 'bold', color: '#333', marginBottom: 5 },
-  halaqaDescription: { fontSize: 14, color: '#666', textAlign: 'center', marginBottom: 10 },
+  halaqaName: { fontSize: 24, fontWeight: 'bold', color: c.text, marginBottom: 5 },
+  halaqaDescription: { fontSize: 14, color: c.textSecondary, textAlign: 'center', marginBottom: 10 },
   creatorRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
-  creatorLabel: { fontSize: 13, color: '#999' },
-  creatorName: { fontSize: 13, color: '#666', fontWeight: '500' },
-  publicBadge: { fontSize: 12, color: COLORS.primary, marginLeft: 10 },
-  privateBadge: { fontSize: 12, color: '#FF9800', marginLeft: 10 },
+  creatorLabel: { fontSize: 13, color: c.textMuted },
+  creatorName: { fontSize: 13, color: c.textSecondary, fontWeight: '500' },
+  publicBadge: { fontSize: 12, color: c.primary, marginLeft: 10 },
+  privateBadge: { fontSize: 12, color: c.warning, marginLeft: 10 },
   activityTypesRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginBottom: 15 },
-  activityTypeBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f0f0f0', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 15, gap: 4 },
+  activityTypeBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.backgroundAlt, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 15, gap: 4 },
   activityTypeBadgeIcon: { fontSize: 14 },
-  activityTypeBadgeName: { fontSize: 11, color: '#666' },
-  statsContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f8f8f8', borderRadius: 15, padding: 15, marginBottom: 20, width: '100%' },
+  activityTypeBadgeName: { fontSize: 11, color: c.textSecondary },
+  statsContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.surfaceAlt, borderRadius: 15, padding: 15, marginBottom: 20, width: '100%' },
   statItem: { flex: 1, alignItems: 'center' },
   statDivider: { width: 1, height: 30, backgroundColor: '#ddd' },
-  statValue: { fontSize: 20, fontWeight: 'bold', color: COLORS.primary },
-  statLabel: { fontSize: 11, color: '#666', marginTop: 2 },
+  statValue: { fontSize: 20, fontWeight: 'bold', color: c.primary },
+  statLabel: { fontSize: 11, color: c.textSecondary, marginTop: 2 },
   inviteSection: { alignItems: 'center', marginBottom: 15, width: '100%' },
-  inviteLabel: { fontSize: 12, color: '#999', marginBottom: 8 },
-  inviteCodeBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#f0f0f0', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10, marginBottom: 10 },
-  inviteCode: { fontSize: 22, fontWeight: 'bold', color: COLORS.primary, letterSpacing: 3, marginRight: 10 },
-  shareButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.primary, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, gap: 8 },
-  shareButtonText: { color: '#fff', fontWeight: '600' },
+  inviteLabel: { fontSize: 12, color: c.textMuted, marginBottom: 8 },
+  inviteCodeBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.backgroundAlt, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 10, marginBottom: 10 },
+  inviteCode: { fontSize: 22, fontWeight: 'bold', color: c.primary, letterSpacing: 3, marginRight: 10 },
+  shareButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.primary, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, gap: 8 },
+  shareButtonText: { color: c.onDeep, fontWeight: '600' },
   actionsRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 },
-  chatButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.primary, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, gap: 5 },
-  chatButtonText: { color: '#fff', fontWeight: '600' },
-  leaveButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFEBEE', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, gap: 5 },
-  leaveButtonText: { color: '#F44336', fontWeight: '600' },
-  deleteButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFEBEE', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, gap: 5 },
-  deleteButtonText: { color: '#F44336', fontWeight: '600' },
-  tabsContainer: { flexDirection: 'row', backgroundColor: '#fff', marginHorizontal: 15, borderRadius: 15, padding: 5, marginBottom: 10 },
+  chatButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.primary, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, gap: 5 },
+  chatButtonText: { color: c.onDeep, fontWeight: '600' },
+  leaveButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.errorSoft, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, gap: 5 },
+  leaveButtonText: { color: c.error, fontWeight: '600' },
+  deleteButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.errorSoft, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, gap: 5 },
+  deleteButtonText: { color: c.error, fontWeight: '600' },
+  tabsContainer: { flexDirection: 'row', backgroundColor: c.surface, marginHorizontal: 15, borderRadius: 15, padding: 5, marginBottom: 10 },
   tab: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 10, gap: 5 },
-  activeTab: { backgroundColor: '#E8F5E9' },
-  tabText: { fontSize: 12, color: '#999', fontWeight: '500' },
-  activeTabText: { color: COLORS.primary, fontWeight: '600' },
+  activeTab: { backgroundColor: c.primarySoft },
+  tabText: { fontSize: 12, color: c.textMuted, fontWeight: '500' },
+  activeTabText: { color: c.primary, fontWeight: '600' },
   tabContent: { flex: 1, minHeight: 300 },
   listContent: { padding: 15 },
-  addActivityButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', marginHorizontal: 15, marginBottom: 10, padding: 15, borderRadius: 12, borderWidth: 2, borderColor: COLORS.primary, borderStyle: 'dashed', gap: 8 },
-  addActivityButtonText: { color: COLORS.primary, fontSize: 15, fontWeight: '600' },
-  activityItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', padding: 15, borderRadius: 12, marginBottom: 10 },
+  addActivityButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: c.surface, marginHorizontal: 15, marginBottom: 10, padding: 15, borderRadius: 12, borderWidth: 2, borderColor: c.primary, borderStyle: 'dashed', gap: 8 },
+  addActivityButtonText: { color: c.primary, fontSize: 15, fontWeight: '600' },
+  activityItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.surface, padding: 15, borderRadius: 12, marginBottom: 10 },
   activityItemCompleted: { opacity: 0.7 },
-  activityIcon: { width: 50, height: 50, borderRadius: 25, backgroundColor: '#E8F5E9', justifyContent: 'center', alignItems: 'center' },
-  activityIconCompleted: { backgroundColor: '#f0f0f0' },
+  activityIcon: { width: 50, height: 50, borderRadius: 25, backgroundColor: c.primarySoft, justifyContent: 'center', alignItems: 'center' },
+  activityIconCompleted: { backgroundColor: c.backgroundAlt },
   activityIconText: { fontSize: 22 },
   activityContent: { flex: 1, marginLeft: 12 },
-  activityTitle: { fontSize: 15, fontWeight: '600', color: '#333' },
-  activityDescription: { fontSize: 12, color: '#666', marginTop: 3 },
+  activityTitle: { fontSize: 15, fontWeight: '600', color: c.text },
+  activityDescription: { fontSize: 12, color: c.textSecondary, marginTop: 3 },
   activityMeta: { flexDirection: 'row', marginTop: 5, gap: 10 },
-  activityCreator: { fontSize: 10, color: '#999' },
-  activityTime: { fontSize: 10, color: '#999' },
+  activityCreator: { fontSize: 10, color: c.textMuted },
+  activityTime: { fontSize: 10, color: c.textMuted },
   activityRight: { alignItems: 'center', gap: 8 },
-  activityXP: { alignItems: 'center', backgroundColor: '#E8F5E9', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10 },
-  activityXPText: { fontSize: 14, fontWeight: 'bold', color: COLORS.primary },
-  activityXPLabel: { fontSize: 9, color: COLORS.primary },
-  completeButton: { backgroundColor: COLORS.primary, width: 30, height: 30, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
-  memberItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', padding: 15, borderRadius: 12, marginBottom: 10 },
-  memberAvatar: { width: 50, height: 50, borderRadius: 25, backgroundColor: COLORS.primary, justifyContent: 'center', alignItems: 'center', position: 'relative' },
-  memberAvatarText: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
-  memberAdminBadge: { position: 'absolute', bottom: -4, right: -4, backgroundColor: '#fff', borderRadius: 10, padding: 1 },
+  activityXP: { alignItems: 'center', backgroundColor: c.primarySoft, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10 },
+  activityXPText: { fontSize: 14, fontWeight: 'bold', color: c.primary },
+  activityXPLabel: { fontSize: 9, color: c.primary },
+  completeButton: { backgroundColor: c.primary, width: 30, height: 30, borderRadius: 15, justifyContent: 'center', alignItems: 'center' },
+  memberItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.surface, padding: 15, borderRadius: 12, marginBottom: 10 },
+  memberAvatar: { width: 50, height: 50, borderRadius: 25, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center', position: 'relative' },
+  memberAvatarText: { color: c.onDeep, fontSize: 20, fontWeight: 'bold' },
+  memberAdminBadge: { position: 'absolute', bottom: -4, right: -4, backgroundColor: c.surface, borderRadius: 10, padding: 1 },
   memberInfo: { flex: 1, marginLeft: 12 },
   memberNameRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  memberName: { fontSize: 16, fontWeight: '600', color: '#333' },
-  adminBadge: { backgroundColor: '#FFF3E0', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10 },
-  adminBadgeText: { fontSize: 10, color: '#FF9800', fontWeight: '600' },
-  memberStats: { fontSize: 12, color: '#999', marginTop: 3 },
-  leaderboardItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', padding: 15, borderRadius: 12, marginBottom: 10 },
-  rank1: { borderWidth: 2, borderColor: '#FFD700' },
-  rank2: { borderWidth: 2, borderColor: '#C0C0C0' },
-  rank3: { borderWidth: 2, borderColor: '#CD7F32' },
+  memberName: { fontSize: 16, fontWeight: '600', color: c.text },
+  adminBadge: { backgroundColor: c.warningSoft, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10 },
+  adminBadgeText: { fontSize: 10, color: c.warning, fontWeight: '600' },
+  memberStats: { fontSize: 12, color: c.textMuted, marginTop: 3 },
+  leaderboardItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.surface, padding: 15, borderRadius: 12, marginBottom: 10 },
+  rank1: { borderWidth: 2, borderColor: fixedColors.gold },
+  rank2: { borderWidth: 2, borderColor: fixedColors.silver },
+  rank3: { borderWidth: 2, borderColor: fixedColors.bronze },
   rankContainer: { width: 35, alignItems: 'center' },
-  rankText: { fontSize: 18, fontWeight: 'bold', color: '#666' },
-  leaderboardAvatar: { width: 45, height: 45, borderRadius: 22.5, backgroundColor: COLORS.primary, justifyContent: 'center', alignItems: 'center', marginLeft: 10 },
-  leaderboardAvatarText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  rankText: { fontSize: 18, fontWeight: 'bold', color: c.textSecondary },
+  leaderboardAvatar: { width: 45, height: 45, borderRadius: 22.5, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center', marginLeft: 10 },
+  leaderboardAvatarText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   leaderboardInfo: { flex: 1, marginLeft: 12 },
-  leaderboardName: { fontSize: 16, fontWeight: '600', color: '#333' },
-  leaderboardActivities: { fontSize: 11, color: '#999', marginTop: 2 },
+  leaderboardName: { fontSize: 16, fontWeight: '600', color: c.text },
+  leaderboardActivities: { fontSize: 11, color: c.textMuted, marginTop: 2 },
   leaderboardXP: { alignItems: 'center' },
-  leaderboardXPValue: { fontSize: 18, fontWeight: 'bold', color: COLORS.primary },
-  leaderboardXPLabel: { fontSize: 10, color: '#999' },
+  leaderboardXPValue: { fontSize: 18, fontWeight: 'bold', color: c.primary },
+  leaderboardXPLabel: { fontSize: 10, color: c.textMuted },
   emptyState: { alignItems: 'center', padding: 40 },
   emptyIcon: { fontSize: 50, marginBottom: 15 },
-  emptyTitle: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 15 },
-  createActivityButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.primary, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 25, gap: 8 },
-  createActivityButtonText: { color: '#fff', fontWeight: '600' },
+  emptyTitle: { fontSize: 18, fontWeight: 'bold', color: c.text, marginBottom: 15 },
+  createActivityButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.primary, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 25, gap: 8 },
+  createActivityButtonText: { color: c.onDeep, fontWeight: '600' },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  modalContent: { backgroundColor: '#fff', borderTopLeftRadius: 25, borderTopRightRadius: 25, padding: 20, maxHeight: '85%' },
+  modalContent: { backgroundColor: c.surface, borderTopLeftRadius: 25, borderTopRightRadius: 25, padding: 20, maxHeight: '85%' },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  modalTitle: { fontSize: 20, fontWeight: 'bold', color: '#333' },
-  sectionTitle: { fontSize: 16, fontWeight: 'bold', color: '#333', marginTop: 15, marginBottom: 10 },
+  modalTitle: { fontSize: 20, fontWeight: 'bold', color: c.text },
+  sectionTitle: { fontSize: 16, fontWeight: 'bold', color: c.text, marginTop: 15, marginBottom: 10 },
   activityTypesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  activityTypeOption: { width: (width - 70) / 3, backgroundColor: '#f5f5f5', borderRadius: 12, padding: 12, alignItems: 'center', position: 'relative' },
-  activityTypeOptionSelected: { backgroundColor: '#E8F5E9', borderWidth: 2, borderColor: COLORS.primary },
+  activityTypeOption: { width: (width - 70) / 3, backgroundColor: c.background, borderRadius: 12, padding: 12, alignItems: 'center', position: 'relative' },
+  activityTypeOptionSelected: { backgroundColor: c.primarySoft, borderWidth: 2, borderColor: c.primary },
   activityTypeOptionIcon: { fontSize: 24, marginBottom: 5 },
-  activityTypeOptionName: { fontSize: 11, fontWeight: '600', color: '#666', textAlign: 'center' },
-  activityTypeOptionNameSelected: { color: COLORS.primary },
-  activityTypeOptionXP: { fontSize: 9, color: '#999', marginTop: 2 },
-  selectedCheck: { position: 'absolute', top: 5, right: 5, backgroundColor: COLORS.primary, borderRadius: 10, width: 18, height: 18, justifyContent: 'center', alignItems: 'center' },
-  input: { backgroundColor: '#f5f5f5', borderRadius: 12, padding: 15, fontSize: 16, marginBottom: 10, textAlign: 'right', color: '#333' },
+  activityTypeOptionName: { fontSize: 11, fontWeight: '600', color: c.textSecondary, textAlign: 'center' },
+  activityTypeOptionNameSelected: { color: c.primary },
+  activityTypeOptionXP: { fontSize: 9, color: c.textMuted, marginTop: 2 },
+  selectedCheck: { position: 'absolute', top: 5, right: 5, backgroundColor: c.primary, borderRadius: 10, width: 18, height: 18, justifyContent: 'center', alignItems: 'center' },
+  input: { backgroundColor: c.background, borderRadius: 12, padding: 15, fontSize: 16, marginBottom: 10, textAlign: 'right', color: c.text },
   textArea: { height: 80, textAlignVertical: 'top' },
   modalButtons: { flexDirection: 'row', gap: 10, marginTop: 20, marginBottom: 30 },
-  cancelButton: { flex: 1, paddingVertical: 15, borderRadius: 12, backgroundColor: '#f5f5f5', alignItems: 'center' },
-  cancelButtonText: { color: '#666', fontWeight: '600', fontSize: 16 },
-  confirmButton: { flex: 2, flexDirection: 'row', paddingVertical: 15, borderRadius: 12, backgroundColor: COLORS.primary, alignItems: 'center', justifyContent: 'center', gap: 5 },
-  confirmButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  cancelButton: { flex: 1, paddingVertical: 15, borderRadius: 12, backgroundColor: c.background, alignItems: 'center' },
+  cancelButtonText: { color: c.textSecondary, fontWeight: '600', fontSize: 16 },
+  confirmButton: { flex: 2, flexDirection: 'row', paddingVertical: 15, borderRadius: 12, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center', gap: 5 },
+  confirmButtonText: { color: c.onDeep, fontWeight: 'bold', fontSize: 16 },
   buttonDisabled: { opacity: 0.6 },
 });

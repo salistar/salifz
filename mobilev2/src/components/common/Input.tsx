@@ -15,6 +15,8 @@ import {
   TextInputProps,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 interface InputProps extends TextInputProps {
   label?: string;
@@ -41,6 +43,9 @@ export const Input: React.FC<InputProps> = ({
   secureTextEntry,
   ...props
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -63,12 +68,14 @@ export const Input: React.FC<InputProps> = ({
           <Ionicons
             name={leftIcon}
             size={20}
-            color={error ? '#F44336' : isFocused ? '#4CAF50' : '#9E9E9E'}
+            color={error ? colors.error : isFocused ? colors.primary : colors.textMuted}
             style={styles.leftIcon}
           />
         )}
         
         <TextInput
+        accessibilityLabel={label}
+        accessibilityHint={error || undefined}
           {...props}
           style={[
             styles.input,
@@ -80,24 +87,24 @@ export const Input: React.FC<InputProps> = ({
           secureTextEntry={isPassword && !showPassword}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          placeholderTextColor="#9E9E9E"
+          placeholderTextColor={colors.textMuted}
         />
         
         {isPassword && (
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={styles.rightIcon}
             onPress={() => setShowPassword(!showPassword)}
           >
             <Ionicons
               name={showPassword ? 'eye-off-outline' : 'eye-outline'}
               size={20}
-              color="#9E9E9E"
+              color={colors.textMuted}
             />
           </TouchableOpacity>
         )}
         
         {!isPassword && rightIcon && (
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={styles.rightIcon}
             onPress={onRightIconPress}
             disabled={!onRightIconPress}
@@ -105,7 +112,7 @@ export const Input: React.FC<InputProps> = ({
             <Ionicons
               name={rightIcon}
               size={20}
-              color={error ? '#F44336' : '#9E9E9E'}
+              color={error ? colors.error : colors.textMuted}
             />
           </TouchableOpacity>
         )}
@@ -122,36 +129,36 @@ export const Input: React.FC<InputProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     marginBottom: 16,
   },
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
     marginBottom: 8,
   },
   inputContainer: {
     position: 'relative',
     borderRadius: 12,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: c.background,
     borderWidth: 2,
     borderColor: 'transparent',
   },
   inputContainerFocused: {
-    borderColor: '#4CAF50',
-    backgroundColor: '#FFFFFF',
+    borderColor: c.primary,
+    backgroundColor: c.surface,
   },
   inputContainerError: {
-    borderColor: '#F44336',
+    borderColor: c.error,
     backgroundColor: '#FFF5F5',
   },
   input: {
     height: 50,
     paddingHorizontal: 16,
     fontSize: 16,
-    color: '#333',
+    color: c.text,
   },
   leftIcon: {
     position: 'absolute',
@@ -167,13 +174,13 @@ const styles = StyleSheet.create({
   },
   error: {
     fontSize: 12,
-    color: '#F44336',
+    color: c.error,
     marginTop: 4,
     marginLeft: 4,
   },
   hint: {
     fontSize: 12,
-    color: '#9E9E9E',
+    color: c.textMuted,
     marginTop: 4,
     marginLeft: 4,
   },

@@ -38,6 +38,8 @@ import { useAuthStore } from '../../stores';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[HalaqaScreen.tsx]';
 
@@ -98,6 +100,9 @@ interface Halaqa {
 type TabType = 'my' | 'public' | 'join';
 
 export default function HalaqaScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
   
   const { user } = useAuthStore();
@@ -416,7 +421,7 @@ export default function HalaqaScreen({ navigation }: any) {
     const isAdmin = isCreator(item);
 
     return (
-      <TouchableOpacity
+      <TouchableOpacity accessible accessibilityRole="button"
         style={styles.halaqaCard}
         onPress={() => isPublicList ? handleJoinPublicHalaqa(item) : navigateToHalaqaDetail(item)}
         activeOpacity={0.7}
@@ -470,7 +475,7 @@ export default function HalaqaScreen({ navigation }: any) {
             {isPublicHalaqa ? '🌍' : '🔒'}
           </Text>
           {isPublicList ? (
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               style={styles.joinButtonSmall}
               onPress={() => handleJoinPublicHalaqa(item)}
             >
@@ -478,7 +483,7 @@ export default function HalaqaScreen({ navigation }: any) {
               <Text style={styles.joinButtonSmallText}>{t('halaqa.join.button')}</Text>
             </TouchableOpacity>
           ) : (
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
+            <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
           )}
         </View>
       </TouchableOpacity>
@@ -514,11 +519,11 @@ export default function HalaqaScreen({ navigation }: any) {
         
         {type === 'my' && (
           <View style={styles.emptyActions}>
-            <TouchableOpacity style={styles.emptyButton} onPress={() => setShowCreateModal(true)}>
+            <TouchableOpacity accessible accessibilityRole="button" style={styles.emptyButton} onPress={() => setShowCreateModal(true)}>
               {/* ✅ AVANT: '➕ إنشاء حلقة' */}
               <Text style={styles.emptyButtonText}>{t('halaqa.empty.createButton')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.emptyButton, styles.emptyButtonSecondary]} onPress={() => setActiveTab('join')}>
+            <TouchableOpacity accessible accessibilityRole="button" style={[styles.emptyButton, styles.emptyButtonSecondary]} onPress={() => setActiveTab('join')}>
               {/* ✅ AVANT: '🔗 انضمام' */}
               <Text style={styles.emptyButtonTextSecondary}>{t('halaqa.empty.joinButton')}</Text>
             </TouchableOpacity>
@@ -537,7 +542,7 @@ export default function HalaqaScreen({ navigation }: any) {
       return (
         <ScrollView 
           contentContainerStyle={styles.emptyContainer}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
         >
           {renderEmptyState('my')}
         </ScrollView>
@@ -551,7 +556,7 @@ export default function HalaqaScreen({ navigation }: any) {
         keyExtractor={(item) => item._id}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
       />
     );
   };
@@ -561,7 +566,7 @@ export default function HalaqaScreen({ navigation }: any) {
       return (
         <ScrollView 
           contentContainerStyle={styles.emptyContainer}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
         >
           {renderEmptyState('public')}
         </ScrollView>
@@ -575,7 +580,7 @@ export default function HalaqaScreen({ navigation }: any) {
         keyExtractor={(item) => item._id}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
       />
     );
   };
@@ -584,7 +589,7 @@ export default function HalaqaScreen({ navigation }: any) {
     <ScrollView 
       style={styles.joinScrollView}
       contentContainerStyle={styles.joinContainer}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.joinCard}>
@@ -598,23 +603,23 @@ export default function HalaqaScreen({ navigation }: any) {
           style={styles.inviteCodeInput}
           // ✅ AVANT: 'مثال: ABC123'
           placeholder={t('halaqa.join.codePlaceholder')}
-          placeholderTextColor="#999"
+          placeholderTextColor={colors.textMuted}
           value={inviteCode}
           onChangeText={(text) => setInviteCode(text.toUpperCase())}
           autoCapitalize="characters"
           maxLength={10}
         />
         
-        <TouchableOpacity
+        <TouchableOpacity accessible accessibilityRole="button"
           style={[styles.joinButton, isJoining && styles.buttonDisabled]}
           onPress={handleJoinByCode}
           disabled={isJoining || !inviteCode.trim()}
         >
           {isJoining ? (
-            <ActivityIndicator size="small" color="#fff" />
+            <ActivityIndicator size="small" color={colors.onDeep} />
           ) : (
             <>
-              <Ionicons name="enter-outline" size={20} color="#fff" />
+              <Ionicons name="enter-outline" size={20} color={colors.onDeep} />
               {/* ✅ AVANT: 'انضمام' */}
               <Text style={styles.joinButtonText}>{t('halaqa.join.button')}</Text>
             </>
@@ -629,11 +634,11 @@ export default function HalaqaScreen({ navigation }: any) {
         <View style={styles.orLine} />
       </View>
       
-      <TouchableOpacity style={styles.browsePublicButton} onPress={() => setActiveTab('public')}>
+      <TouchableOpacity accessible accessibilityRole="button" style={styles.browsePublicButton} onPress={() => setActiveTab('public')}>
         <Text style={styles.browsePublicIcon}>{'🌍'}</Text>
         {/* ✅ AVANT: 'تصفح الحلقات العامة' */}
         <Text style={styles.browsePublicText}>{t('halaqa.join.browsePublic')}</Text>
-        <Ionicons name="arrow-forward" size={20} color={COLORS.primary} />
+        <Ionicons name="arrow-forward" size={20} color={colors.primary} />
       </TouchableOpacity>
     </ScrollView>
   );
@@ -655,8 +660,8 @@ export default function HalaqaScreen({ navigation }: any) {
             <View style={styles.createModalHeader}>
               {/* ✅ AVANT: 'إنشاء حلقة جديدة' */}
               <Text style={styles.createModalTitle}>{t('halaqa.create.title')}</Text>
-              <TouchableOpacity onPress={() => setShowCreateModal(false)}>
-                <Ionicons name="close" size={24} color="#666" />
+              <TouchableOpacity accessible accessibilityRole="button" onPress={() => setShowCreateModal(false)}>
+                <Ionicons name="close" size={24} color={colors.textSecondary} />
               </TouchableOpacity>
             </View>
             
@@ -667,7 +672,7 @@ export default function HalaqaScreen({ navigation }: any) {
               style={styles.input} 
               // ✅ AVANT: 'اسم الحلقة *'
               placeholder={t('halaqa.create.namePlaceholder')} 
-              placeholderTextColor="#999" 
+              placeholderTextColor={colors.textMuted} 
               value={newHalaqaName} 
               onChangeText={setNewHalaqaName} 
               maxLength={50} 
@@ -676,7 +681,7 @@ export default function HalaqaScreen({ navigation }: any) {
               style={[styles.input, styles.textArea]} 
               // ✅ AVANT: 'وصف الحلقة (اختياري)'
               placeholder={t('halaqa.create.descriptionPlaceholder')} 
-              placeholderTextColor="#999" 
+              placeholderTextColor={colors.textMuted} 
               value={newHalaqaDescription} 
               onChangeText={setNewHalaqaDescription} 
               multiline 
@@ -693,7 +698,7 @@ export default function HalaqaScreen({ navigation }: any) {
                 {/* ✅ AVANT: 'يمكن لأي شخص العثور عليها والانضمام' */}
                 <Text style={styles.settingDescription}>{t('halaqa.create.publicDescription')}</Text>
               </View>
-              <Switch value={isPublic} onValueChange={setIsPublic} trackColor={{ false: '#ddd', true: COLORS.primary + '50' }} thumbColor={isPublic ? COLORS.primary : '#999'} />
+              <Switch value={isPublic} onValueChange={setIsPublic} trackColor={{ false: '#ddd', true: colors.primary + '50' }} thumbColor={isPublic ? colors.primary : colors.textMuted} />
             </View>
             
             <View style={styles.settingRow}>
@@ -703,7 +708,7 @@ export default function HalaqaScreen({ navigation }: any) {
                 {/* ✅ AVANT: 'تفعيل الدردشة بين الأعضاء' */}
                 <Text style={styles.settingDescription}>{t('halaqa.create.allowChatDescription')}</Text>
               </View>
-              <Switch value={allowChat} onValueChange={setAllowChat} trackColor={{ false: '#ddd', true: COLORS.primary + '50' }} thumbColor={allowChat ? COLORS.primary : '#999'} />
+              <Switch value={allowChat} onValueChange={setAllowChat} trackColor={{ false: '#ddd', true: colors.primary + '50' }} thumbColor={allowChat ? colors.primary : colors.textMuted} />
             </View>
             
             <View style={styles.settingRow}>
@@ -713,7 +718,7 @@ export default function HalaqaScreen({ navigation }: any) {
                 {/* ✅ AVANT: 'السماح بالمكالمات الصوتية' */}
                 <Text style={styles.settingDescription}>{t('halaqa.create.allowVoiceDescription')}</Text>
               </View>
-              <Switch value={allowVoice} onValueChange={setAllowVoice} trackColor={{ false: '#ddd', true: COLORS.primary + '50' }} thumbColor={allowVoice ? COLORS.primary : '#999'} />
+              <Switch value={allowVoice} onValueChange={setAllowVoice} trackColor={{ false: '#ddd', true: colors.primary + '50' }} thumbColor={allowVoice ? colors.primary : colors.textMuted} />
             </View>
             
             <View style={styles.numberInputsRow}>
@@ -736,7 +741,7 @@ export default function HalaqaScreen({ navigation }: any) {
             
             <View style={styles.activityTypesGrid}>
               {ACTIVITY_TYPES_LIST.map((type) => (
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   key={type.id}
                   style={[styles.activityTypeItem, selectedActivityTypes.includes(type.id) && styles.activityTypeItemSelected]}
                   onPress={() => toggleActivityType(type.id)}
@@ -746,7 +751,7 @@ export default function HalaqaScreen({ navigation }: any) {
                   <Text style={styles.activityTypeItemXP}>{'+' + type.xpReward + ' XP'}</Text>
                   {selectedActivityTypes.includes(type.id) && (
                     <View style={styles.activityTypeCheck}>
-                      <Ionicons name="checkmark" size={14} color="#fff" />
+                      <Ionicons name="checkmark" size={14} color={colors.onDeep} />
                     </View>
                   )}
                 </TouchableOpacity>
@@ -754,17 +759,17 @@ export default function HalaqaScreen({ navigation }: any) {
             </View>
             
             <View style={styles.createModalButtons}>
-              <TouchableOpacity style={styles.cancelButton} onPress={() => setShowCreateModal(false)} disabled={isCreating}>
+              <TouchableOpacity accessible accessibilityRole="button" style={styles.cancelButton} onPress={() => setShowCreateModal(false)} disabled={isCreating}>
                 {/* ✅ AVANT: 'إلغاء' */}
                 <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
               </TouchableOpacity>
               
-              <TouchableOpacity style={[styles.createButton, isCreating && styles.buttonDisabled]} onPress={handleCreateHalaqa} disabled={isCreating}>
+              <TouchableOpacity accessible accessibilityRole="button" style={[styles.createButton, isCreating && styles.buttonDisabled]} onPress={handleCreateHalaqa} disabled={isCreating}>
                 {isCreating ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                  <ActivityIndicator size="small" color={colors.onDeep} />
                 ) : (
                   <>
-                    <Ionicons name="add" size={20} color="#fff" />
+                    <Ionicons name="add" size={20} color={colors.onDeep} />
                     {/* ✅ AVANT: 'إنشاء' */}
                     <Text style={styles.createButtonText}>{t('common.create')}</Text>
                   </>
@@ -779,20 +784,20 @@ export default function HalaqaScreen({ navigation }: any) {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+      <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color={colors.onDeep} />
         </TouchableOpacity>
         {/* ✅ AVANT: 'الحلقات' */}
         <Text style={styles.headerTitle}>{t('halaqa.title')}</Text>
-        <TouchableOpacity style={styles.addButton} onPress={() => setShowCreateModal(true)}>
-          <Ionicons name="add" size={24} color="#fff" />
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.addButton} onPress={() => setShowCreateModal(true)}>
+          <Ionicons name="add" size={24} color={colors.onDeep} />
         </TouchableOpacity>
       </LinearGradient>
 
       <View style={styles.tabsContainer}>
-        <TouchableOpacity style={[styles.tab, activeTab === 'my' && styles.activeTab]} onPress={() => setActiveTab('my')}>
-          <Ionicons name="people" size={18} color={activeTab === 'my' ? COLORS.primary : '#999'} />
+        <TouchableOpacity accessible accessibilityRole="button" style={[styles.tab, activeTab === 'my' && styles.activeTab]} onPress={() => setActiveTab('my')}>
+          <Ionicons name="people" size={18} color={activeTab === 'my' ? colors.primary : colors.textMuted} />
           {/* ✅ AVANT: 'حلقاتي' */}
           <Text style={[styles.tabText, activeTab === 'my' && styles.activeTabText]}>{t('halaqa.tabs.my')}</Text>
           {myHalaqat.length > 0 && (
@@ -800,14 +805,14 @@ export default function HalaqaScreen({ navigation }: any) {
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.tab, activeTab === 'public' && styles.activeTab]} onPress={() => setActiveTab('public')}>
-          <Ionicons name="globe" size={18} color={activeTab === 'public' ? COLORS.primary : '#999'} />
+        <TouchableOpacity accessible accessibilityRole="button" style={[styles.tab, activeTab === 'public' && styles.activeTab]} onPress={() => setActiveTab('public')}>
+          <Ionicons name="globe" size={18} color={activeTab === 'public' ? colors.primary : colors.textMuted} />
           {/* ✅ AVANT: 'عامة' */}
           <Text style={[styles.tabText, activeTab === 'public' && styles.activeTabText]}>{t('halaqa.tabs.public')}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.tab, activeTab === 'join' && styles.activeTab]} onPress={() => setActiveTab('join')}>
-          <Ionicons name="enter" size={18} color={activeTab === 'join' ? COLORS.primary : '#999'} />
+        <TouchableOpacity accessible accessibilityRole="button" style={[styles.tab, activeTab === 'join' && styles.activeTab]} onPress={() => setActiveTab('join')}>
+          <Ionicons name="enter" size={18} color={activeTab === 'join' ? colors.primary : colors.textMuted} />
           {/* ✅ AVANT: 'انضمام' */}
           <Text style={[styles.tabText, activeTab === 'join' && styles.activeTabText]}>{t('halaqa.tabs.join')}</Text>
         </TouchableOpacity>
@@ -815,7 +820,7 @@ export default function HalaqaScreen({ navigation }: any) {
 
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           {/* ✅ AVANT: 'جاري التحميل...' */}
           <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
@@ -830,95 +835,95 @@ export default function HalaqaScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 15, paddingHorizontal: 20 },
   backButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
+  headerTitle: { color: c.onDeep, fontSize: 20, fontWeight: 'bold' },
   addButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
-  tabsContainer: { flexDirection: 'row', backgroundColor: '#fff', marginHorizontal: 15, marginTop: 15, borderRadius: 15, padding: 5 },
+  tabsContainer: { flexDirection: 'row', backgroundColor: c.surface, marginHorizontal: 15, marginTop: 15, borderRadius: 15, padding: 5 },
   tab: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 10, gap: 5 },
-  activeTab: { backgroundColor: '#E8F5E9' },
-  tabText: { fontSize: 13, color: '#999', fontWeight: '500' },
-  activeTabText: { color: COLORS.primary, fontWeight: '600' },
-  tabBadge: { backgroundColor: COLORS.primary, borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2, marginLeft: 3 },
-  tabBadgeText: { color: '#fff', fontSize: 10, fontWeight: 'bold' },
+  activeTab: { backgroundColor: c.primarySoft },
+  tabText: { fontSize: 13, color: c.textMuted, fontWeight: '500' },
+  activeTabText: { color: c.primary, fontWeight: '600' },
+  tabBadge: { backgroundColor: c.primary, borderRadius: 10, paddingHorizontal: 6, paddingVertical: 2, marginLeft: 3 },
+  tabBadgeText: { color: c.onDeep, fontSize: 10, fontWeight: 'bold' },
   content: { flex: 1 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { marginTop: 10, fontSize: 14, color: '#666' },
+  loadingText: { marginTop: 10, fontSize: 14, color: c.textSecondary },
   listContent: { padding: 15, paddingBottom: 100 },
   emptyContainer: { flexGrow: 1, justifyContent: 'center' },
-  halaqaCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', padding: 15, borderRadius: 15, marginBottom: 10, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 },
-  halaqaAvatar: { width: 55, height: 55, borderRadius: 27.5, backgroundColor: COLORS.primary, justifyContent: 'center', alignItems: 'center', marginRight: 12, position: 'relative' },
-  halaqaAvatarText: { color: '#fff', fontSize: 22, fontWeight: 'bold' },
-  adminBadgeSmall: { position: 'absolute', bottom: -2, right: -2, backgroundColor: '#fff', borderRadius: 10, padding: 2 },
+  halaqaCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.surface, padding: 15, borderRadius: 15, marginBottom: 10, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 },
+  halaqaAvatar: { width: 55, height: 55, borderRadius: 27.5, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center', marginRight: 12, position: 'relative' },
+  halaqaAvatarText: { color: c.onDeep, fontSize: 22, fontWeight: 'bold' },
+  adminBadgeSmall: { position: 'absolute', bottom: -2, right: -2, backgroundColor: c.surface, borderRadius: 10, padding: 2 },
   adminBadgeSmallText: { fontSize: 12 },
   halaqaInfo: { flex: 1 },
   halaqaNameRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  halaqaName: { fontSize: 17, fontWeight: 'bold', color: '#333', flex: 1, textAlign: 'right' },
-  adminLabel: { fontSize: 10, color: '#FF9800', backgroundColor: '#FFF3E0', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8, fontWeight: '600' },
-  halaqaDescription: { fontSize: 13, color: '#666', marginTop: 2, textAlign: 'right' },
+  halaqaName: { fontSize: 17, fontWeight: 'bold', color: c.text, flex: 1, textAlign: 'right' },
+  adminLabel: { fontSize: 10, color: c.warning, backgroundColor: c.warningSoft, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8, fontWeight: '600' },
+  halaqaDescription: { fontSize: 13, color: c.textSecondary, marginTop: 2, textAlign: 'right' },
   activityTypesPreview: { flexDirection: 'row', marginTop: 5, gap: 3 },
   activityTypeIcon: { fontSize: 14 },
-  moreActivities: { fontSize: 10, color: '#999', marginLeft: 3 },
+  moreActivities: { fontSize: 10, color: c.textMuted, marginLeft: 3 },
   halaqaStats: { flexDirection: 'row', justifyContent: 'flex-end', gap: 15, marginTop: 5 },
-  halaqaStat: { fontSize: 12, color: '#999' },
+  halaqaStat: { fontSize: 12, color: c.textMuted },
   halaqaRight: { alignItems: 'center', marginLeft: 10 },
   halaqaBadgeText: { fontSize: 20, marginBottom: 5 },
-  joinButtonSmall: { backgroundColor: COLORS.primary, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 15, marginTop: 5 },
-  joinButtonSmallText: { color: '#fff', fontSize: 11, fontWeight: '600' },
+  joinButtonSmall: { backgroundColor: c.primary, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 15, marginTop: 5 },
+  joinButtonSmallText: { color: c.onDeep, fontSize: 11, fontWeight: '600' },
   emptyState: { alignItems: 'center', paddingVertical: 60, paddingHorizontal: 30 },
   emptyIcon: { fontSize: 60, marginBottom: 15 },
-  emptyTitle: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 8 },
-  emptyText: { fontSize: 14, color: '#666', textAlign: 'center', marginBottom: 20 },
+  emptyTitle: { fontSize: 18, fontWeight: 'bold', color: c.text, marginBottom: 8 },
+  emptyText: { fontSize: 14, color: c.textSecondary, textAlign: 'center', marginBottom: 20 },
   emptyActions: { flexDirection: 'row', gap: 10 },
-  emptyButton: { backgroundColor: COLORS.primary, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 25 },
-  emptyButtonSecondary: { backgroundColor: '#fff', borderWidth: 2, borderColor: COLORS.primary },
-  emptyButtonText: { color: '#fff', fontWeight: '600' },
-  emptyButtonTextSecondary: { color: COLORS.primary, fontWeight: '600' },
+  emptyButton: { backgroundColor: c.primary, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 25 },
+  emptyButtonSecondary: { backgroundColor: c.surface, borderWidth: 2, borderColor: c.primary },
+  emptyButtonText: { color: c.onDeep, fontWeight: '600' },
+  emptyButtonTextSecondary: { color: c.primary, fontWeight: '600' },
   joinContainer: { padding: 20 },
-  joinCard: { backgroundColor: '#fff', borderRadius: 20, padding: 25, alignItems: 'center' },
+  joinCard: { backgroundColor: c.surface, borderRadius: 20, padding: 25, alignItems: 'center' },
   joinIcon: { fontSize: 50, marginBottom: 15 },
-  joinTitle: { fontSize: 20, fontWeight: 'bold', color: '#333', marginBottom: 8 },
-  joinSubtitle: { fontSize: 14, color: '#666', textAlign: 'center', marginBottom: 20 },
-  inviteCodeInput: { backgroundColor: '#f5f5f5', borderRadius: 15, padding: 15, fontSize: 22, fontWeight: 'bold', textAlign: 'center', letterSpacing: 4, width: '100%', marginBottom: 15, color: '#333' },
-  joinButton: { flexDirection: 'row', backgroundColor: COLORS.primary, paddingHorizontal: 30, paddingVertical: 15, borderRadius: 25, alignItems: 'center', gap: 8 },
-  joinButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  joinTitle: { fontSize: 20, fontWeight: 'bold', color: c.text, marginBottom: 8 },
+  joinSubtitle: { fontSize: 14, color: c.textSecondary, textAlign: 'center', marginBottom: 20 },
+  inviteCodeInput: { backgroundColor: c.background, borderRadius: 15, padding: 15, fontSize: 22, fontWeight: 'bold', textAlign: 'center', letterSpacing: 4, width: '100%', marginBottom: 15, color: c.text },
+  joinButton: { flexDirection: 'row', backgroundColor: c.primary, paddingHorizontal: 30, paddingVertical: 15, borderRadius: 25, alignItems: 'center', gap: 8 },
+  joinButtonText: { color: c.onDeep, fontSize: 16, fontWeight: 'bold' },
   buttonDisabled: { opacity: 0.6 },
   orDivider: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
   orLine: { flex: 1, height: 1, backgroundColor: '#ddd' },
-  orText: { marginHorizontal: 15, color: '#999', fontSize: 14 },
-  browsePublicButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', padding: 20, borderRadius: 15, gap: 10 },
+  orText: { marginHorizontal: 15, color: c.textMuted, fontSize: 14 },
+  browsePublicButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.surface, padding: 20, borderRadius: 15, gap: 10 },
   browsePublicIcon: { fontSize: 24 },
-  browsePublicText: { flex: 1, fontSize: 16, fontWeight: '600', color: '#333' },
+  browsePublicText: { flex: 1, fontSize: 16, fontWeight: '600', color: c.text },
   joinScrollView: { flex: 1 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  createModalContent: { backgroundColor: '#fff', borderTopLeftRadius: 25, borderTopRightRadius: 25, padding: 20, maxHeight: '90%' },
+  createModalContent: { backgroundColor: c.surface, borderTopLeftRadius: 25, borderTopRightRadius: 25, padding: 20, maxHeight: '90%' },
   createModalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  createModalTitle: { fontSize: 22, fontWeight: 'bold', color: '#333' },
-  sectionTitle: { fontSize: 16, fontWeight: 'bold', color: '#333', marginTop: 20, marginBottom: 10 },
-  sectionSubtitle: { fontSize: 12, color: '#666', marginBottom: 10 },
-  input: { backgroundColor: '#f5f5f5', borderRadius: 12, padding: 15, fontSize: 16, marginBottom: 10, textAlign: 'right', color: '#333' },
+  createModalTitle: { fontSize: 22, fontWeight: 'bold', color: c.text },
+  sectionTitle: { fontSize: 16, fontWeight: 'bold', color: c.text, marginTop: 20, marginBottom: 10 },
+  sectionSubtitle: { fontSize: 12, color: c.textSecondary, marginBottom: 10 },
+  input: { backgroundColor: c.background, borderRadius: 12, padding: 15, fontSize: 16, marginBottom: 10, textAlign: 'right', color: c.text },
   textArea: { height: 80, textAlignVertical: 'top' },
-  settingRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
+  settingRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: c.backgroundAlt },
   settingInfo: { flex: 1, marginRight: 10 },
-  settingLabel: { fontSize: 15, fontWeight: '500', color: '#333' },
-  settingDescription: { fontSize: 12, color: '#999', marginTop: 2 },
+  settingLabel: { fontSize: 15, fontWeight: '500', color: c.text },
+  settingDescription: { fontSize: 12, color: c.textMuted, marginTop: 2 },
   numberInputsRow: { flexDirection: 'row', gap: 15, marginTop: 15 },
   numberInputContainer: { flex: 1 },
-  numberInputLabel: { fontSize: 13, color: '#666', marginBottom: 5 },
-  numberInput: { backgroundColor: '#f5f5f5', borderRadius: 12, padding: 12, fontSize: 16, textAlign: 'center', color: '#333' },
+  numberInputLabel: { fontSize: 13, color: c.textSecondary, marginBottom: 5 },
+  numberInput: { backgroundColor: c.background, borderRadius: 12, padding: 12, fontSize: 16, textAlign: 'center', color: c.text },
   activityTypesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
-  activityTypeItem: { width: (width - 70) / 3, backgroundColor: '#f5f5f5', borderRadius: 12, padding: 12, alignItems: 'center', position: 'relative' },
-  activityTypeItemSelected: { backgroundColor: '#E8F5E9', borderWidth: 2, borderColor: COLORS.primary },
+  activityTypeItem: { width: (width - 70) / 3, backgroundColor: c.background, borderRadius: 12, padding: 12, alignItems: 'center', position: 'relative' },
+  activityTypeItemSelected: { backgroundColor: c.primarySoft, borderWidth: 2, borderColor: c.primary },
   activityTypeItemIcon: { fontSize: 24, marginBottom: 5 },
-  activityTypeItemName: { fontSize: 11, fontWeight: '600', color: '#666', textAlign: 'center' },
-  activityTypeItemNameSelected: { color: COLORS.primary },
-  activityTypeItemXP: { fontSize: 9, color: '#999', marginTop: 2 },
-  activityTypeCheck: { position: 'absolute', top: 5, right: 5, backgroundColor: COLORS.primary, borderRadius: 10, width: 18, height: 18, justifyContent: 'center', alignItems: 'center' },
+  activityTypeItemName: { fontSize: 11, fontWeight: '600', color: c.textSecondary, textAlign: 'center' },
+  activityTypeItemNameSelected: { color: c.primary },
+  activityTypeItemXP: { fontSize: 9, color: c.textMuted, marginTop: 2 },
+  activityTypeCheck: { position: 'absolute', top: 5, right: 5, backgroundColor: c.primary, borderRadius: 10, width: 18, height: 18, justifyContent: 'center', alignItems: 'center' },
   createModalButtons: { flexDirection: 'row', gap: 10, marginTop: 10, marginBottom: 30 },
-  cancelButton: { flex: 1, paddingVertical: 15, borderRadius: 12, backgroundColor: '#f5f5f5', alignItems: 'center' },
-  cancelButtonText: { color: '#666', fontWeight: '600', fontSize: 16 },
-  createButton: { flex: 2, flexDirection: 'row', paddingVertical: 15, borderRadius: 12, backgroundColor: COLORS.primary, alignItems: 'center', justifyContent: 'center', gap: 5 },
-  createButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  cancelButton: { flex: 1, paddingVertical: 15, borderRadius: 12, backgroundColor: c.background, alignItems: 'center' },
+  cancelButtonText: { color: c.textSecondary, fontWeight: '600', fontSize: 16 },
+  createButton: { flex: 2, flexDirection: 'row', paddingVertical: 15, borderRadius: 12, backgroundColor: c.primary, alignItems: 'center', justifyContent: 'center', gap: 5 },
+  createButtonText: { color: c.onDeep, fontWeight: 'bold', fontSize: 16 },
 });

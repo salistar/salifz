@@ -37,6 +37,8 @@ import { socketService } from '../../services/socket';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t, getLocale } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[HalaqaChatScreen.tsx]';
 
@@ -60,6 +62,9 @@ interface TypingUser {
 }
 
 export default function HalaqaChatScreen({ route, navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
   
   const { halaqaId, halaqaName } = route.params || {};
@@ -455,7 +460,7 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <Ionicons name="chatbubbles-outline" size={60} color="#ccc" />
+      <Ionicons name="chatbubbles-outline" size={60} color={colors.textMuted} />
       {/* ✅ AVANT: 'لا توجد رسائل' */}
       <Text style={styles.emptyTitle}>{t('halaqaChat.empty.title')}</Text>
       {/* ✅ AVANT: 'كن أول من يبدأ المحادثة!' */}
@@ -466,9 +471,9 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
-      <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+      <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color={colors.onDeep} />
         </TouchableOpacity>
 
         <View style={styles.headerInfo}>
@@ -485,11 +490,11 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
           </View>
         </View>
 
-        <TouchableOpacity 
+        <TouchableOpacity accessible accessibilityRole="button" 
           style={styles.infoButton} 
           onPress={() => navigation.navigate('HalaqaDetail', { halaqaId })}
         >
-          <Ionicons name="information-circle-outline" size={24} color="#fff" />
+          <Ionicons name="information-circle-outline" size={24} color={colors.onDeep} />
         </TouchableOpacity>
       </LinearGradient>
 
@@ -501,7 +506,7 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
       >
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={COLORS.primary} />
+            <ActivityIndicator size="large" color={colors.primary} />
           </View>
         ) : (
           <FlatList
@@ -528,7 +533,7 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
               style={styles.input}
               // ✅ AVANT: 'اكتب رسالة...'
               placeholder={t('halaqaChat.input.placeholder')}
-              placeholderTextColor="#999"
+              placeholderTextColor={colors.textMuted}
               value={inputText}
               onChangeText={handleTyping}
               multiline
@@ -537,15 +542,15 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
             />
           </View>
 
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={[styles.sendButton, (!inputText.trim() || isSending) && styles.sendButtonDisabled]}
             onPress={handleSend}
             disabled={!inputText.trim() || isSending}
           >
             {isSending ? (
-              <ActivityIndicator size="small" color="#fff" />
+              <ActivityIndicator size="small" color={colors.onDeep} />
             ) : (
-              <Ionicons name="send" size={20} color="#fff" />
+              <Ionicons name="send" size={20} color={colors.onDeep} />
             )}
           </TouchableOpacity>
         </View>
@@ -554,10 +559,10 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: c.background,
   },
   header: {
     flexDirection: 'row',
@@ -578,7 +583,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   headerTitle: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -591,11 +596,11 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#999',
+    backgroundColor: c.textMuted,
     marginRight: 5,
   },
   statusDotOnline: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: c.primary,
   },
   statusText: {
     color: 'rgba(255,255,255,0.8)',
@@ -632,12 +637,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#999',
+    color: c.textMuted,
     marginTop: 15,
   },
   emptyText: {
     fontSize: 14,
-    color: '#999',
+    color: c.textMuted,
     marginTop: 5,
   },
   dateContainer: {
@@ -646,7 +651,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 12,
-    color: '#999',
+    color: c.textMuted,
     backgroundColor: '#e8e8e8',
     paddingHorizontal: 12,
     paddingVertical: 4,
@@ -658,7 +663,7 @@ const styles = StyleSheet.create({
   },
   systemMessageText: {
     fontSize: 12,
-    color: '#999',
+    color: c.textMuted,
     fontStyle: 'italic',
   },
   messageRow: {
@@ -676,12 +681,12 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   avatarText: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 14,
     fontWeight: 'bold',
   },
@@ -691,11 +696,11 @@ const styles = StyleSheet.create({
     borderRadius: 18,
   },
   myMessage: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
     borderBottomRightRadius: 4,
   },
   otherMessage: {
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderBottomLeftRadius: 4,
     elevation: 1,
     shadowColor: '#000',
@@ -706,17 +711,17 @@ const styles = StyleSheet.create({
   senderName: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: c.primary,
     marginBottom: 4,
   },
   messageText: {
     fontSize: 15,
-    color: '#333',
+    color: c.text,
     lineHeight: 22,
     textAlign: 'right',
   },
   myMessageText: {
-    color: '#fff',
+    color: c.onDeep,
   },
   verseContainer: {
     backgroundColor: 'rgba(0,0,0,0.1)',
@@ -726,13 +731,13 @@ const styles = StyleSheet.create({
   },
   verseText: {
     fontSize: 16,
-    color: '#333',
+    color: c.text,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
     textAlign: 'right',
   },
   messageTime: {
     fontSize: 10,
-    color: '#999',
+    color: c.textMuted,
     marginTop: 4,
     textAlign: 'right',
   },
@@ -753,7 +758,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#999',
+    backgroundColor: c.textMuted,
     marginHorizontal: 2,
   },
   dot1: {
@@ -767,20 +772,20 @@ const styles = StyleSheet.create({
   },
   typingText: {
     fontSize: 12,
-    color: '#999',
+    color: c.textMuted,
     fontStyle: 'italic',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     padding: 10,
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderTopWidth: 1,
     borderTopColor: '#eee',
   },
   inputWrapper: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: c.background,
     borderRadius: 20,
     paddingHorizontal: 15,
     paddingVertical: 8,
@@ -789,7 +794,7 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize: 16,
-    color: '#333',
+    color: c.text,
     textAlign: 'right',
     minHeight: 24,
     maxHeight: 80,
@@ -798,11 +803,11 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   sendButtonDisabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: c.textMuted,
   },
 });

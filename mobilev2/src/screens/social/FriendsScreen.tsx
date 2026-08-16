@@ -27,6 +27,8 @@ import { socialAPI, chatAPI } from '../../services/api';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[FriendsScreen.tsx]';
 
@@ -34,6 +36,9 @@ console.log(`${LOG_PREFIX} 📁 File loaded`);
 
 // Avatar component
 const Avatar = ({ avatar, size = 50, isOnline = false }: { avatar?: string; size?: number; isOnline?: boolean }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const avatarEmojis = ['👤', '👨', '👩', '🧑', '👦', '👧', '🧔', '👳', '👲', '🧕'];
   const index = avatar ? parseInt(avatar.replace('avatar_', '')) || 0 : 0;
   const emoji = avatarEmojis[index % avatarEmojis.length];
@@ -56,12 +61,15 @@ const Avatar = ({ avatar, size = 50, isOnline = false }: { avatar?: string; size
 
 // League badge component
 const LeagueBadge = ({ league }: { league?: string }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const badges: Record<string, { emoji: string; color: string }> = {
-    bronze: { emoji: '🥉', color: '#CD7F32' },
-    silver: { emoji: '🥈', color: '#C0C0C0' },
-    gold: { emoji: '🥇', color: '#FFD700' },
-    diamond: { emoji: '💎', color: '#B9F2FF' },
-    hafiz: { emoji: '👑', color: '#FFD700' }
+    bronze: { emoji: '🥉', color: fixedColors.bronze },
+    silver: { emoji: '🥈', color: fixedColors.silver },
+    gold: { emoji: '🥇', color: fixedColors.gold },
+    diamond: { emoji: '💎', color: fixedColors.diamond },
+    hafiz: { emoji: '👑', color: fixedColors.gold }
   };
   const badge = badges[league || 'bronze'];
   return <Text style={styles.leagueBadge}>{badge.emoji}</Text>;
@@ -114,6 +122,9 @@ interface SearchUser {
 }
 
 export default function FriendsScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
   
   const [activeTab, setActiveTab] = useState<'friends' | 'requests' | 'search'>('friends');
@@ -306,7 +317,7 @@ export default function FriendsScreen({ navigation }: any) {
 
   // Render friend item
   const renderFriendItem = (friend: Friend) => (
-    <TouchableOpacity
+    <TouchableOpacity accessible accessibilityRole="button"
       key={friend._id}
       style={styles.friendItem}
       onPress={() => handleViewProfile(friend._id)}
@@ -337,11 +348,11 @@ export default function FriendsScreen({ navigation }: any) {
         </View>
       </View>
       
-      <TouchableOpacity 
+      <TouchableOpacity accessible accessibilityRole="button" 
         style={styles.chatButton}
         onPress={() => handleStartChat(friend._id)}
       >
-        <Ionicons name="chatbubble-outline" size={22} color={COLORS.primary} />
+        <Ionicons name="chatbubble-outline" size={22} color={colors.primary} />
       </TouchableOpacity>
     </TouchableOpacity>
   );
@@ -373,14 +384,14 @@ export default function FriendsScreen({ navigation }: any) {
         </View>
         
         <View style={styles.requestActions}>
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={styles.acceptButton}
             onPress={() => handleAcceptRequest(userId, userName)}
           >
             {/* ✅ AVANT: 'قبول' */}
             <Text style={styles.acceptText}>{t('friends.actions.accept')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={styles.rejectButton}
             onPress={() => handleRejectRequest(userId)}
           >
@@ -427,7 +438,7 @@ export default function FriendsScreen({ navigation }: any) {
             <Text style={styles.sentText}>{t('friends.status.sent')}</Text>
           </View>
         ) : requestReceived ? (
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={styles.acceptButton}
             onPress={() => handleAcceptRequest(user._id, user.displayName || user.username)}
           >
@@ -435,11 +446,11 @@ export default function FriendsScreen({ navigation }: any) {
             <Text style={styles.acceptText}>{t('friends.actions.accept')}</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={styles.addButton}
             onPress={() => handleSendRequest(user._id, user.displayName || user.username)}
           >
-            <Ionicons name="person-add" size={18} color="#fff" />
+            <Ionicons name="person-add" size={18} color={colors.onDeep} />
             {/* ✅ AVANT: 'إضافة' */}
             <Text style={styles.addButtonText}>{t('friends.actions.add')}</Text>
           </TouchableOpacity>
@@ -460,7 +471,7 @@ export default function FriendsScreen({ navigation }: any) {
       <Text style={styles.emptyTitle}>{t(titleKey)}</Text>
       {subtitleKey && <Text style={styles.emptySubtitle}>{t(subtitleKey)}</Text>}
       {action && (
-        <TouchableOpacity style={styles.emptyButton} onPress={action.onPress}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.emptyButton} onPress={action.onPress}>
           <Text style={styles.emptyButtonText}>{t(action.labelKey)}</Text>
         </TouchableOpacity>
       )}
@@ -470,7 +481,7 @@ export default function FriendsScreen({ navigation }: any) {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
         {/* ✅ AVANT: 'جاري التحميل...' */}
         <Text style={styles.loadingText}>{t('common.loading')}</Text>
       </View>
@@ -480,12 +491,12 @@ export default function FriendsScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
-      <LinearGradient colors={['#2196F3', '#1565C0']} style={styles.header}>
-        <TouchableOpacity 
+      <LinearGradient colors={[colors.info, colors.infoStrong]} style={styles.header}>
+        <TouchableOpacity accessible accessibilityRole="button" 
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="arrow-back" size={24} color={colors.onDeep} />
         </TouchableOpacity>
         <Text style={styles.headerIcon}>👥</Text>
         {/* ✅ AVANT: 'الأصدقاء' */}
@@ -499,7 +510,7 @@ export default function FriendsScreen({ navigation }: any) {
       {/* Tabs */}
       <View style={styles.tabsContainer}>
         {tabs.map((tab) => (
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             key={tab.id}
             style={[styles.tab, activeTab === tab.id && styles.tabActive]}
             onPress={() => {
@@ -528,8 +539,8 @@ export default function FriendsScreen({ navigation }: any) {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            colors={[COLORS.primary]}
-            tintColor={COLORS.primary}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -576,12 +587,12 @@ export default function FriendsScreen({ navigation }: any) {
           <>
             <View style={styles.searchContainer}>
               <View style={styles.searchInputContainer}>
-                <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
+                <Ionicons name="search" size={20} color={colors.textMuted} style={styles.searchIcon} />
                 <TextInput
                   style={styles.searchInput}
                   // ✅ AVANT: 'ابحث باسم المستخدم...'
                   placeholder={t('friends.search.placeholder')}
-                  placeholderTextColor="#999"
+                  placeholderTextColor={colors.textMuted}
                   value={searchQuery}
                   onChangeText={setSearchQuery}
                   onSubmitEditing={handleSearch}
@@ -589,20 +600,20 @@ export default function FriendsScreen({ navigation }: any) {
                   autoCapitalize="none"
                 />
                 {searchQuery.length > 0 && (
-                  <TouchableOpacity onPress={() => setSearchQuery('')}>
-                    <Ionicons name="close-circle" size={20} color="#999" />
+                  <TouchableOpacity accessible accessibilityRole="button" onPress={() => setSearchQuery('')}>
+                    <Ionicons name="close-circle" size={20} color={colors.textMuted} />
                   </TouchableOpacity>
                 )}
               </View>
-              <TouchableOpacity 
+              <TouchableOpacity accessible accessibilityRole="button" 
                 style={[styles.searchButton, searching && styles.searchButtonDisabled]}
                 onPress={handleSearch}
                 disabled={searching}
               >
                 {searching ? (
-                  <ActivityIndicator size="small" color="#fff" />
+                  <ActivityIndicator size="small" color={colors.onDeep} />
                 ) : (
-                  <Ionicons name="search" size={22} color="#fff" />
+                  <Ionicons name="search" size={22} color={colors.onDeep} />
                 )}
               </TouchableOpacity>
             </View>
@@ -631,20 +642,20 @@ export default function FriendsScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: c.background,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: c.background,
   },
   loadingText: {
     marginTop: 10,
-    color: '#666',
+    color: c.textSecondary,
     fontSize: 14,
   },
   header: {
@@ -663,7 +674,7 @@ const styles = StyleSheet.create({
     fontSize: 50,
   },
   headerTitle: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 24,
     fontWeight: 'bold',
     marginTop: 10,
@@ -675,7 +686,7 @@ const styles = StyleSheet.create({
   },
   tabsContainer: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     marginHorizontal: 20,
     marginTop: -15,
     borderRadius: 15,
@@ -695,22 +706,22 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   tabActive: {
-    backgroundColor: '#2196F3',
+    backgroundColor: c.info,
   },
   tabIcon: {
     fontSize: 16,
     marginRight: 5,
   },
   tabLabel: {
-    color: '#666',
+    color: c.textSecondary,
     fontWeight: '600',
     fontSize: 13,
   },
   tabLabelActive: {
-    color: '#fff',
+    color: c.onDeep,
   },
   tabBadge: {
-    backgroundColor: '#2196F3',
+    backgroundColor: c.info,
     minWidth: 20,
     height: 20,
     borderRadius: 10,
@@ -720,10 +731,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   tabBadgeRed: {
-    backgroundColor: '#F44336',
+    backgroundColor: c.error,
   },
   tabBadgeText: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 11,
     fontWeight: 'bold',
   },
@@ -733,13 +744,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
     marginBottom: 15,
   },
   friendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     padding: 15,
     borderRadius: 15,
     marginBottom: 12,
@@ -750,7 +761,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   avatar: {
-    backgroundColor: '#E3F2FD',
+    backgroundColor: c.infoSoft,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -758,9 +769,9 @@ const styles = StyleSheet.create({
   },
   onlineIndicator: {
     position: 'absolute',
-    backgroundColor: '#4CAF50',
+    backgroundColor: c.primary,
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: c.surface,
   },
   friendInfo: {
     flex: 1,
@@ -772,14 +783,14 @@ const styles = StyleSheet.create({
   friendName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
     marginRight: 5,
   },
   leagueBadge: {
     fontSize: 14,
   },
   friendLevel: {
-    color: '#666',
+    color: c.textSecondary,
     fontSize: 12,
     marginTop: 2,
   },
@@ -788,13 +799,13 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   friendStreak: {
-    color: '#FF6B35',
+    color: fixedColors.streak,
     fontSize: 12,
     fontWeight: '600',
     marginRight: 10,
   },
   friendXP: {
-    color: '#2196F3',
+    color: c.info,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -802,14 +813,14 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#E3F2FD',
+    backgroundColor: c.infoSoft,
     justifyContent: 'center',
     alignItems: 'center',
   },
   requestItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     padding: 15,
     borderRadius: 15,
     marginBottom: 12,
@@ -823,30 +834,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   acceptButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: c.primary,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 10,
     marginRight: 8,
   },
   acceptText: {
-    color: '#fff',
+    color: c.onDeep,
     fontWeight: 'bold',
     fontSize: 13,
   },
   rejectButton: {
-    backgroundColor: '#FFEBEE',
+    backgroundColor: c.errorSoft,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 10,
   },
   rejectText: {
-    color: '#F44336',
+    color: c.error,
     fontWeight: 'bold',
     fontSize: 13,
   },
   addButton: {
-    backgroundColor: '#2196F3',
+    backgroundColor: c.info,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 10,
@@ -854,30 +865,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addButtonText: {
-    color: '#fff',
+    color: c.onDeep,
     fontWeight: 'bold',
     fontSize: 13,
     marginLeft: 5,
   },
   sentButton: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: c.border,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 10,
   },
   sentText: {
-    color: '#666',
+    color: c.textSecondary,
     fontWeight: '600',
     fontSize: 13,
   },
   alreadyFriendBadge: {
-    backgroundColor: '#E8F5E9',
+    backgroundColor: c.primarySoft,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 10,
   },
   alreadyFriendText: {
-    color: '#4CAF50',
+    color: c.primary,
     fontWeight: '600',
     fontSize: 13,
   },
@@ -889,7 +900,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 15,
     paddingHorizontal: 15,
     marginRight: 10,
@@ -906,11 +917,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 15,
     fontSize: 16,
-    color: '#333',
+    color: c.text,
     textAlign: 'right',
   },
   searchButton: {
-    backgroundColor: '#2196F3',
+    backgroundColor: c.info,
     width: 50,
     height: 50,
     borderRadius: 15,
@@ -936,23 +947,23 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
   },
   emptySubtitle: {
-    color: '#666',
+    color: c.textSecondary,
     marginTop: 8,
     textAlign: 'center',
     paddingHorizontal: 30,
   },
   emptyButton: {
-    backgroundColor: '#2196F3',
+    backgroundColor: c.info,
     paddingHorizontal: 25,
     paddingVertical: 12,
     borderRadius: 25,
     marginTop: 20,
   },
   emptyButtonText: {
-    color: '#fff',
+    color: c.onDeep,
     fontWeight: 'bold',
     fontSize: 14,
   },

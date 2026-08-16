@@ -13,6 +13,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ProgressBar } from '../common/ProgressBar';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 
 // ============================================
 // STREAK CARD
@@ -30,10 +32,13 @@ export const StreakCard: React.FC<StreakCardProps> = ({
   streakFreezes,
   onPress,
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.9}>
+    <TouchableOpacity accessible accessibilityRole="button" onPress={onPress} activeOpacity={0.9}>
       <LinearGradient
-        colors={['#FF6B35', '#FF9F1C']}
+        colors={[fixedColors.streak, fixedColors.streak]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.streakCard}
@@ -49,11 +54,11 @@ export const StreakCard: React.FC<StreakCardProps> = ({
 
         <View style={styles.streakStats}>
           <View style={styles.streakStat}>
-            <Ionicons name="trophy-outline" size={16} color="#FFF" />
+            <Ionicons name="trophy-outline" size={16} color={colors.onDeep} />
             <Text style={styles.streakStatText}>Best: {longestStreak}</Text>
           </View>
           <View style={styles.streakStat}>
-            <Ionicons name="snow-outline" size={16} color="#FFF" />
+            <Ionicons name="snow-outline" size={16} color={colors.onDeep} />
             <Text style={styles.streakStatText}>Freezes: {streakFreezes}</Text>
           </View>
         </View>
@@ -78,10 +83,13 @@ export const XPProgress: React.FC<XPProgressProps> = ({
   level,
   onPress,
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const progress = (currentXP / requiredXP) * 100;
 
   return (
-    <TouchableOpacity style={styles.xpContainer} onPress={onPress} activeOpacity={0.9}>
+    <TouchableOpacity accessible accessibilityRole="button" style={styles.xpContainer} onPress={onPress} activeOpacity={0.9}>
       <View style={styles.xpHeader}>
         <View style={styles.levelBadge}>
           <Text style={styles.levelText}>{level}</Text>
@@ -91,7 +99,7 @@ export const XPProgress: React.FC<XPProgressProps> = ({
           <Text style={styles.xpSubtitle}>{currentXP} / {requiredXP} XP</Text>
         </View>
         <View style={styles.xpNext}>
-          <Ionicons name="arrow-forward-circle" size={24} color="#4CAF50" />
+          <Ionicons name="arrow-forward-circle" size={24} color={colors.primary} />
         </View>
       </View>
       <ProgressBar progress={progress} height={8} variant="gradient" />
@@ -113,14 +121,17 @@ export const HeartsDisplay: React.FC<HeartsDisplayProps> = ({
   max,
   onPress,
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   return (
-    <TouchableOpacity style={styles.heartsContainer} onPress={onPress}>
+    <TouchableOpacity accessible accessibilityRole="button" style={styles.heartsContainer} onPress={onPress}>
       {Array.from({ length: max }).map((_, index) => (
         <Ionicons
           key={index}
           name={index < current ? 'heart' : 'heart-outline'}
           size={20}
-          color={index < current ? '#F44336' : '#CCC'}
+          color={index < current ? colors.error : colors.textMuted}
           style={styles.heartIcon}
         />
       ))}
@@ -137,8 +148,11 @@ interface GemsDisplayProps {
 }
 
 export const GemsDisplay: React.FC<GemsDisplayProps> = ({ amount, onPress }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   return (
-    <TouchableOpacity style={styles.gemsContainer} onPress={onPress}>
+    <TouchableOpacity accessible accessibilityRole="button" style={styles.gemsContainer} onPress={onPress}>
       <Text style={styles.gemIcon}>💎</Text>
       <Text style={styles.gemAmount}>{amount.toLocaleString()}</Text>
     </TouchableOpacity>
@@ -165,8 +179,11 @@ export const AchievementBadge: React.FC<AchievementBadgeProps> = ({
   unlocked,
   onPress,
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   return (
-    <TouchableOpacity
+    <TouchableOpacity accessible accessibilityRole="button"
       style={[styles.achievementContainer, !unlocked && styles.achievementLocked]}
       onPress={onPress}
       activeOpacity={0.8}
@@ -181,7 +198,7 @@ export const AchievementBadge: React.FC<AchievementBadgeProps> = ({
         </View>
       )}
       {unlocked && (
-        <Ionicons name="checkmark-circle" size={16} color="#4CAF50" />
+        <Ionicons name="checkmark-circle" size={16} color={colors.primary} />
       )}
     </TouchableOpacity>
   );
@@ -211,10 +228,13 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
   completed,
   onPress,
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const progress = (current / target) * 100;
 
   return (
-    <TouchableOpacity
+    <TouchableOpacity accessible accessibilityRole="button"
       style={[styles.challengeCard, completed && styles.challengeCompleted]}
       onPress={onPress}
       activeOpacity={0.8}
@@ -226,7 +246,7 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
         </View>
         {completed ? (
           <View style={styles.challengeCheckmark}>
-            <Ionicons name="checkmark-circle" size={28} color="#4CAF50" />
+            <Ionicons name="checkmark-circle" size={28} color={colors.primary} />
           </View>
         ) : (
           <View style={styles.challengeReward}>
@@ -245,7 +265,7 @@ export const ChallengeCard: React.FC<ChallengeCardProps> = ({
 
       {timeLeft && !completed && (
         <View style={styles.challengeTimeLeft}>
-          <Ionicons name="time-outline" size={14} color="#999" />
+          <Ionicons name="time-outline" size={14} color={colors.textMuted} />
           <Text style={styles.challengeTimeText}>{timeLeft}</Text>
         </View>
       )}
@@ -267,13 +287,16 @@ export const LeagueBadge: React.FC<LeagueBadgeProps> = ({
   rank,
   size = 'medium',
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const getLeagueConfig = () => {
     const configs = {
-      bronze: { color: '#CD7F32', icon: '🥉', name: 'Bronze' },
-      silver: { color: '#C0C0C0', icon: '🥈', name: 'Silver' },
-      gold: { color: '#FFD700', icon: '🥇', name: 'Gold' },
-      diamond: { color: '#B9F2FF', icon: '💎', name: 'Diamond' },
-      hafiz: { color: '#9C27B0', icon: '👑', name: 'Hafiz' },
+      bronze: { color: fixedColors.bronze, icon: '🥉', name: 'Bronze' },
+      silver: { color: fixedColors.silver, icon: '🥈', name: 'Silver' },
+      gold: { color: fixedColors.gold, icon: '🥇', name: 'Gold' },
+      diamond: { color: fixedColors.diamond, icon: '💎', name: 'Diamond' },
+      hafiz: { color: colors.accentDeep, icon: '👑', name: 'Hafiz' },
     };
     return configs[league];
   };
@@ -293,7 +316,7 @@ export const LeagueBadge: React.FC<LeagueBadgeProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   // Streak Card
   streakCard: {
     flexDirection: 'row',
@@ -319,7 +342,7 @@ const styles = StyleSheet.create({
   streakCount: {
     fontSize: 32,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: c.onDeep,
   },
   streakLabel: {
     fontSize: 14,
@@ -335,13 +358,13 @@ const styles = StyleSheet.create({
   },
   streakStatText: {
     fontSize: 12,
-    color: '#FFFFFF',
+    color: c.onDeep,
     marginLeft: 4,
   },
 
   // XP Progress
   xpContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: c.surface,
     borderRadius: 12,
     padding: 16,
   },
@@ -354,14 +377,14 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#4CAF50',
+    backgroundColor: c.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   levelText: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: c.onDeep,
   },
   xpInfo: {
     flex: 1,
@@ -370,11 +393,11 @@ const styles = StyleSheet.create({
   xpTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
   },
   xpSubtitle: {
     fontSize: 12,
-    color: '#999',
+    color: c.textMuted,
   },
   xpNext: {},
 
@@ -391,7 +414,7 @@ const styles = StyleSheet.create({
   gemsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E3F2FD',
+    backgroundColor: c.infoSoft,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
@@ -402,7 +425,7 @@ const styles = StyleSheet.create({
   gemAmount: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#1976D2',
+    color: c.infoStrong,
     marginLeft: 4,
   },
 
@@ -419,12 +442,12 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: c.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
   achievementIconUnlocked: {
-    backgroundColor: '#E8F5E9',
+    backgroundColor: c.primarySoft,
   },
   achievementEmoji: {
     fontSize: 28,
@@ -432,7 +455,7 @@ const styles = StyleSheet.create({
   achievementName: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
     marginTop: 8,
     textAlign: 'center',
   },
@@ -443,13 +466,13 @@ const styles = StyleSheet.create({
 
   // Challenge
   challengeCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: c.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
   },
   challengeCompleted: {
-    backgroundColor: '#E8F5E9',
+    backgroundColor: c.primarySoft,
   },
   challengeHeader: {
     flexDirection: 'row',
@@ -462,11 +485,11 @@ const styles = StyleSheet.create({
   challengeTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
   },
   challengeDescription: {
     fontSize: 13,
-    color: '#666',
+    color: c.textSecondary,
     marginTop: 4,
   },
   challengeReward: {
@@ -475,11 +498,11 @@ const styles = StyleSheet.create({
   challengeXP: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#4CAF50',
+    color: c.primary,
   },
   challengeXPLabel: {
     fontSize: 10,
-    color: '#999',
+    color: c.textMuted,
   },
   challengeCheckmark: {},
   challengeProgressSection: {
@@ -488,7 +511,7 @@ const styles = StyleSheet.create({
   },
   challengeProgressText: {
     fontSize: 12,
-    color: '#666',
+    color: c.textSecondary,
     marginLeft: 8,
   },
   challengeTimeLeft: {
@@ -498,7 +521,7 @@ const styles = StyleSheet.create({
   },
   challengeTimeText: {
     fontSize: 12,
-    color: '#999',
+    color: c.textMuted,
     marginLeft: 4,
   },
 
@@ -511,7 +534,7 @@ const styles = StyleSheet.create({
   },
   leagueRank: {
     fontWeight: '600',
-    color: '#666',
+    color: c.textSecondary,
     marginTop: 2,
   },
 });

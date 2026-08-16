@@ -78,7 +78,7 @@ export const Card: React.FC<CardProps> = ({
 
     if (onPress) {
       return (
-        <TouchableOpacity onPress={onPress} activeOpacity={0.9}>
+        <TouchableOpacity accessible accessibilityRole="button" onPress={onPress} activeOpacity={0.9}>
           {gradientContent}
         </TouchableOpacity>
       );
@@ -89,7 +89,7 @@ export const Card: React.FC<CardProps> = ({
 
   if (onPress) {
     return (
-      <TouchableOpacity onPress={onPress} activeOpacity={0.9}>
+      <TouchableOpacity accessible accessibilityRole="button" onPress={onPress} activeOpacity={0.9}>
         {content}
       </TouchableOpacity>
     );

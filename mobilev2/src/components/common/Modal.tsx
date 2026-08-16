@@ -17,6 +17,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -41,6 +43,9 @@ export const Modal: React.FC<ModalProps> = ({
   closeOnBackdrop = true,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const getContainerStyle = (): ViewStyle => {
     switch (variant) {
       case 'bottom':
@@ -84,12 +89,12 @@ export const Modal: React.FC<ModalProps> = ({
                     <Text style={styles.title}>{title}</Text>
                   )}
                   {showCloseButton && (
-                    <TouchableOpacity
+                    <TouchableOpacity accessible accessibilityRole="button"
                       onPress={onClose}
                       style={styles.closeButton}
                       hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     >
-                      <Ionicons name="close" size={24} color="#666" />
+                      <Ionicons name="close" size={24} color={colors.textSecondary} />
                     </TouchableOpacity>
                   )}
                 </View>
@@ -110,7 +115,7 @@ export const Modal: React.FC<ModalProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   backdrop: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -128,21 +133,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   centerContent: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: c.surface,
     borderRadius: 20,
     width: '100%',
     maxHeight: SCREEN_HEIGHT * 0.8,
     overflow: 'hidden',
   },
   bottomContent: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: c.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: SCREEN_HEIGHT * 0.9,
     overflow: 'hidden',
   },
   fullscreenContent: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: c.surface,
     width: '100%',
     height: '100%',
   },
@@ -152,12 +157,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: c.backgroundAlt,
   },
   title: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#333',
+    color: c.text,
     flex: 1,
   },
   closeButton: {

@@ -24,6 +24,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import * as Location from 'expo-location';
 import api from '../../services/api';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[PrayerTimes]';
 
@@ -72,6 +74,9 @@ const DEFAULT_TIMINGS: PrayerTimes = {
 };
 
 const PrayerTimesScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const { t, i18n } = useTranslation();
   const navigation = useNavigation<any>();
   const isRTL = i18n.language === 'ar';
@@ -477,7 +482,7 @@ const PrayerTimesScreen: React.FC = () => {
     const isCurrent = currentPrayer === name;
     
     return (
-      <TouchableOpacity
+      <TouchableOpacity accessible accessibilityRole="button"
         key={name}
         style={[
           styles.prayerCard,
@@ -490,7 +495,7 @@ const PrayerTimesScreen: React.FC = () => {
           <Ionicons
             name={getPrayerIcon(name) as any}
             size={28}
-            color={isNext ? '#667eea' : isCurrent ? '#6bcb77' : '#999'}
+            color={isNext ? colors.accent : isCurrent ? colors.primaryLight : colors.textMuted}
           />
         </View>
         <View style={styles.prayerInfo}>
@@ -520,7 +525,7 @@ const PrayerTimesScreen: React.FC = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#667eea" />
+        <ActivityIndicator size="large" color={colors.accent} />
         <Text style={styles.loadingText}>
           {isRTL ? 'جاري تحميل أوقات الصلاة...' : 'Loading prayer times...'}
         </Text>
@@ -530,15 +535,15 @@ const PrayerTimesScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['#667eea', '#764ba2']} style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color="#fff" />
+      <LinearGradient colors={[colors.accent, colors.accentDeep]} style={styles.header}>
+        <TouchableOpacity accessible accessibilityRole="button" onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color={colors.onDeep} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>
           {isRTL ? 'مواقيت الصلاة' : 'Prayer Times'}
         </Text>
-        <TouchableOpacity style={styles.qiblaButton} onPress={() => navigation.navigate('Qibla')}>
-          <Ionicons name="compass" size={24} color="#fff" />
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.qiblaButton} onPress={() => navigation.navigate('Qibla')}>
+          <Ionicons name="compass" size={24} color={colors.onDeep} />
         </TouchableOpacity>
       </LinearGradient>
 
@@ -555,7 +560,7 @@ const PrayerTimesScreen: React.FC = () => {
 
         {/* Next Prayer Countdown */}
         {nextPrayer && (
-          <LinearGradient colors={['#667eea', '#764ba2']} style={styles.countdownCard} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+          <LinearGradient colors={[colors.accent, colors.accentDeep]} style={styles.countdownCard} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
             <View style={styles.countdownHeader}>
               <Text style={styles.countdownLabel}>{isRTL ? 'الصلاة القادمة' : 'Next Prayer'}</Text>
               <Text style={styles.countdownPrayer}>
@@ -602,7 +607,7 @@ const PrayerTimesScreen: React.FC = () => {
 
         {/* Location Info */}
         <View style={styles.locationInfo}>
-          <Ionicons name="location" size={16} color="#999" />
+          <Ionicons name="location" size={16} color={colors.textMuted} />
           <Text style={styles.locationText}>
             {location ? `${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}` : 'Unknown'}
           </Text>
@@ -612,42 +617,42 @@ const PrayerTimesScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8f9fa' },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f8f9fa' },
-  loadingText: { marginTop: 12, fontSize: 16, color: '#666' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.surfaceAlt },
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: c.surfaceAlt },
+  loadingText: { marginTop: 12, fontSize: 16, color: c.textSecondary },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 16 },
   backButton: { padding: 8 },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#fff' },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: c.onDeep },
   qiblaButton: { padding: 8 },
-  dateCard: { backgroundColor: '#fff', margin: 16, marginBottom: 8, padding: 16, borderRadius: 12, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 2 },
-  hijriDate: { fontSize: 20, fontWeight: 'bold', color: '#667eea', marginBottom: 4 },
-  gregorianDate: { fontSize: 14, color: '#666' },
+  dateCard: { backgroundColor: c.surface, margin: 16, marginBottom: 8, padding: 16, borderRadius: 12, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 2 },
+  hijriDate: { fontSize: 20, fontWeight: 'bold', color: c.accent, marginBottom: 4 },
+  gregorianDate: { fontSize: 14, color: c.textSecondary },
   countdownCard: { margin: 16, marginTop: 8, padding: 24, borderRadius: 20, alignItems: 'center' },
   countdownHeader: { alignItems: 'center', marginBottom: 20 },
   countdownLabel: { fontSize: 14, color: 'rgba(255,255,255,0.8)', marginBottom: 4 },
-  countdownPrayer: { fontSize: 28, fontWeight: 'bold', color: '#fff' },
+  countdownPrayer: { fontSize: 28, fontWeight: 'bold', color: c.onDeep },
   countdownTimer: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
   timerUnit: { alignItems: 'center', minWidth: 60 },
-  timerValue: { fontSize: 48, fontWeight: 'bold', color: '#fff' },
+  timerValue: { fontSize: 48, fontWeight: 'bold', color: c.onDeep },
   timerLabel: { fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
-  timerSeparator: { fontSize: 40, fontWeight: 'bold', color: '#fff', marginHorizontal: 8 },
+  timerSeparator: { fontSize: 40, fontWeight: 'bold', color: c.onDeep, marginHorizontal: 8 },
   countdownTime: { fontSize: 14, color: 'rgba(255,255,255,0.9)' },
   prayersContainer: { padding: 16, paddingTop: 8 },
-  sectionTitle: { fontSize: 18, fontWeight: '600', color: '#333', marginBottom: 16 },
-  prayerCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', padding: 16, borderRadius: 12, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
-  prayerCardNext: { borderWidth: 2, borderColor: '#667eea', backgroundColor: '#f8f9ff' },
-  prayerCardCurrent: { borderLeftWidth: 4, borderLeftColor: '#6bcb77' },
-  prayerIconContainer: { width: 50, height: 50, borderRadius: 25, backgroundColor: '#f8f8f8', alignItems: 'center', justifyContent: 'center', marginRight: 14 },
+  sectionTitle: { fontSize: 18, fontWeight: '600', color: c.text, marginBottom: 16 },
+  prayerCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.surface, padding: 16, borderRadius: 12, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1 },
+  prayerCardNext: { borderWidth: 2, borderColor: c.accent, backgroundColor: '#f8f9ff' },
+  prayerCardCurrent: { borderLeftWidth: 4, borderLeftColor: c.primaryLight },
+  prayerIconContainer: { width: 50, height: 50, borderRadius: 25, backgroundColor: c.surfaceAlt, alignItems: 'center', justifyContent: 'center', marginRight: 14 },
   prayerInfo: { flex: 1 },
-  prayerName: { fontSize: 16, fontWeight: '600', color: '#333' },
-  prayerNameNext: { color: '#667eea' },
-  prayerNameCurrent: { color: '#6bcb77' },
-  nextLabel: { fontSize: 12, color: '#667eea', fontWeight: '500', marginTop: 2 },
-  prayerTime: { fontSize: 18, fontWeight: '600', color: '#333' },
-  prayerTimeNext: { color: '#667eea' },
+  prayerName: { fontSize: 16, fontWeight: '600', color: c.text },
+  prayerNameNext: { color: c.accent },
+  prayerNameCurrent: { color: c.primaryLight },
+  nextLabel: { fontSize: 12, color: c.accent, fontWeight: '500', marginTop: 2 },
+  prayerTime: { fontSize: 18, fontWeight: '600', color: c.text },
+  prayerTimeNext: { color: c.accent },
   locationInfo: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 16, gap: 6 },
-  locationText: { fontSize: 12, color: '#999' },
+  locationText: { fontSize: 12, color: c.textMuted },
 });
 
 export default PrayerTimesScreen;

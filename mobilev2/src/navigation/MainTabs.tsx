@@ -12,6 +12,8 @@ import HomeScreen from '../screens/main/HomeScreen';
 import LessonsScreen from '../screens/quran/LessonsScreen';
 import LeaderboardScreen from '../screens/gamification/LeaderboardScreen';
 import ProfileScreen from '../screens/main/ProfileScreen';
+import { useThemedStyles } from '../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../contexts/ThemeContext';
 
 const Tab = createBottomTabNavigator();
 
@@ -22,7 +24,10 @@ interface TabIconProps {
   badge?: number;
 }
 
-const TabIcon: React.FC<TabIconProps> = ({ name, focused, color, badge }) => (
+const TabIcon: React.FC<TabIconProps> = ({ name, focused, color, badge }) => {
+  const styles = useThemedStyles(makeStyles);
+
+  return (
   <View style={styles.iconContainer}>
     <Ionicons name={name} size={24} color={color} />
     {badge && badge > 0 && (
@@ -31,15 +36,19 @@ const TabIcon: React.FC<TabIconProps> = ({ name, focused, color, badge }) => (
       </View>
     )}
   </View>
-);
+  );
+};
 
 export const MainTabs: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#4CAF50',
-        tabBarInactiveTintColor: '#9E9E9E',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: styles.tabBar,
         tabBarLabelStyle: styles.tabBarLabel,
       }}
@@ -88,11 +97,11 @@ export const MainTabs: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   tabBar: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: c.surface,
     borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
+    borderTopColor: c.backgroundAlt,
     paddingTop: 8,
     paddingBottom: 8,
     height: 60,
@@ -109,7 +118,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -4,
     right: -8,
-    backgroundColor: '#F44336',
+    backgroundColor: c.error,
     borderRadius: 10,
     minWidth: 18,
     height: 18,
@@ -118,7 +127,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   badgeText: {
-    color: '#FFFFFF',
+    color: c.surface,
     fontSize: 10,
     fontWeight: '700',
   },

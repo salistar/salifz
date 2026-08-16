@@ -15,6 +15,8 @@ import { useAuthStore } from '../../stores';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[GoalSetupScreen.tsx]';
 const { width } = Dimensions.get('window');
@@ -54,6 +56,9 @@ const REMINDER_TIMES: ReminderTime[] = [
 ];
 
 export default function GoalSetupScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
   
   const { updateUser } = useAuthStore();
@@ -102,7 +107,7 @@ export default function GoalSetupScreen({ navigation }: any) {
   };
 
   return (
-    <LinearGradient colors={['#1a1a2e', '#16213e']} style={styles.container}>
+    <LinearGradient colors={[colors.canvasDeep, colors.canvasDeepAlt]} style={styles.container}>
       <View style={styles.progressContainer}>
         <View style={styles.progressBar}>
           <View style={[styles.progressFill, { width: step === 1 ? '50%' : '100%' }]} />
@@ -124,7 +129,7 @@ export default function GoalSetupScreen({ navigation }: any) {
           </View>
           <View style={styles.optionsContainer}>
             {DAILY_GOALS.map((goal) => (
-              <TouchableOpacity
+              <TouchableOpacity accessible accessibilityRole="button"
                 key={goal.id}
                 style={[styles.goalCard, selectedGoal === goal.id && styles.goalCardSelected]}
                 onPress={() => handleGoalSelect(goal.id)}
@@ -171,7 +176,7 @@ export default function GoalSetupScreen({ navigation }: any) {
           </View>
           <View style={styles.reminderContainer}>
             {REMINDER_TIMES.map((reminder) => (
-              <TouchableOpacity
+              <TouchableOpacity accessible accessibilityRole="button"
                 key={reminder.id}
                 style={[styles.reminderCard, selectedReminder === reminder.id && styles.reminderCardSelected]}
                 onPress={() => handleReminderSelect(reminder.id)}
@@ -188,7 +193,7 @@ export default function GoalSetupScreen({ navigation }: any) {
               </TouchableOpacity>
             ))}
           </View>
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={styles.skipReminder}
             onPress={() => {
               console.log(`${LOG_PREFIX} ⏭️ Skip reminder pressed`);
@@ -204,7 +209,7 @@ export default function GoalSetupScreen({ navigation }: any) {
 
       <View style={styles.bottomContainer}>
         {step === 2 && (
-          <TouchableOpacity style={styles.backButton} onPress={() => {
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => {
             console.log(`${LOG_PREFIX} ◀️ Back button pressed`);
             setStep(1);
           }}>
@@ -212,13 +217,13 @@ export default function GoalSetupScreen({ navigation }: any) {
             <Text style={styles.backButtonText}>← {t('common.back')}</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity
+        <TouchableOpacity accessible accessibilityRole="button"
           style={[styles.continueButton, (!selectedGoal && step === 1) && styles.continueButtonDisabled]}
           onPress={handleContinue}
           disabled={!selectedGoal && step === 1}
         >
           <LinearGradient
-            colors={(selectedGoal || step === 2) ? [COLORS.primary, '#2E7D32'] : ['#666', '#555']}
+            colors={(selectedGoal || step === 2) ? [colors.primary, colors.primaryDark] : [colors.textSecondary, '#555']}
             style={styles.continueButtonGradient}
           >
             <Text style={styles.continueButtonText}>
@@ -232,48 +237,48 @@ export default function GoalSetupScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { flex: 1 },
   progressContainer: { paddingTop: 50, paddingHorizontal: 25, marginBottom: 20 },
   progressBar: { height: 6, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 3, overflow: 'hidden' },
-  progressFill: { height: '100%', backgroundColor: '#4CAF50', borderRadius: 3 },
+  progressFill: { height: '100%', backgroundColor: c.primary, borderRadius: 3 },
   progressText: { color: '#aaa', textAlign: 'center', marginTop: 10, fontSize: 13 },
   content: { paddingHorizontal: 25, paddingBottom: 120 },
   header: { alignItems: 'center', marginBottom: 30 },
   headerEmoji: { fontSize: 60, marginBottom: 15 },
-  headerTitle: { fontSize: 26, fontWeight: 'bold', color: '#fff', marginBottom: 10 },
+  headerTitle: { fontSize: 26, fontWeight: 'bold', color: c.onDeep, marginBottom: 10 },
   headerSubtitle: { color: '#aaa', fontSize: 16 },
   optionsContainer: { marginBottom: 20 },
   goalCard: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 20, padding: 20, marginBottom: 15, flexDirection: 'row', alignItems: 'center', borderWidth: 2, borderColor: 'transparent' },
-  goalCardSelected: { borderColor: '#4CAF50', backgroundColor: 'rgba(76, 175, 80, 0.1)' },
+  goalCardSelected: { borderColor: c.primary, backgroundColor: 'rgba(76, 175, 80, 0.1)' },
   goalEmoji: { width: 60, height: 60, borderRadius: 30, backgroundColor: 'rgba(255,255,255,0.1)', justifyContent: 'center', alignItems: 'center' },
   goalEmojiText: { fontSize: 30 },
   goalInfo: { flex: 1, marginLeft: 15 },
-  goalLabel: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
-  goalAyahs: { color: '#4CAF50', marginTop: 3 },
-  goalTime: { color: '#666', fontSize: 12, marginTop: 2 },
+  goalLabel: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
+  goalAyahs: { color: c.primary, marginTop: 3 },
+  goalTime: { color: c.textSecondary, fontSize: 12, marginTop: 2 },
   goalDescription: { position: 'absolute', right: 15, bottom: 15 },
   goalDescText: { color: '#888', fontSize: 11 },
-  selectedBadge: { position: 'absolute', top: 15, right: 15, width: 25, height: 25, borderRadius: 12.5, backgroundColor: '#4CAF50', justifyContent: 'center', alignItems: 'center' },
-  selectedCheck: { color: '#fff', fontWeight: 'bold' },
+  selectedBadge: { position: 'absolute', top: 15, right: 15, width: 25, height: 25, borderRadius: 12.5, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center' },
+  selectedCheck: { color: c.onDeep, fontWeight: 'bold' },
   tipCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,193,7,0.1)', padding: 15, borderRadius: 12 },
   tipEmoji: { fontSize: 20, marginRight: 10 },
   tipText: { color: '#FFD54F', flex: 1 },
   reminderContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
   reminderCard: { width: (width - 60) / 2, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 15, padding: 20, alignItems: 'center', marginBottom: 15, borderWidth: 2, borderColor: 'transparent' },
-  reminderCardSelected: { borderColor: '#4CAF50', backgroundColor: 'rgba(76, 175, 80, 0.1)' },
+  reminderCardSelected: { borderColor: c.primary, backgroundColor: 'rgba(76, 175, 80, 0.1)' },
   reminderEmoji: { fontSize: 35, marginBottom: 10 },
-  reminderLabel: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  reminderLabel: { color: c.onDeep, fontSize: 16, fontWeight: '600' },
   reminderTime: { color: '#aaa', marginTop: 5 },
-  reminderCheck: { position: 'absolute', top: 10, right: 10, width: 22, height: 22, borderRadius: 11, backgroundColor: '#4CAF50', justifyContent: 'center', alignItems: 'center' },
-  checkText: { color: '#fff', fontWeight: 'bold', fontSize: 12 },
+  reminderCheck: { position: 'absolute', top: 10, right: 10, width: 22, height: 22, borderRadius: 11, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center' },
+  checkText: { color: c.onDeep, fontWeight: 'bold', fontSize: 12 },
   skipReminder: { alignItems: 'center', padding: 15 },
   skipReminderText: { color: '#aaa' },
-  bottomContainer: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', paddingHorizontal: 25, paddingBottom: 40, paddingTop: 15, backgroundColor: '#1a1a2e' },
+  bottomContainer: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', paddingHorizontal: 25, paddingBottom: 40, paddingTop: 15, backgroundColor: c.canvasDeep },
   backButton: { justifyContent: 'center', paddingRight: 15 },
   backButtonText: { color: '#aaa' },
   continueButton: { flex: 1, borderRadius: 15, overflow: 'hidden' },
   continueButtonDisabled: { opacity: 0.6 },
   continueButtonGradient: { paddingVertical: 18, alignItems: 'center' },
-  continueButtonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' }
+  continueButtonText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' }
 });

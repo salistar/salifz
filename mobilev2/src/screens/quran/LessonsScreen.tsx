@@ -24,6 +24,8 @@ import { useGamificationStore } from '../../stores';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[LessonsScreen.tsx]';
 const { width, height } = Dimensions.get('window');
@@ -151,6 +153,9 @@ export const SURAHS = [
 
 // Generate blocks (5 ayat each)
 export const getBlocks = (surahId: number) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const s = SURAHS.find(x => x.id === surahId);
   if (!s) return [];
   const blocks = [];
@@ -177,6 +182,9 @@ const DUOLINGO_COLORS = {
 };
 
 export default function LessonsScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Render`);
   
   const { hearts, maxHearts, streak } = useGamificationStore();
@@ -315,7 +323,7 @@ export default function LessonsScreen({ navigation }: any) {
     // Node colors based on status
     let bgColor = DUOLINGO_COLORS.gray;
     let borderColor = DUOLINGO_COLORS.grayLight;
-    let iconColor = '#fff';
+    let iconColor = colors.surface;
     
     if (status === 'done') {
       bgColor = DUOLINGO_COLORS.gold;
@@ -335,7 +343,7 @@ export default function LessonsScreen({ navigation }: any) {
           <View style={[styles.pathLine, { backgroundColor: status === 'lock' ? DUOLINGO_COLORS.grayLight : DUOLINGO_COLORS.green }]} />
         )}
         
-        <TouchableOpacity
+        <TouchableOpacity accessible accessibilityRole="button"
           style={[
             styles.pathNode,
             { backgroundColor: bgColor, borderColor, borderWidth: 4 },
@@ -345,7 +353,7 @@ export default function LessonsScreen({ navigation }: any) {
           disabled={status === 'lock'}
         >
           {status === 'lock' ? (
-            <Ionicons name="lock-closed" size={28} color="#666" />
+            <Ionicons name="lock-closed" size={28} color={colors.textSecondary} />
           ) : status === 'done' ? (
             <View style={styles.crownContainer}>
               <Text style={styles.crownEmoji}>👑</Text>
@@ -364,7 +372,7 @@ export default function LessonsScreen({ navigation }: any) {
         
         {/* Surah name label - Les noms de sourates restent en arabe */}
         <View style={[styles.nodeLabel, status === 'lock' && styles.nodeLabelLocked]}>
-          <Text style={[styles.nodeLabelText, status === 'lock' && { color: '#666' }]}>{surah.name}</Text>
+          <Text style={[styles.nodeLabelText, status === 'lock' && { color: colors.textSecondary }]}>{surah.name}</Text>
           {status === 'prog' && (
             <Text style={styles.nodeLabelPct}>{Math.round(pct)}%</Text>
           )}
@@ -381,7 +389,7 @@ export default function LessonsScreen({ navigation }: any) {
     const isComplete = pct >= 100;
     
     return (
-      <TouchableOpacity 
+      <TouchableOpacity accessible accessibilityRole="button" 
         key={juz} 
         style={[styles.juzCard, isComplete && styles.juzCardComplete]}
         onPress={() => setMode('path')}
@@ -409,7 +417,7 @@ export default function LessonsScreen({ navigation }: any) {
     const pct = total ? (done / total) * 100 : 0;
     
     return (
-      <TouchableOpacity 
+      <TouchableOpacity accessible accessibilityRole="button" 
         key={hizb} 
         style={[styles.hizbCard, pct >= 100 && styles.hizbCardComplete]}
         onPress={() => setMode('path')}
@@ -439,21 +447,21 @@ export default function LessonsScreen({ navigation }: any) {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <TouchableOpacity style={styles.headerIcon}>
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.headerIcon}>
             <Text style={styles.flagEmoji}>🇸🇦</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.streakBadge}>
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.streakBadge}>
             <Text style={styles.streakEmoji}>🔥</Text>
             <Text style={styles.streakText}>{streak || 0}</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.gemsBadge}>
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.gemsBadge}>
             <Text style={styles.gemsEmoji}>💎</Text>
             <Text style={styles.gemsText}>{stats.ayahs * 10}</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity style={styles.heartsBadge}>
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.heartsBadge}>
             <Text style={styles.heartsEmoji}>❤️</Text>
             <Text style={styles.heartsText}>{hearts}</Text>
           </TouchableOpacity>
@@ -494,7 +502,7 @@ export default function LessonsScreen({ navigation }: any) {
           { key: 'juz', labelKey: 'lessons.tabs.juz', icon: '📚' },
           { key: 'hizb', labelKey: 'lessons.tabs.hizb', icon: '📖' },
         ].map((tab) => (
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             key={tab.key}
             style={[styles.tab, mode === tab.key && styles.tabActive]}
             onPress={() => setMode(tab.key as any)}
@@ -547,7 +555,7 @@ export default function LessonsScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: DUOLINGO_COLORS.background,
@@ -560,7 +568,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingEmoji: { fontSize: 60, marginBottom: 20 },
-  loadingText: { color: '#fff', fontSize: 18 },
+  loadingText: { color: c.onDeep, fontSize: 18 },
   
   // Header
   header: {
@@ -625,8 +633,8 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   statItem: { flex: 1, alignItems: 'center' },
-  statValue: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
-  statLabel: { color: '#8A9BA8', fontSize: 12, marginTop: 2 },
+  statValue: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
+  statLabel: { color: c.textMuted, fontSize: 12, marginTop: 2 },
   statDivider: { width: 1, backgroundColor: '#2A3F4A' },
   
   // Tabs
@@ -650,8 +658,8 @@ const styles = StyleSheet.create({
     backgroundColor: DUOLINGO_COLORS.green,
   },
   tabIcon: { fontSize: 16, marginRight: 6 },
-  tabText: { color: '#8A9BA8', fontSize: 14, fontWeight: '600' },
-  tabTextActive: { color: '#fff' },
+  tabText: { color: c.textMuted, fontSize: 14, fontWeight: '600' },
+  tabTextActive: { color: c.onDeep },
   
   // Path
   pathContainer: { flex: 1 },
@@ -691,7 +699,7 @@ const styles = StyleSheet.create({
   },
   
   nodeNumber: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 22,
     fontWeight: 'bold',
   },
@@ -713,7 +721,7 @@ const styles = StyleSheet.create({
   },
   progressRingFill: {
     height: '100%',
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 3,
   },
   
@@ -723,7 +731,7 @@ const styles = StyleSheet.create({
   },
   nodeLabelLocked: { opacity: 0.5 },
   nodeLabelText: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -757,7 +765,7 @@ const styles = StyleSheet.create({
     minHeight: 100,
     justifyContent: 'center',
   },
-  juzNumber: { color: '#fff', fontSize: 14, fontWeight: 'bold', marginBottom: 8 },
+  juzNumber: { color: c.onDeep, fontSize: 14, fontWeight: 'bold', marginBottom: 8 },
   juzProgressBar: {
     width: '100%',
     height: 4,
@@ -783,7 +791,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   hizbCardComplete: { backgroundColor: DUOLINGO_COLORS.gold },
-  hizbNumber: { color: '#fff', fontSize: 16, fontWeight: 'bold', marginBottom: 5 },
+  hizbNumber: { color: c.onDeep, fontSize: 16, fontWeight: 'bold', marginBottom: 5 },
   hizbProgressBar: {
     width: '100%',
     height: 3,

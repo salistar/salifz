@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ProgressBar } from '../common/ProgressBar';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 interface SurahCardProps {
   number: number;
@@ -38,8 +40,11 @@ export const SurahCard: React.FC<SurahCardProps> = ({
   isLocked = false,
   isCompleted = false,
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   return (
-    <TouchableOpacity
+    <TouchableOpacity accessible accessibilityRole="button"
       style={[styles.container, isLocked && styles.locked]}
       onPress={onPress}
       disabled={isLocked}
@@ -59,12 +64,12 @@ export const SurahCard: React.FC<SurahCardProps> = ({
             <Ionicons
               name={revelationType === 'Meccan' ? 'moon-outline' : 'sunny-outline'}
               size={12}
-              color="#999"
+              color={colors.textMuted}
             />
             <Text style={styles.metaText}>{revelationType}</Text>
           </View>
           <View style={styles.metaItem}>
-            <Ionicons name="document-text-outline" size={12} color="#999" />
+            <Ionicons name="document-text-outline" size={12} color={colors.textMuted} />
             <Text style={styles.metaText}>{versesCount} verses</Text>
           </View>
         </View>
@@ -72,10 +77,10 @@ export const SurahCard: React.FC<SurahCardProps> = ({
 
       <View style={styles.progressSection}>
         {isLocked ? (
-          <Ionicons name="lock-closed" size={24} color="#CCC" />
+          <Ionicons name="lock-closed" size={24} color={colors.textMuted} />
         ) : isCompleted ? (
           <View style={styles.completedBadge}>
-            <Ionicons name="checkmark-circle" size={24} color="#4CAF50" />
+            <Ionicons name="checkmark-circle" size={24} color={colors.primary} />
           </View>
         ) : (
           <>
@@ -93,17 +98,17 @@ export const SurahCard: React.FC<SurahCardProps> = ({
       </View>
 
       {!isLocked && (
-        <Ionicons name="chevron-forward" size={20} color="#CCC" />
+        <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
       )}
     </TouchableOpacity>
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: c.surface,
     borderRadius: 12,
     padding: 12,
     marginBottom: 8,
@@ -120,21 +125,21 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: c.background,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
   },
   numberCompleted: {
-    backgroundColor: '#E8F5E9',
+    backgroundColor: c.primarySoft,
   },
   number: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#666',
+    color: c.textSecondary,
   },
   numberTextCompleted: {
-    color: '#4CAF50',
+    color: c.primary,
   },
   info: {
     flex: 1,
@@ -142,13 +147,13 @@ const styles = StyleSheet.create({
   arabicName: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
     textAlign: 'right',
     writingDirection: 'rtl',
   },
   englishName: {
     fontSize: 14,
-    color: '#666',
+    color: c.textSecondary,
     marginTop: 2,
   },
   metaRow: {
@@ -162,7 +167,7 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 11,
-    color: '#999',
+    color: c.textMuted,
     marginLeft: 4,
   },
   progressSection: {
@@ -172,7 +177,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: 12,
-    color: '#666',
+    color: c.textSecondary,
     marginBottom: 4,
   },
   progressBar: {

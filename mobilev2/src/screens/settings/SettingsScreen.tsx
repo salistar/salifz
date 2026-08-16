@@ -16,6 +16,8 @@ import settingsStore from '../../stores/settingsStore';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t, changeLanguage } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[SettingsScreen.tsx]';
 
@@ -62,6 +64,9 @@ const THEME_OPTIONS: ThemeOption[] = [
 ];
 
 export default function SettingsScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
   
   const { theme, language, reciter, setTheme, setLanguage, setReciter } = settingsStore();
@@ -124,7 +129,7 @@ export default function SettingsScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       <LinearGradient colors={['#607D8B', '#455A64']} style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => {
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => {
           console.log(`${LOG_PREFIX} ◀️ Back button pressed`);
           navigation.goBack();
         }}>
@@ -142,7 +147,7 @@ export default function SettingsScreen({ navigation }: any) {
           <Text style={styles.sectionTitle}>🌐 {t('settings.language')}</Text>
           <View style={styles.optionsRow}>
             {LANGUAGES.map((lang: LanguageOption) => (
-              <TouchableOpacity
+              <TouchableOpacity accessible accessibilityRole="button"
                 key={lang.code}
                 style={[
                   styles.optionButton,
@@ -169,7 +174,7 @@ export default function SettingsScreen({ navigation }: any) {
           <Text style={styles.sectionTitle}>🎨 {t('settings.appearance')}</Text>
           <View style={styles.optionsRow}>
             {THEME_OPTIONS.map((themeOption: ThemeOption) => (
-              <TouchableOpacity
+              <TouchableOpacity accessible accessibilityRole="button"
                 key={themeOption.id}
                 style={[
                   styles.optionButton,
@@ -195,7 +200,7 @@ export default function SettingsScreen({ navigation }: any) {
           {/* ✅ AVANT: '🎧 القارئ' */}
           <Text style={styles.sectionTitle}>🎧 {t('settings.reciter')}</Text>
           {RECITERS.map((reciterOption: ReciterOption) => (
-            <TouchableOpacity
+            <TouchableOpacity accessible accessibilityRole="button"
               key={reciterOption.id}
               style={[
                 styles.reciterItem,
@@ -224,8 +229,8 @@ export default function SettingsScreen({ navigation }: any) {
               <Switch
                 value={notifications.dailyReminder}
                 onValueChange={(value) => handleNotificationChange('dailyReminder', value)}
-                trackColor={{ false: '#E0E0E0', true: COLORS.primary + '80' }}
-                thumbColor={notifications.dailyReminder ? COLORS.primary : '#f4f3f4'}
+                trackColor={{ false: colors.border, true: colors.primary + '80' }}
+                thumbColor={notifications.dailyReminder ? colors.primary : colors.backgroundAlt}
               />
             </View>
             <View style={styles.settingItem}>
@@ -234,8 +239,8 @@ export default function SettingsScreen({ navigation }: any) {
               <Switch
                 value={notifications.streakReminder}
                 onValueChange={(value) => handleNotificationChange('streakReminder', value)}
-                trackColor={{ false: '#E0E0E0', true: COLORS.primary + '80' }}
-                thumbColor={notifications.streakReminder ? COLORS.primary : '#f4f3f4'}
+                trackColor={{ false: colors.border, true: colors.primary + '80' }}
+                thumbColor={notifications.streakReminder ? colors.primary : colors.backgroundAlt}
               />
             </View>
             <View style={styles.settingItem}>
@@ -244,8 +249,8 @@ export default function SettingsScreen({ navigation }: any) {
               <Switch
                 value={notifications.leagueUpdates}
                 onValueChange={(value) => handleNotificationChange('leagueUpdates', value)}
-                trackColor={{ false: '#E0E0E0', true: COLORS.primary + '80' }}
-                thumbColor={notifications.leagueUpdates ? COLORS.primary : '#f4f3f4'}
+                trackColor={{ false: colors.border, true: colors.primary + '80' }}
+                thumbColor={notifications.leagueUpdates ? colors.primary : colors.backgroundAlt}
               />
             </View>
             <View style={styles.settingItem}>
@@ -254,8 +259,8 @@ export default function SettingsScreen({ navigation }: any) {
               <Switch
                 value={notifications.friendActivity}
                 onValueChange={(value) => handleNotificationChange('friendActivity', value)}
-                trackColor={{ false: '#E0E0E0', true: COLORS.primary + '80' }}
-                thumbColor={notifications.friendActivity ? COLORS.primary : '#f4f3f4'}
+                trackColor={{ false: colors.border, true: colors.primary + '80' }}
+                thumbColor={notifications.friendActivity ? colors.primary : colors.backgroundAlt}
               />
             </View>
           </View>
@@ -265,7 +270,7 @@ export default function SettingsScreen({ navigation }: any) {
         <View style={styles.section}>
           {/* ✅ AVANT: '👤 الحساب' */}
           <Text style={styles.sectionTitle}>👤 {t('settings.account.title')}</Text>
-          <TouchableOpacity style={styles.accountItem} onPress={() => {
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.accountItem} onPress={() => {
             console.log(`${LOG_PREFIX} 👆 Edit profile pressed`);
           }}>
             <Text style={styles.accountIcon}>✏️</Text>
@@ -273,7 +278,7 @@ export default function SettingsScreen({ navigation }: any) {
             <Text style={styles.accountLabel}>{t('settings.account.editProfile')}</Text>
             <Text style={styles.accountArrow}>›</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.accountItem} onPress={() => {
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.accountItem} onPress={() => {
             console.log(`${LOG_PREFIX} 👆 Change password pressed`);
           }}>
             <Text style={styles.accountIcon}>🔒</Text>
@@ -281,7 +286,7 @@ export default function SettingsScreen({ navigation }: any) {
             <Text style={styles.accountLabel}>{t('settings.account.changePassword')}</Text>
             <Text style={styles.accountArrow}>›</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.accountItem} onPress={() => {
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.accountItem} onPress={() => {
             console.log(`${LOG_PREFIX} 👆 Subscription pressed`);
           }}>
             <Text style={styles.accountIcon}>⭐</Text>
@@ -292,7 +297,7 @@ export default function SettingsScreen({ navigation }: any) {
               {user?.subscription?.plan || t('settings.account.free')}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.accountItem, styles.dangerItem]} onPress={() => {
+          <TouchableOpacity accessible accessibilityRole="button" style={[styles.accountItem, styles.dangerItem]} onPress={() => {
             console.log(`${LOG_PREFIX} 👆 Delete account pressed`);
           }}>
             <Text style={styles.accountIcon}>🗑️</Text>
@@ -315,38 +320,38 @@ export default function SettingsScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingBottom: 20, paddingHorizontal: 20 },
   backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-  backIcon: { color: '#fff', fontSize: 24 },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
+  backIcon: { color: c.onDeep, fontSize: 24 },
+  headerTitle: { color: c.onDeep, fontSize: 20, fontWeight: 'bold' },
   content: { padding: 20 },
-  section: { backgroundColor: '#fff', borderRadius: 20, padding: 20, marginBottom: 20, elevation: 2 },
-  sectionTitle: { fontSize: 16, fontWeight: 'bold', color: '#333', marginBottom: 15 },
+  section: { backgroundColor: c.surface, borderRadius: 20, padding: 20, marginBottom: 20, elevation: 2 },
+  sectionTitle: { fontSize: 16, fontWeight: 'bold', color: c.text, marginBottom: 15 },
   optionsRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  optionButton: { flex: 1, alignItems: 'center', padding: 15, borderRadius: 12, backgroundColor: '#f5f5f5', marginHorizontal: 5 },
-  optionButtonActive: { backgroundColor: COLORS.primary + '20', borderWidth: 2, borderColor: COLORS.primary },
+  optionButton: { flex: 1, alignItems: 'center', padding: 15, borderRadius: 12, backgroundColor: c.background, marginHorizontal: 5 },
+  optionButtonActive: { backgroundColor: c.primary + '20', borderWidth: 2, borderColor: c.primary },
   optionFlag: { fontSize: 24, marginBottom: 5 },
   optionIcon: { fontSize: 24, marginBottom: 5 },
-  optionText: { color: '#666', fontSize: 12 },
-  optionTextActive: { color: COLORS.primary, fontWeight: 'bold' },
-  reciterItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 15, borderRadius: 12, backgroundColor: '#f5f5f5', marginBottom: 10 },
-  reciterItemActive: { backgroundColor: COLORS.primary + '20', borderWidth: 2, borderColor: COLORS.primary },
-  reciterName: { fontSize: 16, fontWeight: '600', color: '#333' },
-  reciterNameEn: { color: '#666', fontSize: 12, marginTop: 2 },
-  checkmark: { color: COLORS.primary, fontSize: 20, fontWeight: 'bold' },
+  optionText: { color: c.textSecondary, fontSize: 12 },
+  optionTextActive: { color: c.primary, fontWeight: 'bold' },
+  reciterItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 15, borderRadius: 12, backgroundColor: c.background, marginBottom: 10 },
+  reciterItemActive: { backgroundColor: c.primary + '20', borderWidth: 2, borderColor: c.primary },
+  reciterName: { fontSize: 16, fontWeight: '600', color: c.text },
+  reciterNameEn: { color: c.textSecondary, fontSize: 12, marginTop: 2 },
+  checkmark: { color: c.primary, fontSize: 20, fontWeight: 'bold' },
   settingsList: {},
-  settingItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
-  settingLabel: { fontSize: 16, color: '#333' },
-  accountItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
+  settingItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: c.backgroundAlt },
+  settingLabel: { fontSize: 16, color: c.text },
+  accountItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: c.backgroundAlt },
   accountIcon: { fontSize: 20, marginRight: 15 },
-  accountLabel: { flex: 1, fontSize: 16, color: '#333' },
-  accountArrow: { fontSize: 20, color: '#ccc' },
-  subscriptionBadge: { backgroundColor: '#E8F5E9', color: COLORS.primary, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 10, fontSize: 12, fontWeight: 'bold', overflow: 'hidden' },
+  accountLabel: { flex: 1, fontSize: 16, color: c.text },
+  accountArrow: { fontSize: 20, color: c.textMuted },
+  subscriptionBadge: { backgroundColor: c.primarySoft, color: c.primary, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 10, fontSize: 12, fontWeight: 'bold', overflow: 'hidden' },
   dangerItem: { borderBottomWidth: 0 },
-  dangerLabel: { flex: 1, fontSize: 16, color: '#F44336' },
+  dangerLabel: { flex: 1, fontSize: 16, color: c.error },
   footer: { alignItems: 'center', paddingVertical: 20 },
-  footerText: { color: '#999', fontSize: 14 },
-  footerCopyright: { color: '#ccc', fontSize: 12, marginTop: 5 }
+  footerText: { color: c.textMuted, fontSize: 14 },
+  footerCopyright: { color: c.textMuted, fontSize: 12, marginTop: 5 }
 });

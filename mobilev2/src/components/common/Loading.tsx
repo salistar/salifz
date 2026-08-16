@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import LottieView from 'lottie-react-native';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 interface LoadingProps {
   visible?: boolean;
@@ -27,13 +29,17 @@ export const Loading: React.FC<LoadingProps> = ({
   text,
   variant = 'spinner',
   size = 'large',
-  color = '#4CAF50',
+  color,
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+  const tint = color ?? colors.primary;
+
   if (!visible) return null;
 
   const spinner = (
     <View style={styles.spinnerContainer}>
-      <ActivityIndicator size={size} color={color} />
+      <ActivityIndicator size={size} color={tint} />
       {text && <Text style={styles.text}>{text}</Text>}
     </View>
   );
@@ -47,7 +53,7 @@ export const Loading: React.FC<LoadingProps> = ({
       <Modal transparent visible={visible} statusBarTranslucent>
         <View style={styles.overlay}>
           <View style={styles.overlayContent}>
-            <ActivityIndicator size="large" color={color} />
+            <ActivityIndicator size="large" color={tint} />
             {text && <Text style={styles.overlayText}>{text}</Text>}
           </View>
         </View>
@@ -59,7 +65,7 @@ export const Loading: React.FC<LoadingProps> = ({
     return (
       <View style={styles.fullscreen}>
         <LinearGradient
-          colors={['#2E7D32', '#4CAF50', '#81C784']}
+          colors={[colors.primaryDark, colors.primary, colors.primaryLight]}
           style={styles.gradient}
         >
           <View style={styles.logoContainer}>
@@ -67,7 +73,7 @@ export const Loading: React.FC<LoadingProps> = ({
             <Text style={styles.appName}>حِفْظ سالي</Text>
             <Text style={styles.appNameEn}>Salifz</Text>
           </View>
-          <ActivityIndicator size="large" color="#FFFFFF" />
+          <ActivityIndicator size="large" color={colors.onDeep} />
           {text && <Text style={styles.fullscreenText}>{text}</Text>}
         </LinearGradient>
       </View>
@@ -91,6 +97,9 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   borderRadius = 4,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   return (
     <View
       style={[
@@ -108,6 +117,9 @@ export const Skeleton: React.FC<SkeletonProps> = ({
 
 // Skeleton Card
 export const SkeletonCard: React.FC<{ lines?: number }> = ({ lines = 3 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   return (
     <View style={styles.skeletonCard}>
       <View style={styles.skeletonHeader}>
@@ -129,7 +141,7 @@ export const SkeletonCard: React.FC<{ lines?: number }> = ({ lines = 3 }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   spinnerContainer: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -138,7 +150,7 @@ const styles = StyleSheet.create({
   text: {
     marginTop: 12,
     fontSize: 14,
-    color: '#666',
+    color: c.textSecondary,
   },
   overlay: {
     flex: 1,
@@ -147,7 +159,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   overlayContent: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 24,
     alignItems: 'center',
@@ -156,7 +168,7 @@ const styles = StyleSheet.create({
   overlayText: {
     marginTop: 16,
     fontSize: 14,
-    color: '#333',
+    color: c.text,
     textAlign: 'center',
   },
   fullscreen: {
@@ -178,7 +190,7 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 32,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: c.onDeep,
     marginBottom: 4,
   },
   appNameEn: {
@@ -191,11 +203,11 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.9)',
   },
   skeleton: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: c.border,
     overflow: 'hidden',
   },
   skeletonCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: c.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,

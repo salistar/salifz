@@ -17,6 +17,8 @@ import { aiAPI } from '../../services/api';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
@@ -24,6 +26,9 @@ const { width } = Dimensions.get('window');
 const LOG_PREFIX = '[InsightsScreen.tsx]';
 
 export default function InsightsScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
   
   const { user } = useAuthStore();
@@ -93,8 +98,8 @@ export default function InsightsScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient colors={['#667eea', '#764ba2']} style={styles.header}>
-        <TouchableOpacity 
+      <LinearGradient colors={[colors.accent, colors.accentDeep]} style={styles.header}>
+        <TouchableOpacity accessible accessibilityRole="button" 
           style={styles.backButton} 
           onPress={() => {
             console.log(`${LOG_PREFIX} 🔙 Back button pressed`);
@@ -114,19 +119,19 @@ export default function InsightsScreen({ navigation }: any) {
       >
         {/* Overview Cards */}
         <View style={styles.overviewRow}>
-          <View style={[styles.overviewCard, { backgroundColor: '#E8F5E9' }]}>
+          <View style={[styles.overviewCard, { backgroundColor: colors.primarySoft }]}>
             <Text style={styles.overviewIcon}>📖</Text>
             <Text style={styles.overviewValue}>{weeklyStats.ayahsMemorized}</Text>
             {/* ✅ AVANT: 'آية محفوظة' */}
             <Text style={styles.overviewLabel}>{t('insights.ayahsMemorized')}</Text>
           </View>
-          <View style={[styles.overviewCard, { backgroundColor: '#E3F2FD' }]}>
+          <View style={[styles.overviewCard, { backgroundColor: colors.infoSoft }]}>
             <Text style={styles.overviewIcon}>🔄</Text>
             <Text style={styles.overviewValue}>{weeklyStats.reviewsDone}</Text>
             {/* ✅ AVANT: 'مراجعة' */}
             <Text style={styles.overviewLabel}>{t('insights.reviews')}</Text>
           </View>
-          <View style={[styles.overviewCard, { backgroundColor: '#FFF3E0' }]}>
+          <View style={[styles.overviewCard, { backgroundColor: colors.warningSoft }]}>
             <Text style={styles.overviewIcon}>⏱️</Text>
             <Text style={styles.overviewValue}>{weeklyStats.timeSpent}</Text>
             {/* ✅ AVANT: 'دقيقة' */}
@@ -143,7 +148,7 @@ export default function InsightsScreen({ navigation }: any) {
               <View key={index} style={styles.barContainer}>
                 <View style={styles.barWrapper}>
                   <LinearGradient
-                    colors={[COLORS.primary, '#2E7D32']}
+                    colors={[colors.primary, colors.primaryDark]}
                     style={[styles.bar, { height: `${(item.value / maxValue) * 100}%` }]}
                   />
                 </View>
@@ -185,14 +190,14 @@ export default function InsightsScreen({ navigation }: any) {
 
         {/* Best/Worst Days */}
         <View style={styles.daysRow}>
-          <View style={[styles.dayCard, { backgroundColor: '#E8F5E9' }]}>
+          <View style={[styles.dayCard, { backgroundColor: colors.primarySoft }]}>
             <Text style={styles.dayIcon}>🌟</Text>
             {/* ✅ AVANT: 'أفضل يوم' */}
             <Text style={styles.dayTitle}>{t('insights.bestDay')}</Text>
             {/* ✅ AVANT: {weeklyStats.bestDay} hardcodé en arabe */}
             <Text style={styles.dayValue}>{getDayName(weeklyStats.bestDay)}</Text>
           </View>
-          <View style={[styles.dayCard, { backgroundColor: '#FFEBEE' }]}>
+          <View style={[styles.dayCard, { backgroundColor: colors.errorSoft }]}>
             <Text style={styles.dayIcon}>📉</Text>
             {/* ✅ AVANT: 'يحتاج تحسين' */}
             <Text style={styles.dayTitle}>{t('insights.needsImprovement')}</Text>
@@ -290,49 +295,49 @@ export default function InsightsScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingBottom: 20, paddingHorizontal: 20 },
   backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-  backIcon: { color: '#fff', fontSize: 24 },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
+  backIcon: { color: c.onDeep, fontSize: 24 },
+  headerTitle: { color: c.onDeep, fontSize: 20, fontWeight: 'bold' },
   content: { padding: 20 },
   overviewRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
   overviewCard: { width: (width - 60) / 3, borderRadius: 15, padding: 15, alignItems: 'center' },
   overviewIcon: { fontSize: 24, marginBottom: 5 },
-  overviewValue: { fontSize: 24, fontWeight: 'bold', color: '#333' },
-  overviewLabel: { fontSize: 11, color: '#666', marginTop: 2 },
-  card: { backgroundColor: '#fff', borderRadius: 20, padding: 20, marginBottom: 20, elevation: 2 },
-  cardTitle: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 15 },
+  overviewValue: { fontSize: 24, fontWeight: 'bold', color: c.text },
+  overviewLabel: { fontSize: 11, color: c.textSecondary, marginTop: 2 },
+  card: { backgroundColor: c.surface, borderRadius: 20, padding: 20, marginBottom: 20, elevation: 2 },
+  cardTitle: { fontSize: 18, fontWeight: 'bold', color: c.text, marginBottom: 15 },
   chartContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', height: 150 },
   barContainer: { alignItems: 'center', flex: 1 },
-  barWrapper: { height: 120, width: 25, backgroundColor: '#E0E0E0', borderRadius: 12, justifyContent: 'flex-end', overflow: 'hidden' },
+  barWrapper: { height: 120, width: 25, backgroundColor: c.border, borderRadius: 12, justifyContent: 'flex-end', overflow: 'hidden' },
   bar: { width: '100%', borderRadius: 12 },
-  barLabel: { fontSize: 10, color: '#666', marginTop: 5 },
+  barLabel: { fontSize: 10, color: c.textSecondary, marginTop: 5 },
   accuracyContainer: { flexDirection: 'row', alignItems: 'center' },
-  accuracyCircle: { width: 100, height: 100, borderRadius: 50, backgroundColor: '#E8F5E9', justifyContent: 'center', alignItems: 'center', marginRight: 20 },
-  accuracyValue: { fontSize: 28, fontWeight: 'bold', color: COLORS.primary },
-  accuracyLabel: { fontSize: 10, color: '#666' },
+  accuracyCircle: { width: 100, height: 100, borderRadius: 50, backgroundColor: c.primarySoft, justifyContent: 'center', alignItems: 'center', marginRight: 20 },
+  accuracyValue: { fontSize: 28, fontWeight: 'bold', color: c.primary },
+  accuracyLabel: { fontSize: 10, color: c.textSecondary },
   accuracyDetails: { flex: 1 },
   accuracyItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
   accuracyItemIcon: { fontSize: 16, marginRight: 10 },
-  accuracyItemText: { fontSize: 14, color: '#666' },
+  accuracyItemText: { fontSize: 14, color: c.textSecondary },
   daysRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
   dayCard: { width: (width - 50) / 2, borderRadius: 15, padding: 20, alignItems: 'center' },
   dayIcon: { fontSize: 30, marginBottom: 10 },
-  dayTitle: { fontSize: 12, color: '#666' },
-  dayValue: { fontSize: 18, fontWeight: 'bold', color: '#333', marginTop: 5 },
-  recommendation: { flexDirection: 'row', backgroundColor: '#f5f5f5', borderRadius: 12, padding: 15, marginBottom: 10 },
+  dayTitle: { fontSize: 12, color: c.textSecondary },
+  dayValue: { fontSize: 18, fontWeight: 'bold', color: c.text, marginTop: 5 },
+  recommendation: { flexDirection: 'row', backgroundColor: c.background, borderRadius: 12, padding: 15, marginBottom: 10 },
   recommendationIcon: { fontSize: 20, marginRight: 10 },
-  recommendationText: { flex: 1, fontSize: 14, color: '#333', lineHeight: 22 },
-  summaryItem: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
-  summaryLabel: { fontSize: 14, color: '#666' },
-  summaryValue: { fontSize: 14, fontWeight: 'bold', color: '#333' },
-  progressBar: { height: 8, backgroundColor: '#E0E0E0', borderRadius: 4, marginVertical: 10, overflow: 'hidden' },
-  progressFill: { height: '100%', backgroundColor: COLORS.primary, borderRadius: 4 },
+  recommendationText: { flex: 1, fontSize: 14, color: c.text, lineHeight: 22 },
+  summaryItem: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: c.backgroundAlt },
+  summaryLabel: { fontSize: 14, color: c.textSecondary },
+  summaryValue: { fontSize: 14, fontWeight: 'bold', color: c.text },
+  progressBar: { height: 8, backgroundColor: c.border, borderRadius: 4, marginVertical: 10, overflow: 'hidden' },
+  progressFill: { height: '100%', backgroundColor: c.primary, borderRadius: 4 },
   memStatsRow: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' },
   memStatItem: { alignItems: 'center' },
-  memStatValue: { fontSize: 32, fontWeight: 'bold', color: COLORS.primary },
-  memStatLabel: { fontSize: 14, color: '#666', marginTop: 5 },
-  memStatDivider: { width: 1, height: 50, backgroundColor: '#E0E0E0' }
+  memStatValue: { fontSize: 32, fontWeight: 'bold', color: c.primary },
+  memStatLabel: { fontSize: 14, color: c.textSecondary, marginTop: 5 },
+  memStatDivider: { width: 1, height: 50, backgroundColor: c.border }
 });

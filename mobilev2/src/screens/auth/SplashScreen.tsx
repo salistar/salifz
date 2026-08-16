@@ -24,6 +24,8 @@ import { initializeToken } from '../../services/api';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -31,6 +33,9 @@ const { width, height } = Dimensions.get('window');
 const LOG_PREFIX = '[SplashScreen.tsx]';
 
 export default function SplashScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
   
   const logoScale = useRef(new Animated.Value(0)).current;
@@ -204,7 +209,7 @@ export default function SplashScreen({ navigation }: any) {
 
   return (
     <LinearGradient 
-      colors={['#1a1a2e', '#16213e', '#0f3460']} 
+      colors={[colors.canvasDeep, colors.canvasDeepAlt, colors.canvasDeepAlt]} 
       style={styles.container}
     >
       {/* Background decorations */}
@@ -228,7 +233,7 @@ export default function SplashScreen({ navigation }: any) {
         ]}
       >
         <LinearGradient 
-          colors={[COLORS.primary, '#2E7D32']} 
+          colors={[colors.primary, colors.primaryDark]} 
           style={styles.logoGradient}
         >
           <Text style={styles.logoEmoji}>{'📖'}</Text>
@@ -302,7 +307,7 @@ export default function SplashScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { 
     flex: 1, 
     justifyContent: 'center', 
@@ -360,7 +365,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center', 
     alignItems: 'center', 
     elevation: 10,
-    shadowColor: COLORS.primary,
+    shadowColor: c.primary,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 20,
@@ -384,7 +389,7 @@ const styles = StyleSheet.create({
   appName: { 
     fontSize: 42, 
     fontWeight: 'bold', 
-    color: '#fff', 
+    color: c.onDeep, 
     letterSpacing: 2,
     textShadowColor: 'rgba(76, 175, 80, 0.5)',
     textShadowOffset: { width: 0, height: 2 },
@@ -413,11 +418,11 @@ const styles = StyleSheet.create({
   },
   progressFill: { 
     height: '100%', 
-    backgroundColor: COLORS.primary, 
+    backgroundColor: c.primary, 
     borderRadius: 2 
   },
   loadingText: { 
-    color: '#666', 
+    color: c.textSecondary, 
     marginTop: 15, 
     fontSize: 14 
   },
@@ -440,7 +445,7 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 10,
-    color: '#666',
+    color: c.textSecondary,
   },
   featureDivider: {
     width: 1,

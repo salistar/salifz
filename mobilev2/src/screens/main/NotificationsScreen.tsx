@@ -15,11 +15,16 @@ import { useNotificationsStore } from '../../stores';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 // ✅ Constante pour les logs
 const LOG_PREFIX = '[NotificationsScreen.tsx]';
 
 export default function NotificationsScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
   
   const { notifications, unreadCount, fetchNotifications, markAsRead, markAllAsRead } = useNotificationsStore();
@@ -108,7 +113,7 @@ export default function NotificationsScreen({ navigation }: any) {
 
   // ✅ Helper pour rendre un item de notification (éviter répétition)
   const renderNotificationItem = (notif: any) => (
-    <TouchableOpacity 
+    <TouchableOpacity accessible accessibilityRole="button" 
       key={notif._id} 
       style={[styles.notificationItem, !notif.isRead && styles.notificationUnread]} 
       onPress={() => handleNotificationPress(notif)}
@@ -134,7 +139,7 @@ export default function NotificationsScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient colors={['#FF9800', '#F57C00']} style={styles.header}>
+      <LinearGradient colors={[colors.warning, colors.warningStrong]} style={styles.header}>
         <Text style={styles.headerIcon}>🔔</Text>
         {/* ✅ AVANT: 'الإشعارات' */}
         <Text style={styles.headerTitle}>{t('notifications.title')}</Text>
@@ -148,7 +153,7 @@ export default function NotificationsScreen({ navigation }: any) {
 
       {/* Mark All as Read Button */}
       {unreadCount > 0 && (
-        <TouchableOpacity style={styles.markAllButton} onPress={handleMarkAllAsRead}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.markAllButton} onPress={handleMarkAllAsRead}>
           {/* ✅ AVANT: 'تحديد الكل كمقروء' */}
           <Text style={styles.markAllText}>{t('notifications.markAllAsRead')}</Text>
         </TouchableOpacity>
@@ -202,30 +207,30 @@ export default function NotificationsScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   header: { paddingTop: 50, paddingBottom: 30, alignItems: 'center' },
   headerIcon: { fontSize: 50 },
-  headerTitle: { color: '#fff', fontSize: 24, fontWeight: 'bold', marginTop: 10 },
+  headerTitle: { color: c.onDeep, fontSize: 24, fontWeight: 'bold', marginTop: 10 },
   unreadBadge: { backgroundColor: 'rgba(255,255,255,0.3)', paddingHorizontal: 15, paddingVertical: 5, borderRadius: 15, marginTop: 10 },
-  unreadText: { color: '#fff', fontWeight: '600' },
-  markAllButton: { backgroundColor: '#fff', marginHorizontal: 15, marginTop: -15, padding: 12, borderRadius: 10, alignItems: 'center', elevation: 2 },
-  markAllText: { color: COLORS.primary, fontWeight: '600' },
+  unreadText: { color: c.onDeep, fontWeight: '600' },
+  markAllButton: { backgroundColor: c.surface, marginHorizontal: 15, marginTop: -15, padding: 12, borderRadius: 10, alignItems: 'center', elevation: 2 },
+  markAllText: { color: c.primary, fontWeight: '600' },
   listContainer: { padding: 15 },
   emptyState: { alignItems: 'center', paddingVertical: 50 },
   emptyIcon: { fontSize: 60, marginBottom: 15 },
-  emptyTitle: { fontSize: 18, fontWeight: 'bold', color: '#333' },
-  emptySubtitle: { color: '#999', marginTop: 5 },
+  emptyTitle: { fontSize: 18, fontWeight: 'bold', color: c.text },
+  emptySubtitle: { color: c.textMuted, marginTop: 5 },
   group: { marginBottom: 20 },
-  groupTitle: { fontSize: 14, fontWeight: '600', color: '#666', marginBottom: 10, marginLeft: 5 },
-  notificationItem: { backgroundColor: '#fff', padding: 15, borderRadius: 12, flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10, elevation: 1 },
+  groupTitle: { fontSize: 14, fontWeight: '600', color: c.textSecondary, marginBottom: 10, marginLeft: 5 },
+  notificationItem: { backgroundColor: c.surface, padding: 15, borderRadius: 12, flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10, elevation: 1 },
   notificationUnread: { backgroundColor: '#FFF8E1' },
-  iconContainer: { width: 45, height: 45, borderRadius: 12, backgroundColor: '#E3F2FD', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  iconContainer: { width: 45, height: 45, borderRadius: 12, backgroundColor: c.infoSoft, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
   notificationIcon: { fontSize: 22 },
   notificationContent: { flex: 1 },
-  notificationTitle: { fontSize: 15, fontWeight: '600', color: '#333', textAlign: 'right' },
+  notificationTitle: { fontSize: 15, fontWeight: '600', color: c.text, textAlign: 'right' },
   notificationTitleUnread: { fontWeight: 'bold' },
-  notificationBody: { color: '#666', marginTop: 4, lineHeight: 20, textAlign: 'right' },
-  notificationTime: { color: '#999', fontSize: 12, marginTop: 6, textAlign: 'right' },
-  unreadDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#FF9800', marginLeft: 10 }
+  notificationBody: { color: c.textSecondary, marginTop: 4, lineHeight: 20, textAlign: 'right' },
+  notificationTime: { color: c.textMuted, fontSize: 12, marginTop: 6, textAlign: 'right' },
+  unreadDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: c.warning, marginLeft: 10 }
 });

@@ -18,6 +18,8 @@ import { useAuthStore } from '../../stores';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
@@ -25,6 +27,9 @@ const { width } = Dimensions.get('window');
 const LOG_PREFIX = '[RegisterScreen.tsx]';
 
 export default function RegisterScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
   
   const { register, isLoading } = useAuthStore();
@@ -117,7 +122,7 @@ export default function RegisterScreen({ navigation }: any) {
 
   const getPasswordStrength = () => {
     const { password } = formData;
-    if (!password) return { level: 0, text: '', color: '#666' };
+    if (!password) return { level: 0, text: '', color: colors.textSecondary };
     
     let strength = 0;
     if (password.length >= 6) strength++;
@@ -128,9 +133,9 @@ export default function RegisterScreen({ navigation }: any) {
     
     // ✅ AVANT: 'ضعيفة', 'متوسطة', 'قوية'
     // ✅ APRÈS:
-    if (strength <= 2) return { level: strength, text: t('password.weak'), color: '#F44336' };
-    if (strength <= 3) return { level: strength, text: t('password.medium'), color: '#FF9800' };
-    return { level: strength, text: t('password.strong'), color: '#4CAF50' };
+    if (strength <= 2) return { level: strength, text: t('password.weak'), color: colors.error };
+    if (strength <= 3) return { level: strength, text: t('password.medium'), color: colors.warning };
+    return { level: strength, text: t('password.strong'), color: colors.primary };
   };
 
   const passwordStrength = getPasswordStrength();
@@ -138,11 +143,11 @@ export default function RegisterScreen({ navigation }: any) {
   console.log(`${LOG_PREFIX} 🎨 Rendering UI...`);
 
   return (
-    <LinearGradient colors={['#1a1a2e', '#16213e']} style={styles.container}>
+    <LinearGradient colors={[colors.canvasDeep, colors.canvasDeepAlt]} style={styles.container}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboardView}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               style={styles.backButton} 
               onPress={() => {
                 console.log(`${LOG_PREFIX} 🔙 Back button pressed`);
@@ -170,7 +175,7 @@ export default function RegisterScreen({ navigation }: any) {
                 <TextInput 
                   style={styles.input} 
                   placeholder={t('auth.usernamePlaceholder')} 
-                  placeholderTextColor="#666" 
+                  placeholderTextColor={colors.textSecondary} 
                   value={formData.username} 
                   onChangeText={(text) => updateField('username', text)} 
                   autoCapitalize="none" 
@@ -189,7 +194,7 @@ export default function RegisterScreen({ navigation }: any) {
                 <TextInput 
                   style={styles.input} 
                   placeholder="example@email.com" 
-                  placeholderTextColor="#666" 
+                  placeholderTextColor={colors.textSecondary} 
                   value={formData.email} 
                   onChangeText={(text) => updateField('email', text)} 
                   keyboardType="email-address" 
@@ -209,12 +214,12 @@ export default function RegisterScreen({ navigation }: any) {
                 <TextInput 
                   style={styles.input} 
                   placeholder="••••••••" 
-                  placeholderTextColor="#666" 
+                  placeholderTextColor={colors.textSecondary} 
                   value={formData.password} 
                   onChangeText={(text) => updateField('password', text)} 
                   secureTextEntry={!showPassword} 
                 />
-                <TouchableOpacity onPress={() => {
+                <TouchableOpacity accessible accessibilityRole="button" onPress={() => {
                   console.log(`${LOG_PREFIX} 👁️ Toggle password visibility: ${!showPassword}`);
                   setShowPassword(!showPassword);
                 }}>
@@ -226,7 +231,7 @@ export default function RegisterScreen({ navigation }: any) {
                 <View style={styles.strengthContainer}>
                   <View style={styles.strengthBars}>
                     {[1, 2, 3, 4, 5].map((level) => (
-                      <View key={level} style={[styles.strengthBar, { backgroundColor: level <= passwordStrength.level ? passwordStrength.color : '#333' }]} />
+                      <View key={level} style={[styles.strengthBar, { backgroundColor: level <= passwordStrength.level ? passwordStrength.color : colors.text }]} />
                     ))}
                   </View>
                   <Text style={[styles.strengthText, { color: passwordStrength.color }]}>{passwordStrength.text}</Text>
@@ -243,7 +248,7 @@ export default function RegisterScreen({ navigation }: any) {
                 <TextInput 
                   style={styles.input} 
                   placeholder="••••••••" 
-                  placeholderTextColor="#666" 
+                  placeholderTextColor={colors.textSecondary} 
                   value={formData.confirmPassword} 
                   onChangeText={(text) => updateField('confirmPassword', text)} 
                   secureTextEntry={!showPassword} 
@@ -254,7 +259,7 @@ export default function RegisterScreen({ navigation }: any) {
             </View>
 
             {/* Terms Checkbox */}
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               style={styles.termsContainer} 
               onPress={() => {
                 console.log(`${LOG_PREFIX} ☑️ Terms checkbox toggled: ${!agreeTerms}`);
@@ -272,14 +277,14 @@ export default function RegisterScreen({ navigation }: any) {
             {errors.terms && <Text style={styles.errorText}>{errors.terms}</Text>}
 
             {/* Register Button */}
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               style={styles.registerButton} 
               onPress={handleRegister} 
               disabled={isLoading}
             >
-              <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.registerButtonGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
+              <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.registerButtonGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
                 {isLoading ? (
-                  <ActivityIndicator color="#fff" />
+                  <ActivityIndicator color={colors.onDeep} />
                 ) : (
                   // ✅ AVANT: 'إنشاء الحساب'
                   <Text style={styles.registerButtonText}>{t('auth.createAccountButton')}</Text>
@@ -297,19 +302,19 @@ export default function RegisterScreen({ navigation }: any) {
 
             {/* Social Buttons */}
             <View style={styles.socialButtons}>
-              <TouchableOpacity 
+              <TouchableOpacity accessible accessibilityRole="button" 
                 style={styles.socialButton}
                 onPress={() => console.log(`${LOG_PREFIX} 🍎 Apple login pressed`)}
               >
                 <Text style={styles.socialIcon}>🍎</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity accessible accessibilityRole="button" 
                 style={styles.socialButton}
                 onPress={() => console.log(`${LOG_PREFIX} 🔵 Google login pressed`)}
               >
                 <Text style={styles.socialIcon}>G</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity accessible accessibilityRole="button" 
                 style={styles.socialButton}
                 onPress={() => console.log(`${LOG_PREFIX} 📘 Facebook login pressed`)}
               >
@@ -322,7 +327,7 @@ export default function RegisterScreen({ navigation }: any) {
           <View style={styles.loginSection}>
             {/* ✅ AVANT: 'لديك حساب بالفعل؟' */}
             <Text style={styles.loginText}>{t('auth.hasAccount')}</Text>
-            <TouchableOpacity onPress={() => {
+            <TouchableOpacity accessible accessibilityRole="button" onPress={() => {
               console.log(`${LOG_PREFIX} 🔗 Navigate to Login`);
               navigation.navigate('Login');
             }}>
@@ -336,47 +341,47 @@ export default function RegisterScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { flex: 1 },
   keyboardView: { flex: 1 },
   scrollContent: { flexGrow: 1, paddingHorizontal: 25, paddingTop: 50, paddingBottom: 30 },
   header: { marginBottom: 30 },
   backButton: { width: 40, height: 40, justifyContent: 'center' },
-  backIcon: { color: '#fff', fontSize: 28 },
+  backIcon: { color: c.onDeep, fontSize: 28 },
   headerCenter: { alignItems: 'center', marginTop: 10 },
   headerEmoji: { fontSize: 50, marginBottom: 10 },
-  headerTitle: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
+  headerTitle: { fontSize: 24, fontWeight: 'bold', color: c.onDeep },
   headerSubtitle: { color: '#aaa', marginTop: 5 },
   form: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 25, padding: 25, marginBottom: 20 },
   inputContainer: { marginBottom: 18 },
-  inputLabel: { color: '#fff', marginBottom: 8, fontWeight: '600' },
+  inputLabel: { color: c.onDeep, marginBottom: 8, fontWeight: '600' },
   inputWrapper: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 15, paddingHorizontal: 15, borderWidth: 1, borderColor: 'transparent' },
-  inputError: { borderColor: '#F44336' },
+  inputError: { borderColor: c.error },
   inputIcon: { fontSize: 18, marginRight: 10 },
-  input: { flex: 1, color: '#fff', paddingVertical: 15, fontSize: 16 },
+  input: { flex: 1, color: c.onDeep, paddingVertical: 15, fontSize: 16 },
   showIcon: { fontSize: 18, padding: 5 },
-  matchIcon: { color: '#4CAF50', fontSize: 18, fontWeight: 'bold' },
-  errorText: { color: '#F44336', fontSize: 12, marginTop: 5, marginLeft: 5 },
+  matchIcon: { color: c.primary, fontSize: 18, fontWeight: 'bold' },
+  errorText: { color: c.error, fontSize: 12, marginTop: 5, marginLeft: 5 },
   strengthContainer: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
   strengthBars: { flexDirection: 'row', flex: 1 },
   strengthBar: { flex: 1, height: 4, borderRadius: 2, marginRight: 3 },
   strengthText: { fontSize: 12, marginLeft: 10, fontWeight: '600' },
   termsContainer: { flexDirection: 'row', alignItems: 'center', marginVertical: 15 },
-  checkbox: { width: 22, height: 22, borderRadius: 6, borderWidth: 2, borderColor: '#666', marginRight: 10, justifyContent: 'center', alignItems: 'center' },
-  checkboxChecked: { backgroundColor: '#4CAF50', borderColor: '#4CAF50' },
-  checkboxIcon: { color: '#fff', fontSize: 14, fontWeight: 'bold' },
+  checkbox: { width: 22, height: 22, borderRadius: 6, borderWidth: 2, borderColor: c.textSecondary, marginRight: 10, justifyContent: 'center', alignItems: 'center' },
+  checkboxChecked: { backgroundColor: c.primary, borderColor: c.primary },
+  checkboxIcon: { color: c.onDeep, fontSize: 14, fontWeight: 'bold' },
   termsText: { flex: 1, color: '#aaa', fontSize: 13 },
-  termsLink: { color: '#4CAF50' },
+  termsLink: { color: c.primary },
   registerButton: { borderRadius: 15, overflow: 'hidden', marginTop: 10 },
   registerButtonGradient: { paddingVertical: 16, alignItems: 'center' },
-  registerButtonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  registerButtonText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   divider: { flexDirection: 'row', alignItems: 'center', marginVertical: 25 },
   dividerLine: { flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,0.2)' },
-  dividerText: { color: '#666', marginHorizontal: 15, fontSize: 13 },
+  dividerText: { color: c.textSecondary, marginHorizontal: 15, fontSize: 13 },
   socialButtons: { flexDirection: 'row', justifyContent: 'center' },
   socialButton: { width: 55, height: 55, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 15, justifyContent: 'center', alignItems: 'center', marginHorizontal: 10 },
   socialIcon: { fontSize: 22 },
   loginSection: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
   loginText: { color: '#aaa' },
-  loginLink: { color: '#4CAF50', fontWeight: 'bold', marginLeft: 5 }
+  loginLink: { color: c.primary, fontWeight: 'bold', marginLeft: 5 }
 });

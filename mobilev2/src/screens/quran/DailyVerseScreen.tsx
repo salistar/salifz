@@ -17,6 +17,8 @@ import * as Clipboard from 'expo-clipboard';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[DailyVerseScreen.tsx]';
 const { width, height } = Dimensions.get('window');
@@ -37,6 +39,9 @@ const DAILY_VERSES = [
 console.log(`${LOG_PREFIX} 📚 Daily verses configured: ${DAILY_VERSES.length} verses`);
 
 export default function DailyVerseScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering...`);
   
   const [verse, setVerse] = useState<any>(null);
@@ -234,7 +239,7 @@ export default function DailyVerseScreen({ navigation }: any) {
   if (!verse) {
     console.log(`${LOG_PREFIX} ⏳ Rendering loading state - verse not yet loaded`);
     return (
-      <LinearGradient colors={['#1a1a2e', '#16213e']} style={styles.container}>
+      <LinearGradient colors={[colors.canvasDeep, colors.canvasDeepAlt]} style={styles.container}>
         <View style={styles.loadingContainer}>
           {/* ✅ AVANT: 'جاري التحميل...' */}
           <Text style={styles.loadingText}>{t('common.loading')}</Text>
@@ -247,15 +252,15 @@ export default function DailyVerseScreen({ navigation }: any) {
   console.log(`${LOG_PREFIX} 📊 Render state - verse: ${verse.surahName}, isPlaying: ${isPlaying}`);
 
   return (
-    <LinearGradient colors={['#1a1a2e', '#16213e']} style={styles.container}>
+    <LinearGradient colors={[colors.canvasDeep, colors.canvasDeepAlt]} style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleBackPress}>
+        <TouchableOpacity accessible accessibilityRole="button" onPress={handleBackPress}>
           <Text style={styles.backButton}>←</Text>
         </TouchableOpacity>
         {/* ✅ AVANT: 'آية اليوم' */}
         <Text style={styles.headerTitle}>{t('dailyVerse.title')}</Text>
-        <TouchableOpacity onPress={shareVerse}>
+        <TouchableOpacity accessible accessibilityRole="button" onPress={shareVerse}>
           <Text style={styles.shareButton}>📤</Text>
         </TouchableOpacity>
       </View>
@@ -287,8 +292,8 @@ export default function DailyVerseScreen({ navigation }: any) {
         </View>
 
         {/* Play Button */}
-        <TouchableOpacity style={styles.playButton} onPress={playAudio}>
-          <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.playButtonGradient}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.playButton} onPress={playAudio}>
+          <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.playButtonGradient}>
             <Text style={styles.playIcon}>{isPlaying ? '⏸' : '▶️'}</Text>
             {/* ✅ AVANT: 'إيقاف' / 'استمع' */}
             <Text style={styles.playText}>
@@ -299,17 +304,17 @@ export default function DailyVerseScreen({ navigation }: any) {
 
         {/* Actions Row */}
         <View style={styles.actionsRow}>
-          <TouchableOpacity style={styles.actionButton} onPress={shareVerse}>
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.actionButton} onPress={shareVerse}>
             <Text style={styles.actionIcon}>📤</Text>
             {/* ✅ AVANT: 'مشاركة' */}
             <Text style={styles.actionText}>{t('dailyVerse.share')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton} onPress={copyVerse}>
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.actionButton} onPress={copyVerse}>
             <Text style={styles.actionIcon}>📋</Text>
             {/* ✅ AVANT: 'نسخ' */}
             <Text style={styles.actionText}>{t('dailyVerse.copy')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton} onPress={navigateToMemorize}>
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.actionButton} onPress={navigateToMemorize}>
             <Text style={styles.actionIcon}>📖</Text>
             {/* ✅ AVANT: 'احفظ' */}
             <Text style={styles.actionText}>{t('dailyVerse.memorize')}</Text>
@@ -324,29 +329,29 @@ export default function DailyVerseScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { flex: 1 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { color: '#fff', fontSize: 16 },
+  loadingText: { color: c.onDeep, fontSize: 16 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingHorizontal: 20, paddingBottom: 20 },
-  backButton: { color: '#fff', fontSize: 28 },
-  headerTitle: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  backButton: { color: c.onDeep, fontSize: 28 },
+  headerTitle: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   shareButton: { fontSize: 24 },
   content: { flex: 1, paddingHorizontal: 20, alignItems: 'center' },
   decorTop: { marginBottom: 20 },
-  decorText: { fontSize: 40, color: COLORS.primary },
+  decorText: { fontSize: 40, color: c.primary },
   verseContainer: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 20, padding: 25, marginBottom: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
-  arabicText: { color: '#fff', fontSize: 28, textAlign: 'center', lineHeight: 55 },
+  arabicText: { color: c.onDeep, fontSize: 28, textAlign: 'center', lineHeight: 55 },
   translationContainer: { paddingHorizontal: 10, marginBottom: 20 },
   translationText: { color: '#aaa', fontSize: 16, textAlign: 'center', lineHeight: 26, fontStyle: 'italic' },
   referenceContainer: { alignItems: 'center', marginBottom: 30 },
-  surahName: { color: COLORS.primary, fontSize: 20, fontWeight: 'bold' },
+  surahName: { color: c.primary, fontSize: 20, fontWeight: 'bold' },
   surahNameEn: { color: '#aaa', fontSize: 14, marginTop: 2 },
-  ayahRef: { color: '#666', marginTop: 5 },
+  ayahRef: { color: c.textSecondary, marginTop: 5 },
   playButton: { marginBottom: 30 },
   playButtonGradient: { flexDirection: 'row', alignItems: 'center', paddingVertical: 15, paddingHorizontal: 40, borderRadius: 30 },
   playIcon: { fontSize: 24, marginRight: 10 },
-  playText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  playText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   actionsRow: { flexDirection: 'row', justifyContent: 'center' },
   actionButton: { alignItems: 'center', marginHorizontal: 20, padding: 15, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 15, minWidth: 80 },
   actionIcon: { fontSize: 24, marginBottom: 5 },

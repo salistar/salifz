@@ -17,6 +17,8 @@ import { useGamificationStore, useStreakStore } from '../../stores';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[LessonCompleteScreen.tsx]';
 const { width } = Dimensions.get('window');
@@ -24,6 +26,9 @@ const { width } = Dimensions.get('window');
 console.log(`${LOG_PREFIX} 📁 File loaded`);
 
 export default function LessonCompleteScreen({ route, navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering...`);
   console.log(`${LOG_PREFIX} 📥 Route params:`, JSON.stringify(route?.params || {}));
   
@@ -161,7 +166,7 @@ export default function LessonCompleteScreen({ route, navigation }: any) {
   console.log(`${LOG_PREFIX} 📊 Surah complete: ${surahComplete}, Progress: ${progressPercent}%`);
 
   return (
-    <LinearGradient colors={['#667eea', '#764ba2']} style={styles.container}>
+    <LinearGradient colors={[colors.accent, colors.accentDeep]} style={styles.container}>
       <Animated.View style={[styles.content, { transform: [{ scale: scaleAnim }] }]}>
         {/* Trophy */}
         <View style={styles.trophyContainer}>
@@ -254,26 +259,26 @@ export default function LessonCompleteScreen({ route, navigation }: any) {
 
       {/* Buttons */}
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.shareButton} onPress={handleShare}>
           <Text style={styles.shareIcon}>📤</Text>
           {/* ✅ AVANT: 'مشاركة' */}
           <Text style={styles.shareText}>{t('lessonComplete.share')}</Text>
         </TouchableOpacity>
         
         {!surahComplete && (
-          <TouchableOpacity style={styles.continueButton} onPress={handleContinueSurah}>
-            <LinearGradient colors={['#FF9800', '#F57C00']} style={styles.continueGradient}>
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.continueButton} onPress={handleContinueSurah}>
+            <LinearGradient colors={[colors.warning, colors.warningStrong]} style={styles.continueGradient}>
               {/* ✅ AVANT: 'متابعة السورة' */}
               <Text style={styles.continueText}>{t('lessonComplete.continueSurah')}</Text>
             </LinearGradient>
           </TouchableOpacity>
         )}
         
-        <TouchableOpacity 
+        <TouchableOpacity accessible accessibilityRole="button" 
           style={[styles.continueButton, !surahComplete && { flex: 0.5 }]} 
           onPress={handleContinue}
         >
-          <LinearGradient colors={['#4CAF50', '#2E7D32']} style={styles.continueGradient}>
+          <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.continueGradient}>
             {/* ✅ AVANT: 'سورة جديدة' / 'الدروس' */}
             <Text style={styles.continueText}>
               {surahComplete ? t('lessonComplete.newSurah') : t('lessonComplete.lessons')}
@@ -285,7 +290,7 @@ export default function LessonCompleteScreen({ route, navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { flex: 1 },
   content: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 20 },
   trophyContainer: { 
@@ -298,12 +303,12 @@ const styles = StyleSheet.create({
     marginBottom: 20 
   },
   trophyEmoji: { fontSize: 60 },
-  title: { fontSize: 36, fontWeight: 'bold', color: '#fff', marginBottom: 10 },
+  title: { fontSize: 36, fontWeight: 'bold', color: c.onDeep, marginBottom: 10 },
   subtitle: { fontSize: 18, color: 'rgba(255,255,255,0.8)', marginBottom: 20, textAlign: 'center' },
   
   surahProgress: { width: '80%', marginBottom: 20 },
   progressBarContainer: { height: 8, backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: 4, overflow: 'hidden' },
-  progressBarFill: { height: '100%', backgroundColor: '#4CAF50', borderRadius: 4 },
+  progressBarFill: { height: '100%', backgroundColor: c.primary, borderRadius: 4 },
   progressText: { color: 'rgba(255,255,255,0.8)', fontSize: 12, marginTop: 5, textAlign: 'center' },
   
   rewardsCard: { 
@@ -315,20 +320,20 @@ const styles = StyleSheet.create({
   },
   rewardItem: { alignItems: 'center', paddingHorizontal: 25 },
   rewardIcon: { fontSize: 30, marginBottom: 5 },
-  rewardValue: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
+  rewardValue: { fontSize: 24, fontWeight: 'bold', color: c.onDeep },
   rewardLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 12 },
   rewardDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.2)' },
   milestoneCard: { 
     flexDirection: 'row', 
     alignItems: 'center', 
-    backgroundColor: '#FFD700', 
+    backgroundColor: fixedColors.gold, 
     paddingHorizontal: 20, 
     paddingVertical: 12, 
     borderRadius: 25, 
     marginBottom: 20 
   },
   milestoneEmoji: { fontSize: 20, marginRight: 10 },
-  milestoneText: { color: '#333', fontWeight: 'bold' },
+  milestoneText: { color: c.text, fontWeight: 'bold' },
   statsCard: { 
     flexDirection: 'row', 
     backgroundColor: 'rgba(255,255,255,0.1)', 
@@ -337,7 +342,7 @@ const styles = StyleSheet.create({
   },
   statItem: { alignItems: 'center', paddingHorizontal: 20 },
   statLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 12, marginBottom: 5 },
-  statValue: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  statValue: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   buttonsContainer: { flexDirection: 'row', padding: 20, paddingBottom: 40 },
   shareButton: { 
     flexDirection: 'row', 
@@ -349,8 +354,8 @@ const styles = StyleSheet.create({
     marginRight: 10 
   },
   shareIcon: { fontSize: 18, marginRight: 5 },
-  shareText: { color: '#fff', fontWeight: '600', fontSize: 14 },
+  shareText: { color: c.onDeep, fontWeight: '600', fontSize: 14 },
   continueButton: { flex: 1, borderRadius: 25, overflow: 'hidden', marginLeft: 5 },
   continueGradient: { paddingVertical: 18, alignItems: 'center' },
-  continueText: { color: '#fff', fontSize: 16, fontWeight: 'bold' }
+  continueText: { color: c.onDeep, fontSize: 16, fontWeight: 'bold' }
 });

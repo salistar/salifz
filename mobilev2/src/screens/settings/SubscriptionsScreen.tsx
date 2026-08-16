@@ -24,6 +24,8 @@ import { useAuthStore } from '../../stores';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[SubscriptionsScreen.tsx]';
 const { width } = Dimensions.get('window');
@@ -118,6 +120,9 @@ const FEATURES_PREMIUM: Feature[] = [
 ];
 
 export default function SubscriptionsScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
   
   const { user } = useAuthStore();
@@ -235,7 +240,7 @@ export default function SubscriptionsScreen({ navigation }: any) {
     const isSelected = selectedPlan === plan.id;
 
     return (
-      <TouchableOpacity
+      <TouchableOpacity accessible accessibilityRole="button"
         key={plan.id}
         style={[
           styles.planCard,
@@ -295,8 +300,8 @@ export default function SubscriptionsScreen({ navigation }: any) {
     console.log(`${LOG_PREFIX} 🎨 Rendering Premium view`);
     return (
       <View style={styles.container}>
-        <LinearGradient colors={['#9C27B0', '#7B1FA2']} style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <LinearGradient colors={[colors.accentDeep, colors.accentDeep]} style={styles.header}>
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => navigation.goBack()}>
             <Text style={styles.backIcon}>←</Text>
           </TouchableOpacity>
           {/* ✅ AVANT: 'اشتراكي' */}
@@ -330,7 +335,7 @@ export default function SubscriptionsScreen({ navigation }: any) {
           </View>
 
           {currentSubscription?.plan !== 'lifetime' && (
-            <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
+            <TouchableOpacity accessible accessibilityRole="button" style={styles.cancelButton} onPress={handleCancel}>
               {/* ✅ AVANT: 'إلغاء الاشتراك' */}
               <Text style={styles.cancelButtonText}>
                 {t('subscriptions.cancelSubscription')}
@@ -347,8 +352,8 @@ export default function SubscriptionsScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient colors={[COLORS.primary, COLORS.primaryDark]} style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Salifz Plus</Text>
@@ -400,17 +405,17 @@ export default function SubscriptionsScreen({ navigation }: any) {
         </View>
 
         {/* Subscribe Button */}
-        <TouchableOpacity
+        <TouchableOpacity accessible accessibilityRole="button"
           style={styles.subscribeButton}
           onPress={() => handleSubscribe(selectedPlan)}
           disabled={isLoading}
         >
           <LinearGradient
-            colors={['#9C27B0', '#7B1FA2']}
+            colors={[colors.accentDeep, colors.accentDeep]}
             style={styles.subscribeButtonGradient}
           >
             {isLoading ? (
-              <ActivityIndicator color="#fff" />
+              <ActivityIndicator color={colors.onDeep} />
             ) : (
               // ✅ AVANT: 'اشترك الآن'
               <Text style={styles.subscribeButtonText}>
@@ -421,7 +426,7 @@ export default function SubscriptionsScreen({ navigation }: any) {
         </TouchableOpacity>
 
         {/* Restore */}
-        <TouchableOpacity style={styles.restoreButton} onPress={handleRestore}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.restoreButton} onPress={handleRestore}>
           {/* ✅ AVANT: 'استعادة المشتريات' */}
           <Text style={styles.restoreButtonText}>
             {t('subscriptions.restorePurchases')}
@@ -438,10 +443,10 @@ export default function SubscriptionsScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: c.background,
   },
   header: {
     flexDirection: 'row',
@@ -458,11 +463,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backIcon: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 24,
   },
   headerTitle: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 20,
     fontWeight: 'bold',
   },
@@ -480,44 +485,44 @@ const styles = StyleSheet.create({
   heroTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
     marginBottom: 8,
     textAlign: 'center',
   },
   heroSubtitle: {
     fontSize: 14,
-    color: '#666',
+    color: c.textSecondary,
     textAlign: 'center',
   },
   plansContainer: {
     marginBottom: 30,
   },
   planCard: {
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 20,
     marginBottom: 15,
     borderWidth: 2,
-    borderColor: '#E0E0E0',
+    borderColor: c.border,
     position: 'relative',
   },
   planCardSelected: {
-    borderColor: COLORS.primary,
+    borderColor: c.primary,
   },
   planCardPopular: {
-    borderColor: '#9C27B0',
+    borderColor: c.accentDeep,
   },
   popularBadge: {
     position: 'absolute',
     top: -12,
     right: 20,
-    backgroundColor: '#9C27B0',
+    backgroundColor: c.accentDeep,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
   },
   popularText: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 12,
     fontWeight: 'bold',
   },
@@ -525,20 +530,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -12,
     left: 20,
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
   },
   savingsText: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 12,
     fontWeight: 'bold',
   },
   planName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
     marginBottom: 10,
   },
   priceContainer: {
@@ -549,11 +554,11 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: COLORS.primary,
+    color: c.primary,
   },
   period: {
     fontSize: 14,
-    color: '#666',
+    color: c.textSecondary,
     marginLeft: 4,
   },
   featuresContainer: {
@@ -565,12 +570,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   featureCheck: {
-    color: COLORS.primary,
+    color: c.primary,
     fontSize: 14,
     marginRight: 8,
   },
   featureText: {
-    color: '#666',
+    color: c.textSecondary,
     fontSize: 13,
   },
   radioOuter: {
@@ -581,21 +586,21 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#E0E0E0',
+    borderColor: c.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
   radioOuterSelected: {
-    borderColor: COLORS.primary,
+    borderColor: c.primary,
   },
   radioInner: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
   },
   comparisonSection: {
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 20,
     marginBottom: 20,
@@ -603,7 +608,7 @@ const styles = StyleSheet.create({
   comparisonTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
     marginBottom: 15,
     textAlign: 'center',
   },
@@ -611,14 +616,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: c.border,
     marginBottom: 10,
   },
   comparisonHeaderText: {
     flex: 1,
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#666',
+    color: c.textSecondary,
     textAlign: 'center',
   },
   comparisonRow: {
@@ -626,7 +631,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#F5F5F5',
+    borderBottomColor: c.background,
   },
   comparisonFeature: {
     flex: 2,
@@ -639,16 +644,16 @@ const styles = StyleSheet.create({
   },
   comparisonText: {
     fontSize: 12,
-    color: '#333',
+    color: c.text,
   },
   comparisonCheck: {
     flex: 1,
     textAlign: 'center',
     fontSize: 14,
-    color: '#999',
+    color: c.textMuted,
   },
   comparisonCheckPremium: {
-    color: COLORS.primary,
+    color: c.primary,
   },
   subscribeButton: {
     borderRadius: 16,
@@ -660,7 +665,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   subscribeButtonText: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -670,13 +675,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   restoreButtonText: {
-    color: COLORS.primary,
+    color: c.primary,
     fontSize: 14,
     fontWeight: '600',
   },
   termsText: {
     fontSize: 11,
-    color: '#999',
+    color: c.textMuted,
     textAlign: 'center',
     lineHeight: 18,
   },
@@ -685,7 +690,7 @@ const styles = StyleSheet.create({
   },
   premiumBadge: {
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 20,
     padding: 30,
     marginBottom: 20,
@@ -697,15 +702,15 @@ const styles = StyleSheet.create({
   premiumTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#9C27B0',
+    color: c.accentDeep,
     marginBottom: 5,
   },
   premiumPlan: {
     fontSize: 16,
-    color: '#666',
+    color: c.textSecondary,
   },
   featuresSection: {
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 16,
     padding: 20,
     marginBottom: 20,
@@ -713,7 +718,7 @@ const styles = StyleSheet.create({
   featuresSectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
     marginBottom: 15,
   },
   featureItem: {
@@ -721,7 +726,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#F5F5F5',
+    borderBottomColor: c.background,
   },
   featureIcon: {
     fontSize: 20,
@@ -730,20 +735,20 @@ const styles = StyleSheet.create({
   featureLabel: {
     flex: 1,
     fontSize: 14,
-    color: '#333',
+    color: c.text,
   },
   featureStatus: {
     fontSize: 16,
-    color: COLORS.primary,
+    color: c.primary,
   },
   cancelButton: {
-    backgroundColor: '#FFEBEE',
+    backgroundColor: c.errorSoft,
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
   },
   cancelButtonText: {
-    color: '#F44336',
+    color: c.error,
     fontWeight: '600',
   },
 });

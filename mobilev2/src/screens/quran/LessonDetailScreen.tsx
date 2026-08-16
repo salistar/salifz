@@ -23,6 +23,8 @@ import { progressAPI } from '../../services/api';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[LessonDetailScreen.tsx]';
 const { width } = Dimensions.get('window');
@@ -70,6 +72,9 @@ interface Exercise {
 }
 
 export default function LessonDetailScreen({ route, navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering...`);
   console.log(`${LOG_PREFIX} 📥 Route params:`, JSON.stringify(route?.params || {}));
   
@@ -604,7 +609,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
     if (loading || exercises.length === 0) {
       return (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
           {/* ✅ AVANT: 'جاري تحميل الدرس...' */}
           <Text style={styles.loadingText}>{t('lessonDetail.loadingLesson')}</Text>
         </View>
@@ -622,15 +627,15 @@ export default function LessonDetailScreen({ route, navigation }: any) {
             <Text style={styles.ayahText}>{exercise.ayah?.text}</Text>
             <Text style={styles.translationText}>{exercise.ayah?.translation}</Text>
             
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               style={[styles.playButton, isPlaying && styles.playButtonActive]} 
               onPress={() => isPlaying ? stopAudio() : playAudio(exercise.ayah)}
               disabled={audioLoading}
             >
               {audioLoading ? (
-                <ActivityIndicator size="small" color="#1976D2" />
+                <ActivityIndicator size="small" color={colors.infoStrong} />
               ) : (
-                <Ionicons name={isPlaying ? 'pause' : 'play'} size={32} color="#1976D2" />
+                <Ionicons name={isPlaying ? 'pause' : 'play'} size={32} color={colors.infoStrong} />
               )}
               <Text style={styles.playText}>
                 {/* ✅ AVANT: 'جاري التحميل...' / 'إيقاف' / 'استمع' */}
@@ -643,7 +648,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
               </Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.doneButton} onPress={checkAnswer}>
+            <TouchableOpacity accessible accessibilityRole="button" style={styles.doneButton} onPress={checkAnswer}>
               {/* ✅ AVANT: 'تم الاستماع والتكرار ✓' */}
               <Text style={styles.doneText}>{t('lessonDetail.doneListening')}</Text>
             </TouchableOpacity>
@@ -658,7 +663,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
             
             <View style={styles.optionsContainer}>
               {exercise.options?.map((option: string, index: number) => (
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   key={index}
                   style={[
                     styles.optionButton,
@@ -684,7 +689,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
             
             <View style={styles.optionsContainer}>
               {exercise.options?.map((option: string, index: number) => (
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   key={index}
                   style={[styles.optionButton, selectedAnswer === index && styles.optionSelected]}
                   onPress={() => setSelectedAnswer(index)}
@@ -707,7 +712,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
             
             <View style={styles.arrangeTarget}>
               {arrangedWords.map((word: string, index: number) => (
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   key={index}
                   style={styles.arrangedWord}
                   onPress={() => setArrangedWords(arrangedWords.filter((_: string, i: number) => i !== index))}
@@ -719,7 +724,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
             
             <View style={styles.wordsContainer}>
               {shuffled.filter((w: string) => !arrangedWords.includes(w)).map((word: string, index: number) => (
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   key={index}
                   style={styles.wordButton}
                   onPress={() => setArrangedWords([...arrangedWords, word])}
@@ -743,14 +748,14 @@ export default function LessonDetailScreen({ route, navigation }: any) {
                 <View key={index} style={styles.reciteAyah}>
                   <Text style={styles.reciteNumber}>{ayah.numberInSurah}</Text>
                   <Text style={styles.reciteHint}>• • • • •</Text>
-                  <TouchableOpacity onPress={() => playAudio(ayah)} style={styles.recitePlay}>
-                    <Ionicons name="volume-high" size={20} color={COLORS.primary} />
+                  <TouchableOpacity accessible accessibilityRole="button" onPress={() => playAudio(ayah)} style={styles.recitePlay}>
+                    <Ionicons name="volume-high" size={20} color={colors.primary} />
                   </TouchableOpacity>
                 </View>
               ))}
             </View>
             
-            <TouchableOpacity style={styles.revealButton} onPress={() => {
+            <TouchableOpacity accessible accessibilityRole="button" style={styles.revealButton} onPress={() => {
               const ayahsText = exercise.ayahs?.map((a: AyahData) => `${a.numberInSurah}. ${a.text}`).join('\n\n') || '';
               // ✅ AVANT: 'الآيات'
               Alert.alert(t('lessonDetail.theAyahs'), ayahsText);
@@ -759,7 +764,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
               <Text style={styles.revealText}>{t('lessonDetail.revealForReview')}</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity style={styles.doneButton} onPress={checkAnswer}>
+            <TouchableOpacity accessible accessibilityRole="button" style={styles.doneButton} onPress={checkAnswer}>
               {/* ✅ AVANT: 'تمت القراءة ✓' */}
               <Text style={styles.doneText}>{t('lessonDetail.doneReading')}</Text>
             </TouchableOpacity>
@@ -775,8 +780,8 @@ export default function LessonDetailScreen({ route, navigation }: any) {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={handleGoBack}>
-          <Ionicons name="close" size={28} color="#666" />
+        <TouchableOpacity accessible accessibilityRole="button" onPress={handleGoBack}>
+          <Ionicons name="close" size={28} color={colors.textSecondary} />
         </TouchableOpacity>
         
         <View style={styles.progressBar}>
@@ -818,7 +823,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
       {exercises[currentExerciseIndex]?.type !== 'listen_repeat' && 
        exercises[currentExerciseIndex]?.type !== 'recite_check' && (
         <View style={styles.footer}>
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={[
               styles.checkButton, 
               (selectedAnswer === null && arrangedWords.length === 0) && styles.checkButtonDisabled
@@ -826,7 +831,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
             onPress={checkAnswer}
             disabled={selectedAnswer === null && arrangedWords.length === 0}
           >
-            <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.checkGradient}>
+            <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.checkGradient}>
               {/* ✅ AVANT: 'تحقق' */}
               <Text style={styles.checkText}>{t('lessonDetail.check')}</Text>
             </LinearGradient>
@@ -851,70 +856,70 @@ export default function LessonDetailScreen({ route, navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.surface },
   header: { flexDirection: 'row', alignItems: 'center', paddingTop: 50, paddingHorizontal: 20, paddingBottom: 15 },
-  progressBar: { flex: 1, height: 10, backgroundColor: '#E0E0E0', borderRadius: 5, marginHorizontal: 15, overflow: 'hidden' },
-  progressFill: { height: '100%', backgroundColor: COLORS.primary, borderRadius: 5 },
+  progressBar: { flex: 1, height: 10, backgroundColor: c.border, borderRadius: 5, marginHorizontal: 15, overflow: 'hidden' },
+  progressFill: { height: '100%', backgroundColor: c.primary, borderRadius: 5 },
   heartsDisplay: { flexDirection: 'row', alignItems: 'center' },
   heartIcon: { fontSize: 18 },
-  heartCount: { color: '#F44336', fontWeight: 'bold', marginLeft: 5 },
+  heartCount: { color: c.error, fontWeight: 'bold', marginLeft: 5 },
   
-  blockInfo: { alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
-  surahName: { fontSize: 20, fontWeight: 'bold', color: '#333' },
-  blockRange: { fontSize: 14, color: COLORS.primary, marginTop: 4 },
-  blockProgress: { fontSize: 12, color: '#999', marginTop: 2 },
+  blockInfo: { alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: c.backgroundAlt },
+  surahName: { fontSize: 20, fontWeight: 'bold', color: c.text },
+  blockRange: { fontSize: 14, color: c.primary, marginTop: 4 },
+  blockProgress: { fontSize: 12, color: c.textMuted, marginTop: 2 },
   
   content: { flex: 1 },
   scrollContent: { flexGrow: 1, padding: 20 },
   
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { fontSize: 16, color: '#666', marginTop: 15 },
+  loadingText: { fontSize: 16, color: c.textSecondary, marginTop: 15 },
   
   exerciseContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  instruction: { fontSize: 18, color: '#666', marginBottom: 20, textAlign: 'center' },
-  subtitle: { fontSize: 14, color: '#999', marginBottom: 20 },
-  ayahText: { fontSize: 26, color: '#333', textAlign: 'center', lineHeight: 50, marginBottom: 15, fontFamily: 'System' },
-  translationText: { fontSize: 14, color: '#666', textAlign: 'center', marginBottom: 30, fontStyle: 'italic' },
+  instruction: { fontSize: 18, color: c.textSecondary, marginBottom: 20, textAlign: 'center' },
+  subtitle: { fontSize: 14, color: c.textMuted, marginBottom: 20 },
+  ayahText: { fontSize: 26, color: c.text, textAlign: 'center', lineHeight: 50, marginBottom: 15, fontFamily: 'System' },
+  translationText: { fontSize: 14, color: c.textSecondary, textAlign: 'center', marginBottom: 30, fontStyle: 'italic' },
   
-  playButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#E3F2FD', paddingHorizontal: 30, paddingVertical: 15, borderRadius: 25, marginBottom: 20, minWidth: 180, justifyContent: 'center' },
+  playButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.infoSoft, paddingHorizontal: 30, paddingVertical: 15, borderRadius: 25, marginBottom: 20, minWidth: 180, justifyContent: 'center' },
   playButtonActive: { backgroundColor: '#BBDEFB' },
-  playText: { fontSize: 16, color: '#1976D2', fontWeight: '600', marginLeft: 10 },
+  playText: { fontSize: 16, color: c.infoStrong, fontWeight: '600', marginLeft: 10 },
   
-  doneButton: { backgroundColor: COLORS.primary, paddingHorizontal: 50, paddingVertical: 15, borderRadius: 25 },
-  doneText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  doneButton: { backgroundColor: c.primary, paddingHorizontal: 50, paddingVertical: 15, borderRadius: 25 },
+  doneText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   
   optionsContainer: { width: '100%' },
-  optionButton: { backgroundColor: '#f5f5f5', padding: 18, borderRadius: 15, marginBottom: 12, borderWidth: 2, borderColor: 'transparent' },
-  optionSelected: { borderColor: COLORS.primary, backgroundColor: '#E8F5E9' },
-  optionCorrect: { borderColor: '#4CAF50', backgroundColor: '#E8F5E9' },
-  optionWrong: { borderColor: '#F44336', backgroundColor: '#FFEBEE' },
-  optionText: { fontSize: 16, textAlign: 'center', color: '#333' },
+  optionButton: { backgroundColor: c.background, padding: 18, borderRadius: 15, marginBottom: 12, borderWidth: 2, borderColor: 'transparent' },
+  optionSelected: { borderColor: c.primary, backgroundColor: c.primarySoft },
+  optionCorrect: { borderColor: c.primary, backgroundColor: c.primarySoft },
+  optionWrong: { borderColor: c.error, backgroundColor: c.errorSoft },
+  optionText: { fontSize: 16, textAlign: 'center', color: c.text },
   
-  arrangeTarget: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', minHeight: 60, backgroundColor: '#f5f5f5', borderRadius: 15, padding: 10, marginBottom: 20, width: '100%' },
-  arrangedWord: { backgroundColor: COLORS.primary, paddingHorizontal: 15, paddingVertical: 10, borderRadius: 10, margin: 5 },
-  arrangedWordText: { color: '#fff', fontSize: 16 },
+  arrangeTarget: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', minHeight: 60, backgroundColor: c.background, borderRadius: 15, padding: 10, marginBottom: 20, width: '100%' },
+  arrangedWord: { backgroundColor: c.primary, paddingHorizontal: 15, paddingVertical: 10, borderRadius: 10, margin: 5 },
+  arrangedWordText: { color: c.onDeep, fontSize: 16 },
   wordsContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
-  wordButton: { backgroundColor: '#E0E0E0', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 10, margin: 5 },
-  wordText: { fontSize: 16, color: '#333' },
+  wordButton: { backgroundColor: c.border, paddingHorizontal: 15, paddingVertical: 10, borderRadius: 10, margin: 5 },
+  wordText: { fontSize: 16, color: c.text },
   
   reciteContainer: { width: '100%', marginBottom: 20 },
-  reciteAyah: { flexDirection: 'row', alignItems: 'center', padding: 15, backgroundColor: '#f5f5f5', borderRadius: 10, marginBottom: 10 },
-  reciteNumber: { fontSize: 18, fontWeight: 'bold', color: COLORS.primary, marginRight: 15, width: 30 },
-  reciteHint: { flex: 1, fontSize: 24, color: '#ccc', letterSpacing: 5 },
+  reciteAyah: { flexDirection: 'row', alignItems: 'center', padding: 15, backgroundColor: c.background, borderRadius: 10, marginBottom: 10 },
+  reciteNumber: { fontSize: 18, fontWeight: 'bold', color: c.primary, marginRight: 15, width: 30 },
+  reciteHint: { flex: 1, fontSize: 24, color: c.textMuted, letterSpacing: 5 },
   recitePlay: { padding: 5 },
   revealButton: { padding: 15 },
-  revealText: { color: '#666', fontSize: 14 },
+  revealText: { color: c.textSecondary, fontSize: 14 },
   
   footer: { padding: 20 },
   checkButton: { borderRadius: 15, overflow: 'hidden' },
   checkButtonDisabled: { opacity: 0.5 },
   checkGradient: { paddingVertical: 18, alignItems: 'center' },
-  checkText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  checkText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   
   feedback: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 20 },
-  feedbackCorrect: { backgroundColor: '#E8F5E9' },
-  feedbackWrong: { backgroundColor: '#FFEBEE' },
+  feedbackCorrect: { backgroundColor: c.primarySoft },
+  feedbackWrong: { backgroundColor: c.errorSoft },
   feedbackIcon: { fontSize: 24, marginRight: 10 },
   feedbackText: { fontSize: 16, fontWeight: 'bold' },
 });

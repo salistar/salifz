@@ -21,6 +21,8 @@ import { socketService } from '../../services/socket';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -32,6 +34,9 @@ type CameraFacing = 'front' | 'back';
 const LOG_PREFIX = '[ChatVideoScreen.tsx]';
 
 export default function ChatVideoScreen({ route, navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const { recipientId, recipientName, recipientAvatar, isIncoming } = route.params || {};
   const { user } = useAuthStore();
   
@@ -210,8 +215,8 @@ export default function ChatVideoScreen({ route, navigation }: any) {
         {callState === 'ringing' && t('call.ringing')}
       </Text>
       <View style={styles.callingActions}>
-        <TouchableOpacity style={styles.endCallButton} onPress={endCall}>
-          <LinearGradient colors={['#F44336', '#D32F2F']} style={styles.endCallGradient}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.endCallButton} onPress={endCall}>
+          <LinearGradient colors={[colors.error, colors.error]} style={styles.endCallGradient}>
             <Text style={styles.endCallIcon}>📞</Text>
           </LinearGradient>
           {/* ✅ AVANT: 'إنهاء' */}
@@ -231,15 +236,15 @@ export default function ChatVideoScreen({ route, navigation }: any) {
       {/* ✅ AVANT: 'مكالمة فيديو واردة...' */}
       <Text style={styles.callingStatus}>{t('call.incomingVideo')}</Text>
       <View style={styles.incomingActions}>
-        <TouchableOpacity style={styles.rejectButton} onPress={rejectCall}>
-          <LinearGradient colors={['#F44336', '#D32F2F']} style={styles.actionButtonGradient}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.rejectButton} onPress={rejectCall}>
+          <LinearGradient colors={[colors.error, colors.error]} style={styles.actionButtonGradient}>
             <Text style={styles.actionButtonIcon}>✕</Text>
           </LinearGradient>
           {/* ✅ AVANT: 'رفض' */}
           <Text style={styles.actionLabel}>{t('call.reject')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.acceptButton} onPress={acceptCall}>
-          <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.actionButtonGradient}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.acceptButton} onPress={acceptCall}>
+          <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.actionButtonGradient}>
             <Text style={styles.actionButtonIcon}>📹</Text>
           </LinearGradient>
           {/* ✅ AVANT: 'قبول' */}
@@ -274,28 +279,28 @@ export default function ChatVideoScreen({ route, navigation }: any) {
         <Text style={styles.callInfoDuration}>{formatDuration(callDuration)}</Text>
       </View>
       <View style={styles.controls}>
-        <TouchableOpacity style={[styles.controlButton, isMuted && styles.controlButtonActive]} onPress={toggleMute}>
+        <TouchableOpacity accessible accessibilityRole="button" style={[styles.controlButton, isMuted && styles.controlButtonActive]} onPress={toggleMute}>
           <Text style={styles.controlIcon}>{isMuted ? '🔇' : '🎤'}</Text>
           {/* ✅ AVANT: 'إلغاء الكتم' / 'كتم' */}
           <Text style={styles.controlLabel}>{isMuted ? t('call.unmute') : t('call.mute')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.controlButton, isVideoOff && styles.controlButtonActive]} onPress={toggleVideo}>
+        <TouchableOpacity accessible accessibilityRole="button" style={[styles.controlButton, isVideoOff && styles.controlButtonActive]} onPress={toggleVideo}>
           <Text style={styles.controlIcon}>{isVideoOff ? '📷' : '📹'}</Text>
           {/* ✅ AVANT: 'تشغيل' / 'إيقاف' */}
           <Text style={styles.controlLabel}>{isVideoOff ? t('call.videoOn') : t('call.videoOff')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.controlButton} onPress={flipCamera}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.controlButton} onPress={flipCamera}>
           <Text style={styles.controlIcon}>🔄</Text>
           {/* ✅ AVANT: 'تبديل' */}
           <Text style={styles.controlLabel}>{t('call.flip')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.controlButton, isSpeakerOn && styles.controlButtonActive]} onPress={toggleSpeaker}>
+        <TouchableOpacity accessible accessibilityRole="button" style={[styles.controlButton, isSpeakerOn && styles.controlButtonActive]} onPress={toggleSpeaker}>
           <Text style={styles.controlIcon}>{isSpeakerOn ? '🔊' : '🔈'}</Text>
           {/* ✅ AVANT: 'مكبر' */}
           <Text style={styles.controlLabel}>{t('call.speaker')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.endCallButtonSmall} onPress={endCall}>
-          <LinearGradient colors={['#F44336', '#D32F2F']} style={styles.endCallSmallGradient}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.endCallButtonSmall} onPress={endCall}>
+          <LinearGradient colors={[colors.error, colors.error]} style={styles.endCallSmallGradient}>
             <Text style={styles.endCallSmallIcon}>📞</Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -307,7 +312,7 @@ export default function ChatVideoScreen({ route, navigation }: any) {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={callState === 'connected' ? ['#1a1a2e', '#16213e'] : [COLORS.primary, '#2E7D32']} style={styles.gradient}>
+      <LinearGradient colors={callState === 'connected' ? [colors.canvasDeep, colors.canvasDeepAlt] : [colors.primary, colors.primaryDark]} style={styles.gradient}>
         {callState === 'ringing' && isIncoming && renderIncomingCall()}
         {(callState === 'connecting' || (callState === 'ringing' && !isIncoming)) && renderCallingState()}
         {callState === 'connected' && renderConnectedCall()}
@@ -324,13 +329,13 @@ export default function ChatVideoScreen({ route, navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { flex: 1 },
   gradient: { flex: 1 },
   callingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
   avatarLarge: { width: 150, height: 150, borderRadius: 75, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center', marginBottom: 20 },
-  avatarLargeText: { fontSize: 60, color: '#fff' },
-  callingName: { color: '#fff', fontSize: 28, fontWeight: 'bold', marginBottom: 10 },
+  avatarLargeText: { fontSize: 60, color: c.onDeep },
+  callingName: { color: c.onDeep, fontSize: 28, fontWeight: 'bold', marginBottom: 10 },
   callingStatus: { color: 'rgba(255,255,255,0.8)', fontSize: 16 },
   callingActions: { position: 'absolute', bottom: 100 },
   incomingActions: { flexDirection: 'row', position: 'absolute', bottom: 100 },
@@ -340,31 +345,31 @@ const styles = StyleSheet.create({
   rejectButton: { alignItems: 'center', marginRight: 60 },
   acceptButton: { alignItems: 'center', marginLeft: 60 },
   actionButtonGradient: { width: 70, height: 70, borderRadius: 35, justifyContent: 'center', alignItems: 'center' },
-  actionButtonIcon: { fontSize: 30, color: '#fff' },
-  actionLabel: { color: '#fff', marginTop: 10, fontSize: 14 },
+  actionButtonIcon: { fontSize: 30, color: c.onDeep },
+  actionLabel: { color: c.onDeep, marginTop: 10, fontSize: 14 },
   connectedContainer: { flex: 1 },
   remoteVideo: { flex: 1, backgroundColor: '#000' },
-  remoteVideoPlaceholder: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#1a1a2e' },
-  remoteAvatarText: { fontSize: 80, color: '#fff', marginBottom: 10 },
-  remoteNameText: { color: '#fff', fontSize: 20 },
-  localVideo: { position: 'absolute', top: 50, right: 20, width: 120, height: 160, borderRadius: 15, overflow: 'hidden', borderWidth: 2, borderColor: '#fff' },
+  remoteVideoPlaceholder: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: c.canvasDeep },
+  remoteAvatarText: { fontSize: 80, color: c.onDeep, marginBottom: 10 },
+  remoteNameText: { color: c.onDeep, fontSize: 20 },
+  localVideo: { position: 'absolute', top: 50, right: 20, width: 120, height: 160, borderRadius: 15, overflow: 'hidden', borderWidth: 2, borderColor: c.surface },
   camera: { flex: 1 },
-  localVideoOff: { flex: 1, backgroundColor: '#333', justifyContent: 'center', alignItems: 'center' },
+  localVideoOff: { flex: 1, backgroundColor: c.text, justifyContent: 'center', alignItems: 'center' },
   localVideoOffIcon: { fontSize: 30 },
-  localVideoOffText: { color: '#fff', fontSize: 10, marginTop: 5 },
+  localVideoOffText: { color: c.onDeep, fontSize: 10, marginTop: 5 },
   callInfo: { position: 'absolute', top: 60, left: 0, right: 0, alignItems: 'center' },
-  callInfoName: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  callInfoName: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   callInfoDuration: { color: 'rgba(255,255,255,0.8)', fontSize: 14, marginTop: 4 },
   controls: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', paddingVertical: 30, paddingHorizontal: 20, backgroundColor: 'rgba(0,0,0,0.5)' },
   controlButton: { alignItems: 'center', padding: 10 },
   controlButtonActive: { backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 15 },
   controlIcon: { fontSize: 28 },
-  controlLabel: { color: '#fff', fontSize: 10, marginTop: 5 },
+  controlLabel: { color: c.onDeep, fontSize: 10, marginTop: 5 },
   endCallButtonSmall: { borderRadius: 30, overflow: 'hidden' },
   endCallSmallGradient: { width: 60, height: 60, borderRadius: 30, justifyContent: 'center', alignItems: 'center' },
   endCallSmallIcon: { fontSize: 26, transform: [{ rotate: '135deg' }] },
   endedContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   endedIcon: { fontSize: 60, marginBottom: 20, transform: [{ rotate: '135deg' }] },
-  endedText: { color: '#fff', fontSize: 24, fontWeight: 'bold' },
+  endedText: { color: c.onDeep, fontSize: 24, fontWeight: 'bold' },
   endedDuration: { color: 'rgba(255,255,255,0.7)', fontSize: 16, marginTop: 10 },
 });

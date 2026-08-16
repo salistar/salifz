@@ -25,12 +25,17 @@ import * as Location from 'expo-location';
 import { Magnetometer } from 'expo-sensors';
 import api from '../../services/api';
 import { TouchableOpacity } from 'react-native';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 
 const { width } = Dimensions.get('window');
 const COMPASS_SIZE = width * 0.8;
 const LOG_PREFIX = '[Qibla]';
 
 const QiblaScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const { t, i18n } = useTranslation();
   const navigation = useNavigation<any>();
   const isRTL = i18n.language === 'ar';
@@ -257,7 +262,7 @@ const QiblaScreen: React.FC = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#667eea" />
+        <ActivityIndicator size="large" color={colors.accent} />
         <Text style={styles.loadingText}>
           {isRTL ? 'جاري تحديد اتجاه القبلة...' : 'Finding Qibla direction...'}
         </Text>
@@ -267,11 +272,11 @@ const QiblaScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={['#1a1a2e', '#16213e', '#0f3460']} style={styles.background}>
+      <LinearGradient colors={[colors.canvasDeep, colors.canvasDeepAlt, colors.canvasDeepAlt]} style={styles.background}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color="#fff" />
+          <TouchableOpacity accessible accessibilityRole="button" onPress={() => navigation.goBack()} style={styles.backButton}>
+            <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color={colors.onDeep} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>{isRTL ? 'اتجاه القبلة' : 'Qibla Direction'}</Text>
           <View style={{ width: 40 }} />
@@ -309,7 +314,7 @@ const QiblaScreen: React.FC = () => {
 
           {/* Qibla Needle */}
           <Animated.View style={[styles.needleContainer, { transform: [{ rotate: needleRotation }] }]}>
-            <LinearGradient colors={isFacingQibla ? ['#6bcb77', '#4ade80'] : ['#ffd93d', '#f59e0b']} style={styles.needle}>
+            <LinearGradient colors={isFacingQibla ? [colors.primaryLight, '#4ade80'] : [fixedColors.gold, '#f59e0b']} style={styles.needle}>
               <View style={styles.needleArrow} />
             </LinearGradient>
             <View style={styles.kaabaIcon}>
@@ -326,7 +331,7 @@ const QiblaScreen: React.FC = () => {
         {/* Status */}
         {isFacingQibla && (
           <View style={styles.facingQibla}>
-            <Ionicons name="checkmark-circle" size={24} color="#6bcb77" />
+            <Ionicons name="checkmark-circle" size={24} color={colors.primaryLight} />
             <Text style={styles.facingText}>{isRTL ? 'أنت تواجه القبلة!' : "You're facing Qibla!"}</Text>
           </View>
         )}
@@ -349,7 +354,7 @@ const QiblaScreen: React.FC = () => {
         {/* Calibration notice */}
         {!magnetometerAvailable && (
           <View style={styles.notice}>
-            <Ionicons name="warning" size={20} color="#ffd93d" />
+            <Ionicons name="warning" size={20} color={fixedColors.gold} />
             <Text style={styles.noticeText}>
               {isRTL ? 'البوصلة غير متاحة. الاتجاه تقريبي.' : 'Compass not available. Direction is approximate.'}
             </Text>
@@ -368,14 +373,14 @@ const QiblaScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { flex: 1 },
   background: { flex: 1 },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#1a1a2e' },
-  loadingText: { marginTop: 16, fontSize: 16, color: '#fff' },
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: c.canvasDeep },
+  loadingText: { marginTop: 16, fontSize: 16, color: c.onDeep },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 16 },
   backButton: { padding: 8 },
-  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#fff' },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: c.onDeep },
   kaabaContainer: { alignItems: 'center', marginTop: 10 },
   kaabaEmoji: { fontSize: 40 },
   meccaText: { fontSize: 14, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
@@ -389,18 +394,18 @@ const styles = StyleSheet.create({
   degreeMarkMajor: { height: 14, backgroundColor: 'rgba(255,255,255,0.4)' },
   needleContainer: { position: 'absolute', width: COMPASS_SIZE, height: COMPASS_SIZE, alignItems: 'center' },
   needle: { position: 'absolute', top: 20, width: 8, height: COMPASS_SIZE / 2 - 60, borderRadius: 4, alignItems: 'center' },
-  needleArrow: { position: 'absolute', top: -10, width: 0, height: 0, borderLeftWidth: 10, borderRightWidth: 10, borderBottomWidth: 20, borderLeftColor: 'transparent', borderRightColor: 'transparent', borderBottomColor: '#ffd93d' },
+  needleArrow: { position: 'absolute', top: -10, width: 0, height: 0, borderLeftWidth: 10, borderRightWidth: 10, borderBottomWidth: 20, borderLeftColor: 'transparent', borderRightColor: 'transparent', borderBottomColor: fixedColors.gold },
   kaabaIcon: { position: 'absolute', top: 35 },
   centerCircle: { width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,255,255,0.1)', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: 'rgba(255,255,255,0.2)' },
-  degreeText: { fontSize: 24, fontWeight: 'bold', color: '#fff' },
-  degreeTextGreen: { color: '#6bcb77' },
+  degreeText: { fontSize: 24, fontWeight: 'bold', color: c.onDeep },
+  degreeTextGreen: { color: c.primaryLight },
   facingQibla: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 24, gap: 8 },
-  facingText: { fontSize: 18, fontWeight: '600', color: '#6bcb77' },
+  facingText: { fontSize: 18, fontWeight: '600', color: c.primaryLight },
   infoCard: { backgroundColor: 'rgba(255,255,255,0.1)', marginHorizontal: 24, marginTop: 30, borderRadius: 16, padding: 20 },
   infoRow: { flexDirection: 'row', alignItems: 'center' },
   infoItem: { flex: 1, alignItems: 'center' },
   infoLabel: { fontSize: 12, color: 'rgba(255,255,255,0.6)', marginBottom: 6 },
-  infoValue: { fontSize: 18, fontWeight: 'bold', color: '#fff' },
+  infoValue: { fontSize: 18, fontWeight: 'bold', color: c.onDeep },
   infoDivider: { width: 1, height: 40, backgroundColor: 'rgba(255,255,255,0.2)' },
   notice: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 20, paddingHorizontal: 24, gap: 8 },
   noticeText: { fontSize: 12, color: 'rgba(255,255,255,0.6)' },

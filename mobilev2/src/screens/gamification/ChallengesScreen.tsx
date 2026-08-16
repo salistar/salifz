@@ -17,11 +17,16 @@ import { useGamificationStore } from '../../stores';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 
 // ✅ Constante pour les logs
 const LOG_PREFIX = '[ChallengesScreen.tsx]';
 
 export default function ChallengesScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
   
   const { addXp, addGems } = useGamificationStore();
@@ -96,10 +101,10 @@ export default function ChallengesScreen({ navigation }: any) {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'easy': return '#4CAF50';
-      case 'medium': return '#FF9800';
-      case 'hard': return '#F44336';
-      default: return '#9E9E9E';
+      case 'easy': return colors.primary;
+      case 'medium': return colors.warning;
+      case 'hard': return colors.error;
+      default: return colors.textMuted;
     }
   };
 
@@ -133,7 +138,7 @@ export default function ChallengesScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient colors={['#9C27B0', '#7B1FA2']} style={styles.header}>
+      <LinearGradient colors={[colors.accentDeep, colors.accentDeep]} style={styles.header}>
         <Text style={styles.headerIcon}>🎯</Text>
         {/* ✅ AVANT: 'التحديات' */}
         <Text style={styles.headerTitle}>{t('challenges.title')}</Text>
@@ -142,7 +147,7 @@ export default function ChallengesScreen({ navigation }: any) {
       {/* Tabs */}
       <View style={styles.tabsContainer}>
         {tabs.map((tab) => (
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             key={tab.id} 
             style={[styles.tab, activeTab === tab.id && styles.tabActive]} 
             onPress={() => handleTabChange(tab.id)}
@@ -241,11 +246,11 @@ export default function ChallengesScreen({ navigation }: any) {
                     <Text style={styles.claimedText}>✓ {t('challenges.claimed')}</Text>
                   </View>
                 ) : isCompleted ? (
-                  <TouchableOpacity 
+                  <TouchableOpacity accessible accessibilityRole="button" 
                     style={styles.claimButton} 
                     onPress={() => handleClaimReward(challenge)}
                   >
-                    <LinearGradient colors={['#FFD700', '#FFA000']} style={styles.claimGradient}>
+                    <LinearGradient colors={[fixedColors.gold, colors.warningStrong]} style={styles.claimGradient}>
                       {/* ✅ AVANT: 'استلم المكافأة 🎁' */}
                       <Text style={styles.claimText}>{t('challenges.claimReward')} 🎁</Text>
                     </LinearGradient>
@@ -256,7 +261,7 @@ export default function ChallengesScreen({ navigation }: any) {
                     <Text style={styles.inProgressText}>{t('challenges.inProgress')}</Text>
                   </View>
                 ) : (
-                  <TouchableOpacity 
+                  <TouchableOpacity accessible accessibilityRole="button" 
                     style={styles.startButton} 
                     onPress={() => handleStartChallenge(challenge)}
                   >
@@ -274,14 +279,14 @@ export default function ChallengesScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   header: { paddingTop: 50, paddingBottom: 30, alignItems: 'center' },
   headerIcon: { fontSize: 50 },
-  headerTitle: { color: '#fff', fontSize: 24, fontWeight: 'bold', marginTop: 10 },
+  headerTitle: { color: c.onDeep, fontSize: 24, fontWeight: 'bold', marginTop: 10 },
   tabsContainer: { 
     flexDirection: 'row', 
-    backgroundColor: '#fff', 
+    backgroundColor: c.surface, 
     marginHorizontal: 20, 
     marginTop: -15, 
     borderRadius: 15, 
@@ -296,16 +301,16 @@ const styles = StyleSheet.create({
     paddingVertical: 12, 
     borderRadius: 12 
   },
-  tabActive: { backgroundColor: '#9C27B0' },
+  tabActive: { backgroundColor: c.accentDeep },
   tabIcon: { fontSize: 16, marginRight: 5 },
-  tabLabel: { color: '#666', fontWeight: '600' },
-  tabLabelActive: { color: '#fff' },
+  tabLabel: { color: c.textSecondary, fontWeight: '600' },
+  tabLabelActive: { color: c.onDeep },
   content: { padding: 20 },
   emptyState: { alignItems: 'center', paddingVertical: 50 },
   emptyIcon: { fontSize: 60, marginBottom: 15 },
-  emptyText: { color: '#666', fontSize: 16 },
+  emptyText: { color: c.textSecondary, fontSize: 16 },
   challengeCard: { 
-    backgroundColor: '#fff', 
+    backgroundColor: c.surface, 
     borderRadius: 20, 
     padding: 20, 
     marginBottom: 15, 
@@ -316,53 +321,53 @@ const styles = StyleSheet.create({
     width: 50, 
     height: 50, 
     borderRadius: 15, 
-    backgroundColor: '#f5f5f5', 
+    backgroundColor: c.background, 
     justifyContent: 'center', 
     alignItems: 'center' 
   },
   challengeIcon: { fontSize: 25 },
   challengeInfo: { flex: 1, marginLeft: 12 },
-  challengeTitle: { fontSize: 16, fontWeight: 'bold', color: '#333' },
-  challengeDesc: { color: '#666', fontSize: 12, marginTop: 2 },
+  challengeTitle: { fontSize: 16, fontWeight: 'bold', color: c.text },
+  challengeDesc: { color: c.textSecondary, fontSize: 12, marginTop: 2 },
   difficultyBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
   difficultyText: { fontSize: 11, fontWeight: '600' },
   progressContainer: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
   progressBar: { 
     flex: 1, 
     height: 8, 
-    backgroundColor: '#E0E0E0', 
+    backgroundColor: c.border, 
     borderRadius: 4, 
     overflow: 'hidden', 
     marginRight: 10 
   },
-  progressFill: { height: '100%', backgroundColor: '#9C27B0', borderRadius: 4 },
-  progressText: { color: '#666', fontSize: 12, fontWeight: '600' },
+  progressFill: { height: '100%', backgroundColor: c.accentDeep, borderRadius: 4 },
+  progressText: { color: c.textSecondary, fontSize: 12, fontWeight: '600' },
   rewardsRow: { flexDirection: 'row', marginBottom: 15 },
   rewardItem: { flexDirection: 'row', alignItems: 'center', marginRight: 20 },
   rewardIcon: { fontSize: 14, marginRight: 4 },
-  rewardValue: { color: '#333', fontWeight: '600' },
+  rewardValue: { color: c.text, fontWeight: '600' },
   claimedBadge: { 
-    backgroundColor: '#E8F5E9', 
+    backgroundColor: c.primarySoft, 
     paddingVertical: 12, 
     borderRadius: 12, 
     alignItems: 'center' 
   },
-  claimedText: { color: '#4CAF50', fontWeight: 'bold' },
+  claimedText: { color: c.primary, fontWeight: 'bold' },
   claimButton: { borderRadius: 12, overflow: 'hidden' },
   claimGradient: { paddingVertical: 14, alignItems: 'center' },
-  claimText: { color: '#333', fontWeight: 'bold', fontSize: 16 },
+  claimText: { color: c.text, fontWeight: 'bold', fontSize: 16 },
   inProgressBadge: { 
-    backgroundColor: '#f5f5f5', 
+    backgroundColor: c.background, 
     paddingVertical: 12, 
     borderRadius: 12, 
     alignItems: 'center' 
   },
-  inProgressText: { color: '#666' },
+  inProgressText: { color: c.textSecondary },
   startButton: { 
-    backgroundColor: '#9C27B0', 
+    backgroundColor: c.accentDeep, 
     paddingVertical: 14, 
     borderRadius: 12, 
     alignItems: 'center' 
   },
-  startText: { color: '#fff', fontWeight: 'bold', fontSize: 16 }
+  startText: { color: c.onDeep, fontWeight: 'bold', fontSize: 16 }
 });

@@ -17,6 +17,8 @@ import { rewardsAPI } from '../../services/api';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
@@ -49,6 +51,9 @@ const ACHIEVEMENTS_DATA = [
 ];
 
 export default function AchievementsScreen() {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
   
   const [achievements] = useState<any[]>(ACHIEVEMENTS_DATA);
@@ -89,12 +94,12 @@ export default function AchievementsScreen() {
 
   const getRarityColor = (rarity: string) => {
     switch (rarity) {
-      case 'common': return '#9E9E9E';
-      case 'uncommon': return '#4CAF50';
-      case 'rare': return '#2196F3';
-      case 'epic': return '#9C27B0';
-      case 'legendary': return '#FF9800';
-      default: return '#9E9E9E';
+      case 'common': return colors.textMuted;
+      case 'uncommon': return colors.primary;
+      case 'rare': return colors.info;
+      case 'epic': return colors.accentDeep;
+      case 'legendary': return colors.warning;
+      default: return colors.textMuted;
     }
   };
 
@@ -132,7 +137,7 @@ export default function AchievementsScreen() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient colors={['#FFD700', '#FFA000']} style={styles.header}>
+      <LinearGradient colors={[fixedColors.gold, colors.warningStrong]} style={styles.header}>
         <Text style={styles.headerIcon}>🏆</Text>
         {/* ✅ AVANT: 'الإنجازات' */}
         <Text style={styles.headerTitle}>{t('achievements.title')}</Text>
@@ -154,7 +159,7 @@ export default function AchievementsScreen() {
       {/* Categories */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesContainer}>
         {CATEGORIES.map((cat) => (
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             key={cat.id} 
             style={[styles.categoryButton, activeCategory === cat.id && styles.categoryButtonActive]} 
             onPress={() => handleCategoryChange(cat.id)}
@@ -177,12 +182,12 @@ export default function AchievementsScreen() {
           {filteredAchievements.map((achievement) => {
             const isUnlocked = userAchievements.includes(achievement.id);
             return (
-              <TouchableOpacity
+              <TouchableOpacity accessible accessibilityRole="button"
                 key={achievement.id}
                 style={[styles.achievementCard, !isUnlocked && styles.achievementLocked]}
                 onPress={() => handleAchievementPress(achievement)}
               >
-                <View style={[styles.achievementIconBg, { backgroundColor: isUnlocked ? getRarityColor(achievement.rarity) + '30' : '#f0f0f0' }]}>
+                <View style={[styles.achievementIconBg, { backgroundColor: isUnlocked ? getRarityColor(achievement.rarity) + '30' : colors.backgroundAlt }]}>
                   <Text style={[styles.achievementIcon, !isUnlocked && styles.achievementIconLocked]}>
                     {isUnlocked ? achievement.icon : '🔒'}
                   </Text>
@@ -203,7 +208,7 @@ export default function AchievementsScreen() {
 
       {/* Achievement Detail Modal */}
       <Modal visible={!!selectedAchievement} transparent animationType="fade" onRequestClose={handleModalClose}>
-        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={handleModalClose}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.modalOverlay} activeOpacity={1} onPress={handleModalClose}>
           {selectedAchievement && (
             <View style={styles.modalContent}>
               <View style={[styles.modalIconBg, { backgroundColor: getRarityColor(selectedAchievement.rarity) + '30' }]}>
@@ -230,7 +235,7 @@ export default function AchievementsScreen() {
                   <Text style={styles.lockedText}>🔒 {t('achievements.lockedStatus')}</Text>
                 </View>
               )}
-              <TouchableOpacity style={styles.closeButton} onPress={handleModalClose}>
+              <TouchableOpacity accessible accessibilityRole="button" style={styles.closeButton} onPress={handleModalClose}>
                 {/* ✅ AVANT: 'إغلاق' */}
                 <Text style={styles.closeButtonText}>{t('common.close')}</Text>
               </TouchableOpacity>
@@ -242,47 +247,47 @@ export default function AchievementsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   header: { paddingTop: 50, paddingBottom: 30, alignItems: 'center' },
   headerIcon: { fontSize: 50 },
-  headerTitle: { color: '#fff', fontSize: 24, fontWeight: 'bold', marginTop: 10 },
+  headerTitle: { color: c.onDeep, fontSize: 24, fontWeight: 'bold', marginTop: 10 },
   statsRow: { flexDirection: 'row', marginTop: 20, backgroundColor: 'rgba(0,0,0,0.1)', borderRadius: 15, padding: 15 },
   statItem: { alignItems: 'center', paddingHorizontal: 25 },
-  statValue: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
+  statValue: { color: c.onDeep, fontSize: 20, fontWeight: 'bold' },
   statLabel: { color: 'rgba(255,255,255,0.8)', marginTop: 2 },
   statDivider: { width: 1, backgroundColor: 'rgba(255,255,255,0.3)' },
   categoriesContainer: { paddingHorizontal: 10, paddingVertical: 15 },
-  categoryButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 20, marginHorizontal: 5, elevation: 1 },
-  categoryButtonActive: { backgroundColor: COLORS.primary },
+  categoryButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.surface, paddingHorizontal: 15, paddingVertical: 10, borderRadius: 20, marginHorizontal: 5, elevation: 1 },
+  categoryButtonActive: { backgroundColor: c.primary },
   categoryIcon: { fontSize: 18, marginRight: 6 },
-  categoryText: { color: '#666', fontWeight: '600' },
-  categoryTextActive: { color: '#fff' },
+  categoryText: { color: c.textSecondary, fontWeight: '600' },
+  categoryTextActive: { color: c.onDeep },
   gridContainer: { padding: 10 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  achievementCard: { width: (width - 40) / 3, backgroundColor: '#fff', borderRadius: 15, padding: 12, alignItems: 'center', marginBottom: 10, elevation: 2 },
+  achievementCard: { width: (width - 40) / 3, backgroundColor: c.surface, borderRadius: 15, padding: 12, alignItems: 'center', marginBottom: 10, elevation: 2 },
   achievementLocked: { opacity: 0.6 },
   achievementIconBg: { width: 55, height: 55, borderRadius: 27.5, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
   achievementIcon: { fontSize: 28 },
   achievementIconLocked: { opacity: 0.5 },
-  achievementName: { fontSize: 12, fontWeight: '600', color: '#333', textAlign: 'center' },
-  achievementNameLocked: { color: '#999' },
+  achievementName: { fontSize: 12, fontWeight: '600', color: c.text, textAlign: 'center' },
+  achievementNameLocked: { color: c.textMuted },
   rarityBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8, marginTop: 6 },
-  rarityText: { color: '#fff', fontSize: 9, fontWeight: '600' },
+  rarityText: { color: c.onDeep, fontSize: 9, fontWeight: '600' },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
-  modalContent: { backgroundColor: '#fff', borderRadius: 20, padding: 25, alignItems: 'center', width: width - 60, elevation: 10 },
+  modalContent: { backgroundColor: c.surface, borderRadius: 20, padding: 25, alignItems: 'center', width: width - 60, elevation: 10 },
   modalIconBg: { width: 80, height: 80, borderRadius: 40, justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
   modalIcon: { fontSize: 45 },
-  modalTitle: { fontSize: 22, fontWeight: 'bold', color: '#333' },
+  modalTitle: { fontSize: 22, fontWeight: 'bold', color: c.text },
   modalRarityBadge: { paddingHorizontal: 15, paddingVertical: 5, borderRadius: 15, marginTop: 10 },
-  modalRarityText: { color: '#fff', fontWeight: '600' },
-  modalReward: { flexDirection: 'row', alignItems: 'center', marginTop: 20, backgroundColor: '#f5f5f5', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 15 },
-  modalRewardLabel: { color: '#666', marginRight: 5 },
-  modalRewardValue: { color: COLORS.primary, fontWeight: 'bold', fontSize: 16 },
-  unlockedBadge: { backgroundColor: '#E8F5E9', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 15, marginTop: 15 },
-  unlockedText: { color: '#4CAF50', fontWeight: 'bold' },
-  lockedBadge: { backgroundColor: '#f5f5f5', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 15, marginTop: 15 },
-  lockedText: { color: '#999' },
-  closeButton: { marginTop: 20, paddingVertical: 12, paddingHorizontal: 40, backgroundColor: COLORS.primary, borderRadius: 25 },
-  closeButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 }
+  modalRarityText: { color: c.onDeep, fontWeight: '600' },
+  modalReward: { flexDirection: 'row', alignItems: 'center', marginTop: 20, backgroundColor: c.background, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 15 },
+  modalRewardLabel: { color: c.textSecondary, marginRight: 5 },
+  modalRewardValue: { color: c.primary, fontWeight: 'bold', fontSize: 16 },
+  unlockedBadge: { backgroundColor: c.primarySoft, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 15, marginTop: 15 },
+  unlockedText: { color: c.primary, fontWeight: 'bold' },
+  lockedBadge: { backgroundColor: c.background, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 15, marginTop: 15 },
+  lockedText: { color: c.textMuted },
+  closeButton: { marginTop: 20, paddingVertical: 12, paddingHorizontal: 40, backgroundColor: c.primary, borderRadius: 25 },
+  closeButtonText: { color: c.onDeep, fontWeight: 'bold', fontSize: 16 }
 });

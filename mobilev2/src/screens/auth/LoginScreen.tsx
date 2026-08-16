@@ -21,6 +21,8 @@ import { initializeToken, debugAuth } from '../../services/api';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -28,6 +30,9 @@ const { width, height } = Dimensions.get('window');
 const LOG_PREFIX = '[LoginScreen.tsx]';
 
 export default function LoginScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
   console.log(`${LOG_PREFIX} 📐 Screen dimensions: ${width}x${height}`);
   
@@ -144,7 +149,7 @@ export default function LoginScreen({ navigation }: any) {
   console.log(`${LOG_PREFIX} 🎨 Rendering UI...`);
 
   return (
-    <LinearGradient colors={['#1a1a2e', '#16213e']} style={styles.container}>
+    <LinearGradient colors={[colors.canvasDeep, colors.canvasDeepAlt]} style={styles.container}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboardView}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           {/* Logo Section */}
@@ -175,7 +180,7 @@ export default function LoginScreen({ navigation }: any) {
                   style={styles.input}
                   // ✅ AVANT: 'example@email.com أو username'
                   placeholder={t('auth.emailPlaceholder')}
-                  placeholderTextColor="#666"
+                  placeholderTextColor={colors.textSecondary}
                   value={email}
                   onChangeText={(text) => { 
                     console.log(`${LOG_PREFIX} 📝 Email changed: ${text}`);
@@ -199,7 +204,7 @@ export default function LoginScreen({ navigation }: any) {
                 <TextInput
                   style={styles.input}
                   placeholder="••••••••"
-                  placeholderTextColor="#666"
+                  placeholderTextColor={colors.textSecondary}
                   value={password}
                   onChangeText={(text) => { 
                     console.log(`${LOG_PREFIX} 📝 Password changed: ******`);
@@ -208,7 +213,7 @@ export default function LoginScreen({ navigation }: any) {
                   }}
                   secureTextEntry={!showPassword}
                 />
-                <TouchableOpacity onPress={() => {
+                <TouchableOpacity accessible accessibilityRole="button" onPress={() => {
                   console.log(`${LOG_PREFIX} 👁️ Toggle password visibility: ${!showPassword}`);
                   setShowPassword(!showPassword);
                 }}>
@@ -219,7 +224,7 @@ export default function LoginScreen({ navigation }: any) {
             </View>
 
             {/* Forgot Password */}
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               style={styles.forgotButton} 
               onPress={() => {
                 console.log(`${LOG_PREFIX} 🔗 Navigate to ForgotPassword`);
@@ -231,20 +236,20 @@ export default function LoginScreen({ navigation }: any) {
             </TouchableOpacity>
 
             {/* Login Button */}
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               style={[styles.loginButton, (isLoading || isSubmitting) && styles.loginButtonDisabled]} 
               onPress={handleLogin} 
               disabled={isLoading || isSubmitting}
             >
               <LinearGradient 
-                colors={[COLORS.primary, '#2E7D32']} 
+                colors={[colors.primary, colors.primaryDark]} 
                 style={styles.loginButtonGradient} 
                 start={{ x: 0, y: 0 }} 
                 end={{ x: 1, y: 0 }}
               >
                 {(isLoading || isSubmitting) ? (
                   <View style={styles.loadingContainer}>
-                    <ActivityIndicator color="#fff" size="small" />
+                    <ActivityIndicator color={colors.onDeep} size="small" />
                     {/* ✅ AVANT: 'جاري تسجيل الدخول...' */}
                     <Text style={styles.loadingText}>{t('auth.loggingIn')}</Text>
                   </View>
@@ -265,14 +270,14 @@ export default function LoginScreen({ navigation }: any) {
 
             {/* Social Buttons */}
             <View style={styles.socialButtons}>
-              <TouchableOpacity 
+              <TouchableOpacity accessible accessibilityRole="button" 
                 style={styles.socialButton}
                 onPress={() => console.log(`${LOG_PREFIX} 🍎 Apple login pressed`)}
               >
                 <Text style={styles.socialIcon}>🍎</Text>
                 <Text style={styles.socialText}>Apple</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity accessible accessibilityRole="button" 
                 style={styles.socialButton}
                 onPress={() => console.log(`${LOG_PREFIX} 🔵 Google login pressed`)}
               >
@@ -286,7 +291,7 @@ export default function LoginScreen({ navigation }: any) {
           <View style={styles.registerSection}>
             {/* ✅ AVANT: 'ليس لديك حساب؟' */}
             <Text style={styles.registerText}>{t('auth.noAccount')}</Text>
-            <TouchableOpacity onPress={() => {
+            <TouchableOpacity accessible accessibilityRole="button" onPress={() => {
               console.log(`${LOG_PREFIX} 🔗 Navigate to Register`);
               navigation.navigate('Register');
             }}>
@@ -298,7 +303,7 @@ export default function LoginScreen({ navigation }: any) {
           {/* ✅ Dev Helper - Only in development */}
           {__DEV__ && (
             <View style={styles.devSection}>
-              <TouchableOpacity style={styles.devButton} onPress={fillTestCredentials}>
+              <TouchableOpacity accessible accessibilityRole="button" style={styles.devButton} onPress={fillTestCredentials}>
                 <Text style={styles.devButtonText}>🧪 Test User</Text>
               </TouchableOpacity>
             </View>
@@ -309,7 +314,7 @@ export default function LoginScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { flex: 1 },
   keyboardView: { flex: 1 },
   scrollContent: { flexGrow: 1, paddingHorizontal: 25, paddingTop: 60, paddingBottom: 30 },
@@ -324,7 +329,7 @@ const styles = StyleSheet.create({
     marginBottom: 15 
   },
   logoEmoji: { fontSize: 50 },
-  appName: { fontSize: 32, fontWeight: 'bold', color: '#fff' },
+  appName: { fontSize: 32, fontWeight: 'bold', color: c.onDeep },
   appSlogan: { color: '#aaa', marginTop: 5 },
   formSection: { 
     backgroundColor: 'rgba(255,255,255,0.05)', 
@@ -332,10 +337,10 @@ const styles = StyleSheet.create({
     padding: 25, 
     marginBottom: 20 
   },
-  welcomeText: { fontSize: 24, fontWeight: 'bold', color: '#fff', textAlign: 'center' },
+  welcomeText: { fontSize: 24, fontWeight: 'bold', color: c.onDeep, textAlign: 'center' },
   subtitleText: { color: '#aaa', textAlign: 'center', marginTop: 5, marginBottom: 25 },
   inputContainer: { marginBottom: 20 },
-  inputLabel: { color: '#fff', marginBottom: 8, fontWeight: '600' },
+  inputLabel: { color: c.onDeep, marginBottom: 8, fontWeight: '600' },
   inputWrapper: { 
     flexDirection: 'row', 
     alignItems: 'center', 
@@ -345,22 +350,22 @@ const styles = StyleSheet.create({
     borderWidth: 1, 
     borderColor: 'transparent' 
   },
-  inputError: { borderColor: '#F44336' },
+  inputError: { borderColor: c.error },
   inputIcon: { fontSize: 18, marginRight: 10 },
-  input: { flex: 1, color: '#fff', paddingVertical: 15, fontSize: 16 },
+  input: { flex: 1, color: c.onDeep, paddingVertical: 15, fontSize: 16 },
   showIcon: { fontSize: 18, padding: 5 },
-  errorText: { color: '#F44336', fontSize: 12, marginTop: 5, marginLeft: 5 },
+  errorText: { color: c.error, fontSize: 12, marginTop: 5, marginLeft: 5 },
   forgotButton: { alignSelf: 'flex-end', marginBottom: 20 },
-  forgotText: { color: '#4CAF50', fontWeight: '600' },
+  forgotText: { color: c.primary, fontWeight: '600' },
   loginButton: { borderRadius: 15, overflow: 'hidden', marginBottom: 20 },
   loginButtonDisabled: { opacity: 0.7 },
   loginButtonGradient: { paddingVertical: 16, alignItems: 'center' },
-  loginButtonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  loginButtonText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   loadingContainer: { flexDirection: 'row', alignItems: 'center' },
-  loadingText: { color: '#fff', fontSize: 16, marginLeft: 10 },
+  loadingText: { color: c.onDeep, fontSize: 16, marginLeft: 10 },
   divider: { flexDirection: 'row', alignItems: 'center', marginVertical: 20 },
   dividerLine: { flex: 1, height: 1, backgroundColor: 'rgba(255,255,255,0.2)' },
-  dividerText: { color: '#666', marginHorizontal: 15 },
+  dividerText: { color: c.textSecondary, marginHorizontal: 15 },
   socialButtons: { flexDirection: 'row', justifyContent: 'space-between' },
   socialButton: { 
     flex: 1, 
@@ -373,10 +378,10 @@ const styles = StyleSheet.create({
     marginHorizontal: 5 
   },
   socialIcon: { fontSize: 18, marginRight: 8 },
-  socialText: { color: '#fff', fontWeight: '600' },
+  socialText: { color: c.onDeep, fontWeight: '600' },
   registerSection: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
   registerText: { color: '#aaa' },
-  registerLink: { color: '#4CAF50', fontWeight: 'bold', marginLeft: 5 },
+  registerLink: { color: c.primary, fontWeight: 'bold', marginLeft: 5 },
   // Dev section
   devSection: { 
     marginTop: 20, 
@@ -390,5 +395,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 152, 0, 0.5)'
   },
-  devButtonText: { color: '#FF9800', fontWeight: '600' }
+  devButtonText: { color: c.warning, fontWeight: '600' }
 });

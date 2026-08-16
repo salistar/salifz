@@ -7,7 +7,7 @@
  * ✅ ENHANCED: More detailed console.log
  */
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet,
   Dimensions, FlatList, Animated
@@ -18,6 +18,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -38,14 +40,14 @@ interface OnboardingSlide {
 }
 
 // ✅ DONNÉES AVEC CLÉS i18n (au lieu de texte hardcodé)
-const ONBOARDING_DATA: OnboardingSlide[] = [
+const makeOnboardingData = (colors: ThemeColors): OnboardingSlide[] => [
   { 
     id: '1', 
     emoji: '📖', 
     titleKey: 'onboarding.slide1.title',
     subtitleKey: 'onboarding.slide1.subtitle',
     descriptionKey: 'onboarding.slide1.description',
-    color: ['#4CAF50', '#2E7D32'] as const
+    color: [colors.primary, colors.primaryDark] as const
   },
   { 
     id: '2', 
@@ -53,7 +55,7 @@ const ONBOARDING_DATA: OnboardingSlide[] = [
     titleKey: 'onboarding.slide2.title',
     subtitleKey: 'onboarding.slide2.subtitle',
     descriptionKey: 'onboarding.slide2.description',
-    color: ['#FF9800', '#F57C00'] as const
+    color: [colors.warning, colors.warningStrong] as const
   },
   { 
     id: '3', 
@@ -61,7 +63,7 @@ const ONBOARDING_DATA: OnboardingSlide[] = [
     titleKey: 'onboarding.slide3.title',
     subtitleKey: 'onboarding.slide3.subtitle',
     descriptionKey: 'onboarding.slide3.description',
-    color: ['#F44336', '#D32F2F'] as const
+    color: [colors.error, colors.error] as const
   },
   { 
     id: '4', 
@@ -69,7 +71,7 @@ const ONBOARDING_DATA: OnboardingSlide[] = [
     titleKey: 'onboarding.slide4.title',
     subtitleKey: 'onboarding.slide4.subtitle',
     descriptionKey: 'onboarding.slide4.description',
-    color: ['#9C27B0', '#7B1FA2'] as const
+    color: [colors.accentDeep, colors.accentDeep] as const
   },
   { 
     id: '5', 
@@ -77,11 +79,15 @@ const ONBOARDING_DATA: OnboardingSlide[] = [
     titleKey: 'onboarding.slide5.title',
     subtitleKey: 'onboarding.slide5.subtitle',
     descriptionKey: 'onboarding.slide5.description',
-    color: ['#2196F3', '#1976D2'] as const
+    color: [colors.info, colors.infoStrong] as const
   }
 ];
 
 export default function OnboardingScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+  const ONBOARDING_DATA = useMemo(() => makeOnboardingData(colors), [colors]);
+
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
   console.log(`${LOG_PREFIX} 📐 Screen dimensions: ${width}x${height}`);
   console.log(`${LOG_PREFIX} 📊 Total slides: ${ONBOARDING_DATA.length}`);
@@ -189,7 +195,7 @@ export default function OnboardingScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       {/* Skip Button */}
-      <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+      <TouchableOpacity accessible accessibilityRole="button" style={styles.skipButton} onPress={handleSkip}>
         {/* ✅ AVANT: 'تخطي' */}
         <Text style={styles.skipText}>{t('common.skip')}</Text>
       </TouchableOpacity>
@@ -216,7 +222,7 @@ export default function OnboardingScreen({ navigation }: any) {
 
       {/* Next/Start Button */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.nextButton} onPress={handleNext}>
           {/* ✅ FIX: Utiliser ONBOARDING_DATA[currentIndex].color directement */}
           <LinearGradient 
             colors={ONBOARDING_DATA[currentIndex].color} 
@@ -246,8 +252,8 @@ export default function OnboardingScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#1a1a2e' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.canvasDeep },
   skipButton: { position: 'absolute', top: 50, right: 25, zIndex: 10, padding: 10 },
   skipText: { color: '#aaa', fontSize: 16 },
   slide: { width, alignItems: 'center' },
@@ -269,15 +275,15 @@ const styles = StyleSheet.create({
   },
   emoji: { fontSize: 80 },
   textContainer: { paddingHorizontal: 40, alignItems: 'center', marginTop: 40 },
-  title: { fontSize: 28, fontWeight: 'bold', color: '#fff', textAlign: 'center', marginBottom: 10 },
-  subtitle: { fontSize: 18, color: '#4CAF50', textAlign: 'center', marginBottom: 15 },
+  title: { fontSize: 28, fontWeight: 'bold', color: c.onDeep, textAlign: 'center', marginBottom: 10 },
+  subtitle: { fontSize: 18, color: c.primary, textAlign: 'center', marginBottom: 15 },
   description: { fontSize: 15, color: '#aaa', textAlign: 'center', lineHeight: 24 },
   pagination: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 30 },
   dot: { height: 8, borderRadius: 4, marginHorizontal: 4 },
   buttonContainer: { paddingHorizontal: 40, marginTop: 40 },
   nextButton: { borderRadius: 25, overflow: 'hidden' },
   nextButtonGradient: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 18 },
-  nextButtonText: { color: '#fff', fontSize: 18, fontWeight: 'bold', marginRight: 10 },
-  nextButtonIcon: { color: '#fff', fontSize: 20 },
-  progressText: { color: '#666', textAlign: 'center', marginTop: 20, marginBottom: 30 }
+  nextButtonText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold', marginRight: 10 },
+  nextButtonIcon: { color: c.onDeep, fontSize: 20 },
+  progressText: { color: c.textSecondary, textAlign: 'center', marginTop: 20, marginBottom: 30 }
 });

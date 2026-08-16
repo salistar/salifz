@@ -12,6 +12,8 @@ import {
   ViewStyle,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 interface AvatarProps {
   source?: string | null;
@@ -32,10 +34,15 @@ export const Avatar: React.FC<AvatarProps> = ({
   style,
   showBadge = false,
   badgeContent,
-  badgeColor = '#4CAF50',
+  // La valeur par défaut ne peut plus être une couleur figée : elle est
+  // résolue depuis le thème dans le corps du composant.
+  badgeColor,
   isOnline,
   level,
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const getSize = (): number => {
     switch (size) {
       case 'small': return 32;
@@ -66,22 +73,34 @@ export const Avatar: React.FC<AvatarProps> = ({
     return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
   };
 
+  const badgeTint = badgeColor ?? colors.primary;
+
+  // Dégradé déterministe déduit de l'initiale, pour que le même nom garde
+  // toujours la même couleur. La liste locale s'appelait `colors` et masquait
+  // le thème du même nom.
   const getGradientColors = (): string[] => {
-    if (!name) return ['#9E9E9E', '#757575'];
-    const colors = [
-      ['#4CAF50', '#2E7D32'],
-      ['#2196F3', '#1565C0'],
-      ['#FF9800', '#F57C00'],
-      ['#9C27B0', '#7B1FA2'],
-      ['#F44336', '#C62828'],
-      ['#00BCD4', '#0097A7'],
+    if (!name) return [colors.textMuted, colors.textSecondary];
+    const palettes = [
+      [colors.primary, colors.primaryDark],
+      [colors.info, colors.infoStrong],
+      [colors.warning, colors.warningStrong],
+      [colors.accent, colors.accentDeep],
+      [colors.error, colors.error],
+      [colors.primaryLight, colors.primary],
     ];
-    const index = name.charCodeAt(0) % colors.length;
-    return colors[index];
+    const index = name.charCodeAt(0) % palettes.length;
+    return palettes[index];
   };
 
   return (
-    <View style={[{ position: 'relative' }, style]}>
+    // Regroupé en un seul élément : sans cela, le lecteur d'écran énumère
+    // séparément les initiales, le badge et l'indicateur de présence.
+    <View
+      style={[{ position: 'relative' }, style]}
+      accessible
+      accessibilityRole="image"
+      accessibilityLabel={name ? `Avatar de ${name}` : undefined}
+    >
       {source ? (
         <Image
           source={{ uri: source }}
@@ -121,7 +140,7 @@ export const Avatar: React.FC<AvatarProps> = ({
               width: avatarSize * 0.25,
               height: avatarSize * 0.25,
               borderRadius: avatarSize * 0.125,
-              backgroundColor: isOnline ? '#4CAF50' : '#9E9E9E',
+              backgroundColor: isOnline ? colors.primary : colors.textMuted,
               right: 0,
               bottom: 0,
             },
@@ -135,7 +154,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           style={[
             styles.badge,
             {
-              backgroundColor: badgeColor,
+              backgroundColor: badgeTint,
               minWidth: avatarSize * 0.4,
               height: avatarSize * 0.4,
               borderRadius: avatarSize * 0.2,
@@ -172,22 +191,22 @@ export const Avatar: React.FC<AvatarProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   image: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: c.border,
   },
   placeholder: {
     justifyContent: 'center',
     alignItems: 'center',
   },
   initials: {
-    color: '#FFFFFF',
+    color: c.onDeep,
     fontWeight: '700',
   },
   onlineIndicator: {
     position: 'absolute',
     borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderColor: c.surface,
   },
   badge: {
     position: 'absolute',
@@ -196,18 +215,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   badgeText: {
-    color: '#FFFFFF',
+    color: c.onDeep,
     fontWeight: '700',
   },
   levelBadge: {
     position: 'absolute',
     alignSelf: 'center',
-    backgroundColor: '#FFC107',
+    backgroundColor: c.warning,
     justifyContent: 'center',
     alignItems: 'center',
   },
   levelText: {
-    color: '#333',
+    color: c.text,
     fontWeight: '700',
   },
 });

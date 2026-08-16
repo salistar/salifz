@@ -23,6 +23,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 
 const { width } = Dimensions.get('window');
 const GRID_ITEM_SIZE = (width - 48) / 10; // 10 items per row
@@ -44,6 +46,9 @@ interface Participant {
 }
 
 const KhatamDetailScreen: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const { t, i18n } = useTranslation();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
@@ -133,12 +138,12 @@ const KhatamDetailScreen: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'available': return '#e0e0e0';
-      case 'assigned': return '#ffd93d';
-      case 'in_progress': return '#6bcb77';
-      case 'completed': return '#4d96ff';
-      case 'verified': return '#6bcb77';
-      default: return '#e0e0e0';
+      case 'available': return colors.border;
+      case 'assigned': return fixedColors.gold;
+      case 'in_progress': return colors.primaryLight;
+      case 'completed': return colors.info;
+      case 'verified': return colors.primaryLight;
+      default: return colors.border;
     }
   };
 
@@ -158,7 +163,7 @@ const KhatamDetailScreen: React.FC = () => {
     const icon = getStatusIcon(item.status);
     
     return (
-      <TouchableOpacity
+      <TouchableOpacity accessible accessibilityRole="button"
         style={[styles.hizbItem, { backgroundColor: statusColor }]}
         onPress={() => {
           setSelectedHizb(item);
@@ -176,7 +181,7 @@ const KhatamDetailScreen: React.FC = () => {
           <Ionicons
             name={icon as any}
             size={10}
-            color={item.status === 'verified' ? '#fff' : '#333'}
+            color={item.status === 'verified' ? colors.surface : colors.text}
             style={styles.hizbIcon}
           />
         )}
@@ -202,7 +207,7 @@ const KhatamDetailScreen: React.FC = () => {
         </View>
         {item.isAdmin && (
           <View style={styles.adminBadge}>
-            <Ionicons name="shield-checkmark" size={14} color="#667eea" />
+            <Ionicons name="shield-checkmark" size={14} color={colors.accent} />
           </View>
         )}
       </View>
@@ -218,7 +223,7 @@ const KhatamDetailScreen: React.FC = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#667eea" />
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
@@ -230,11 +235,11 @@ const KhatamDetailScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <LinearGradient
-        colors={['#667eea', '#764ba2']}
+        colors={[colors.accent, colors.accentDeep]}
         style={styles.header}
       >
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color="#fff" />
+        <TouchableOpacity accessible accessibilityRole="button" onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color={colors.onDeep} />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle} numberOfLines={1}>{khatam?.title}</Text>
@@ -243,8 +248,8 @@ const KhatamDetailScreen: React.FC = () => {
             {khatam?.type === 'group' ? ' 👥 Group' : ' 👤 Solo'}
           </Text>
         </View>
-        <TouchableOpacity style={styles.menuButton}>
-          <Ionicons name="ellipsis-vertical" size={24} color="#fff" />
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.menuButton}>
+          <Ionicons name="ellipsis-vertical" size={24} color={colors.onDeep} />
         </TouchableOpacity>
       </LinearGradient>
 
@@ -295,46 +300,46 @@ const KhatamDetailScreen: React.FC = () => {
         {/* Legend */}
         <View style={styles.legend}>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: '#e0e0e0' }]} />
+            <View style={[styles.legendDot, { backgroundColor: colors.border }]} />
             <Text style={styles.legendText}>{isRTL ? 'متاح' : 'Available'}</Text>
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: '#ffd93d' }]} />
+            <View style={[styles.legendDot, { backgroundColor: fixedColors.gold }]} />
             <Text style={styles.legendText}>{isRTL ? 'محجوز' : 'Assigned'}</Text>
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: '#4d96ff' }]} />
+            <View style={[styles.legendDot, { backgroundColor: colors.info }]} />
             <Text style={styles.legendText}>{isRTL ? 'مكتمل' : 'Completed'}</Text>
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: '#6bcb77' }]} />
+            <View style={[styles.legendDot, { backgroundColor: colors.primaryLight }]} />
             <Text style={styles.legendText}>{isRTL ? 'موثق' : 'Verified'}</Text>
           </View>
         </View>
 
         {/* Tabs */}
         <View style={styles.tabContainer}>
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={[styles.tab, activeTab === 'grid' && styles.tabActive]}
             onPress={() => setActiveTab('grid')}
           >
             <Ionicons 
               name="grid" 
               size={18} 
-              color={activeTab === 'grid' ? '#667eea' : '#999'} 
+              color={activeTab === 'grid' ? colors.accent : colors.textMuted} 
             />
             <Text style={[styles.tabText, activeTab === 'grid' && styles.tabTextActive]}>
               {isRTL ? 'جدول الأحزاب' : 'Hizb Grid'}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={[styles.tab, activeTab === 'participants' && styles.tabActive]}
             onPress={() => setActiveTab('participants')}
           >
             <Ionicons 
               name="people" 
               size={18} 
-              color={activeTab === 'participants' ? '#667eea' : '#999'} 
+              color={activeTab === 'participants' ? colors.accent : colors.textMuted} 
             />
             <Text style={[styles.tabText, activeTab === 'participants' && styles.tabTextActive]}>
               {isRTL ? 'المشاركون' : 'Participants'}
@@ -357,7 +362,7 @@ const KhatamDetailScreen: React.FC = () => {
                   </Text>
                   <View style={styles.hizbRow}>
                     {juzHizbs.map(hizb => (
-                      <TouchableOpacity
+                      <TouchableOpacity accessible accessibilityRole="button"
                         key={hizb.number}
                         style={[styles.hizbItem, { backgroundColor: getStatusColor(hizb.status) }]}
                         onPress={() => {
@@ -375,7 +380,7 @@ const KhatamDetailScreen: React.FC = () => {
                           <Ionicons
                             name={getStatusIcon(hizb.status) as any}
                             size={10}
-                            color={hizb.status === 'verified' ? '#fff' : '#333'}
+                            color={hizb.status === 'verified' ? colors.surface : colors.text}
                             style={styles.hizbIcon}
                           />
                         )}
@@ -399,7 +404,7 @@ const KhatamDetailScreen: React.FC = () => {
 
       {/* Realtime Session Button */}
       {khatam?.readingMode === 'realtime' && (
-        <TouchableOpacity
+        <TouchableOpacity accessible accessibilityRole="button"
           style={styles.liveButton}
           onPress={() => navigation.navigate('KhatamLive', { khatamId })}
         >
@@ -407,7 +412,7 @@ const KhatamDetailScreen: React.FC = () => {
             colors={['#ff416c', '#ff4b2b']}
             style={styles.liveButtonGradient}
           >
-            <Ionicons name="videocam" size={24} color="#fff" />
+            <Ionicons name="videocam" size={24} color={colors.onDeep} />
             <Text style={styles.liveButtonText}>
               {isRTL ? 'بدء جلسة مباشرة' : 'Start Live Session'}
             </Text>
@@ -451,11 +456,11 @@ const KhatamDetailScreen: React.FC = () => {
             
             <View style={styles.modalActions}>
               {selectedHizb?.status === 'available' && (
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   style={[styles.modalButton, styles.assignButton]}
                   onPress={() => handleAssignHizb(selectedHizb.number)}
                 >
-                  <Ionicons name="hand-left" size={20} color="#fff" />
+                  <Ionicons name="hand-left" size={20} color={colors.onDeep} />
                   <Text style={styles.modalButtonText}>
                     {isRTL ? 'احجز هذا الحزب' : 'Take this Hizb'}
                   </Text>
@@ -463,18 +468,18 @@ const KhatamDetailScreen: React.FC = () => {
               )}
               
               {(selectedHizb?.status === 'assigned' || selectedHizb?.status === 'in_progress') && (
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   style={[styles.modalButton, styles.completeButton]}
                   onPress={() => handleCompleteHizb(selectedHizb.number)}
                 >
-                  <Ionicons name="checkmark-circle" size={20} color="#fff" />
+                  <Ionicons name="checkmark-circle" size={20} color={colors.onDeep} />
                   <Text style={styles.modalButtonText}>
                     {isRTL ? 'إتمام القراءة' : 'Mark Complete'}
                   </Text>
                 </TouchableOpacity>
               )}
               
-              <TouchableOpacity
+              <TouchableOpacity accessible accessibilityRole="button"
                 style={[styles.modalButton, styles.cancelButton]}
                 onPress={() => setShowHizbModal(false)}
               >
@@ -490,10 +495,10 @@ const KhatamDetailScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: c.surfaceAlt,
   },
   loadingContainer: {
     flex: 1,
@@ -516,7 +521,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: c.onDeep,
   },
   headerSubtitle: {
     fontSize: 12,
@@ -527,7 +532,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   overviewCard: {
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     margin: 16,
     borderRadius: 16,
     padding: 20,
@@ -546,11 +551,11 @@ const styles = StyleSheet.create({
   overviewTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
   },
   khatamCount: {
     fontSize: 14,
-    color: '#667eea',
+    color: c.accent,
     fontWeight: '600',
   },
   progressCircle: {
@@ -560,11 +565,11 @@ const styles = StyleSheet.create({
   progressPercent: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#667eea',
+    color: c.accent,
   },
   progressLabel: {
     fontSize: 14,
-    color: '#666',
+    color: c.textSecondary,
   },
   statsRow: {
     flexDirection: 'row',
@@ -576,11 +581,11 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
   },
   statLabel: {
     fontSize: 12,
-    color: '#999',
+    color: c.textMuted,
     marginTop: 4,
   },
   legend: {
@@ -603,12 +608,12 @@ const styles = StyleSheet.create({
   },
   legendText: {
     fontSize: 12,
-    color: '#666',
+    color: c.textSecondary,
   },
   tabContainer: {
     flexDirection: 'row',
     marginHorizontal: 16,
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 12,
     padding: 4,
     marginBottom: 16,
@@ -623,15 +628,15 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   tabActive: {
-    backgroundColor: '#f0f0ff',
+    backgroundColor: c.infoSoft,
   },
   tabText: {
     fontSize: 14,
-    color: '#999',
+    color: c.textMuted,
     fontWeight: '500',
   },
   tabTextActive: {
-    color: '#667eea',
+    color: c.accent,
     fontWeight: '600',
   },
   gridContainer: {
@@ -644,7 +649,7 @@ const styles = StyleSheet.create({
   juzLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#667eea',
+    color: c.accent,
     marginBottom: 8,
   },
   hizbRow: {
@@ -663,10 +668,10 @@ const styles = StyleSheet.create({
   hizbNumber: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#666',
+    color: c.textSecondary,
   },
   hizbNumberDark: {
-    color: '#333',
+    color: c.text,
   },
   hizbIcon: {
     position: 'absolute',
@@ -678,7 +683,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   participantCard: {
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
@@ -692,14 +697,14 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#667eea',
+    backgroundColor: c.accent,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: c.onDeep,
   },
   participantDetails: {
     flex: 1,
@@ -708,15 +713,15 @@ const styles = StyleSheet.create({
   participantName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
   },
   participantStats: {
     fontSize: 12,
-    color: '#999',
+    color: c.textMuted,
     marginTop: 2,
   },
   adminBadge: {
-    backgroundColor: '#f0f0ff',
+    backgroundColor: c.infoSoft,
     padding: 6,
     borderRadius: 12,
   },
@@ -727,19 +732,19 @@ const styles = StyleSheet.create({
   progressBarSmall: {
     flex: 1,
     height: 6,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: c.backgroundAlt,
     borderRadius: 3,
     overflow: 'hidden',
   },
   progressFillSmall: {
     height: '100%',
-    backgroundColor: '#667eea',
+    backgroundColor: c.accent,
     borderRadius: 3,
   },
   progressTextSmall: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#667eea',
+    color: c.accent,
     marginLeft: 8,
     width: 40,
   },
@@ -761,7 +766,7 @@ const styles = StyleSheet.create({
   liveButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
+    color: c.onDeep,
   },
   // Modal
   modalOverlay: {
@@ -771,19 +776,19 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 20,
     padding: 24,
   },
   modalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
     textAlign: 'center',
     marginBottom: 20,
   },
   hizbInfo: {
-    backgroundColor: '#f8f8f8',
+    backgroundColor: c.surfaceAlt,
     borderRadius: 12,
     padding: 16,
     marginBottom: 20,
@@ -796,12 +801,12 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 14,
-    color: '#666',
+    color: c.textSecondary,
   },
   infoValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
   },
   statusBadge: {
     paddingHorizontal: 12,
@@ -811,7 +816,7 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
     textTransform: 'capitalize',
   },
   modalActions: {
@@ -826,23 +831,23 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   assignButton: {
-    backgroundColor: '#667eea',
+    backgroundColor: c.accent,
   },
   completeButton: {
-    backgroundColor: '#6bcb77',
+    backgroundColor: c.primaryLight,
   },
   cancelButton: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: c.backgroundAlt,
   },
   modalButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
+    color: c.onDeep,
   },
   cancelButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#666',
+    color: c.textSecondary,
   },
 });
 

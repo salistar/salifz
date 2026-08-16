@@ -5,6 +5,8 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 interface BadgeProps {
   content?: string | number;
@@ -21,13 +23,16 @@ export const Badge: React.FC<BadgeProps> = ({
   dot = false,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const getBackgroundColor = (): string => {
     switch (variant) {
-      case 'success': return '#4CAF50';
-      case 'warning': return '#FF9800';
-      case 'error': return '#F44336';
-      case 'info': return '#2196F3';
-      default: return '#9E9E9E';
+      case 'success': return colors.primary;
+      case 'warning': return colors.warning;
+      case 'error': return colors.error;
+      case 'info': return colors.info;
+      default: return colors.textMuted;
     }
   };
 
@@ -89,13 +94,13 @@ export const Badge: React.FC<BadgeProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   badge: {
     justifyContent: 'center',
     alignItems: 'center',
   },
   text: {
-    color: '#FFFFFF',
+    color: c.onDeep,
     fontWeight: '700',
   },
   dot: {},

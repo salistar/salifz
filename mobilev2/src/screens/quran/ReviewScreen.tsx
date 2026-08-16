@@ -16,12 +16,17 @@ import { aiAPI, progressAPI } from '../../services/api';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[ReviewScreen.tsx]';
 
 console.log(`${LOG_PREFIX} 📁 File loaded`);
 
 export default function ReviewScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering...`);
   
   const [reviewData, setReviewData] = useState<any>(null);
@@ -106,7 +111,7 @@ export default function ReviewScreen({ navigation }: any) {
     console.log(`${LOG_PREFIX} ⏳ Rendering loading state`);
     return (
       <View style={styles.container}>
-        <LinearGradient colors={['#FF9800', '#F57C00']} style={styles.header}>
+        <LinearGradient colors={[colors.warning, colors.warningStrong]} style={styles.header}>
           <Text style={styles.headerIcon}>🔄</Text>
           {/* ✅ AVANT: 'المراجعة الذكية' */}
           <Text style={styles.headerTitle}>{t('review.title')}</Text>
@@ -127,7 +132,7 @@ export default function ReviewScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={['#FF9800', '#F57C00']} style={styles.header}>
+      <LinearGradient colors={[colors.warning, colors.warningStrong]} style={styles.header}>
         <Text style={styles.headerIcon}>🔄</Text>
         {/* ✅ AVANT: 'المراجعة الذكية' */}
         <Text style={styles.headerTitle}>{t('review.title')}</Text>
@@ -164,11 +169,11 @@ export default function ReviewScreen({ navigation }: any) {
                     </Text>
                     <View style={[
                       styles.strengthBadge, 
-                      { backgroundColor: item.strength > 70 ? '#E8F5E9' : item.strength > 40 ? '#FFF3E0' : '#FFEBEE' }
+                      { backgroundColor: item.strength > 70 ? colors.primarySoft : item.strength > 40 ? colors.warningSoft : colors.errorSoft }
                     ]}>
                       <Text style={[
                         styles.strengthText, 
-                        { color: item.strength > 70 ? '#4CAF50' : item.strength > 40 ? '#FF9800' : '#F44336' }
+                        { color: item.strength > 70 ? colors.primary : item.strength > 40 ? colors.warning : colors.error }
                       ]}>
                         {item.strength}%
                       </Text>
@@ -177,14 +182,14 @@ export default function ReviewScreen({ navigation }: any) {
                 );
               })}
             </View>
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               style={styles.startButton} 
               onPress={() => {
                 console.log(`${LOG_PREFIX} 👆 "Start Review" button pressed`);
                 startReview('due', 0);
               }}
             >
-              <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.startGradient}>
+              <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.startGradient}>
                 {/* ✅ AVANT: 'ابدأ المراجعة' */}
                 <Text style={styles.startText}>{t('review.startReview')}</Text>
                 <Text style={styles.startXp}>+{reviewData.estimatedXp} XP</Text>
@@ -216,21 +221,21 @@ export default function ReviewScreen({ navigation }: any) {
                     <Text style={styles.previewText}>
                       {t('review.surahAyah', { surah: item.surahId, ayah: item.ayahId })}
                     </Text>
-                    <View style={[styles.strengthBadge, { backgroundColor: '#FFEBEE' }]}>
-                      <Text style={[styles.strengthText, { color: '#F44336' }]}>{item.strength}%</Text>
+                    <View style={[styles.strengthBadge, { backgroundColor: colors.errorSoft }]}>
+                      <Text style={[styles.strengthText, { color: colors.error }]}>{item.strength}%</Text>
                     </View>
                   </View>
                 );
               })}
             </View>
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               style={styles.startButton} 
               onPress={() => {
                 console.log(`${LOG_PREFIX} 👆 "Strengthen" button pressed`);
                 startReview('weak', 0);
               }}
             >
-              <LinearGradient colors={['#FF9800', '#F57C00']} style={styles.startGradient}>
+              <LinearGradient colors={[colors.warning, colors.warningStrong]} style={styles.startGradient}>
                 {/* ✅ AVANT: 'تقوية' */}
                 <Text style={styles.startText}>{t('review.strengthen')}</Text>
               </LinearGradient>
@@ -247,7 +252,7 @@ export default function ReviewScreen({ navigation }: any) {
             { duration: 10, icon: '📖' }, 
             { duration: 15, icon: '🎯' }
           ].map((option, index) => (
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               key={index} 
               style={styles.quickOption} 
               onPress={() => {
@@ -298,38 +303,38 @@ export default function ReviewScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   header: { paddingTop: 50, paddingBottom: 30, alignItems: 'center' },
   headerIcon: { fontSize: 50 },
-  headerTitle: { color: '#fff', fontSize: 24, fontWeight: 'bold', marginTop: 10 },
+  headerTitle: { color: c.onDeep, fontSize: 24, fontWeight: 'bold', marginTop: 10 },
   headerSubtitle: { color: 'rgba(255,255,255,0.8)', marginTop: 5 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { color: '#666' },
+  loadingText: { color: c.textSecondary },
   content: { padding: 20 },
-  card: { backgroundColor: '#fff', borderRadius: 20, padding: 20, marginBottom: 20, elevation: 2 },
+  card: { backgroundColor: c.surface, borderRadius: 20, padding: 20, marginBottom: 20, elevation: 2 },
   cardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
   cardIcon: { fontSize: 35, marginRight: 15 },
-  cardTitle: { fontSize: 18, fontWeight: 'bold', color: '#333' },
-  cardSubtitle: { color: '#666', marginTop: 2 },
+  cardTitle: { fontSize: 18, fontWeight: 'bold', color: c.text },
+  cardSubtitle: { color: c.textSecondary, marginTop: 2 },
   previewList: { marginBottom: 15 },
-  previewItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
-  previewText: { color: '#333' },
+  previewItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: c.backgroundAlt },
+  previewText: { color: c.text },
   strengthBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
   strengthText: { fontWeight: 'bold', fontSize: 12 },
   startButton: { borderRadius: 15, overflow: 'hidden' },
   startGradient: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: 15 },
-  startText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+  startText: { color: c.onDeep, fontSize: 16, fontWeight: 'bold' },
   startXp: { color: 'rgba(255,255,255,0.8)', marginLeft: 10 },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 15, marginTop: 10 },
+  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: c.text, marginBottom: 15, marginTop: 10 },
   quickOptions: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
-  quickOption: { backgroundColor: '#fff', borderRadius: 15, padding: 20, alignItems: 'center', flex: 1, marginHorizontal: 5, elevation: 2 },
+  quickOption: { backgroundColor: c.surface, borderRadius: 15, padding: 20, alignItems: 'center', flex: 1, marginHorizontal: 5, elevation: 2 },
   quickIcon: { fontSize: 30, marginBottom: 8 },
-  quickDuration: { color: '#333', fontWeight: '600' },
-  statsCard: { backgroundColor: '#fff', borderRadius: 20, padding: 20, elevation: 2 },
-  statsTitle: { fontSize: 16, fontWeight: 'bold', color: '#333', marginBottom: 15 },
+  quickDuration: { color: c.text, fontWeight: '600' },
+  statsCard: { backgroundColor: c.surface, borderRadius: 20, padding: 20, elevation: 2 },
+  statsTitle: { fontSize: 16, fontWeight: 'bold', color: c.text, marginBottom: 15 },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap' },
   statItem: { width: '50%', alignItems: 'center', paddingVertical: 10 },
-  statValue: { fontSize: 24, fontWeight: 'bold', color: COLORS.primary },
-  statLabel: { color: '#666', fontSize: 12, marginTop: 2 }
+  statValue: { fontSize: 24, fontWeight: 'bold', color: c.primary },
+  statLabel: { color: c.textSecondary, fontSize: 12, marginTop: 2 }
 });

@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Slider from '@react-native-community/slider';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 interface AudioPlayerProps {
   surahName: string;
@@ -53,6 +55,9 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   playbackSpeed = 1.0,
   variant = 'full',
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -77,14 +82,14 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
           <Text style={styles.miniReciter} numberOfLines={1}>{reciterName}</Text>
         </View>
         
-        <TouchableOpacity
+        <TouchableOpacity accessible accessibilityRole="button"
           style={styles.miniPlayButton}
           onPress={isPlaying ? onPause : onPlay}
         >
           <Ionicons
             name={isPlaying ? 'pause' : 'play'}
             size={24}
-            color="#FFFFFF"
+            color={colors.onDeep}
           />
         </TouchableOpacity>
       </View>
@@ -94,14 +99,14 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   if (variant === 'inline') {
     return (
       <View style={styles.inlineContainer}>
-        <TouchableOpacity
+        <TouchableOpacity accessible accessibilityRole="button"
           onPress={isPlaying ? onPause : onPlay}
           style={styles.inlinePlayButton}
         >
           <Ionicons
             name={isPlaying ? 'pause-circle' : 'play-circle'}
             size={40}
-            color="#4CAF50"
+            color={colors.primary}
           />
         </TouchableOpacity>
         
@@ -112,9 +117,9 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
             maximumValue={duration}
             value={currentTime}
             onSlidingComplete={onSeek}
-            minimumTrackTintColor="#4CAF50"
-            maximumTrackTintColor="#E0E0E0"
-            thumbTintColor="#4CAF50"
+            minimumTrackTintColor={colors.primary}
+            maximumTrackTintColor={colors.border}
+            thumbTintColor={colors.primary}
           />
           <View style={styles.inlineTimeRow}>
             <Text style={styles.inlineTime}>{formatTime(currentTime)}</Text>
@@ -143,9 +148,9 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
           maximumValue={duration}
           value={currentTime}
           onSlidingComplete={onSeek}
-          minimumTrackTintColor="#4CAF50"
-          maximumTrackTintColor="#E0E0E0"
-          thumbTintColor="#4CAF50"
+          minimumTrackTintColor={colors.primary}
+          maximumTrackTintColor={colors.border}
+          thumbTintColor={colors.primary}
         />
         <Text style={styles.time}>{formatTime(duration)}</Text>
       </View>
@@ -153,11 +158,11 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       {/* Controls */}
       <View style={styles.controls}>
         {onRepeat && (
-          <TouchableOpacity onPress={onRepeat} style={styles.controlButton}>
+          <TouchableOpacity accessible accessibilityRole="button" onPress={onRepeat} style={styles.controlButton}>
             <Ionicons
               name={getRepeatIcon() as any}
               size={24}
-              color={repeatMode !== 'none' ? '#4CAF50' : '#666'}
+              color={repeatMode !== 'none' ? colors.primary : colors.textSecondary}
             />
             {repeatMode === 'one' && (
               <Text style={styles.repeatBadge}>1</Text>
@@ -166,35 +171,35 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         )}
 
         {onPrevious && (
-          <TouchableOpacity onPress={onPrevious} style={styles.controlButton}>
-            <Ionicons name="play-skip-back" size={28} color="#333" />
+          <TouchableOpacity accessible accessibilityRole="button" onPress={onPrevious} style={styles.controlButton}>
+            <Ionicons name="play-skip-back" size={28} color={colors.text} />
           </TouchableOpacity>
         )}
 
-        <TouchableOpacity
+        <TouchableOpacity accessible accessibilityRole="button"
           style={styles.playButton}
           onPress={isPlaying ? onPause : onPlay}
           disabled={isLoading}
         >
           {isLoading ? (
-            <Ionicons name="hourglass-outline" size={32} color="#FFFFFF" />
+            <Ionicons name="hourglass-outline" size={32} color={colors.onDeep} />
           ) : (
             <Ionicons
               name={isPlaying ? 'pause' : 'play'}
               size={32}
-              color="#FFFFFF"
+              color={colors.onDeep}
             />
           )}
         </TouchableOpacity>
 
         {onNext && (
-          <TouchableOpacity onPress={onNext} style={styles.controlButton}>
-            <Ionicons name="play-skip-forward" size={28} color="#333" />
+          <TouchableOpacity accessible accessibilityRole="button" onPress={onNext} style={styles.controlButton}>
+            <Ionicons name="play-skip-forward" size={28} color={colors.text} />
           </TouchableOpacity>
         )}
 
         {onSpeedChange && (
-          <TouchableOpacity onPress={onSpeedChange} style={styles.controlButton}>
+          <TouchableOpacity accessible accessibilityRole="button" onPress={onSpeedChange} style={styles.controlButton}>
             <Text style={styles.speedText}>{playbackSpeed}x</Text>
           </TouchableOpacity>
         )}
@@ -203,9 +208,9 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: c.surface,
     borderRadius: 20,
     padding: 20,
     shadowColor: '#000',
@@ -221,16 +226,16 @@ const styles = StyleSheet.create({
   surahName: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#333',
+    color: c.text,
   },
   ayahNumber: {
     fontSize: 14,
-    color: '#4CAF50',
+    color: c.primary,
     marginTop: 4,
   },
   reciterName: {
     fontSize: 14,
-    color: '#999',
+    color: c.textMuted,
     marginTop: 4,
   },
   progressContainer: {
@@ -244,7 +249,7 @@ const styles = StyleSheet.create({
   },
   time: {
     fontSize: 12,
-    color: '#999',
+    color: c.textMuted,
     minWidth: 40,
   },
   controls: {
@@ -260,7 +265,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#4CAF50',
+    backgroundColor: c.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 16,
@@ -271,18 +276,18 @@ const styles = StyleSheet.create({
     right: 8,
     fontSize: 10,
     fontWeight: '700',
-    color: '#4CAF50',
+    color: c.primary,
   },
   speedText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666',
+    color: c.textSecondary,
   },
   // Mini variant
   miniContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: c.surface,
     borderRadius: 12,
     padding: 12,
     shadowColor: '#000',
@@ -297,18 +302,18 @@ const styles = StyleSheet.create({
   miniTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
   },
   miniReciter: {
     fontSize: 12,
-    color: '#999',
+    color: c.textMuted,
     marginTop: 2,
   },
   miniPlayButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#4CAF50',
+    backgroundColor: c.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -333,7 +338,7 @@ const styles = StyleSheet.create({
   },
   inlineTime: {
     fontSize: 10,
-    color: '#999',
+    color: c.textMuted,
   },
 });
 

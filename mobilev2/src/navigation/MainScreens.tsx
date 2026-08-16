@@ -7,7 +7,8 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, spacing } from '../contexts/ThemeContext';
+import { spacing, ThemeColors, useTheme } from '../contexts/ThemeContext';
+import { useThemedStyles } from '../hooks/useThemedStyles';
 import { t } from '../services/i18n';
 import { useAuthStore } from '../stores/authStore';
 
@@ -26,6 +27,9 @@ const SURAHS = [
 ];
 
 export function LearnScreen() {
+  const { colors: themeColors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -38,7 +42,7 @@ export function LearnScreen() {
         keyExtractor={(item) => item.number.toString()}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.surahCard}>
+          <TouchableOpacity accessible accessibilityRole="button" style={styles.surahCard}>
             <View style={styles.surahNumber}>
               <Text style={styles.surahNumberText}>{item.number}</Text>
             </View>
@@ -72,22 +76,25 @@ const LEADERBOARD = [
 ];
 
 export function LeaderboardScreen() {
+  const { colors: themeColors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   return (
     <SafeAreaView style={styles.container}>
-      <LinearGradient colors={[colors.secondary[500], colors.secondary[600]]} style={styles.leagueHeader}>
+      <LinearGradient colors={[themeColors.warning, themeColors.warningStrong]} style={styles.leagueHeader}>
         <Text style={styles.leagueIcon}>🏆</Text>
         <Text style={styles.leagueTitle}>{t('leaderboard.gold')}</Text>
         <Text style={styles.leagueSubtitle}>3 {t('leaderboard.daysLeft')}</Text>
       </LinearGradient>
 
       <View style={styles.tabs}>
-        <TouchableOpacity style={[styles.tab, styles.tabActive]}>
+        <TouchableOpacity accessible accessibilityRole="button" style={[styles.tab, styles.tabActive]}>
           <Text style={[styles.tabText, styles.tabTextActive]}>{t('leaderboard.league')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tab}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.tab}>
           <Text style={styles.tabText}>{t('leaderboard.friends')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tab}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.tab}>
           <Text style={styles.tabText}>{t('leaderboard.global')}</Text>
         </TouchableOpacity>
       </View>
@@ -121,6 +128,9 @@ export function LeaderboardScreen() {
 // ============================================
 
 export function ProfileScreen() {
+  const { colors: themeColors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const { user, logout } = useAuthStore();
   
   // ✅ FIXED: Safe access with fallback values
@@ -156,23 +166,23 @@ export function ProfileScreen() {
       </View>
 
       <View style={styles.settingsList}>
-        <TouchableOpacity style={styles.settingItem}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.settingItem}>
           <Text style={styles.settingIcon}>⚙️</Text>
           <Text style={styles.settingText}>{t('profile.settings')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.settingItem}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.settingItem}>
           <Text style={styles.settingIcon}>🎯</Text>
           <Text style={styles.settingText}>{t('profile.dailyGoal')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.settingItem}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.settingItem}>
           <Text style={styles.settingIcon}>🌐</Text>
           <Text style={styles.settingText}>{t('profile.language')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.settingItem}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.settingItem}>
           <Text style={styles.settingIcon}>⭐</Text>
           <Text style={styles.settingText}>{t('profile.premium')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.settingItem, styles.logoutItem]} onPress={logout}>
+        <TouchableOpacity accessible accessibilityRole="button" style={[styles.settingItem, styles.logoutItem]} onPress={logout}>
           <Text style={styles.settingIcon}>🚪</Text>
           <Text style={[styles.settingText, styles.logoutText]}>{t('auth.logout')}</Text>
         </TouchableOpacity>
@@ -185,22 +195,22 @@ export function ProfileScreen() {
 // STYLES
 // ============================================
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.gray[50] },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   header: { padding: spacing.lg, backgroundColor: '#FFF' },
-  title: { fontSize: 24, fontWeight: '700', color: colors.gray[900] },
-  subtitle: { fontSize: 14, color: colors.gray[500], marginTop: 4 },
+  title: { fontSize: 24, fontWeight: '700', color: c.text },
+  subtitle: { fontSize: 14, color: c.textMuted, marginTop: 4 },
   list: { padding: spacing.md },
   
   // Surah Card
   surahCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', padding: spacing.md, borderRadius: 12, marginBottom: 8 },
-  surahNumber: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.primary[100], justifyContent: 'center', alignItems: 'center', marginLeft: 12 },
-  surahNumberText: { color: colors.primary[700], fontWeight: '600' },
+  surahNumber: { width: 40, height: 40, borderRadius: 20, backgroundColor: c.primarySoft, justifyContent: 'center', alignItems: 'center', marginLeft: 12 },
+  surahNumberText: { color: c.primaryDark, fontWeight: '600' },
   surahInfo: { flex: 1 },
-  surahName: { fontSize: 18, fontWeight: '600', color: colors.gray[900] },
-  surahMeta: { fontSize: 12, color: colors.gray[500], marginVertical: 4 },
-  progressBar: { height: 4, backgroundColor: colors.gray[200], borderRadius: 2 },
-  progressFill: { height: '100%', backgroundColor: colors.primary[500], borderRadius: 2 },
+  surahName: { fontSize: 18, fontWeight: '600', color: c.text },
+  surahMeta: { fontSize: 12, color: c.textMuted, marginVertical: 4 },
+  progressBar: { height: 4, backgroundColor: c.divider, borderRadius: 2 },
+  progressFill: { height: '100%', backgroundColor: c.primary, borderRadius: 2 },
   statusIcon: { fontSize: 18 },
   
   // League Header
@@ -210,37 +220,37 @@ const styles = StyleSheet.create({
   leagueSubtitle: { color: 'rgba(255,255,255,0.8)', marginTop: 4 },
   
   // Tabs
-  tabs: { flexDirection: 'row', backgroundColor: '#FFF', borderBottomWidth: 1, borderBottomColor: colors.gray[200] },
+  tabs: { flexDirection: 'row', backgroundColor: '#FFF', borderBottomWidth: 1, borderBottomColor: c.divider },
   tab: { flex: 1, paddingVertical: 12, alignItems: 'center' },
-  tabActive: { borderBottomWidth: 2, borderBottomColor: colors.primary[600] },
-  tabText: { color: colors.gray[500] },
-  tabTextActive: { color: colors.primary[600], fontWeight: '600' },
+  tabActive: { borderBottomWidth: 2, borderBottomColor: c.primary },
+  tabText: { color: c.textMuted },
+  tabTextActive: { color: c.primary, fontWeight: '600' },
   
   // Leaderboard
   leaderItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', padding: spacing.md, borderRadius: 12, marginBottom: 8 },
-  rankText: { width: 40, fontSize: 16, fontWeight: '600', color: colors.gray[600] },
+  rankText: { width: 40, fontSize: 16, fontWeight: '600', color: c.textSecondary },
   avatarIcon: { fontSize: 32, marginHorizontal: 8 },
   leaderInfo: { flex: 1 },
-  leaderName: { fontSize: 16, fontWeight: '600', color: colors.gray[900] },
-  leaderXP: { fontSize: 14, color: colors.gray[500] },
+  leaderName: { fontSize: 16, fontWeight: '600', color: c.text },
+  leaderXP: { fontSize: 14, color: c.textMuted },
   medalIcon: { fontSize: 24 },
   
   // Profile
   profileHeader: { alignItems: 'center', padding: spacing.xl, backgroundColor: '#FFF' },
-  profileAvatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.primary[100], justifyContent: 'center', alignItems: 'center' },
+  profileAvatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: c.primarySoft, justifyContent: 'center', alignItems: 'center' },
   profileAvatarText: { fontSize: 40 },
-  profileName: { fontSize: 24, fontWeight: '700', color: colors.gray[900], marginTop: 12 },
-  profileUsername: { fontSize: 14, color: colors.gray[500] },
+  profileName: { fontSize: 24, fontWeight: '700', color: c.text, marginTop: 12 },
+  profileUsername: { fontSize: 14, color: c.textMuted },
   profileStats: { flexDirection: 'row', marginTop: spacing.lg },
   profileStat: { alignItems: 'center', marginHorizontal: spacing.lg },
-  profileStatValue: { fontSize: 24, fontWeight: '700', color: colors.primary[600] },
-  profileStatLabel: { fontSize: 12, color: colors.gray[500], marginTop: 4 },
+  profileStatValue: { fontSize: 24, fontWeight: '700', color: c.primary },
+  profileStatLabel: { fontSize: 12, color: c.textMuted, marginTop: 4 },
   
   // Settings
   settingsList: { padding: spacing.lg },
   settingItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', padding: spacing.md, borderRadius: 12, marginBottom: 8 },
   settingIcon: { fontSize: 20, marginLeft: 12 },
-  settingText: { flex: 1, fontSize: 16, color: colors.gray[700] },
+  settingText: { flex: 1, fontSize: 16, color: c.textSecondary },
   logoutItem: { marginTop: spacing.lg },
-  logoutText: { color: colors.error },
+  logoutText: { color: c.error },
 });

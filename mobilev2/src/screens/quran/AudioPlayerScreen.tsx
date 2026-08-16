@@ -17,6 +17,8 @@ import { useSettingsStore } from '../../stores';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[AudioPlayerScreen.tsx]';
 const { width } = Dimensions.get('window');
@@ -33,6 +35,9 @@ const RECITERS = [
 console.log(`${LOG_PREFIX} 🎙️ Reciters configured:`, RECITERS.length);
 
 export default function AudioPlayerScreen({ route, navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering...`);
   console.log(`${LOG_PREFIX} 📥 Route params:`, JSON.stringify(route?.params || {}));
   
@@ -294,13 +299,13 @@ export default function AudioPlayerScreen({ route, navigation }: any) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient colors={['#1a1a2e', '#16213e']} style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={handleBackPress}>
+      <LinearGradient colors={[colors.canvasDeep, colors.canvasDeepAlt]} style={styles.header}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={handleBackPress}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Text style={styles.surahName}>{surahName}</Text>
-          <TouchableOpacity onPress={handleShowReciterPicker}>
+          <TouchableOpacity accessible accessibilityRole="button" onPress={handleShowReciterPicker}>
             {/* ✅ AVANT: 'مشاري العفاسي' hardcodé */}
             <Text style={styles.reciterName}>{getCurrentReciterName()} ▼</Text>
           </TouchableOpacity>
@@ -334,9 +339,9 @@ export default function AudioPlayerScreen({ route, navigation }: any) {
             console.log(`${LOG_PREFIX} 🎚️ Slider changed to: ${value}ms`);
             seekTo(value);
           }} 
-          minimumTrackTintColor={COLORS.primary} 
+          minimumTrackTintColor={colors.primary} 
           maximumTrackTintColor="#444" 
-          thumbTintColor={COLORS.primary} 
+          thumbTintColor={colors.primary} 
         />
         <View style={styles.timeContainer}>
           <Text style={styles.timeText}>{formatTime(position)}</Text>
@@ -346,21 +351,21 @@ export default function AudioPlayerScreen({ route, navigation }: any) {
 
       {/* Controls */}
       <View style={styles.controls}>
-        <TouchableOpacity style={styles.controlButton} onPress={changeSpeed}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.controlButton} onPress={changeSpeed}>
           <Text style={styles.speedText}>{playbackSpeed}x</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.controlButton} onPress={handlePreviousAyah} disabled={currentAyah === 0}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.controlButton} onPress={handlePreviousAyah} disabled={currentAyah === 0}>
           <Text style={[styles.controlIcon, currentAyah === 0 && styles.controlDisabled]}>⏮</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.playButton} onPress={togglePlayPause}>
-          <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.playButtonGradient}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.playButton} onPress={togglePlayPause}>
+          <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.playButtonGradient}>
             <Text style={styles.playIcon}>{isPlaying ? '⏸' : '▶️'}</Text>
           </LinearGradient>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.controlButton} onPress={handleNextAyah}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.controlButton} onPress={handleNextAyah}>
           <Text style={styles.controlIcon}>⏭</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.controlButton} onPress={toggleRepeat}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.controlButton} onPress={toggleRepeat}>
           <Text style={[styles.controlIcon, repeatMode !== 'none' && styles.controlActive]}>
             {repeatMode === 'one' ? '🔂' : '🔁'}
           </Text>
@@ -373,7 +378,7 @@ export default function AudioPlayerScreen({ route, navigation }: any) {
         <Text style={styles.listTitle}>{t('audioPlayer.ayahsList')}</Text>
         <ScrollView style={styles.ayahsList}>
           {[1, 2, 3, 4, 5, 6, 7].map((num, index) => (
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               key={index} 
               style={[styles.ayahItem, currentAyah === index && styles.ayahItemActive]} 
               onPress={() => handleAyahSelect(index)}
@@ -393,12 +398,12 @@ export default function AudioPlayerScreen({ route, navigation }: any) {
 
       {/* Reciter Picker Modal */}
       {showReciterPicker && (
-        <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={handleCloseReciterPicker}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.modalOverlay} activeOpacity={1} onPress={handleCloseReciterPicker}>
           <View style={styles.reciterPicker}>
             {/* ✅ AVANT: 'اختر القارئ' */}
             <Text style={styles.pickerTitle}>{t('audioPlayer.selectReciter')}</Text>
             {RECITERS.map((r) => (
-              <TouchableOpacity 
+              <TouchableOpacity accessible accessibilityRole="button" 
                 key={r.id} 
                 style={[styles.reciterOption, reciter === r.id && styles.reciterOptionActive]} 
                 onPress={() => handleReciterChange(r.id)}
@@ -416,50 +421,50 @@ export default function AudioPlayerScreen({ route, navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#1a1a2e' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.canvasDeep },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 50, paddingBottom: 20, paddingHorizontal: 15 },
   backButton: { width: 40, height: 40, justifyContent: 'center', alignItems: 'center' },
-  backIcon: { color: '#fff', fontSize: 24 },
+  backIcon: { color: c.onDeep, fontSize: 24 },
   headerCenter: { alignItems: 'center' },
-  surahName: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
+  surahName: { color: c.onDeep, fontSize: 20, fontWeight: 'bold' },
   reciterName: { color: '#aaa', marginTop: 5 },
   vinylContainer: { alignItems: 'center', marginVertical: 20 },
-  vinyl: { width: 150, height: 150, borderRadius: 75, backgroundColor: '#333', justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#444' },
-  vinylInner: { width: 50, height: 50, borderRadius: 25, backgroundColor: '#1a1a2e', justifyContent: 'center', alignItems: 'center' },
+  vinyl: { width: 150, height: 150, borderRadius: 75, backgroundColor: c.text, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#444' },
+  vinylInner: { width: 50, height: 50, borderRadius: 25, backgroundColor: c.canvasDeep, justifyContent: 'center', alignItems: 'center' },
   vinylText: { fontSize: 25 },
   currentAyahContainer: { paddingHorizontal: 20, alignItems: 'center' },
-  currentAyahLabel: { color: COLORS.primary, marginBottom: 10 },
-  currentAyahText: { color: '#fff', fontSize: 22, textAlign: 'center', lineHeight: 38 },
+  currentAyahLabel: { color: c.primary, marginBottom: 10 },
+  currentAyahText: { color: c.onDeep, fontSize: 22, textAlign: 'center', lineHeight: 38 },
   progressContainer: { paddingHorizontal: 20, marginTop: 30 },
   slider: { width: '100%', height: 40 },
   timeContainer: { flexDirection: 'row', justifyContent: 'space-between' },
   timeText: { color: '#aaa', fontSize: 12 },
   controls: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 20 },
   controlButton: { width: 50, height: 50, justifyContent: 'center', alignItems: 'center' },
-  controlIcon: { fontSize: 24, color: '#fff' },
+  controlIcon: { fontSize: 24, color: c.onDeep },
   controlDisabled: { opacity: 0.3 },
-  controlActive: { color: COLORS.primary },
-  speedText: { color: '#fff', fontWeight: 'bold' },
+  controlActive: { color: c.primary },
+  speedText: { color: c.onDeep, fontWeight: 'bold' },
   playButton: { marginHorizontal: 20 },
   playButtonGradient: { width: 70, height: 70, borderRadius: 35, justifyContent: 'center', alignItems: 'center' },
   playIcon: { fontSize: 30 },
-  listContainer: { flex: 1, marginTop: 20, backgroundColor: '#16213e', borderTopLeftRadius: 25, borderTopRightRadius: 25, padding: 20 },
-  listTitle: { color: '#fff', fontSize: 16, fontWeight: 'bold', marginBottom: 15 },
+  listContainer: { flex: 1, marginTop: 20, backgroundColor: c.canvasDeepAlt, borderTopLeftRadius: 25, borderTopRightRadius: 25, padding: 20 },
+  listTitle: { color: c.onDeep, fontSize: 16, fontWeight: 'bold', marginBottom: 15 },
   ayahsList: { flex: 1 },
-  ayahItem: { flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 10, marginBottom: 8, backgroundColor: '#1a1a2e' },
-  ayahItemActive: { backgroundColor: COLORS.primary + '30' },
-  ayahNumber: { width: 35, height: 35, borderRadius: 17.5, backgroundColor: '#333', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  ayahNumberText: { color: '#fff', fontSize: 12 },
-  ayahItemText: { flex: 1, color: '#ccc', fontSize: 14, textAlign: 'right' },
-  ayahItemTextActive: { color: '#fff' },
+  ayahItem: { flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 10, marginBottom: 8, backgroundColor: c.canvasDeep },
+  ayahItemActive: { backgroundColor: c.primary + '30' },
+  ayahNumber: { width: 35, height: 35, borderRadius: 17.5, backgroundColor: c.text, justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  ayahNumberText: { color: c.onDeep, fontSize: 12 },
+  ayahItemText: { flex: 1, color: c.textMuted, fontSize: 14, textAlign: 'right' },
+  ayahItemTextActive: { color: c.onDeep },
   playingIndicator: { marginLeft: 10 },
   modalOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'center', alignItems: 'center' },
-  reciterPicker: { backgroundColor: '#1a1a2e', borderRadius: 20, padding: 20, width: width - 60 },
-  pickerTitle: { color: '#fff', fontSize: 18, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 },
-  reciterOption: { padding: 15, borderRadius: 10, marginBottom: 10, backgroundColor: '#16213e', flexDirection: 'row', alignItems: 'center' },
-  reciterOptionActive: { backgroundColor: COLORS.primary + '30', borderColor: COLORS.primary, borderWidth: 1 },
-  reciterOptionText: { color: '#fff', fontSize: 16, flex: 1 },
+  reciterPicker: { backgroundColor: c.canvasDeep, borderRadius: 20, padding: 20, width: width - 60 },
+  pickerTitle: { color: c.onDeep, fontSize: 18, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 },
+  reciterOption: { padding: 15, borderRadius: 10, marginBottom: 10, backgroundColor: c.canvasDeepAlt, flexDirection: 'row', alignItems: 'center' },
+  reciterOptionActive: { backgroundColor: c.primary + '30', borderColor: c.primary, borderWidth: 1 },
+  reciterOptionText: { color: c.onDeep, fontSize: 16, flex: 1 },
   reciterOptionSubtext: { color: '#aaa', fontSize: 12 },
-  checkmark: { color: COLORS.primary, fontSize: 20, fontWeight: 'bold' }
+  checkmark: { color: c.primary, fontSize: 20, fontWeight: 'bold' }
 });

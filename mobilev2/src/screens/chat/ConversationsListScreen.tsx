@@ -27,6 +27,8 @@ import { socketService } from '../../services/socket';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 // ✅ Constante pour les logs
 const LOG_PREFIX = '[ConversationsListScreen.tsx]';
@@ -59,6 +61,9 @@ interface SearchUser {
 }
 
 export default function ConversationsListScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
   
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -237,7 +242,7 @@ export default function ConversationsListScreen({ navigation }: any) {
     const recipientId = item?.participants?.[0]?._id || '';
 
     return (
-      <TouchableOpacity
+      <TouchableOpacity accessible accessibilityRole="button"
         style={styles.conversationItem}
         onPress={() => {
           console.log(`${LOG_PREFIX} 👆 Conversation pressed: ${item._id}`);
@@ -286,7 +291,7 @@ export default function ConversationsListScreen({ navigation }: any) {
     const username = item?.username || '';
 
     return (
-      <TouchableOpacity
+      <TouchableOpacity accessible accessibilityRole="button"
         style={styles.searchResultItem}
         onPress={() => startConversation(item._id)}
       >
@@ -299,14 +304,14 @@ export default function ConversationsListScreen({ navigation }: any) {
             <Text style={styles.searchResultUsername}>{'@'}{username}</Text>
           ) : null}
         </View>
-        <Ionicons name="chatbubble-outline" size={24} color={COLORS.primary} />
+        <Ionicons name="chatbubble-outline" size={24} color={colors.primary} />
       </TouchableOpacity>
     );
   };
 
   const renderSearchHeader = () => {
     if (isSearching) {
-      return <ActivityIndicator style={styles.searchingIndicator} color={COLORS.primary} />;
+      return <ActivityIndicator style={styles.searchingIndicator} color={colors.primary} />;
     }
     
     if (searchResults.length === 0 && searchQuery.length >= 2) {
@@ -324,7 +329,7 @@ export default function ConversationsListScreen({ navigation }: any) {
       <Text style={styles.emptyTitle}>{t('conversations.empty')}</Text>
       {/* ✅ AVANT: 'ابحث عن أصدقاء لبدء محادثة جديدة' */}
       <Text style={styles.emptySubtitle}>{t('conversations.emptySubtitle')}</Text>
-      <TouchableOpacity 
+      <TouchableOpacity accessible accessibilityRole="button" 
         style={styles.findFriendsButton}
         onPress={() => {
           console.log(`${LOG_PREFIX} 🔗 Navigate to Friends`);
@@ -339,7 +344,7 @@ export default function ConversationsListScreen({ navigation }: any) {
 
   const renderLoading = () => (
     <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color={COLORS.primary} />
+      <ActivityIndicator size="large" color={colors.primary} />
       {/* ✅ AVANT: 'جاري التحميل...' */}
       <Text style={styles.loadingText}>{t('common.loading')}</Text>
     </View>
@@ -362,44 +367,44 @@ export default function ConversationsListScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
-      <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.header}>
+      <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
         <View style={styles.headerContent}>
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             style={styles.backButton}
             onPress={() => {
               console.log(`${LOG_PREFIX} 🔙 Back button pressed`);
               navigation.goBack();
             }}
           >
-            <Ionicons name="arrow-back" size={24} color="#fff" />
+            <Ionicons name="arrow-back" size={24} color={colors.onDeep} />
           </TouchableOpacity>
           {/* ✅ AVANT: 'المحادثات' */}
           <Text style={styles.headerTitle}>{t('conversations.title')}</Text>
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             style={styles.newChatButton}
             onPress={() => {
               console.log(`${LOG_PREFIX} ➕ New chat button pressed`);
               navigation.navigate('Friends');
             }}
           >
-            <Ionicons name="create-outline" size={24} color="#fff" />
+            <Ionicons name="create-outline" size={24} color={colors.onDeep} />
           </TouchableOpacity>
         </View>
         
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#999" style={styles.searchIcon} />
+          <Ionicons name="search" size={20} color={colors.textMuted} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             // ✅ AVANT: placeholder="ابحث عن شخص..."
             placeholder={t('conversations.searchPlaceholder')}
-            placeholderTextColor="#999"
+            placeholderTextColor={colors.textMuted}
             value={searchQuery}
             onChangeText={handleSearchChange}
           />
           {searchQuery.length > 0 ? (
-            <TouchableOpacity onPress={clearSearch}>
-              <Ionicons name="close-circle" size={20} color="#999" />
+            <TouchableOpacity accessible accessibilityRole="button" onPress={clearSearch}>
+              <Ionicons name="close-circle" size={20} color={colors.textMuted} />
             </TouchableOpacity>
           ) : null}
         </View>
@@ -436,7 +441,7 @@ export default function ConversationsListScreen({ navigation }: any) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={[COLORS.primary]}
+              colors={[colors.primary]}
             />
           }
           ListEmptyComponent={renderEmpty}
@@ -446,10 +451,10 @@ export default function ConversationsListScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: c.background,
   },
   header: {
     paddingBottom: 15,
@@ -472,7 +477,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#fff',
+    color: c.onDeep,
   },
   newChatButton: {
     width: 40,
@@ -485,7 +490,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     marginHorizontal: 15,
     borderRadius: 25,
     paddingHorizontal: 15,
@@ -498,7 +503,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     textAlign: 'right',
-    color: '#333',
+    color: c.text,
   },
   loadingContainer: {
     flex: 1,
@@ -508,7 +513,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 14,
-    color: '#666',
+    color: c.textSecondary,
   },
   listContent: {
     padding: 15,
@@ -520,7 +525,7 @@ const styles = StyleSheet.create({
   conversationItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 15,
     padding: 15,
     marginBottom: 10,
@@ -534,7 +539,7 @@ const styles = StyleSheet.create({
     width: 55,
     height: 55,
     borderRadius: 27.5,
-    backgroundColor: '#E3F2FD',
+    backgroundColor: c.infoSoft,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -554,13 +559,13 @@ const styles = StyleSheet.create({
   conversationName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
     flex: 1,
     textAlign: 'right',
   },
   timeText: {
     fontSize: 12,
-    color: '#999',
+    color: c.textMuted,
     marginLeft: 10,
   },
   conversationFooter: {
@@ -570,12 +575,12 @@ const styles = StyleSheet.create({
   },
   lastMessage: {
     fontSize: 14,
-    color: '#666',
+    color: c.textSecondary,
     flex: 1,
     textAlign: 'right',
   },
   unreadBadge: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
     borderRadius: 12,
     minWidth: 24,
     height: 24,
@@ -585,14 +590,14 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   unreadText: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 12,
     fontWeight: 'bold',
   },
   searchResultItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 15,
     padding: 15,
     marginBottom: 10,
@@ -604,12 +609,12 @@ const styles = StyleSheet.create({
   searchResultName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
     textAlign: 'right',
   },
   searchResultUsername: {
     fontSize: 13,
-    color: '#999',
+    color: c.textMuted,
     textAlign: 'right',
   },
   searchingIndicator: {
@@ -617,7 +622,7 @@ const styles = StyleSheet.create({
   },
   noResultsText: {
     textAlign: 'center',
-    color: '#999',
+    color: c.textMuted,
     fontSize: 16,
     paddingVertical: 30,
   },
@@ -632,23 +637,23 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
     marginBottom: 10,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: '#666',
+    color: c.textSecondary,
     textAlign: 'center',
     marginBottom: 25,
   },
   findFriendsButton: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
     paddingHorizontal: 30,
     paddingVertical: 12,
     borderRadius: 25,
   },
   findFriendsText: {
-    color: '#fff',
+    color: c.onDeep,
     fontWeight: 'bold',
     fontSize: 16,
   },

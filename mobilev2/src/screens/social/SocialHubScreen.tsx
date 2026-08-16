@@ -24,12 +24,17 @@ import { chatAPI, halaqaAPI, socialAPI } from '../../services/api';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t, getLocale } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[SocialHubScreen.tsx]';
 
 console.log(`${LOG_PREFIX} 📁 File loaded`);
 
 export default function SocialHubScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
   
   const [refreshing, setRefreshing] = useState(false);
@@ -117,7 +122,7 @@ export default function SocialHubScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
-      <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.header}>
+      <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
         {/* ✅ AVANT: 'التواصل' */}
         <Text style={styles.headerTitle}>{t('socialHub.title')}</Text>
         {/* ✅ AVANT: 'تواصل مع أصدقائك وحلقاتك' */}
@@ -127,19 +132,19 @@ export default function SocialHubScreen({ navigation }: any) {
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.primary]} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
         }
       >
         {/* Quick Actions */}
         <View style={styles.quickActions}>
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={styles.quickAction}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               navigation.navigate('ConversationsList');
             }}
           >
-            <View style={[styles.quickActionIcon, { backgroundColor: '#E3F2FD' }]}>
+            <View style={[styles.quickActionIcon, { backgroundColor: colors.infoSoft }]}>
               <Text style={styles.quickActionEmoji}>💬</Text>
               {unreadMessages > 0 && (
                 <View style={styles.quickActionBadge}>
@@ -153,28 +158,28 @@ export default function SocialHubScreen({ navigation }: any) {
             <Text style={styles.quickActionLabel}>{t('socialHub.quickActions.conversations')}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={styles.quickAction}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               navigation.navigate('Halaqa');
             }}
           >
-            <View style={[styles.quickActionIcon, { backgroundColor: '#E8F5E9' }]}>
+            <View style={[styles.quickActionIcon, { backgroundColor: colors.primarySoft }]}>
               <Text style={styles.quickActionEmoji}>🕌</Text>
             </View>
             {/* ✅ AVANT: 'الحلقات' */}
             <Text style={styles.quickActionLabel}>{t('socialHub.quickActions.halaqat')}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={styles.quickAction}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               navigation.navigate('Friends');
             }}
           >
-            <View style={[styles.quickActionIcon, { backgroundColor: '#FFF3E0' }]}>
+            <View style={[styles.quickActionIcon, { backgroundColor: colors.warningSoft }]}>
               <Text style={styles.quickActionEmoji}>👥</Text>
               {friendRequests.length > 0 && (
                 <View style={styles.quickActionBadge}>
@@ -186,14 +191,14 @@ export default function SocialHubScreen({ navigation }: any) {
             <Text style={styles.quickActionLabel}>{t('socialHub.quickActions.friends')}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
+          <TouchableOpacity accessible accessibilityRole="button"
             style={styles.quickAction}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               navigation.navigate('LeaderboardTab');
             }}
           >
-            <View style={[styles.quickActionIcon, { backgroundColor: '#F3E5F5' }]}>
+            <View style={[styles.quickActionIcon, { backgroundColor: colors.accentSoft }]}>
               <Text style={styles.quickActionEmoji}>🏆</Text>
             </View>
             {/* ✅ AVANT: 'الترتيب' */}
@@ -222,7 +227,7 @@ export default function SocialHubScreen({ navigation }: any) {
                     {request.from?.displayName || request.from?.username || t('socialHub.user')}
                   </Text>
                   <View style={styles.requestActions}>
-                    <TouchableOpacity
+                    <TouchableOpacity accessible accessibilityRole="button"
                       style={[styles.requestButton, styles.acceptButton]}
                       onPress={() => {
                         socialAPI.acceptFriendRequest(request.from?._id || request._id);
@@ -244,7 +249,7 @@ export default function SocialHubScreen({ navigation }: any) {
           <View style={styles.sectionHeader}>
             {/* ✅ AVANT: '💬 المحادثات الأخيرة' */}
             <Text style={styles.sectionTitle}>{t('socialHub.sections.recentConversations')}</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('ConversationsList')}>
+            <TouchableOpacity accessible accessibilityRole="button" onPress={() => navigation.navigate('ConversationsList')}>
               {/* ✅ AVANT: 'عرض الكل' */}
               <Text style={styles.seeAll}>{t('socialHub.seeAll')}</Text>
             </TouchableOpacity>
@@ -252,7 +257,7 @@ export default function SocialHubScreen({ navigation }: any) {
 
           {conversations.length > 0 ? (
             conversations.map((conv, index) => (
-              <TouchableOpacity
+              <TouchableOpacity accessible accessibilityRole="button"
                 key={conv._id || index}
                 style={styles.conversationItem}
                 onPress={() =>
@@ -298,7 +303,7 @@ export default function SocialHubScreen({ navigation }: any) {
               <Text style={styles.emptyIcon}>💬</Text>
               {/* ✅ AVANT: 'لا توجد محادثات بعد' */}
               <Text style={styles.emptyText}>{t('socialHub.empty.conversations')}</Text>
-              <TouchableOpacity
+              <TouchableOpacity accessible accessibilityRole="button"
                 style={styles.emptyButton}
                 onPress={() => navigation.navigate('Friends')}
               >
@@ -314,7 +319,7 @@ export default function SocialHubScreen({ navigation }: any) {
           <View style={styles.sectionHeader}>
             {/* ✅ AVANT: '🕌 حلقاتي' */}
             <Text style={styles.sectionTitle}>{t('socialHub.sections.myHalaqat')}</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Halaqa')}>
+            <TouchableOpacity accessible accessibilityRole="button" onPress={() => navigation.navigate('Halaqa')}>
               <Text style={styles.seeAll}>{t('socialHub.seeAll')}</Text>
             </TouchableOpacity>
           </View>
@@ -322,7 +327,7 @@ export default function SocialHubScreen({ navigation }: any) {
           {halaqat.length > 0 ? (
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {halaqat.map((halaqa, index) => (
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   key={halaqa._id || index}
                   style={styles.halaqaCard}
                   onPress={() => navigation.navigate('HalaqaDetail', { halaqaId: halaqa._id })}
@@ -339,12 +344,12 @@ export default function SocialHubScreen({ navigation }: any) {
                   </Text>
                 </TouchableOpacity>
               ))}
-              <TouchableOpacity
+              <TouchableOpacity accessible accessibilityRole="button"
                 style={[styles.halaqaCard, styles.createHalaqaCard]}
                 onPress={() => navigation.navigate('Halaqa')}
               >
-                <View style={[styles.halaqaIconContainer, { backgroundColor: '#E0E0E0' }]}>
-                  <Ionicons name="add" size={28} color="#666" />
+                <View style={[styles.halaqaIconContainer, { backgroundColor: colors.border }]}>
+                  <Ionicons name="add" size={28} color={colors.textSecondary} />
                 </View>
                 {/* ✅ AVANT: 'انضم أو أنشئ' */}
                 <Text style={styles.halaqaName}>{t('socialHub.joinOrCreate')}</Text>
@@ -357,7 +362,7 @@ export default function SocialHubScreen({ navigation }: any) {
               <Text style={styles.emptyIcon}>🕌</Text>
               {/* ✅ AVANT: 'لم تنضم لأي حلقة بعد' */}
               <Text style={styles.emptyText}>{t('socialHub.empty.halaqat')}</Text>
-              <TouchableOpacity
+              <TouchableOpacity accessible accessibilityRole="button"
                 style={styles.emptyButton}
                 onPress={() => navigation.navigate('Halaqa')}
               >
@@ -374,7 +379,7 @@ export default function SocialHubScreen({ navigation }: any) {
             <View style={styles.sectionHeader}>
               {/* ✅ AVANT: '👥 الأصدقاء' */}
               <Text style={styles.sectionTitle}>{t('socialHub.sections.friends')}</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('Friends')}>
+              <TouchableOpacity accessible accessibilityRole="button" onPress={() => navigation.navigate('Friends')}>
                 {/* ✅ AVANT: 'عرض الكل (X)' */}
                 <Text style={styles.seeAll}>
                   {t('socialHub.seeAllCount', { count: friends.length })}
@@ -384,7 +389,7 @@ export default function SocialHubScreen({ navigation }: any) {
 
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {friends.map((friend, index) => (
-                <TouchableOpacity
+                <TouchableOpacity accessible accessibilityRole="button"
                   key={friend._id || index}
                   style={styles.friendItem}
                   onPress={() => navigation.navigate('UserProfile', { userId: friend._id })}
@@ -408,10 +413,10 @@ export default function SocialHubScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: c.background,
   },
   header: {
     paddingVertical: 20,
@@ -421,7 +426,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
+    color: c.onDeep,
   },
   headerSubtitle: {
     fontSize: 14,
@@ -434,7 +439,7 @@ const styles = StyleSheet.create({
   quickActions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 20,
     padding: 20,
     marginBottom: 20,
@@ -459,7 +464,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -5,
     right: -5,
-    backgroundColor: '#F44336',
+    backgroundColor: c.error,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -468,17 +473,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   quickActionBadgeText: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 10,
     fontWeight: 'bold',
   },
   quickActionLabel: {
     fontSize: 12,
-    color: '#666',
+    color: c.textSecondary,
     fontWeight: '600',
   },
   section: {
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     borderRadius: 15,
     padding: 15,
     marginBottom: 15,
@@ -493,26 +498,26 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
   },
   seeAll: {
-    color: COLORS.primary,
+    color: c.primary,
     fontWeight: '600',
   },
   requestsBadge: {
-    backgroundColor: '#F44336',
+    backgroundColor: c.error,
     borderRadius: 10,
     paddingHorizontal: 8,
     paddingVertical: 2,
     marginLeft: 8,
   },
   requestsBadgeText: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 12,
     fontWeight: 'bold',
   },
   requestCard: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: c.surfaceAlt,
     borderRadius: 15,
     padding: 15,
     marginRight: 12,
@@ -523,7 +528,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#E3F2FD',
+    backgroundColor: c.infoSoft,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
@@ -534,7 +539,7 @@ const styles = StyleSheet.create({
   requestName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
     marginBottom: 10,
     textAlign: 'center',
   },
@@ -547,10 +552,10 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   acceptButton: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
   },
   acceptButtonText: {
-    color: '#fff',
+    color: c.onDeep,
     fontWeight: '600',
     fontSize: 12,
   },
@@ -559,13 +564,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: c.backgroundAlt,
   },
   conversationAvatar: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#E3F2FD',
+    backgroundColor: c.infoSoft,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -579,11 +584,11 @@ const styles = StyleSheet.create({
   conversationName: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
   },
   conversationLastMessage: {
     fontSize: 13,
-    color: '#999',
+    color: c.textMuted,
     marginTop: 3,
   },
   conversationMeta: {
@@ -591,11 +596,11 @@ const styles = StyleSheet.create({
   },
   conversationTime: {
     fontSize: 11,
-    color: '#999',
+    color: c.textMuted,
     marginBottom: 5,
   },
   unreadBadge: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -604,12 +609,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
   },
   unreadBadgeText: {
-    color: '#fff',
+    color: c.onDeep,
     fontSize: 11,
     fontWeight: 'bold',
   },
   halaqaCard: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: c.surfaceAlt,
     borderRadius: 15,
     padding: 15,
     marginRight: 12,
@@ -619,14 +624,14 @@ const styles = StyleSheet.create({
   createHalaqaCard: {
     borderStyle: 'dashed',
     borderWidth: 2,
-    borderColor: '#E0E0E0',
+    borderColor: c.border,
     backgroundColor: 'transparent',
   },
   halaqaIconContainer: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#E8F5E9',
+    backgroundColor: c.primarySoft,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
@@ -637,12 +642,12 @@ const styles = StyleSheet.create({
   halaqaName: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
     textAlign: 'center',
   },
   halaqaMembers: {
     fontSize: 11,
-    color: '#999',
+    color: c.textMuted,
     marginTop: 4,
   },
   friendItem: {
@@ -654,7 +659,7 @@ const styles = StyleSheet.create({
     width: 55,
     height: 55,
     borderRadius: 27.5,
-    backgroundColor: '#E3F2FD',
+    backgroundColor: c.infoSoft,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
@@ -670,13 +675,13 @@ const styles = StyleSheet.create({
     width: 14,
     height: 14,
     borderRadius: 7,
-    backgroundColor: '#4CAF50',
+    backgroundColor: c.primary,
     borderWidth: 2,
-    borderColor: '#fff',
+    borderColor: c.surface,
   },
   friendName: {
     fontSize: 12,
-    color: '#666',
+    color: c.textSecondary,
     textAlign: 'center',
   },
   emptyState: {
@@ -689,17 +694,17 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: '#999',
+    color: c.textMuted,
     marginBottom: 15,
   },
   emptyButton: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
     paddingHorizontal: 25,
     paddingVertical: 10,
     borderRadius: 20,
   },
   emptyButtonText: {
-    color: '#fff',
+    color: c.onDeep,
     fontWeight: '600',
   },
 });

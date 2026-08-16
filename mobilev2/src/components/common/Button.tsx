@@ -13,6 +13,7 @@ import {
   TextStyle,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface ButtonProps {
   title: string;
@@ -43,6 +44,7 @@ export const Button: React.FC<ButtonProps> = ({
   textStyle,
   gradient = false,
 }) => {
+  const { gradients } = useTheme();
   const getButtonStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
       flexDirection: 'row',
@@ -153,14 +155,16 @@ export const Button: React.FC<ButtonProps> = ({
 
   if (gradient && variant === 'primary') {
     return (
-      <TouchableOpacity
+      <TouchableOpacity accessible accessibilityRole="button"
+        accessibilityLabel={title}
+        accessibilityState={{ disabled: disabled || loading, busy: loading }}
         onPress={onPress}
         disabled={disabled || loading}
         activeOpacity={0.8}
         style={[fullWidth && { width: '100%' }, style]}
       >
         <LinearGradient
-          colors={['#4CAF50', '#2E7D32']}
+          colors={gradients.primary}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={[getButtonStyle(), { backgroundColor: undefined }]}
@@ -172,7 +176,9 @@ export const Button: React.FC<ButtonProps> = ({
   }
 
   return (
-    <TouchableOpacity
+    <TouchableOpacity accessible accessibilityRole="button"
+      accessibilityLabel={title}
+      accessibilityState={{ disabled: disabled || loading, busy: loading }}
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.8}

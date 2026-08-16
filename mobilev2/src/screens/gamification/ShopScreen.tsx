@@ -17,6 +17,8 @@ import { rewardsAPI } from '../../services/api';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 
 // ✅ Constante pour les logs
 const LOG_PREFIX = '[ShopScreen.tsx]';
@@ -42,6 +44,9 @@ const SHOP_ITEMS = [
 ];
 
 export default function ShopScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
   
   const { gems, addGems, refillHearts } = useGamificationStore();
@@ -162,8 +167,8 @@ export default function ShopScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient colors={['#9C27B0', '#7B1FA2']} style={styles.header}>
-        <TouchableOpacity 
+      <LinearGradient colors={[colors.accentDeep, colors.accentDeep]} style={styles.header}>
+        <TouchableOpacity accessible accessibilityRole="button" 
           style={styles.backButton} 
           onPress={() => {
             console.log(`${LOG_PREFIX} 🔙 Back button pressed`);
@@ -218,13 +223,13 @@ export default function ShopScreen({ navigation }: any) {
             })}
           </View>
 
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             style={[styles.claimButton, dailyClaimed && styles.claimButtonDisabled]}
             onPress={handleClaimDaily}
             disabled={dailyClaimed}
           >
             <LinearGradient 
-              colors={dailyClaimed ? ['#9E9E9E', '#757575'] : ['#FFD700', '#FFA000']} 
+              colors={dailyClaimed ? [colors.textMuted, colors.textSecondary] : [fixedColors.gold, colors.warningStrong]} 
               style={styles.claimGradient}
             >
               <Text style={styles.claimText}>
@@ -240,7 +245,7 @@ export default function ShopScreen({ navigation }: any) {
         <Text style={styles.sectionTitle}>🛒 {t('shop.items')}</Text>
         <View style={styles.itemsGrid}>
           {SHOP_ITEMS.map((item, index) => (
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               key={index}
               style={[styles.itemCard, item.price > gems && item.price > 0 && styles.itemCardDisabled]}
               onPress={() => item.price > 0 && handleBuyItem(item)}
@@ -274,8 +279,8 @@ export default function ShopScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   header: { 
     flexDirection: 'row', 
     alignItems: 'center', 
@@ -285,8 +290,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20 
   },
   backButton: { width: 40, height: 40, justifyContent: 'center' },
-  backIcon: { color: '#fff', fontSize: 28 },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
+  backIcon: { color: c.onDeep, fontSize: 28 },
+  headerTitle: { color: c.onDeep, fontSize: 20, fontWeight: 'bold' },
   gemsDisplay: { 
     flexDirection: 'row', 
     alignItems: 'center', 
@@ -296,17 +301,17 @@ const styles = StyleSheet.create({
     borderRadius: 20 
   },
   gemsIcon: { fontSize: 18, marginRight: 5 },
-  gemsCount: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  gemsCount: { color: c.onDeep, fontWeight: 'bold', fontSize: 16 },
   content: { padding: 20 },
   dailyCard: { 
-    backgroundColor: '#fff', 
+    backgroundColor: c.surface, 
     borderRadius: 20, 
     padding: 20, 
     marginBottom: 25, 
     elevation: 3 
   },
-  dailyTitle: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 5 },
-  dailySubtitle: { color: '#666', marginBottom: 20 },
+  dailyTitle: { fontSize: 18, fontWeight: 'bold', color: c.text, marginBottom: 5 },
+  dailySubtitle: { color: c.textSecondary, marginBottom: 20 },
   dailyDays: { 
     flexDirection: 'row', 
     justifyContent: 'space-between', 
@@ -316,20 +321,20 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     padding: 8, 
     borderRadius: 10, 
-    backgroundColor: '#f5f5f5',
+    backgroundColor: c.background,
     minWidth: 45
   },
-  dayItemPast: { backgroundColor: '#E8F5E9' },
-  dayItemCurrent: { backgroundColor: '#FFF3E0', borderWidth: 2, borderColor: '#FFD700' },
-  dayItemFuture: { backgroundColor: '#f5f5f5' },
-  dayNumber: { fontSize: 9, color: '#666', marginBottom: 3 },
-  dayReward: { fontSize: 12, fontWeight: 'bold', color: '#333' },
-  dayCheck: { color: COLORS.primary, fontWeight: 'bold', marginTop: 2 },
+  dayItemPast: { backgroundColor: c.primarySoft },
+  dayItemCurrent: { backgroundColor: c.warningSoft, borderWidth: 2, borderColor: fixedColors.gold },
+  dayItemFuture: { backgroundColor: c.background },
+  dayNumber: { fontSize: 9, color: c.textSecondary, marginBottom: 3 },
+  dayReward: { fontSize: 12, fontWeight: 'bold', color: c.text },
+  dayCheck: { color: c.primary, fontWeight: 'bold', marginTop: 2 },
   claimButton: { borderRadius: 15, overflow: 'hidden' },
   claimButtonDisabled: { opacity: 0.7 },
   claimGradient: { paddingVertical: 15, alignItems: 'center' },
-  claimText: { color: '#333', fontWeight: 'bold', fontSize: 16 },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 15 },
+  claimText: { color: c.text, fontWeight: 'bold', fontSize: 16 },
+  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: c.text, marginBottom: 15 },
   itemsGrid: { 
     flexDirection: 'row', 
     flexWrap: 'wrap', 
@@ -337,7 +342,7 @@ const styles = StyleSheet.create({
   },
   itemCard: { 
     width: '48%', 
-    backgroundColor: '#fff', 
+    backgroundColor: c.surface, 
     borderRadius: 15, 
     padding: 15, 
     alignItems: 'center', 
@@ -349,31 +354,31 @@ const styles = StyleSheet.create({
     width: 60, 
     height: 60, 
     borderRadius: 30, 
-    backgroundColor: '#f5f5f5', 
+    backgroundColor: c.background, 
     justifyContent: 'center', 
     alignItems: 'center', 
     marginBottom: 10 
   },
   itemIcon: { fontSize: 30 },
-  itemName: { fontSize: 14, fontWeight: 'bold', color: '#333', textAlign: 'center' },
-  itemNameEn: { fontSize: 10, color: '#999', marginTop: 2 },
+  itemName: { fontSize: 14, fontWeight: 'bold', color: c.text, textAlign: 'center' },
+  itemNameEn: { fontSize: 10, color: c.textMuted, marginTop: 2 },
   priceContainer: { 
     flexDirection: 'row', 
     alignItems: 'center', 
     marginTop: 10, 
-    backgroundColor: '#E8F5E9', 
+    backgroundColor: c.primarySoft, 
     paddingHorizontal: 12, 
     paddingVertical: 5, 
     borderRadius: 10 
   },
   priceIcon: { fontSize: 14, marginRight: 4 },
-  priceText: { color: COLORS.primary, fontWeight: 'bold' },
+  priceText: { color: c.primary, fontWeight: 'bold' },
   realPriceContainer: { 
     marginTop: 10, 
-    backgroundColor: '#E3F2FD', 
+    backgroundColor: c.infoSoft, 
     paddingHorizontal: 12, 
     paddingVertical: 5, 
     borderRadius: 10 
   },
-  realPriceText: { color: '#1976D2', fontWeight: 'bold' }
+  realPriceText: { color: c.infoStrong, fontWeight: 'bold' }
 });

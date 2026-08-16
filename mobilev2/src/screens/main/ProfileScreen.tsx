@@ -16,6 +16,8 @@ import { useAuthStore, useGamificationStore } from '../../stores';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 
 // ✅ Constante pour les logs
 const LOG_PREFIX = '[ProfileScreen.tsx]';
@@ -31,15 +33,18 @@ interface League {
 }
 
 const LEAGUES: League[] = [
-  { id: 'bronze', nameKey: 'profile.leagues.bronze', nameEn: 'Bronze', icon: '🥉', color: '#CD7F32', minXP: 0 },
-  { id: 'silver', nameKey: 'profile.leagues.silver', nameEn: 'Silver', icon: '🥈', color: '#C0C0C0', minXP: 1000 },
-  { id: 'gold', nameKey: 'profile.leagues.gold', nameEn: 'Gold', icon: '🥇', color: '#FFD700', minXP: 5000 },
-  { id: 'platinum', nameKey: 'profile.leagues.platinum', nameEn: 'Platinum', icon: '💎', color: '#E5E4E2', minXP: 15000 },
-  { id: 'diamond', nameKey: 'profile.leagues.diamond', nameEn: 'Diamond', icon: '💠', color: '#B9F2FF', minXP: 30000 },
-  { id: 'master', nameKey: 'profile.leagues.master', nameEn: 'Master', icon: '👑', color: '#9B59B6', minXP: 50000 },
+  { id: 'bronze', nameKey: 'profile.leagues.bronze', nameEn: 'Bronze', icon: '🥉', color: fixedColors.bronze, minXP: 0 },
+  { id: 'silver', nameKey: 'profile.leagues.silver', nameEn: 'Silver', icon: '🥈', color: fixedColors.silver, minXP: 1000 },
+  { id: 'gold', nameKey: 'profile.leagues.gold', nameEn: 'Gold', icon: '🥇', color: fixedColors.gold, minXP: 5000 },
+  { id: 'platinum', nameKey: 'profile.leagues.platinum', nameEn: 'Platinum', icon: '💎', color: fixedColors.silver, minXP: 15000 },
+  { id: 'diamond', nameKey: 'profile.leagues.diamond', nameEn: 'Diamond', icon: '💠', color: fixedColors.diamond, minXP: 30000 },
+  { id: 'master', nameKey: 'profile.leagues.master', nameEn: 'Master', icon: '👑', color: fixedColors.master, minXP: 50000 },
 ];
 
 export default function ProfileScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
   
   const { user, logout } = useAuthStore();
@@ -110,7 +115,7 @@ export default function ProfileScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.header}>
+      <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
         <View style={styles.avatarContainer}>
           <Text style={styles.avatarEmoji}>👤</Text>
         </View>
@@ -166,7 +171,7 @@ export default function ProfileScreen({ navigation }: any) {
           <View style={styles.achievementsHeader}>
             {/* ✅ AVANT: '🏅 الإنجازات' */}
             <Text style={styles.cardTitle}>🏅 {t('profile.achievements')}</Text>
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               onPress={() => {
                 console.log(`${LOG_PREFIX} 🏆 See all achievements pressed`);
                 navigation.navigate('Achievements');
@@ -188,7 +193,7 @@ export default function ProfileScreen({ navigation }: any) {
         {/* Menu Section */}
         <View style={styles.menuSection}>
           {menuItems.map((item, index) => (
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               key={index} 
               style={styles.menuItem}
               onPress={() => handleMenuItemPress(item)}
@@ -202,7 +207,7 @@ export default function ProfileScreen({ navigation }: any) {
         </View>
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutIcon}>🚪</Text>
           {/* ✅ AVANT: 'تسجيل الخروج' */}
           <Text style={styles.logoutText}>{t('profile.logout')}</Text>
@@ -214,40 +219,40 @@ export default function ProfileScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   header: { paddingTop: 50, paddingBottom: 30, alignItems: 'center' },
   avatarContainer: { width: 100, height: 100, borderRadius: 50, backgroundColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
   avatarEmoji: { fontSize: 50 },
-  username: { color: '#fff', fontSize: 24, fontWeight: 'bold' },
+  username: { color: c.onDeep, fontSize: 24, fontWeight: 'bold' },
   email: { color: 'rgba(255,255,255,0.8)', marginTop: 5 },
   levelBadge: { backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 20, paddingVertical: 8, borderRadius: 20, marginTop: 15 },
-  levelText: { color: '#fff', fontWeight: 'bold' },
+  levelText: { color: c.onDeep, fontWeight: 'bold' },
   content: { padding: 20 },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 20 },
-  statCard: { width: '31%', backgroundColor: '#fff', borderRadius: 15, padding: 15, alignItems: 'center', marginBottom: 10, elevation: 2 },
+  statCard: { width: '31%', backgroundColor: c.surface, borderRadius: 15, padding: 15, alignItems: 'center', marginBottom: 10, elevation: 2 },
   statIcon: { fontSize: 24, marginBottom: 5 },
-  statValue: { fontSize: 18, fontWeight: 'bold', color: '#333' },
-  statLabel: { fontSize: 10, color: '#666', marginTop: 2 },
-  memorizationCard: { backgroundColor: '#fff', borderRadius: 20, padding: 20, marginBottom: 20, elevation: 2 },
-  cardTitle: { fontSize: 16, fontWeight: 'bold', color: '#333', marginBottom: 15 },
+  statValue: { fontSize: 18, fontWeight: 'bold', color: c.text },
+  statLabel: { fontSize: 10, color: c.textSecondary, marginTop: 2 },
+  memorizationCard: { backgroundColor: c.surface, borderRadius: 20, padding: 20, marginBottom: 20, elevation: 2 },
+  cardTitle: { fontSize: 16, fontWeight: 'bold', color: c.text, marginBottom: 15 },
   memorizationStats: { flexDirection: 'row', justifyContent: 'space-around' },
   memStatItem: { alignItems: 'center' },
-  memStatValue: { fontSize: 28, fontWeight: 'bold', color: COLORS.primary },
-  memStatLabel: { color: '#666', fontSize: 12, marginTop: 5 },
-  memStatDivider: { width: 1, backgroundColor: '#E0E0E0' },
-  achievementsPreview: { backgroundColor: '#fff', borderRadius: 20, padding: 20, marginBottom: 20, elevation: 2 },
+  memStatValue: { fontSize: 28, fontWeight: 'bold', color: c.primary },
+  memStatLabel: { color: c.textSecondary, fontSize: 12, marginTop: 5 },
+  memStatDivider: { width: 1, backgroundColor: c.border },
+  achievementsPreview: { backgroundColor: c.surface, borderRadius: 20, padding: 20, marginBottom: 20, elevation: 2 },
   achievementsHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 },
-  seeAllText: { color: COLORS.primary, fontWeight: '600' },
+  seeAllText: { color: c.primary, fontWeight: '600' },
   achievementsList: { flexDirection: 'row', justifyContent: 'space-around' },
-  achievementItem: { width: 50, height: 50, borderRadius: 25, backgroundColor: '#f5f5f5', justifyContent: 'center', alignItems: 'center' },
+  achievementItem: { width: 50, height: 50, borderRadius: 25, backgroundColor: c.background, justifyContent: 'center', alignItems: 'center' },
   achievementEmoji: { fontSize: 24 },
-  menuSection: { backgroundColor: '#fff', borderRadius: 20, overflow: 'hidden', marginBottom: 20, elevation: 2 },
-  menuItem: { flexDirection: 'row', alignItems: 'center', padding: 18, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
+  menuSection: { backgroundColor: c.surface, borderRadius: 20, overflow: 'hidden', marginBottom: 20, elevation: 2 },
+  menuItem: { flexDirection: 'row', alignItems: 'center', padding: 18, borderBottomWidth: 1, borderBottomColor: c.backgroundAlt },
   menuIcon: { fontSize: 22, marginRight: 15 },
-  menuLabel: { flex: 1, fontSize: 16, color: '#333' },
-  menuArrow: { fontSize: 20, color: '#ccc' },
-  logoutButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFEBEE', padding: 18, borderRadius: 15 },
+  menuLabel: { flex: 1, fontSize: 16, color: c.text },
+  menuArrow: { fontSize: 20, color: c.textMuted },
+  logoutButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: c.errorSoft, padding: 18, borderRadius: 15 },
   logoutIcon: { fontSize: 20, marginRight: 10 },
-  logoutText: { color: '#F44336', fontSize: 16, fontWeight: '600' }
+  logoutText: { color: c.error, fontSize: 16, fontWeight: '600' }
 });

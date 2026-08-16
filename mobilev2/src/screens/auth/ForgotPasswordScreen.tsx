@@ -17,11 +17,16 @@ import { authAPI } from '../../services/api';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 // ✅ Constante pour les logs
 const LOG_PREFIX = '[ForgotPasswordScreen.tsx]';
 
 export default function ForgotPasswordScreen({ navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
   
   const [email, setEmail] = useState('');
@@ -74,7 +79,7 @@ export default function ForgotPasswordScreen({ navigation }: any) {
   if (isSent) {
     console.log(`${LOG_PREFIX} 🎨 Rendering SUCCESS UI...`);
     return (
-      <LinearGradient colors={['#1a1a2e', '#16213e']} style={styles.container}>
+      <LinearGradient colors={[colors.canvasDeep, colors.canvasDeepAlt]} style={styles.container}>
         <View style={styles.successContainer}>
           <View style={styles.successIcon}>
             <Text style={styles.successEmoji}>✉️</Text>
@@ -85,7 +90,7 @@ export default function ForgotPasswordScreen({ navigation }: any) {
           <Text style={styles.successText}>{t('forgotPassword.sentDescription')}</Text>
           <Text style={styles.emailText}>{email}</Text>
           
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             style={styles.backToLoginButton} 
             onPress={() => {
               console.log(`${LOG_PREFIX} 🔗 Navigate to Login`);
@@ -96,7 +101,7 @@ export default function ForgotPasswordScreen({ navigation }: any) {
             <Text style={styles.backToLoginText}>{t('forgotPassword.backToLogin')}</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             style={styles.resendButton} 
             onPress={() => { 
               console.log(`${LOG_PREFIX} 🔄 Resend button pressed`);
@@ -115,11 +120,11 @@ export default function ForgotPasswordScreen({ navigation }: any) {
   console.log(`${LOG_PREFIX} 🎨 Rendering FORM UI...`);
 
   return (
-    <LinearGradient colors={['#1a1a2e', '#16213e']} style={styles.container}>
+    <LinearGradient colors={[colors.canvasDeep, colors.canvasDeepAlt]} style={styles.container}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboardView}>
         <View style={styles.content}>
           {/* Back Button */}
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             style={styles.backButton} 
             onPress={() => {
               console.log(`${LOG_PREFIX} 🔙 Back button pressed`);
@@ -149,7 +154,7 @@ export default function ForgotPasswordScreen({ navigation }: any) {
               <TextInput 
                 style={styles.input} 
                 placeholder="example@email.com" 
-                placeholderTextColor="#666" 
+                placeholderTextColor={colors.textSecondary} 
                 value={email} 
                 onChangeText={(text) => { 
                   console.log(`${LOG_PREFIX} 📝 Email changed: ${text}`);
@@ -165,14 +170,14 @@ export default function ForgotPasswordScreen({ navigation }: any) {
             {error && <Text style={styles.errorText}>{error}</Text>}
             
             {/* Submit Button */}
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               style={styles.submitButton} 
               onPress={handleSubmit} 
               disabled={isLoading}
             >
-              <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.submitButtonGradient}>
+              <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.submitButtonGradient}>
                 {isLoading ? (
-                  <ActivityIndicator color="#fff" />
+                  <ActivityIndicator color={colors.onDeep} />
                 ) : (
                   // ✅ AVANT: 'إرسال الرابط'
                   <Text style={styles.submitButtonText}>{t('forgotPassword.sendLink')}</Text>
@@ -182,7 +187,7 @@ export default function ForgotPasswordScreen({ navigation }: any) {
           </View>
           
           {/* Back to Login Link */}
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             style={styles.loginLink} 
             onPress={() => {
               console.log(`${LOG_PREFIX} 🔗 Navigate to Login`);
@@ -198,12 +203,12 @@ export default function ForgotPasswordScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { flex: 1 },
   keyboardView: { flex: 1 },
   content: { flex: 1, paddingHorizontal: 25, paddingTop: 50 },
   backButton: { width: 40, height: 40, justifyContent: 'center' },
-  backIcon: { color: '#fff', fontSize: 28 },
+  backIcon: { color: c.onDeep, fontSize: 28 },
   header: { alignItems: 'center', marginTop: 40, marginBottom: 40 },
   iconContainer: { 
     width: 100, 
@@ -215,10 +220,10 @@ const styles = StyleSheet.create({
     marginBottom: 20 
   },
   headerEmoji: { fontSize: 50 },
-  title: { fontSize: 26, fontWeight: 'bold', color: '#fff', marginBottom: 10 },
+  title: { fontSize: 26, fontWeight: 'bold', color: c.onDeep, marginBottom: 10 },
   subtitle: { color: '#aaa', textAlign: 'center', lineHeight: 22, paddingHorizontal: 20 },
   form: { backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 25, padding: 25 },
-  inputLabel: { color: '#fff', marginBottom: 10, fontWeight: '600' },
+  inputLabel: { color: c.onDeep, marginBottom: 10, fontWeight: '600' },
   inputWrapper: { 
     flexDirection: 'row', 
     alignItems: 'center', 
@@ -228,15 +233,15 @@ const styles = StyleSheet.create({
     borderWidth: 1, 
     borderColor: 'transparent' 
   },
-  inputError: { borderColor: '#F44336' },
+  inputError: { borderColor: c.error },
   inputIcon: { fontSize: 18, marginRight: 10 },
-  input: { flex: 1, color: '#fff', paddingVertical: 15, fontSize: 16 },
-  errorText: { color: '#F44336', fontSize: 12, marginTop: 8 },
+  input: { flex: 1, color: c.onDeep, paddingVertical: 15, fontSize: 16 },
+  errorText: { color: c.error, fontSize: 12, marginTop: 8 },
   submitButton: { borderRadius: 15, overflow: 'hidden', marginTop: 25 },
   submitButtonGradient: { paddingVertical: 16, alignItems: 'center' },
-  submitButtonText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  submitButtonText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   loginLink: { alignItems: 'center', marginTop: 30 },
-  loginLinkText: { color: '#4CAF50', fontWeight: '600' },
+  loginLinkText: { color: c.primary, fontWeight: '600' },
   successContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 30 },
   successIcon: { 
     width: 120, 
@@ -248,17 +253,17 @@ const styles = StyleSheet.create({
     marginBottom: 25 
   },
   successEmoji: { fontSize: 60 },
-  successTitle: { fontSize: 28, fontWeight: 'bold', color: '#fff', marginBottom: 15 },
+  successTitle: { fontSize: 28, fontWeight: 'bold', color: c.onDeep, marginBottom: 15 },
   successText: { color: '#aaa', textAlign: 'center', lineHeight: 24, marginBottom: 10 },
-  emailText: { color: '#4CAF50', fontWeight: 'bold', marginBottom: 40 },
+  emailText: { color: c.primary, fontWeight: 'bold', marginBottom: 40 },
   backToLoginButton: { 
-    backgroundColor: '#4CAF50', 
+    backgroundColor: c.primary, 
     paddingVertical: 15, 
     paddingHorizontal: 40, 
     borderRadius: 25, 
     marginBottom: 15 
   },
-  backToLoginText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  backToLoginText: { color: c.onDeep, fontWeight: 'bold', fontSize: 16 },
   resendButton: { padding: 10 },
   resendText: { color: '#aaa' }
 });

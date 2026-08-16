@@ -17,6 +17,8 @@ import { streaksAPI } from '../../services/api';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 
 // ✅ Constante pour les logs
 const LOG_PREFIX = '[StreakScreen.tsx]';
@@ -31,6 +33,8 @@ const MILESTONES = [
 ];
 
 export default function StreakScreen({ navigation }: any) {
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
   
   // ✅ FIXED: Cast to any to avoid TypeScript errors
@@ -152,7 +156,7 @@ export default function StreakScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient colors={['#FF6B35', '#F7931E']} style={styles.header}>
+      <LinearGradient colors={[fixedColors.streak, '#F7931E']} style={styles.header}>
         <Text style={styles.headerEmoji}>🔥</Text>
         <Text style={styles.streakCount}>{current}</Text>
         {/* ✅ AVANT: 'يوم متتالي' */}
@@ -194,11 +198,11 @@ export default function StreakScreen({ navigation }: any) {
             </View>
           </View>
           <View style={styles.freezeActions}>
-            <TouchableOpacity style={styles.freezeButton} onPress={handleUseFreeze}>
+            <TouchableOpacity accessible accessibilityRole="button" style={styles.freezeButton} onPress={handleUseFreeze}>
               {/* ✅ AVANT: 'استخدم' */}
               <Text style={styles.freezeButtonText}>{t('streak.use')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.buyFreezeButton} onPress={handleBuyFreeze}>
+            <TouchableOpacity accessible accessibilityRole="button" style={styles.buyFreezeButton} onPress={handleBuyFreeze}>
               {/* ✅ AVANT: 'شراء (200 💎)' */}
               <Text style={styles.buyFreezeText}>{t('streak.buyPrice', { price: 200 })}</Text>
             </TouchableOpacity>
@@ -281,11 +285,11 @@ export default function StreakScreen({ navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   header: { paddingTop: 50, paddingBottom: 40, alignItems: 'center' },
   headerEmoji: { fontSize: 60 },
-  streakCount: { fontSize: 72, fontWeight: 'bold', color: '#fff' },
+  streakCount: { fontSize: 72, fontWeight: 'bold', color: c.onDeep },
   streakLabel: { color: 'rgba(255,255,255,0.9)', fontSize: 18 },
   longestBadge: { 
     backgroundColor: 'rgba(255,255,255,0.2)', 
@@ -294,28 +298,28 @@ const styles = StyleSheet.create({
     borderRadius: 20, 
     marginTop: 15 
   },
-  longestText: { color: '#fff' },
+  longestText: { color: c.onDeep },
   content: { padding: 20 },
   progressCard: { 
-    backgroundColor: '#fff', 
+    backgroundColor: c.surface, 
     borderRadius: 20, 
     padding: 20, 
     marginBottom: 20, 
     elevation: 2 
   },
-  progressTitle: { fontSize: 16, fontWeight: 'bold', color: '#333', marginBottom: 15 },
+  progressTitle: { fontSize: 16, fontWeight: 'bold', color: c.text, marginBottom: 15 },
   progressBar: { 
     height: 12, 
-    backgroundColor: '#E0E0E0', 
+    backgroundColor: c.border, 
     borderRadius: 6, 
     overflow: 'hidden', 
     marginBottom: 10 
   },
-  progressFill: { height: '100%', backgroundColor: '#FF6B35', borderRadius: 6 },
-  progressText: { color: '#666', textAlign: 'center' },
-  rewardText: { color: COLORS.primary, textAlign: 'center', marginTop: 10, fontWeight: '600' },
+  progressFill: { height: '100%', backgroundColor: fixedColors.streak, borderRadius: 6 },
+  progressText: { color: c.textSecondary, textAlign: 'center' },
+  rewardText: { color: c.primary, textAlign: 'center', marginTop: 10, fontWeight: '600' },
   freezeCard: { 
-    backgroundColor: '#fff', 
+    backgroundColor: c.surface, 
     borderRadius: 20, 
     padding: 20, 
     marginBottom: 20, 
@@ -323,27 +327,27 @@ const styles = StyleSheet.create({
   },
   freezeHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
   freezeIcon: { fontSize: 40, marginRight: 15 },
-  freezeTitle: { fontSize: 18, fontWeight: 'bold', color: '#333' },
-  freezeCount: { color: '#666' },
+  freezeTitle: { fontSize: 18, fontWeight: 'bold', color: c.text },
+  freezeCount: { color: c.textSecondary },
   freezeActions: { flexDirection: 'row' },
   freezeButton: { 
     flex: 1, 
-    backgroundColor: '#E3F2FD', 
+    backgroundColor: c.infoSoft, 
     paddingVertical: 12, 
     borderRadius: 12, 
     alignItems: 'center', 
     marginRight: 10 
   },
-  freezeButtonText: { color: '#1976D2', fontWeight: 'bold' },
+  freezeButtonText: { color: c.infoStrong, fontWeight: 'bold' },
   buyFreezeButton: { 
     flex: 1, 
-    backgroundColor: '#FFF3E0', 
+    backgroundColor: c.warningSoft, 
     paddingVertical: 12, 
     borderRadius: 12, 
     alignItems: 'center' 
   },
-  buyFreezeText: { color: '#FF9800', fontWeight: 'bold' },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 15 },
+  buyFreezeText: { color: c.warning, fontWeight: 'bold' },
+  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: c.text, marginBottom: 15 },
   milestonesGrid: { 
     flexDirection: 'row', 
     flexWrap: 'wrap', 
@@ -352,16 +356,16 @@ const styles = StyleSheet.create({
   },
   milestoneItem: { 
     width: '30%', 
-    backgroundColor: '#fff', 
+    backgroundColor: c.surface, 
     borderRadius: 15, 
     padding: 15, 
     alignItems: 'center', 
     marginBottom: 10, 
     elevation: 1 
   },
-  milestoneAchieved: { backgroundColor: '#E8F5E9' },
+  milestoneAchieved: { backgroundColor: c.primarySoft },
   milestoneIcon: { fontSize: 30, marginBottom: 5 },
-  milestoneDays: { fontWeight: 'bold', color: '#333' },
+  milestoneDays: { fontWeight: 'bold', color: c.text },
   milestoneCheck: { 
     position: 'absolute', 
     top: 5, 
@@ -369,13 +373,13 @@ const styles = StyleSheet.create({
     width: 20, 
     height: 20, 
     borderRadius: 10, 
-    backgroundColor: COLORS.primary, 
+    backgroundColor: c.primary, 
     justifyContent: 'center', 
     alignItems: 'center' 
   },
-  checkIcon: { color: '#fff', fontSize: 12, fontWeight: 'bold' },
+  checkIcon: { color: c.onDeep, fontSize: 12, fontWeight: 'bold' },
   calendarCard: { 
-    backgroundColor: '#fff', 
+    backgroundColor: c.surface, 
     borderRadius: 20, 
     padding: 15, 
     marginBottom: 20, 
@@ -389,13 +393,13 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     borderRadius: 8 
   },
-  calendarDayCompleted: { backgroundColor: '#E8F5E9' },
-  calendarDayToday: { borderWidth: 2, borderColor: COLORS.primary },
-  calendarCheck: { color: COLORS.primary, fontWeight: 'bold' },
-  calendarDayNumber: { color: '#999', fontSize: 12 },
-  benefitsCard: { backgroundColor: '#fff', borderRadius: 20, padding: 20, elevation: 2 },
-  benefitsTitle: { fontSize: 16, fontWeight: 'bold', color: '#333', marginBottom: 15 },
+  calendarDayCompleted: { backgroundColor: c.primarySoft },
+  calendarDayToday: { borderWidth: 2, borderColor: c.primary },
+  calendarCheck: { color: c.primary, fontWeight: 'bold' },
+  calendarDayNumber: { color: c.textMuted, fontSize: 12 },
+  benefitsCard: { backgroundColor: c.surface, borderRadius: 20, padding: 20, elevation: 2 },
+  benefitsTitle: { fontSize: 16, fontWeight: 'bold', color: c.text, marginBottom: 15 },
   benefitItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
   benefitIcon: { fontSize: 20, marginRight: 12 },
-  benefitText: { color: '#333', flex: 1 }
+  benefitText: { color: c.text, flex: 1 }
 });

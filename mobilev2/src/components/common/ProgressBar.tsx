@@ -12,6 +12,8 @@ import {
   ViewStyle,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 interface ProgressBarProps {
   progress: number; // 0-100
@@ -32,12 +34,20 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   showLabel = false,
   labelPosition = 'outside',
   variant = 'default',
-  color = '#4CAF50',
-  gradientColors = ['#4CAF50', '#81C784'],
-  backgroundColor = '#E0E0E0',
+  color,
+  gradientColors,
+  backgroundColor,
   animated = true,
   style,
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+  // Les valeurs par défaut sont résolues depuis le thème, et non figées à la
+  // déstructuration où le contexte n'est pas encore disponible.
+  const tint = color ?? colors.primary;
+  const gradient = gradientColors ?? [colors.primary, colors.primaryLight];
+  const track = backgroundColor ?? colors.border;
+
   const animatedValue = useRef(new Animated.Value(0)).current;
   const clampedProgress = Math.min(100, Math.max(0, progress));
 
@@ -63,7 +73,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       return (
         <Animated.View style={{ width, height, overflow: 'hidden', borderRadius: height / 2 }}>
           <LinearGradient
-            colors={gradientColors as [string, string, ...string[]]}
+            colors={gradient as [string, string, ...string[]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={{ flex: 1 }}
@@ -79,7 +89,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
           {
             width,
             height,
-            backgroundColor: color,
+            backgroundColor: tint,
             borderRadius: height / 2,
           },
         ]}
@@ -112,7 +122,14 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   };
 
   return (
-    <View style={style}>
+    // Une barre de progression muette n'apprend rien à un lecteur d'écran :
+    // le rôle et la valeur permettent d'annoncer « progression, 62 % ».
+    <View
+      style={style}
+      accessible
+      accessibilityRole="progressbar"
+      accessibilityValue={{ min: 0, max: 100, now: Math.round(clampedProgress) }}
+    >
       {labelPosition === 'top' && renderLabel()}
       
       <View style={styles.row}>
@@ -121,7 +138,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
             styles.container,
             {
               height,
-              backgroundColor,
+              backgroundColor: track,
               borderRadius: height / 2,
             },
           ]}
@@ -136,7 +153,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
     overflow: 'hidden',
@@ -154,19 +171,19 @@ const styles = StyleSheet.create({
   labelInside: {
     position: 'absolute',
     alignSelf: 'center',
-    color: '#FFFFFF',
+    color: c.onDeep,
     fontWeight: '700',
   },
   labelOutside: {
     marginLeft: 8,
     fontSize: 12,
     fontWeight: '600',
-    color: '#666',
+    color: c.textSecondary,
   },
   labelTop: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#666',
+    color: c.textSecondary,
     marginBottom: 4,
     textAlign: 'right',
   },

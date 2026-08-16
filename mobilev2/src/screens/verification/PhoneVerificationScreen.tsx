@@ -16,6 +16,8 @@ import * as Haptics from 'expo-haptics';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[PhoneVerificationScreen.tsx]';
 
@@ -25,6 +27,9 @@ const OTP_LENGTH = 6;
 const RESEND_TIMEOUT = 60;
 
 export default function PhoneVerificationScreen({ route, navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
   
   const { phoneNumber, isSimulation = true } = route.params || {};
@@ -152,9 +157,9 @@ export default function PhoneVerificationScreen({ route, navigation }: any) {
   };
 
   return (
-    <LinearGradient colors={['#1a1a2e', '#16213e']} style={styles.container}>
+    <LinearGradient colors={[colors.canvasDeep, colors.canvasDeepAlt]} style={styles.container}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboardView}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => navigation.goBack()}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
         
@@ -189,14 +194,14 @@ export default function PhoneVerificationScreen({ route, navigation }: any) {
             ))}
           </View>
           
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             style={styles.verifyButton} 
             onPress={() => verifyOtp(otp.join(''))} 
             disabled={isLoading || otp.some(d => !d)}
           >
-            <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.verifyGradient}>
+            <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.verifyGradient}>
               {isLoading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color={colors.onDeep} />
               ) : (
                 // ✅ AVANT: 'تحقق'
                 <Text style={styles.verifyText}>{t('phoneVerification.verify')}</Text>
@@ -206,7 +211,7 @@ export default function PhoneVerificationScreen({ route, navigation }: any) {
           
           <View style={styles.resendContainer}>
             {canResend ? (
-              <TouchableOpacity onPress={resendOtp}>
+              <TouchableOpacity accessible accessibilityRole="button" onPress={resendOtp}>
                 {/* ✅ AVANT: 'إعادة إرسال الرمز' */}
                 <Text style={styles.resendLink}>{t('phoneVerification.resend.code')}</Text>
               </TouchableOpacity>
@@ -233,27 +238,27 @@ export default function PhoneVerificationScreen({ route, navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { flex: 1 },
   keyboardView: { flex: 1 },
   backButton: { position: 'absolute', top: 50, left: 20, zIndex: 10, padding: 10 },
-  backIcon: { color: '#fff', fontSize: 28 },
+  backIcon: { color: c.onDeep, fontSize: 28 },
   content: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 30 },
   iconContainer: { width: 100, height: 100, borderRadius: 50, backgroundColor: 'rgba(76, 175, 80, 0.2)', justifyContent: 'center', alignItems: 'center', marginBottom: 30 },
   icon: { fontSize: 50 },
-  title: { color: '#fff', fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
+  title: { color: c.onDeep, fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
   subtitle: { color: '#aaa', fontSize: 14, textAlign: 'center', lineHeight: 22 },
-  phoneNumber: { color: COLORS.primary, fontWeight: 'bold' },
+  phoneNumber: { color: c.primary, fontWeight: 'bold' },
   otpContainer: { flexDirection: 'row', justifyContent: 'center', marginVertical: 40 },
-  otpInput: { width: 45, height: 55, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 12, marginHorizontal: 5, textAlign: 'center', color: '#fff', fontSize: 24, fontWeight: 'bold', borderWidth: 2, borderColor: 'transparent' },
-  otpInputFilled: { borderColor: COLORS.primary, backgroundColor: 'rgba(76, 175, 80, 0.2)' },
+  otpInput: { width: 45, height: 55, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 12, marginHorizontal: 5, textAlign: 'center', color: c.onDeep, fontSize: 24, fontWeight: 'bold', borderWidth: 2, borderColor: 'transparent' },
+  otpInputFilled: { borderColor: c.primary, backgroundColor: 'rgba(76, 175, 80, 0.2)' },
   verifyButton: { width: '100%', borderRadius: 15, overflow: 'hidden', marginBottom: 20 },
   verifyGradient: { paddingVertical: 16, alignItems: 'center' },
-  verifyText: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  verifyText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   resendContainer: { marginTop: 10 },
-  resendText: { color: '#666', fontSize: 14 },
-  resendLink: { color: COLORS.primary, fontSize: 14, fontWeight: 'bold' },
+  resendText: { color: c.textSecondary, fontSize: 14 },
+  resendLink: { color: c.primary, fontSize: 14, fontWeight: 'bold' },
   simulationBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255, 193, 7, 0.2)', paddingHorizontal: 15, paddingVertical: 10, borderRadius: 20, marginTop: 30 },
   simulationIcon: { fontSize: 16, marginRight: 8 },
-  simulationText: { color: '#FFC107', fontSize: 12 },
+  simulationText: { color: c.warning, fontSize: 12 },
 });

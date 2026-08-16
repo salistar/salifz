@@ -25,6 +25,8 @@ import { socialAPI, chatAPI } from '../../services/api';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t, getLocale } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 
 const LOG_PREFIX = '[UserProfileScreen.tsx]';
 
@@ -65,32 +67,32 @@ const getLeagueConfig = (): Record<string, LeagueConfig> => ({
   bronze: { 
     name: t('userProfile.leagues.bronze'), 
     emoji: '🥉', 
-    color: '#CD7F32', 
-    gradient: ['#CD7F32', '#8B4513'] as const 
+    color: fixedColors.bronze, 
+    gradient: [fixedColors.bronze, '#8B4513'] as const 
   },
   silver: { 
     name: t('userProfile.leagues.silver'), 
     emoji: '🥈', 
-    color: '#C0C0C0', 
-    gradient: ['#C0C0C0', '#808080'] as const 
+    color: fixedColors.silver, 
+    gradient: [fixedColors.silver, '#808080'] as const 
   },
   gold: { 
     name: t('userProfile.leagues.gold'), 
     emoji: '🥇', 
-    color: '#FFD700', 
-    gradient: ['#FFD700', '#FFA500'] as const 
+    color: fixedColors.gold, 
+    gradient: [fixedColors.gold, '#FFA500'] as const 
   },
   diamond: { 
     name: t('userProfile.leagues.diamond'), 
     emoji: '💎', 
-    color: '#B9F2FF', 
+    color: fixedColors.diamond, 
     gradient: ['#00BCD4', '#0097A7'] as const 
   },
   hafiz: { 
     name: t('userProfile.leagues.hafiz'), 
     emoji: '👑', 
-    color: '#FFD700', 
-    gradient: ['#9C27B0', '#7B1FA2'] as const 
+    color: fixedColors.gold, 
+    gradient: [fixedColors.diamond, fixedColors.silver] as const 
   }
 });
 
@@ -101,6 +103,9 @@ const formatNumber = (value: number | undefined | null): string => {
 };
 
 export default function UserProfileScreen({ route, navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
   
   const { userId } = route.params;
@@ -243,7 +248,7 @@ export default function UserProfileScreen({ route, navigation }: any) {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -264,11 +269,11 @@ export default function UserProfileScreen({ route, navigation }: any) {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header - ✅ FIXED: Cast gradient to proper type */}
         <LinearGradient colors={league.gradient} style={styles.header}>
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <Ionicons name="arrow-back" size={24} color="#fff" />
+            <Ionicons name="arrow-back" size={24} color={colors.onDeep} />
           </TouchableOpacity>
 
           {/* Avatar */}
@@ -316,57 +321,57 @@ export default function UserProfileScreen({ route, navigation }: any) {
         <View style={styles.actionsContainer}>
           {profile.isFriend ? (
             <>
-              <TouchableOpacity 
+              <TouchableOpacity accessible accessibilityRole="button" 
                 style={styles.chatButton}
                 onPress={handleStartChat}
               >
-                <Ionicons name="chatbubble" size={20} color="#fff" />
+                <Ionicons name="chatbubble" size={20} color={colors.onDeep} />
                 {/* ✅ AVANT: 'محادثة' */}
                 <Text style={styles.chatButtonText}>{t('userProfile.actions.chat')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity accessible accessibilityRole="button" 
                 style={styles.removeButton}
                 onPress={handleRemoveFriend}
                 disabled={actionLoading}
               >
-                <Ionicons name="person-remove" size={20} color="#F44336" />
+                <Ionicons name="person-remove" size={20} color={colors.error} />
                 {/* ✅ AVANT: 'إزالة' */}
                 <Text style={styles.removeButtonText}>{t('userProfile.actions.remove')}</Text>
               </TouchableOpacity>
             </>
           ) : profile.requestSent ? (
             <View style={styles.pendingButton}>
-              <Ionicons name="time" size={20} color="#666" />
+              <Ionicons name="time" size={20} color={colors.textSecondary} />
               {/* ✅ AVANT: 'طلب معلق' */}
               <Text style={styles.pendingButtonText}>{t('userProfile.actions.pending')}</Text>
             </View>
           ) : profile.requestReceived ? (
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               style={styles.acceptButton}
               onPress={handleAcceptRequest}
               disabled={actionLoading}
             >
               {actionLoading ? (
-                <ActivityIndicator size="small" color="#fff" />
+                <ActivityIndicator size="small" color={colors.onDeep} />
               ) : (
                 <>
-                  <Ionicons name="checkmark" size={20} color="#fff" />
+                  <Ionicons name="checkmark" size={20} color={colors.onDeep} />
                   {/* ✅ AVANT: 'قبول الطلب' */}
                   <Text style={styles.acceptButtonText}>{t('userProfile.actions.acceptRequest')}</Text>
                 </>
               )}
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               style={styles.addButton}
               onPress={handleAddFriend}
               disabled={actionLoading}
             >
               {actionLoading ? (
-                <ActivityIndicator size="small" color="#fff" />
+                <ActivityIndicator size="small" color={colors.onDeep} />
               ) : (
                 <>
-                  <Ionicons name="person-add" size={20} color="#fff" />
+                  <Ionicons name="person-add" size={20} color={colors.onDeep} />
                   {/* ✅ AVANT: 'إضافة صديق' */}
                   <Text style={styles.addButtonText}>{t('userProfile.actions.addFriend')}</Text>
                 </>
@@ -434,16 +439,16 @@ export default function UserProfileScreen({ route, navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: c.background,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: c.background,
   },
   header: {
     paddingTop: 10,
@@ -471,7 +476,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 4,
-    borderColor: '#fff',
+    borderColor: c.surface,
   },
   avatarText: {
     fontSize: 50,
@@ -480,24 +485,24 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     width: 32,
     height: 32,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#FFD700',
+    borderColor: fixedColors.gold,
   },
   levelText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
   },
   displayName: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
+    color: c.onDeep,
   },
   username: {
     fontSize: 14,
@@ -518,7 +523,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   leagueName: {
-    color: '#fff',
+    color: c.onDeep,
     fontWeight: 'bold',
     fontSize: 14,
   },
@@ -538,7 +543,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#fff',
+    color: c.onDeep,
   },
   statLabel: {
     fontSize: 12,
@@ -561,14 +566,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
     paddingVertical: 14,
     borderRadius: 15,
     marginRight: 10,
     elevation: 3,
   },
   chatButtonText: {
-    color: '#fff',
+    color: c.onDeep,
     fontWeight: 'bold',
     fontSize: 15,
     marginLeft: 8,
@@ -577,14 +582,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 15,
     elevation: 3,
   },
   removeButtonText: {
-    color: '#F44336',
+    color: c.error,
     fontWeight: 'bold',
     fontSize: 15,
     marginLeft: 8,
@@ -594,13 +599,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.primary,
+    backgroundColor: c.primary,
     paddingVertical: 14,
     borderRadius: 15,
     elevation: 3,
   },
   addButtonText: {
-    color: '#fff',
+    color: c.onDeep,
     fontWeight: 'bold',
     fontSize: 15,
     marginLeft: 8,
@@ -610,13 +615,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#4CAF50',
+    backgroundColor: c.primary,
     paddingVertical: 14,
     borderRadius: 15,
     elevation: 3,
   },
   acceptButtonText: {
-    color: '#fff',
+    color: c.onDeep,
     fontWeight: 'bold',
     fontSize: 15,
     marginLeft: 8,
@@ -626,18 +631,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#E0E0E0',
+    backgroundColor: c.border,
     paddingVertical: 14,
     borderRadius: 15,
   },
   pendingButtonText: {
-    color: '#666',
+    color: c.textSecondary,
     fontWeight: 'bold',
     fontSize: 15,
     marginLeft: 8,
   },
   section: {
-    backgroundColor: '#fff',
+    backgroundColor: c.surface,
     marginHorizontal: 20,
     marginBottom: 15,
     borderRadius: 15,
@@ -647,7 +652,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
     marginBottom: 15,
   },
   statsGrid: {
@@ -666,13 +671,13 @@ const styles = StyleSheet.create({
   statCardValue: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: c.text,
     textAlign: 'center',
     marginTop: 5,
   },
   statCardLabel: {
     fontSize: 12,
-    color: '#666',
+    color: c.textSecondary,
     textAlign: 'center',
     marginTop: 4,
   },
@@ -682,15 +687,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: c.backgroundAlt,
   },
   infoLabel: {
     fontSize: 14,
-    color: '#666',
+    color: c.textSecondary,
   },
   infoValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
+    color: c.text,
   },
 });

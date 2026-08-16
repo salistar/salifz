@@ -20,6 +20,8 @@ import { socketService } from '../../services/socket';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
@@ -45,6 +47,9 @@ interface ChatUser {
 }
 
 export default function ChatScreen({ route, navigation }: any) {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(makeStyles);
+
   const { recipientId, recipientName, recipientAvatar } = route.params || {};
   const { user } = useAuthStore();
   
@@ -230,8 +235,8 @@ export default function ChatScreen({ route, navigation }: any) {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
-      <LinearGradient colors={[COLORS.primary, '#2E7D32']} style={styles.header}>
-        <TouchableOpacity 
+      <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
+        <TouchableOpacity accessible accessibilityRole="button" 
           style={styles.backButton} 
           onPress={() => {
             console.log(`${LOG_PREFIX} 🔙 Back button pressed`);
@@ -241,7 +246,7 @@ export default function ChatScreen({ route, navigation }: any) {
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity 
+        <TouchableOpacity accessible accessibilityRole="button" 
           style={styles.userInfo} 
           onPress={() => {
             console.log(`${LOG_PREFIX} 👤 Navigate to UserProfile: ${recipientId}`);
@@ -259,7 +264,7 @@ export default function ChatScreen({ route, navigation }: any) {
         </TouchableOpacity>
         
         <View style={styles.headerActions}>
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             style={styles.headerButton} 
             onPress={() => {
               console.log(`${LOG_PREFIX} 📞 Navigate to ChatAudio`);
@@ -268,7 +273,7 @@ export default function ChatScreen({ route, navigation }: any) {
           >
             <Text style={styles.headerButtonIcon}>📞</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             style={styles.headerButton} 
             onPress={() => {
               console.log(`${LOG_PREFIX} 📹 Navigate to ChatVideo`);
@@ -302,7 +307,7 @@ export default function ChatScreen({ route, navigation }: any) {
       {/* Input Container */}
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={90}>
         <View style={styles.inputContainer}>
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             style={styles.attachButton}
             onPress={() => console.log(`${LOG_PREFIX} 📎 Attach button pressed`)}
           >
@@ -314,13 +319,13 @@ export default function ChatScreen({ route, navigation }: any) {
               style={styles.input}
               // ✅ AVANT: 'اكتب رسالتك...'
               placeholder={t('chat.placeholder')}
-              placeholderTextColor="#999"
+              placeholderTextColor={colors.textMuted}
               value={inputText}
               onChangeText={handleTextChange}
               multiline
               maxLength={1000}
             />
-            <TouchableOpacity 
+            <TouchableOpacity accessible accessibilityRole="button" 
               style={styles.emojiButton}
               onPress={() => console.log(`${LOG_PREFIX} 😊 Emoji button pressed`)}
             >
@@ -328,13 +333,13 @@ export default function ChatScreen({ route, navigation }: any) {
             </TouchableOpacity>
           </View>
           
-          <TouchableOpacity 
+          <TouchableOpacity accessible accessibilityRole="button" 
             style={[styles.sendButton, !inputText.trim() && styles.sendButtonDisabled]}
             onPress={sendMessage}
             disabled={!inputText.trim()}
           >
             <LinearGradient 
-              colors={inputText.trim() ? [COLORS.primary, '#2E7D32'] : ['#ccc', '#aaa']}
+              colors={inputText.trim() ? [colors.primary, colors.primaryDark] : [colors.textMuted, '#aaa']}
               style={styles.sendButtonGradient}
             >
               <Text style={styles.sendIcon}>➤</Text>
@@ -346,16 +351,16 @@ export default function ChatScreen({ route, navigation }: any) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
+const makeStyles = (c: ThemeColors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: c.background },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15, paddingVertical: 12 },
   backButton: { padding: 8 },
-  backIcon: { color: '#fff', fontSize: 24 },
+  backIcon: { color: c.onDeep, fontSize: 24 },
   userInfo: { flex: 1, flexDirection: 'row', alignItems: 'center', marginLeft: 10 },
   avatar: { width: 45, height: 45, borderRadius: 22.5, backgroundColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center' },
-  avatarText: { fontSize: 20, color: '#fff' },
+  avatarText: { fontSize: 20, color: c.onDeep },
   userDetails: { marginLeft: 12 },
-  userName: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  userName: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   userStatus: { color: 'rgba(255,255,255,0.8)', fontSize: 12, marginTop: 2 },
   headerActions: { flexDirection: 'row' },
   headerButton: { padding: 10, marginLeft: 5 },
@@ -363,29 +368,29 @@ const styles = StyleSheet.create({
   messagesList: { padding: 15, paddingBottom: 10 },
   messageRow: { flexDirection: 'row', marginBottom: 8, alignItems: 'flex-end' },
   messageRowMe: { justifyContent: 'flex-end' },
-  avatarSmall: { width: 32, height: 32, borderRadius: 16, backgroundColor: COLORS.primary, justifyContent: 'center', alignItems: 'center', marginRight: 8 },
-  avatarSmallText: { color: '#fff', fontSize: 14 },
+  avatarSmall: { width: 32, height: 32, borderRadius: 16, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center', marginRight: 8 },
+  avatarSmallText: { color: c.onDeep, fontSize: 14 },
   avatarPlaceholder: { width: 40 },
   messageBubble: { maxWidth: width * 0.75, padding: 12, borderRadius: 18 },
-  messageBubbleMe: { backgroundColor: COLORS.primary, borderBottomRightRadius: 4 },
-  messageBubbleOther: { backgroundColor: '#fff', borderBottomLeftRadius: 4, elevation: 1 },
-  messageText: { fontSize: 16, color: '#333', lineHeight: 22 },
-  messageTextMe: { color: '#fff' },
+  messageBubbleMe: { backgroundColor: c.primary, borderBottomRightRadius: 4 },
+  messageBubbleOther: { backgroundColor: c.surface, borderBottomLeftRadius: 4, elevation: 1 },
+  messageText: { fontSize: 16, color: c.text, lineHeight: 22 },
+  messageTextMe: { color: c.onDeep },
   messageFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginTop: 4 },
-  messageTime: { fontSize: 11, color: '#999' },
+  messageTime: { fontSize: 11, color: c.textMuted },
   messageTimeMe: { color: 'rgba(255,255,255,0.7)' },
   messageStatus: { marginLeft: 4, fontSize: 12 },
   typingIndicator: { paddingHorizontal: 20, paddingVertical: 8 },
-  typingText: { color: '#666', fontSize: 12, fontStyle: 'italic' },
-  inputContainer: { flexDirection: 'row', alignItems: 'flex-end', padding: 10, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#eee' },
+  typingText: { color: c.textSecondary, fontSize: 12, fontStyle: 'italic' },
+  inputContainer: { flexDirection: 'row', alignItems: 'flex-end', padding: 10, backgroundColor: c.surface, borderTopWidth: 1, borderTopColor: '#eee' },
   attachButton: { padding: 10 },
   attachIcon: { fontSize: 22 },
-  inputWrapper: { flex: 1, flexDirection: 'row', alignItems: 'flex-end', backgroundColor: '#f5f5f5', borderRadius: 25, paddingHorizontal: 15, paddingVertical: 8, marginHorizontal: 8 },
-  input: { flex: 1, fontSize: 16, maxHeight: 100, color: '#333' },
+  inputWrapper: { flex: 1, flexDirection: 'row', alignItems: 'flex-end', backgroundColor: c.background, borderRadius: 25, paddingHorizontal: 15, paddingVertical: 8, marginHorizontal: 8 },
+  input: { flex: 1, fontSize: 16, maxHeight: 100, color: c.text },
   emojiButton: { padding: 5 },
   emojiIcon: { fontSize: 22 },
   sendButton: { borderRadius: 25, overflow: 'hidden' },
   sendButtonDisabled: { opacity: 0.5 },
   sendButtonGradient: { width: 45, height: 45, justifyContent: 'center', alignItems: 'center' },
-  sendIcon: { color: '#fff', fontSize: 20 },
+  sendIcon: { color: c.onDeep, fontSize: 20 },
 });
