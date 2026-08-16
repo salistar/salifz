@@ -26,7 +26,8 @@
     "failed": "Échec",
     "share": "Partager",
     "create": "Créer",
-    "close": "Fermer"
+    "close": "Fermer",
+    "retry": "Réessayer"
   },
   "auth": {
     "login": "Connexion",
@@ -1523,6 +1524,19 @@
   },
   "quran": {
     "juz": "Juz",
-    "hizb": "Hizb"
+    "hizb": "Hizb",
+    "ayahs": "versets"
+  },
+  "downloads": {
+    "title": "Hors ligne",
+    "download": "Télécharger",
+    "surahsStored": "sourate(s) sur l’appareil",
+    "freeSpace": "disponibles",
+    "unknownSize": "taille inconnue",
+    "confirmTitle": "Télécharger cette sourate ?",
+    "removeTitle": "Supprimer la récitation ?",
+    "removeAllTitle": "Tout supprimer ?",
+    "removeAllBody": "Toutes les récitations conservées seront effacées.",
+    "manage": "Gérer les récitations"
   }
 }

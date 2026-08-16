@@ -17,6 +17,7 @@ import { useSettingsStore } from '../../stores';
 import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { offlineAudio } from '../../services/offlineAudio';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
@@ -92,14 +93,19 @@ export default function AudioPlayerScreen({ route, navigation }: any) {
       setCurrentAyah(ayahIndex);
       console.log(`${LOG_PREFIX} 📍 Current ayah set to: ${ayahIndex}`);
       
-      // Build audio URL
-      const ayahNumber = String(ayahIndex + 1).padStart(3, '0');
-      const surahNumber = String(surahId).padStart(3, '0');
-      const audioUrl = `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${surahNumber}${ayahNumber}.mp3`;
-      
-      console.log(`${LOG_PREFIX} 🌐 BACKEND API CALL - Audio URL: ${audioUrl}`);
-      console.log(`${LOG_PREFIX} 🔗 API Domain: cdn.islamic.network`);
-      console.log(`${LOG_PREFIX} 📡 Fetching audio for Surah: ${surahId}, Ayah: ${ayahIndex + 1}`);
+      // L'URL était construite en **concaténant** les nombres :
+      // `${surahNumber}${ayahNumber}` donnait « 001001 » là où le CDN attend
+      // le numéro absolu du verset (1 à 6236). Le lecteur jouait donc un tout
+      // autre verset que celui demandé.
+      //
+      // On passe désormais par le fichier de la sourate entière : c'est ce que
+      // le gestionnaire hors ligne conserve, et `resolveUri` renvoie le
+      // fichier local dès qu'il est présent — sinon le réseau.
+      const audioUrl = await offlineAudio.resolveUri(surahId, 'ar.alafasy');
+      const isLocal = !audioUrl.startsWith('http');
+
+      console.log(`${LOG_PREFIX} 🎵 Source: ${isLocal ? 'fichier local' : 'réseau'} — ${audioUrl}`);
+      console.log(`${LOG_PREFIX} 📡 Sourate ${surahId}, verset ${ayahIndex + 1}`);
       
       console.log(`${LOG_PREFIX} 🎵 Creating sound from URL...`);
       const { sound: newSound } = await Audio.Sound.createAsync(

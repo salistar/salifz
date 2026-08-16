@@ -26,7 +26,8 @@
     "failed": "Failed",
     "share": "Share",
     "create": "Create",
-    "close": "Close"
+    "close": "Close",
+    "retry": "Retry"
   },
   "auth": {
     "login": "Login",
@@ -1523,6 +1524,19 @@
   },
   "quran": {
     "juz": "Juz",
-    "hizb": "Hizb"
+    "hizb": "Hizb",
+    "ayahs": "verses"
+  },
+  "downloads": {
+    "title": "Offline",
+    "download": "Download",
+    "surahsStored": "surah(s) on device",
+    "freeSpace": "free",
+    "unknownSize": "unknown size",
+    "confirmTitle": "Download this surah?",
+    "removeTitle": "Remove this recitation?",
+    "removeAllTitle": "Remove everything?",
+    "removeAllBody": "All stored recitations will be deleted.",
+    "manage": "Manage recitations"
   }
 }

@@ -43,6 +43,7 @@ import LessonDetailScreen from '../screens/quran/LessonDetailScreen';
 import LessonCompleteScreen from '../screens/quran/LessonCompleteScreen';
 import ReviewScreen from '../screens/quran/ReviewScreen';
 import MushafScreen from '../screens/quran/MushafScreen';
+import DownloadsScreen from '../screens/quran/DownloadsScreen';
 import AudioPlayerScreen from '../screens/quran/AudioPlayerScreen';
 import DailyVerseScreen from '../screens/quran/DailyVerseScreen';
 
@@ -235,6 +236,7 @@ export default function RootNavigator() {
         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
         <Stack.Screen name="GoalSetup" component={GoalSetupScreen} />
         <Stack.Screen name="Mushaf" component={MushafScreen} />
+        <Stack.Screen name="Downloads" component={DownloadsScreen} />
         
         {/* ============ VERIFICATION ============ */}
         <Stack.Screen name="PhoneVerification" component={PhoneVerificationScreen} />

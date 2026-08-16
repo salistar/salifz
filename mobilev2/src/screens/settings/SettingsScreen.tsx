@@ -218,6 +218,23 @@ export default function SettingsScreen({ navigation }: any) {
           ))}
         </View>
 
+        {/* Récitations conservées sur l'appareil */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>📥 {t('downloads.title')}</Text>
+          <View style={styles.settingsList}>
+            <TouchableOpacity
+              accessible
+              accessibilityRole="button"
+              accessibilityLabel={t('downloads.title')}
+              style={styles.settingItem}
+              onPress={() => navigation.navigate('Downloads')}
+            >
+              <Text style={styles.settingLabel}>{t('downloads.manage')}</Text>
+              <Text style={styles.settingChevron}>›</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         {/* Notifications Section */}
         <View style={styles.section}>
           {/* ✅ AVANT: '🔔 الإشعارات' */}
@@ -328,6 +345,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   headerTitle: { color: c.onDeep, fontSize: 20, fontWeight: 'bold' },
   content: { padding: 20 },
   section: { backgroundColor: c.surface, borderRadius: 20, padding: 20, marginBottom: 20, elevation: 2 },
+  settingChevron: { fontSize: 22, color: c.textMuted },
   sectionTitle: { fontSize: 16, fontWeight: 'bold', color: c.text, marginBottom: 15 },
   optionsRow: { flexDirection: 'row', justifyContent: 'space-between' },
   optionButton: { flex: 1, alignItems: 'center', padding: 15, borderRadius: 12, backgroundColor: c.background, marginHorizontal: 5 },

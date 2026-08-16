@@ -26,7 +26,8 @@
     "failed": "فشل",
     "share": "مشاركة",
     "create": "إنشاء",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "retry": "إعادة المحاولة"
   },
   "auth": {
     "login": "تسجيل الدخول",
@@ -1523,6 +1524,19 @@
   },
   "quran": {
     "juz": "جزء",
-    "hizb": "حزب"
+    "hizb": "حزب",
+    "ayahs": "آيات"
+  },
+  "downloads": {
+    "title": "بدون اتصال",
+    "download": "تحميل",
+    "surahsStored": "سورة على الجهاز",
+    "freeSpace": "متاحة",
+    "unknownSize": "حجم غير معروف",
+    "confirmTitle": "تحميل هذه السورة؟",
+    "removeTitle": "حذف التلاوة؟",
+    "removeAllTitle": "حذف الكل؟",
+    "removeAllBody": "ستُحذف جميع التلاوات المحفوظة.",
+    "manage": "إدارة التلاوات"
   }
 }
