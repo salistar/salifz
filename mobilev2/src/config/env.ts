@@ -30,9 +30,13 @@ function detectDevHost(): string | null {
     (Constants as any).manifest2?.extra?.expoGo?.debuggerHost,
   ].filter(Boolean) as string[];
 
+  // On garde l'hôte tel quel, y compris `localhost` : en USB
+  // (`adb reverse tcp:8088 tcp:8088`), le téléphone joint le backend sur son
+  // propre localhost. Si Metro est joignable à cette adresse depuis le
+  // téléphone, le backend l'est aussi — les deux tournent sur la même machine.
   for (const candidate of candidates) {
     const host = candidate.split(':')[0];
-    if (host && host !== 'localhost' && host !== '127.0.0.1') return host;
+    if (host) return host;
   }
   return null;
 }

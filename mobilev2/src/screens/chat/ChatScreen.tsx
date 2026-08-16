@@ -59,7 +59,7 @@ export default function ChatScreen({ route, navigation }: any) {
   const [isOnline, setIsOnline] = useState(false);
   
   const flatListRef = useRef<FlatList>(null);
-  const typingTimeout = useRef<NodeJS.Timeout>();
+  const typingTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     console.log(`${LOG_PREFIX} 🔄 useEffect: Initializing chat...`);

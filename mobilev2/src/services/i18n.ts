@@ -155,10 +155,20 @@ export const t = (key: string, params?: Record<string, any>): string => {
     return key;
   }
   
-  // Interpolation des paramètres
+  // Interpolation des paramètres.
+  //
+  // Les fichiers de traduction utilisent la syntaxe `{{clé}}`, alors que cette
+  // fonction ne remplaçait que `{clé}` : sur « المستوى {{level}} », seule la
+  // partie intérieure était substituée et l'écran affichait « المستوى {1} ».
+  // Les deux syntaxes sont désormais acceptées, la double d'abord.
   if (params) {
     Object.entries(params).forEach(([paramKey, value]) => {
-      translation = translation!.replace(new RegExp(`{${paramKey}}`, 'g'), String(value));
+      // Les accolades sont des quantificateurs en expression régulière :
+      // il faut les échapper.
+      const name = paramKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      translation = translation!
+        .replace(new RegExp(`\\{\\{\\s*${name}\\s*\\}\\}`, 'g'), String(value))
+        .replace(new RegExp(`\\{\\s*${name}\\s*\\}`, 'g'), String(value));
     });
   }
   

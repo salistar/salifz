@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "حفظ سالي",
+    "appName": "سالفز",
     "loading": "جاري التحميل...",
     "error": "خطأ",
     "success": "تم بنجاح",
@@ -83,7 +83,7 @@
   },
   "password": { "weak": "ضعيفة", "medium": "متوسطة", "strong": "قوية" },
   "onboarding": {
-    "welcome": "مرحباً بك في حفظ سالي",
+    "welcome": "مرحباً بك في سالفز",
     "subtitle": "طريقك لحفظ القرآن الكريم",
     "slogan": "احفظ القرآن بطريقة ممتعة",
     "feature1": "تعلّم بالألعاب والتحديات",
@@ -378,7 +378,7 @@
     "leagues": { "bronze": "البرونزي", "silver": "الفضي", "gold": "الذهبي", "diamond": "الماسي", "hafiz": "الحافظ" }
   },
   "profile": {
-    "title": "حسابي", "settings": "الإعدادات", "dailyGoal": "الهدف اليومي", "notifications": "التنبيهات", "premium": "سالي+ بريميوم", "language": "اللغة", "about": "حول التطبيق", "help": "المساعدة", "totalVerses": "آيات محفوظة", "achievements": "الإنجازات",
+    "title": "حسابي", "settings": "الإعدادات", "dailyGoal": "الهدف اليومي", "notifications": "التنبيهات", "premium": "سالفز+ بريميوم", "language": "اللغة", "about": "حول التطبيق", "help": "المساعدة", "totalVerses": "آيات محفوظة", "achievements": "الإنجازات",
     "defaultUsername": "مستخدم", "levelX": "المستوى {{level}}", "memorizationStats": "📖 إحصائيات الحفظ", "ayahsMemorized": "آيات محفوظة", "surahsCompleted": "سور مكتملة", "juz": "أجزاء", "seeAll": "عرض الكل", "logout": "تسجيل الخروج", "logoutConfirm": "هل أنت متأكد من تسجيل الخروج؟", "logoutButton": "خروج",
     "stats": { "streak": "السلسلة", "xp": "XP", "gems": "جواهر", "coins": "عملات", "hearts": "قلوب", "league": "الدوري" },
     "menu": { "settings": "الإعدادات", "insights": "الإحصائيات", "friends": "الأصدقاء", "achievements": "الإنجازات", "notifications": "الإشعارات", "help": "المساعدة" },

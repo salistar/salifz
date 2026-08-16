@@ -39,7 +39,7 @@ export default function ChatAudioScreen({ route, navigation }: any) {
   const waveAnim1 = useRef(new Animated.Value(0)).current;
   const waveAnim2 = useRef(new Animated.Value(0)).current;
   const waveAnim3 = useRef(new Animated.Value(0)).current;
-  const durationInterval = useRef<NodeJS.Timeout>();
+  const durationInterval = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     console.log(`${LOG_PREFIX} 🔄 useEffect: Setting up call...`);

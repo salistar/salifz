@@ -13,6 +13,10 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getSecureItem, setSecureItem, clearTokens, TOKEN_KEY, REFRESH_TOKEN_KEY } from '../services/secureStorage';
+// `syncWithUser` n'etait appele nulle part : l'en-tete de gamification
+// (niveau, XP, gemmes, serie) affichait toujours les valeurs par defaut,
+// quel que soit le compte connecte.
+import { useGamificationStore } from './gamificationStore';
 import api, { initializeToken } from '../services/api';
 import { initializeSocket, disconnectSocket } from '../services/socket';
 
@@ -192,6 +196,7 @@ export const useAuthStore = create<AuthState>()(
               isLoading: false,
               error: null 
             });
+            useGamificationStore.getState().syncWithUser(user);
             console.log(`${LOG_PREFIX} ✅ User loaded:`, user.username);
             
             // ✅ Initialize socket after loading user
@@ -289,6 +294,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
             error: null,
           });
+          useGamificationStore.getState().syncWithUser(user);
           
           console.log(`${LOG_PREFIX} ✅ Login successful:`, user.username);
           
@@ -351,6 +357,7 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
             error: null,
           });
+          useGamificationStore.getState().syncWithUser(user);
           
           console.log(`${LOG_PREFIX} ✅ Registration successful:`, user.username);
           
@@ -516,14 +523,18 @@ export const useAuthStore = create<AuthState>()(
             if (user && (user._id || user.id || user.username)) {
               await AsyncStorage.setItem('user', JSON.stringify(user));
               
-              set({ 
-                user, 
+              set({
+                user,
                 token,
-                isAuthenticated: true, 
+                isAuthenticated: true,
                 isLoading: false,
                 error: null
               });
-              
+              // Chemin de reconnexion automatique au lancement : c'est le plus
+              // fréquent une fois la session établie, et donc celui qui doit le
+              // plus sûrement rafraîchir la gamification.
+              useGamificationStore.getState().syncWithUser(user);
+
               console.log(`${LOG_PREFIX} ✅ Auth check successful:`, user.username);
               
               // ✅ Initialize socket after successful auth check

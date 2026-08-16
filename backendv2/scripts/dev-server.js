@@ -35,6 +35,19 @@ async function main() {
 
   require('../index.js');
 
+  // La base en mémoire repart vide à chaque lancement : on y sème le compte
+  // de démonstration pour que le bouton « Test User » fonctionne tout de suite.
+  const mongoose = require('mongoose');
+  mongoose.connection.once('connected', async () => {
+    try {
+      const { seedTestUser, TEST_EMAIL, TEST_PASSWORD } = require('./seed-test-user');
+      await seedTestUser();
+      console.log(`🧪 Compte de démonstration : ${TEST_EMAIL} / ${TEST_PASSWORD}`);
+    } catch (error) {
+      console.error('⚠️  Seed du compte de test impossible :', error.message);
+    }
+  });
+
   const shutdown = async () => {
     console.log('\n⏹  Arrêt du serveur et de MongoDB...');
     await mongo.stop();

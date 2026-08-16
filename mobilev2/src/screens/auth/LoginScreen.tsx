@@ -134,8 +134,11 @@ export default function LoginScreen({ navigation }: any) {
   // ✅ Dev helper pour remplir les champs de test
   const fillTestCredentials = () => {
     console.log(`${LOG_PREFIX} 🧪 Filling test credentials...`);
+    // `test123` ne passe plus la politique de mot de passe (10 caractères
+    // minimum, majuscule, minuscule, chiffre). Ces identifiants correspondent
+    // au compte semé par backendv2/scripts/seed-test-user.js.
     setEmail('test@salifz.com');
-    setPassword('test123');
+    setPassword('Salifz2026');
   };
 
   console.log(`${LOG_PREFIX} 🎨 Rendering UI...`);

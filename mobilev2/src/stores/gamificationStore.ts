@@ -98,7 +98,7 @@ export const useGamificationStore = create<GamificationState>((set, get) => ({
 
   syncWithUser: (user: any) => {
     if (!user?.gamification) return;
-    
+
     const g = user.gamification;
     set({
       totalXP: g.totalXP || 0,

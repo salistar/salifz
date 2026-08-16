@@ -50,7 +50,7 @@ export default function ChatVideoScreen({ route, navigation }: any) {
   const [permission, requestPermission] = useCameraPermissions();
   
   const pulseAnim = useRef(new Animated.Value(1)).current;
-  const durationInterval = useRef<NodeJS.Timeout>();
+  const durationInterval = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     console.log(`${LOG_PREFIX} 🔄 useEffect: Initializing video call...`);
