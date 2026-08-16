@@ -10,8 +10,6 @@
  */
 
 const express = require('express');
-const path = require('path');
-const fs = require('fs');
 const multer = require('multer');
 const { body, validationResult } = require('express-validator');
 
@@ -20,22 +18,16 @@ const SurahProgress = require('../models/SurahProgress');
 const { canJoinHalaqa, isHalaqaModerator } = require('../sockets/authorization');
 const { heavyLimiter } = require('../middleware/rateLimit');
 const pushService = require('../services/pushService');
+const storage = require('../services/storage');
 
 const router = express.Router();
 
-// Stockage local en développement. En production, ces fichiers doivent partir
-// vers un stockage objet (S3, GCS) : le disque d'une instance est éphémère.
-const UPLOAD_DIR = path.join(__dirname, '..', 'uploads', 'recitations');
-fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-
+// Le fichier transite en mémoire puis part vers la destination choisie par
+// `services/storage` : disque local en développement, stockage objet dès que
+// S3_BUCKET est configuré. Le disque d'un conteneur est éphémère — s'y fier en
+// production revient à perdre les enregistrements au premier redéploiement.
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: (req, file, cb) => cb(null, UPLOAD_DIR),
-    filename: (req, file, cb) => {
-      const ext = path.extname(file.originalname) || '.m4a';
-      cb(null, `${req.userId}-${Date.now()}${ext}`);
-    },
-  }),
+  storage: multer.memoryStorage(),
   limits: { fileSize: 25 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     // Seul de l'audio est attendu : accepter n'importe quel type ferait de
@@ -90,6 +82,13 @@ router.post(
         fromAyah: Number(fromAyah),
       });
 
+      const storageKey = await storage.save({
+        prefix: 'recitations',
+        originalName: req.file.originalname || 'recitation.m4a',
+        buffer: req.file.buffer,
+        contentType: req.file.mimetype,
+      });
+
       const recitation = await Recitation.create({
         student: req.userId,
         halaqa: halaqaId,
@@ -97,7 +96,8 @@ router.post(
         fromAyah: Number(fromAyah),
         toAyah: Number(toAyah),
         kind: kind || 'hifz',
-        audioUrl: `/uploads/recitations/${req.file.filename}`,
+        audioUrl: await storage.url(storageKey),
+        storageKey,
         durationSeconds: durationSeconds ? Number(durationSeconds) : undefined,
         attempt: previous + 1,
       });
@@ -108,6 +108,20 @@ router.post(
     }
   }
 );
+
+/**
+ * Régénère les URL d'écoute au moment de la lecture.
+ * Une URL signée expire : celle enregistrée à la soumission serait périmée
+ * quand l'enseignant ouvre sa file d'attente le lendemain.
+ */
+async function withFreshUrls(recitations) {
+  return Promise.all(
+    recitations.map(async (r) => ({
+      ...r,
+      audioUrl: r.storageKey ? await storage.url(r.storageKey) : r.audioUrl,
+    }))
+  );
+}
 
 /**
  * GET /api/v1/recitations/mine
@@ -122,7 +136,7 @@ router.get('/mine', async (req, res, next) => {
       .limit(50)
       .lean();
 
-    res.json({ success: true, data: { recitations } });
+    res.json({ success: true, data: { recitations: await withFreshUrls(recitations) } });
   } catch (error) {
     next(error);
   }
@@ -150,7 +164,8 @@ router.get('/pending/:halaqaId', async (req, res, next) => {
       .limit(100)
       .lean();
 
-    res.json({ success: true, data: { recitations, count: recitations.length } });
+    const fresh = await withFreshUrls(recitations);
+    res.json({ success: true, data: { recitations: fresh, count: fresh.length } });
   } catch (error) {
     next(error);
   }

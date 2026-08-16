@@ -1,68 +1,70 @@
 {
-    "name":  "salifz-backend",
-    "version":  "3.0.0",
-    "description":  "Salifz - Complete Quran Memorization App Backend",
-    "main":  "index.js",
-    "scripts":  {
-                    "start":  "node index.js",
-                    "dev":  "nodemon index.js",
-                    "seed":  "node scripts/seed.js",
-                    "seed-halaqa":  "node scripts/seed-halaqa.js",
-                    "test":  "jest",
-                    "lint":  "eslint .",
-                    "docker:build":  "docker build -t salifz-api .",
-                    "docker:run":  "docker run -p 8088:8088 salifz-api",
-                    "deploy:heroku":  "git push heroku main",
-                    "deploy:railway":  "railway up",
-                    "dev:standalone":  "node scripts/dev-server.js"
-                },
-    "dependencies":  {
-                         "@aws-sdk/client-rekognition":  "^3.0.0",
-                         "@azure/cognitiveservices-face":  "^5.0.0",
-                         "@socket.io/redis-adapter":  "^8.3.0",
-                         "axios":  "^1.6.2",
-                         "bcryptjs":  "^2.4.3",
-                         "compression":  "^1.7.4",
-                         "cors":  "^2.8.5",
-                         "dotenv":  "^16.3.1",
-                         "express":  "^4.18.2",
-                         "express-rate-limit":  "^8.6.2",
-                         "express-validator":  "^7.3.1",
-                         "helmet":  "^7.1.0",
-                         "ioredis":  "^5.8.2",
-                         "jsonwebtoken":  "^9.0.2",
-                         "mongoose":  "^8.0.3",
-                         "morgan":  "^1.10.0",
-                         "multer":  "^1.4.5-lts.1",
-                         "node-cron":  "^3.0.3",
-                         "nodemailer":  "^6.9.7",
-                         "redis":  "^5.10.0",
-                         "socket.io":  "^4.8.3",
-                         "stripe":  "^14.10.0",
-                         "twilio":  "^4.19.3",
-                         "uuid":  "^9.0.1"
-                     },
-    "devDependencies":  {
-                            "eslint":  "^8.56.0",
-                            "jest":  "^29.7.0",
-                            "mongodb-memory-server":  "^11.2.0",
-                            "nodemon":  "^3.0.2"
-                        },
-    "engines":  {
-                    "node":  "\u003e=18.0.0"
-                },
-    "repository":  {
-                       "type":  "git",
-                       "url":  "https://github.com/salifz/backend.git"
-                   },
-    "keywords":  [
-                     "quran",
-                     "hifz",
-                     "memorization",
-                     "islamic",
-                     "arabic",
-                     "learning"
-                 ],
-    "author":  "Salifz Team",
-    "license":  "MIT"
+    "name": "salifz-backend",
+    "version": "3.0.0",
+    "description": "Salifz - Complete Quran Memorization App Backend",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js",
+        "seed": "node scripts/seed.js",
+        "seed-halaqa": "node scripts/seed-halaqa.js",
+        "test": "jest",
+        "lint": "eslint .",
+        "docker:build": "docker build -t salifz-api .",
+        "docker:run": "docker run -p 8088:8088 salifz-api",
+        "deploy:heroku": "git push heroku main",
+        "deploy:railway": "railway up",
+        "dev:standalone": "node scripts/dev-server.js"
+    },
+    "dependencies": {
+        "@aws-sdk/client-rekognition": "^3.0.0",
+        "@aws-sdk/client-s3": "^3.1111.0",
+        "@aws-sdk/s3-request-presigner": "^3.1111.0",
+        "@azure/cognitiveservices-face": "^5.0.0",
+        "@socket.io/redis-adapter": "^8.3.0",
+        "axios": "^1.6.2",
+        "bcryptjs": "^2.4.3",
+        "compression": "^1.7.4",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "express-rate-limit": "^8.6.2",
+        "express-validator": "^7.3.1",
+        "helmet": "^7.1.0",
+        "ioredis": "^5.8.2",
+        "jsonwebtoken": "^9.0.2",
+        "mongoose": "^8.0.3",
+        "morgan": "^1.10.0",
+        "multer": "^1.4.5-lts.1",
+        "node-cron": "^3.0.3",
+        "nodemailer": "^6.9.7",
+        "redis": "^5.10.0",
+        "socket.io": "^4.8.3",
+        "stripe": "^14.10.0",
+        "twilio": "^4.19.3",
+        "uuid": "^9.0.1"
+    },
+    "devDependencies": {
+        "eslint": "^8.56.0",
+        "jest": "^29.7.0",
+        "mongodb-memory-server": "^11.2.0",
+        "nodemon": "^3.0.2"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/salifz/backend.git"
+    },
+    "keywords": [
+        "quran",
+        "hifz",
+        "memorization",
+        "islamic",
+        "arabic",
+        "learning"
+    ],
+    "author": "Salifz Team",
+    "license": "MIT"
 }

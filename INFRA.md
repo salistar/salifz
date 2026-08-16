@@ -11,7 +11,8 @@ docker compose up -d
 |---|---|---|
 | `salifz-mongo` | Base de données persistante | 27017 |
 | `salifz-redis` | Cache, OTP, adaptateur Socket.IO multi-instance | 6379 |
-| `salifz-coturn` | STUN et TURN pour les appels audio/vidéo | 3478 |
+| `salifz-coturn` | STUN et TURN pour les appels audio/vidéo | 3478 / 5349 (TLS) |
+| `salifz-minio` | Stockage objet compatible S3 (récitations) | 9000 / 9001 |
 | `salifz-api` | Backend + serveur WebSocket | 8088 |
 | `salifz-web` | Application web | 5173 |
 
@@ -77,20 +78,62 @@ ou le téléphone, pas par le conteneur. Un nom interne à Docker comme
 échouent alors en silence. Sans cette variable, le serveur déduit l'hôte de
 l'en-tête de la requête — ce qui suffit en local.
 
-## À changer avant la production
+## Passer en production
 
-- **coturn** : identifiants fixes en développement. Passer à
-  `use-auth-secret` avec `TURN_STATIC_SECRET` — la route `/rtc/ice-servers`
-  génère déjà des identifiants éphémères quand cette variable est présente.
-  Un mot de passe TURN fixe distribué à tous les clients finit toujours par fuiter.
-- **coturn TLS** : sans certificat, un navigateur sur une page HTTPS refusera
-  le TURN. Renseigner `cert` et `pkey` dans `infra/coturn/turnserver.conf`.
-- **Enregistrements de récitation** : stockés sur un volume local. Le disque
-  d'une instance est éphémère — les basculer vers un stockage objet (S3, GCS).
-- **`web`** : l'image lance le serveur de développement Vite. Pour la
-  production, construire (`npm run build`) et servir `dist` derrière nginx.
-- **Montage du code** : `./backendv2:/app` est pratique en développement mais
-  n'a pas sa place dans une image de production, qui doit être figée.
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+```
+
+La surcouche de production corrige ce qui ne doit pas sortir du poste de
+développement :
+
+| Point | Développement | Production |
+|---|---|---|
+| Code de l'API | monté depuis l'hôte | figé dans l'image |
+| Application web | serveur Vite | build statique derrière nginx, port 80 |
+| Mongo, Redis, MinIO | ports publiés sur l'hôte | fermés, réseau interne seulement |
+| `NODE_ENV` | development | production |
+
+**Ce qui reste à votre charge :**
+
+- **Certificat TURN réel.** Le certificat monté est auto-signé : suffisant en
+  HTTP local, refusé par un navigateur sur une page HTTPS. Remplacer
+  `infra/coturn/certs/turn.crt` et `turn.key` par un certificat Let's Encrypt.
+- **Stockage objet distant.** MinIO tourne ici dans la pile ; en production,
+  pointer `S3_ENDPOINT`, `S3_BUCKET` et les clés vers S3, R2 ou GCS. Le code
+  ne change pas — c'est le même protocole.
+- **`CORS_ORIGINS`** doit lister vos domaines réels : le serveur refuse de
+  démarrer en production sans cette variable.
+- **Secrets.** Ceux de `.env` sont générés localement. En production, les
+  fournir par le gestionnaire de secrets de la plateforme, jamais par un
+  fichier versionné.
+
+## Sécurité des appels et du stockage
+
+**Identifiants TURN éphémères.** coturn est configuré en `use-auth-secret` :
+l'API dérive un couple identifiant/mot de passe valable 12 heures à partir de
+`TURN_STATIC_SECRET`, par utilisateur. Un identifiant qui fuite cesse de
+fonctionner de lui-même — contrairement à un mot de passe fixe compilé dans
+l'application, qui est de fait public et transforme le relais en proxy gratuit.
+
+Vérification :
+
+```bash
+curl -s localhost:8088/api/v1/rtc/ice-servers -H "Authorization: Bearer <jeton>"
+# → "mode": "ephemeral", username "1786961955:<userId>", expire dans 12 h
+```
+
+**Clé privée TURN.** Une clé lisible par tous n'est plus une clé. coturn
+tourne en `nobody` : un conteneur d'initialisation recopie les certificats
+dans un volume avec `chown nobody:nogroup` et `chmod 640`, plutôt que d'ouvrir
+la clé ou de faire tourner coturn en root.
+
+**URL de récitation signées.** Les enregistrements ne sont pas publics : l'API
+génère une URL signée à durée limitée à chaque lecture. Une URL dont la
+signature est altérée reçoit un `403`. C'est aussi la raison pour laquelle
+`storageKey` est enregistré en base à côté d'`audioUrl` : c'est la clé qui
+identifie le fichier de façon durable, l'URL n'étant qu'un laissez-passer
+temporaire.
 
 ## Appels de groupe
 

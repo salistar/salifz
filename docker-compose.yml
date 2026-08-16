@@ -55,6 +55,26 @@ services:
   # STUN découvre l'adresse publique des pairs ; TURN relaie le flux quand la
   # connexion directe est impossible (NAT symétrique, réseau d'entreprise).
   # Sans TURN, une partie des appels échoue en silence.
+  # Une clé privée doit rester lisible du seul service qui l'utilise. coturn
+  # tourne en `nobody` : on recopie donc les certificats dans un volume avec
+  # le propriétaire et les droits attendus, plutôt que d'ouvrir la clé en
+  # lecture à tous ou de faire tourner coturn en root.
+  coturn-certs:
+    image: alpine:3
+    container_name: salifz-coturn-certs
+    volumes:
+      - ./infra/coturn/certs:/src:ro
+      - coturn-certs:/dst
+    command: >
+      /bin/sh -c "
+      cp /src/turn.crt /src/turn.key /dst/ 2>/dev/null || echo 'aucun certificat : coturn demarrera sans TLS';
+      chown -R 65534:65533 /dst 2>/dev/null || true;
+      chmod 644 /dst/turn.crt 2>/dev/null || true;
+      chmod 640 /dst/turn.key 2>/dev/null || true;
+      echo 'certificats prets'
+      "
+    restart: "no"
+
   coturn:
     image: coturn/coturn:4.6-alpine
     container_name: salifz-coturn
@@ -62,7 +82,46 @@ services:
     network_mode: host
     volumes:
       - ./infra/coturn/turnserver.conf:/etc/coturn/turnserver.conf:ro
+      - coturn-certs:/etc/coturn/certs:ro
+    depends_on:
+      coturn-certs:
+        condition: service_completed_successfully
     command: ["-c", "/etc/coturn/turnserver.conf"]
+
+  minio:
+    image: minio/minio:latest
+    container_name: salifz-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-salifz}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-salifz_minio_dev}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # Crée le bucket au premier démarrage : sans lui, le premier envoi échouerait
+  # sur un bucket inexistant.
+  minio-init:
+    image: minio/mc:latest
+    container_name: salifz-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 ${S3_ACCESS_KEY:-salifz} ${S3_SECRET_KEY:-salifz_minio_dev} &&
+      mc mb --ignore-existing local/${S3_BUCKET:-salifz-recitations} &&
+      echo 'bucket pret'
+      "
+    restart: "no"
 
   api:
     build:
@@ -81,10 +140,18 @@ services:
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET est obligatoire}
       JWT_RESET_SECRET: ${JWT_RESET_SECRET:?JWT_RESET_SECRET est obligatoire}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:8081}
-      TURN_URL: ${TURN_URL:-turn:host.docker.internal:3478}
-      TURN_USER: ${TURN_USER:-salifz}
-      TURN_PASSWORD: ${TURN_PASSWORD:-salifz_turn_dev}
-      STUN_URL: ${STUN_URL:-stun:host.docker.internal:3478}
+      TURN_URL: ${TURN_URL:-turn:localhost:3478}
+      STUN_URL: ${STUN_URL:-stun:localhost:3478}
+      # Doit valoir exactement `static-auth-secret` de turnserver.conf.
+      TURN_STATIC_SECRET: ${TURN_STATIC_SECRET:?TURN_STATIC_SECRET est obligatoire}
+      RTC_PUBLIC_HOST: ${RTC_PUBLIC_HOST:-}
+      # Stockage objet : dès que S3_BUCKET est là, les récitations n'écrivent
+      # plus sur le disque éphémère du conteneur.
+      S3_BUCKET: ${S3_BUCKET:-salifz-recitations}
+      S3_ENDPOINT: ${S3_ENDPOINT:-http://minio:9000}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-salifz}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-salifz_minio_dev}
+      S3_REGION: ${S3_REGION:-us-east-1}
     volumes:
       # Le code est monté depuis l'hôte : une modification est prise en compte
       # au redémarrage du conteneur, sans reconstruire l'image. À retirer pour
@@ -99,6 +166,8 @@ services:
       mongo:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      minio:
         condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -118,6 +187,8 @@ services:
       - api
 
 volumes:
+  coturn-certs:
   mongo-data:
   redis-data:
+  minio-data:
   api-uploads:

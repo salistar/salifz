@@ -1,0 +1,51 @@
+# ============================================================
+# Salifz — surcouche de production
+#
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Reprend la pile de développement et corrige ce qui ne doit pas partir en
+# production : code figé dans l'image, build statique du web, ports internes
+# fermés, stockage objet réel.
+# ============================================================
+
+services:
+  api:
+    environment:
+      NODE_ENV: production
+    volumes:
+      # Le montage `./backendv2:/app` du développement est retiré : une image
+      # de production doit contenir exactement ce qui a été testé, et non le
+      # contenu d'un dossier de l'hôte.
+      - api-uploads:/app/uploads
+    restart: always
+
+  web:
+    build:
+      target: prod
+      args:
+        # Servi par nginx sur la même origine que l'API : plus de préflight
+        # CORS, et les URL restent valides derrière n'importe quel domaine.
+        VITE_API_URL: /api/v1
+        VITE_WS_URL: /
+    ports:
+      - "80:80"
+    restart: always
+
+  # Les bases ne sont plus exposées sur l'hôte : elles ne doivent être
+  # joignables que depuis le réseau interne de la composition.
+  mongo:
+    ports: []
+    restart: always
+
+  redis:
+    ports: []
+    restart: always
+
+  minio:
+    # La console d'administration reste fermée ; seul le point d'entrée S3
+    # est exposé si un service externe en a besoin.
+    ports: []
+    restart: always
+
+  coturn:
+    restart: always

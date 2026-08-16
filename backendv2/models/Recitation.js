@@ -40,6 +40,9 @@ const recitationSchema = new mongoose.Schema(
     },
 
     audioUrl: { type: String, required: true },
+    // Clé chez le fournisseur de stockage. `audioUrl` peut être une URL signée
+    // à durée limitée : c'est la clé, pas l'URL, qui identifie le fichier.
+    storageKey: { type: String },
     durationSeconds: Number,
 
     status: {
