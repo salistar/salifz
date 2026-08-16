@@ -1,0 +1,102 @@
+# ============================================
+# Salifz AI - Configuration
+# ============================================
+
+# Paramètres généraux
+general:
+  project_name: "Salifz AI"
+  version: "1.0.0"
+  seed: 42
+  debug: false
+
+# Configuration des données
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/datasets"
+  cache_dir: "data/cache"
+  
+# Configuration des modèles
+models:
+  # Modèle de reconnaissance vocale
+  speech:
+    base_model: "openai/whisper-small"
+    language: "ar"
+    output_dir: "models/speech"
+    
+  # Modèle d'analyse de Tajwid
+  tajwid:
+    base_model: "CAMeL-Lab/bert-base-arabic-camelbert-mix"
+    output_dir: "models/tajwid"
+    labels:
+      - "O"
+      - "IZHAR"
+      - "IDGHAM_GHUNNAH"
+      - "IDGHAM_BILA"
+      - "IKHFA"
+      - "IQLAB"
+      - "QALQALA"
+      - "GHUNNAH"
+      - "MADD_TABII"
+      - "MADD_MUTTASIL"
+      - "MADD_MUNFASIL"
+      - "MADD_LAZIM"
+      - "TAFKHIM"
+      - "TARQIQ"
+    
+  # Modèle de chatbot
+  chatbot:
+    base_model: "aubmindlab/aragpt2-base"
+    output_dir: "models/chatbot"
+    max_length: 512
+    
+# Paramètres d'entraînement
+training:
+  device: "cuda"  # cuda ou cpu
+  num_epochs: 10
+  batch_size: 8
+  eval_batch_size: 16
+  learning_rate: 0.00002
+  weight_decay: 0.01
+  warmup_steps: 500
+  lr_scheduler: "cosine"
+  gradient_accumulation_steps: 4
+  gradient_checkpointing: true
+  mixed_precision: true
+  
+  # Évaluation
+  eval_strategy: "steps"
+  eval_steps: 500
+  
+  # Sauvegarde
+  save_steps: 500
+  save_total_limit: 3
+  
+  # Logging
+  logging_steps: 100
+  report_to: "none"  # tensorboard, wandb, none
+  
+  # Early stopping
+  early_stopping: true
+  early_stopping_patience: 3
+  early_stopping_threshold: 0.01
+  
+  seed: 42
+
+# Configuration de l'API
+api:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  cors_origins:
+    - "http://localhost:3000"
+    - "http://localhost:19006"
+  
+# Configuration des récitateurs
+reciters:
+  default: "alafasy"
+  available:
+    - alafasy
+    - husary
+    - minshawi
+    - abdulbasit
+    - sudais

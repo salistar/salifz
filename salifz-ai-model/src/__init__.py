@@ -1,0 +1,6 @@
+"""
+Salifz AI - Main Package
+"""
+
+__version__ = "1.0.0"
+__author__ = "Salifz Team"

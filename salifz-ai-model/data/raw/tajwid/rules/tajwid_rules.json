@@ -1,0 +1,30 @@
+{
+  "IZHAR": {
+    "name_ar": "إظهار",
+    "letters": "ء ه ع ح غ خ"
+  },
+  "IDGHAM_GHUNNAH": {
+    "name_ar": "إدغام بغنة",
+    "letters": "ي ن م و"
+  },
+  "IDGHAM_BILA": {
+    "name_ar": "إدغام بلا غنة",
+    "letters": "ل ر"
+  },
+  "IKHFA": {
+    "name_ar": "إخفاء",
+    "letters": "ت ث ج د ذ ز س ش ص ض ط ظ ف ق ك"
+  },
+  "IQLAB": {
+    "name_ar": "إقلاب",
+    "letters": "ب"
+  },
+  "QALQALA": {
+    "name_ar": "قلقلة",
+    "letters": "ق ط ب ج د"
+  },
+  "GHUNNAH": {
+    "name_ar": "غنة",
+    "letters": "ن م"
+  }
+}

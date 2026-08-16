@@ -1,0 +1,75 @@
+# ============================================
+# Salifz — .gitignore
+# Les fichiers listés ici restent sur le disque,
+# ils sont seulement exclus du dépôt.
+# ============================================
+
+# --- Dépendances ---
+node_modules/
+.pnp
+.pnp.js
+
+# --- Secrets (ne JAMAIS pousser : le dépôt est public) ---
+.env
+.env.local
+.env.*.local
+!.env.example
+*.pem
+*.key
+serviceAccount*.json
+google-services.json
+GoogleService-Info.plist
+
+# --- Expo / build mobile ---
+.expo/
+.expo-shared/
+dist/
+web-build/
+*.jks
+*.p8
+*.p12
+*.mobileprovision
+*.orig.*
+android/
+ios/
+
+# --- Sous-projet IA : assets lourds (33 Go, conservés localement) ---
+salifz-ai-model/venv_hifz/
+salifz-ai-model/venv/
+salifz-ai-model/data/raw/quran/
+salifz-ai-model/data/raw/audio/
+salifz-ai-model/data/processed/
+salifz-ai-model/models/**/*.safetensors
+salifz-ai-model/models/**/*.bin
+salifz-ai-model/models/**/*.pt
+salifz-ai-model/models/**/*.pth
+salifz-ai-model/models/**/*.onnx
+salifz-ai-model/models/**/*.keras
+salifz-ai-model/models/**/*.tflite
+salifz-ai-model/logs/
+salifz-ai-model/runs/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# --- Médias et archives (conservés localement, trop lourds pour git) ---
+*.zip
+*.tar.gz
+*.mp3
+*.wav
+*.m4a
+*.mp4
+*.mov
+
+# --- Logs & divers ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+*.swp
+coverage/
+.vscode/
+.idea/

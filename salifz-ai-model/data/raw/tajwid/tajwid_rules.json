@@ -1,0 +1,56 @@
+{
+  "IDGHAM": {
+    "name_ar": "إدغام",
+    "name_en": "Idgham",
+    "description": "Merging of a non-voweled letter into a voweled letter",
+    "color": "#FF6B6B"
+  },
+  "IKHFA": {
+    "name_ar": "إخفاء",
+    "name_en": "Ikhfa",
+    "description": "Hiding the noon sakinah or tanween",
+    "color": "#4ECDC4"
+  },
+  "IQLAB": {
+    "name_ar": "إقلاب",
+    "name_en": "Iqlab",
+    "description": "Changing noon sakinah to meem",
+    "color": "#45B7D1"
+  },
+  "IZHAR": {
+    "name_ar": "إظهار",
+    "name_en": "Izhar",
+    "description": "Clear pronunciation of noon sakinah",
+    "color": "#96CEB4"
+  },
+  "GHUNNA": {
+    "name_ar": "غنة",
+    "name_en": "Ghunna",
+    "description": "Nasalization sound",
+    "color": "#FFEAA7"
+  },
+  "QALQALA": {
+    "name_ar": "قلقلة",
+    "name_en": "Qalqala",
+    "description": "Echoing sound on certain letters",
+    "color": "#DDA0DD"
+  },
+  "MADD_TABII": {
+    "name_ar": "مد طبيعي",
+    "name_en": "Natural Madd",
+    "description": "Natural prolongation of 2 counts",
+    "color": "#98D8C8"
+  },
+  "MADD_MUTTASIL": {
+    "name_ar": "مد متصل",
+    "name_en": "Connected Madd",
+    "description": "Prolongation when hamza follows in same word",
+    "color": "#F7DC6F"
+  },
+  "MADD_MUNFASIL": {
+    "name_ar": "مد منفصل",
+    "name_en": "Separated Madd",
+    "description": "Prolongation when hamza is in next word",
+    "color": "#BB8FCE"
+  }
+}

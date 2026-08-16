@@ -1,0 +1,62 @@
+[
+  {
+    "instruction": "كم عدد سور القرآن الكريم؟",
+    "input": "",
+    "output": "عدد سور القرآن الكريم 114 سورة. 📖",
+    "context": "general"
+  },
+  {
+    "instruction": "كم عدد آيات القرآن الكريم؟",
+    "input": "",
+    "output": "عدد آيات القرآن الكريم 6236 آية.",
+    "context": "general"
+  },
+  {
+    "instruction": "ما أطول سورة في القرآن؟",
+    "input": "",
+    "output": "أطول سورة هي سورة البقرة (286 آية).",
+    "context": "general"
+  },
+  {
+    "instruction": "ما أقصر سورة في القرآن؟",
+    "input": "",
+    "output": "أقصر سورة هي سورة الكوثر (3 آيات).",
+    "context": "general"
+  },
+  {
+    "instruction": "كيف أحفظ القرآن؟",
+    "input": "",
+    "output": "نصائح للحفظ:\n1️⃣ الإخلاص لله\n2️⃣ التكرار\n3️⃣ الفهم\n4️⃣ المراجعة المستمرة",
+    "context": "general"
+  },
+  {
+    "instruction": "ما هو الإظهار؟",
+    "input": "",
+    "output": "الإظهار: إخراج النون الساكنة عند حروف الحلق (ء ه ع ح غ خ).",
+    "context": "general"
+  },
+  {
+    "instruction": "ما فضل سورة الفاتحة؟",
+    "input": "",
+    "output": "أعظم سورة في القرآن، لا تصح الصلاة بدونها.",
+    "context": "general"
+  },
+  {
+    "instruction": "السلام عليكم",
+    "input": "",
+    "output": "وعليكم السلام ورحمة الله! 😊 كيف يمكنني مساعدتك؟",
+    "context": "general"
+  },
+  {
+    "instruction": "شكراً",
+    "input": "",
+    "output": "العفو! سعيدة بمساعدتك 💚",
+    "context": "general"
+  },
+  {
+    "instruction": "من هي سالي؟",
+    "input": "",
+    "output": "أنا سالي، مساعدتك الذكية لحفظ القرآن! 🤖📖",
+    "context": "general"
+  }
+]

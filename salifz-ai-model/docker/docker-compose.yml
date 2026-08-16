@@ -1,0 +1,141 @@
+# ============================================
+# Salifz AI - Docker Compose
+# ============================================
+
+version: '3.8'
+
+services:
+  # ============================================
+  # AI API Service
+  # ============================================
+  ai-api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: salifz-ai-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../data:/app/data
+      - ../models:/app/models
+      - ../logs:/app/logs
+    environment:
+      - PYTHONPATH=/app
+      - CUDA_VISIBLE_DEVICES=0
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - salifz-network
+
+  # ============================================
+  # AI API with GPU Support
+  # ============================================
+  ai-api-gpu:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.gpu
+    container_name: salifz-ai-api-gpu
+    ports:
+      - "8001:8000"
+    volumes:
+      - ../data:/app/data
+      - ../models:/app/models
+      - ../logs:/app/logs
+    environment:
+      - PYTHONPATH=/app
+      - NVIDIA_VISIBLE_DEVICES=all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    profiles:
+      - gpu
+    networks:
+      - salifz-network
+
+  # ============================================
+  # Redis for Caching
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: salifz-ai-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - salifz-network
+
+  # ============================================
+  # MLflow for Experiment Tracking
+  # ============================================
+  mlflow:
+    image: python:3.10-slim
+    container_name: salifz-mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ../mlruns:/mlruns
+    command: >
+      bash -c "pip install mlflow && 
+               mlflow server --host 0.0.0.0 --port 5000 
+               --backend-store-uri sqlite:///mlruns/mlflow.db 
+               --default-artifact-root /mlruns"
+    restart: unless-stopped
+    profiles:
+      - dev
+    networks:
+      - salifz-network
+
+  # ============================================
+  # TensorBoard
+  # ============================================
+  tensorboard:
+    image: tensorflow/tensorflow:latest
+    container_name: salifz-tensorboard
+    ports:
+      - "6006:6006"
+    volumes:
+      - ../runs:/runs
+    command: tensorboard --logdir=/runs --host=0.0.0.0 --port=6006
+    restart: unless-stopped
+    profiles:
+      - dev
+    networks:
+      - salifz-network
+
+  # ============================================
+  # Jupyter Notebook
+  # ============================================
+  jupyter:
+    image: jupyter/pytorch-notebook:latest
+    container_name: salifz-jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - ..:/home/jovyan/work
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - GRANT_SUDO=yes
+    user: root
+    restart: unless-stopped
+    profiles:
+      - dev
+    networks:
+      - salifz-network
+
+networks:
+  salifz-network:
+    driver: bridge
+
+volumes:
+  redis-data:

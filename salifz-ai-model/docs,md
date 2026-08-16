@@ -1,0 +1,179 @@
+# Créer l'environnement
+python -m venv venv_hifz
+
+# Activer
+.\venv_hifz\Scripts\Activate.ps1
+
+# Installer
+pip install --upgrade pip
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install -r requirements.txt
+
+
+
+
+
+
+
+
+
+# Salifz AI Model - Installation Guide
+
+## 🚀 Quick Setup (Recommended)
+
+### Option 1: Using PowerShell Script (Windows)
+```powershell
+# Run in PowerShell (as Administrator recommended)
+powershell -ExecutionPolicy Bypass -File setup_venv.ps1
+```
+
+### Option 2: Using Batch Script (Windows CMD)
+```cmd
+setup_venv.bat
+```
+
+---
+
+## 📝 Manual Installation Commands
+
+If you prefer to run commands manually, follow these steps:
+
+### Step 1: Create Virtual Environment
+```powershell
+# Navigate to your project folder
+cd C:\Users\21266\Desktop\sdk52\salifz\salifz-ai-model
+
+# Remove old environment (if exists)
+Remove-Item -Recurse -Force venv_hifz -ErrorAction SilentlyContinue
+
+# Create new virtual environment
+python -m venv venv_hifz
+
+# Activate (PowerShell)
+.\venv_hifz\Scripts\Activate.ps1
+
+# OR Activate (CMD)
+venv_hifz\Scripts\activate.bat
+```
+
+### Step 2: Upgrade pip
+```powershell
+python -m pip install --upgrade pip setuptools wheel
+```
+
+### Step 3: Install PyTorch with CUDA
+```powershell
+# With CUDA 11.8 (recommended for GPU)
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+# OR CPU only (if no NVIDIA GPU)
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+```
+
+### Step 4: Install Requirements
+```powershell
+pip install -r requirements.txt
+```
+
+### Step 5: Verify Installation
+```powershell
+python -c "import torch; print(f'PyTorch: {torch.__version__}, CUDA: {torch.cuda.is_available()}')"
+python -c "import numpy; print(f'NumPy: {numpy.__version__}')"
+python -c "import transformers; print(f'Transformers: {transformers.__version__}')"
+python -c "import librosa; print(f'Librosa: {librosa.__version__}')"
+python -c "import camel_tools; print('CamelTools: OK')"
+```
+
+---
+
+## ⚠️ Troubleshooting
+
+### Problem: Dependency Conflicts
+If you see dependency conflicts, install packages in this order:
+```powershell
+# 1. Core packages first
+pip install "numpy>=1.24.0,<2.0.0"
+pip install "scipy>=1.10.0,<1.13.0"
+
+# 2. Then ML packages
+pip install "scikit-learn>=1.3.0,<1.5.0"
+
+# 3. Finally, the rest
+pip install -r requirements.txt --no-deps
+pip install -r requirements.txt
+```
+
+### Problem: camel-tools installation fails
+```powershell
+# Install system dependencies first
+pip install numpy<2.0.0
+pip install camel-tools
+```
+
+### Problem: ONNX conflicts
+```powershell
+# Use compatible version
+pip install "onnx>=1.14.0,<1.16.0"
+pip install "onnxruntime>=1.16.0,<1.18.0"
+```
+
+### Problem: TensorFlow conflicts
+TensorFlow 2.15 requires specific versions. If you need TensorFlow:
+```powershell
+pip install "tensorflow>=2.15.0,<2.16.0"
+pip install "ml-dtypes~=0.2.0"
+```
+
+---
+
+## 📁 Project Structure
+```
+salifz-ai-model/
+├── venv_hifz/              # Virtual environment (created)
+├── requirements.txt        # Dependencies
+├── setup_venv.ps1         # PowerShell setup script
+├── setup_venv.bat         # Batch setup script
+├── INSTALLATION.md        # This file
+└── src/                   # Your source code
+```
+
+---
+
+## 🔧 Daily Usage
+
+### Activate Environment
+```powershell
+# PowerShell
+.\venv_hifz\Scripts\Activate.ps1
+
+# CMD
+venv_hifz\Scripts\activate.bat
+```
+
+### Deactivate Environment
+```powershell
+deactivate
+```
+
+### Update a Package
+```powershell
+pip install --upgrade package_name
+```
+
+### Export Current Environment
+```powershell
+pip freeze > requirements-lock.txt
+```
+
+---
+
+## 📌 Version Summary (Tested Compatible)
+
+| Package | Version Range | Notes |
+|---------|---------------|-------|
+| Python | 3.9.x | Recommended |
+| NumPy | >=1.24.0,<2.0.0 | Critical for camel-tools |
+| PyTorch | >=2.0.0,<2.3.0 | With CUDA 11.8 |
+| Transformers | >=4.35.0,<4.45.0 | Hugging Face |
+| ONNX | >=1.14.0,<1.16.0 | Avoid 1.16+ conflicts |
+| scikit-learn | >=1.3.0,<1.5.0 | ML utilities |
