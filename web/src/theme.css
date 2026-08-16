@@ -1,0 +1,77 @@
+/* Thème Salifz — mêmes jetons sémantiques que l'application mobile,
+   pour que les deux interfaces restent reconnaissables comme un seul produit. */
+:root {
+  --background: #f5f5f5;
+  --background-alt: #f0f0f0;
+  --surface: #ffffff;
+  --surface-alt: #fafafa;
+  --canvas-deep: #1a1a2e;
+  --text: #333333;
+  --text-secondary: #666666;
+  --text-muted: #9e9e9e;
+  --on-deep: #ffffff;
+  --primary: #4caf50;
+  --primary-dark: #2e7d32;
+  --primary-soft: #e8f5e9;
+  --accent: #667eea;
+  --error: #f44336;
+  --error-soft: #ffebee;
+  --warning: #ff9800;
+  --border: #e0e0e0;
+  --divider: #eeeeee;
+  --radius: 12px;
+}
+
+:root[data-theme='dark'] {
+  --background: #12121c;
+  --background-alt: #1a1a2e;
+  --surface: #1e1e32;
+  --surface-alt: #252540;
+  --canvas-deep: #12121c;
+  --text: #f5f5f5;
+  --text-secondary: #b0b6c4;
+  --text-muted: #7a8194;
+  --primary: #66bb6a;
+  --primary-dark: #43a047;
+  --primary-soft: #1f3325;
+  --accent: #8b9cf7;
+  --error: #ef5350;
+  --error-soft: #3a1f1f;
+  --warning: #ffa726;
+  --border: #33344a;
+  --divider: #2a2b3d;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Le texte coranique se lit de droite à gauche et demande de l'interligne. */
+.arabic { direction: rtl; font-size: 1.6rem; line-height: 2.4; }
+
+button { font: inherit; cursor: pointer; border: none; border-radius: 8px; }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+input, textarea, select {
+  font: inherit; padding: 10px 12px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+}
+a { color: var(--primary); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+.btn-primary { background: var(--primary); color: var(--on-deep); padding: 10px 18px; font-weight: 600; }
+.btn-ghost { background: var(--primary-soft); color: var(--primary-dark); padding: 8px 14px; font-weight: 600; }
+.btn-danger { background: var(--error-soft); color: var(--error); padding: 8px 14px; font-weight: 600; }
+
+/* Le focus doit rester visible : le masquer rend l'application inutilisable au clavier. */
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }

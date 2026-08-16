@@ -1,0 +1,123 @@
+# ============================================================
+# Salifz — pile de développement complète
+#
+#   docker compose up -d
+#
+# Fournit tout ce dont l'API a besoin, en local et sans compte
+# chez un fournisseur :
+#   - MongoDB   : persistance réelle (remplace la base en mémoire)
+#   - Redis     : cache, sessions OTP et adaptateur Socket.IO multi-instance
+#   - coturn    : serveurs STUN et TURN pour les appels audio/vidéo
+#   - api       : le backend, qui sert aussi le WebSocket
+#   - web       : l'application web
+#
+# L'application mobile et l'application web parlent au **même** backend :
+# un seul modèle de données, un seul jeu de règles d'autorisation.
+# ============================================================
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: salifz-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-salifz}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-salifz_dev_password}
+      MONGO_INITDB_DATABASE: salifz
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  redis:
+    image: redis:7-alpine
+    container_name: salifz-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    # `appendonly` conserve les données entre redémarrages : sans cela, un
+    # simple restart viderait les sessions et les codes OTP en cours.
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # STUN découvre l'adresse publique des pairs ; TURN relaie le flux quand la
+  # connexion directe est impossible (NAT symétrique, réseau d'entreprise).
+  # Sans TURN, une partie des appels échoue en silence.
+  coturn:
+    image: coturn/coturn:4.6-alpine
+    container_name: salifz-coturn
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./infra/coturn/turnserver.conf:/etc/coturn/turnserver.conf:ro
+    command: ["-c", "/etc/coturn/turnserver.conf"]
+
+  api:
+    build:
+      context: ./backendv2
+      dockerfile: Dockerfile
+    container_name: salifz-api
+    restart: unless-stopped
+    ports:
+      - "8088:8088"
+    environment:
+      NODE_ENV: development
+      PORT: 8088
+      MONGODB_URI: mongodb://${MONGO_USER:-salifz}:${MONGO_PASSWORD:-salifz_dev_password}@mongo:27017/salifz?authSource=admin
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET est obligatoire}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:?JWT_REFRESH_SECRET est obligatoire}
+      JWT_RESET_SECRET: ${JWT_RESET_SECRET:?JWT_RESET_SECRET est obligatoire}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:8081}
+      TURN_URL: ${TURN_URL:-turn:host.docker.internal:3478}
+      TURN_USER: ${TURN_USER:-salifz}
+      TURN_PASSWORD: ${TURN_PASSWORD:-salifz_turn_dev}
+      STUN_URL: ${STUN_URL:-stun:host.docker.internal:3478}
+    volumes:
+      # Le code est monté depuis l'hôte : une modification est prise en compte
+      # au redémarrage du conteneur, sans reconstruire l'image. À retirer pour
+      # une image de production, qui doit être figée.
+      - ./backendv2:/app
+      # `node_modules` reste celui de l'image : les binaires natifs compilés
+      # pour Alpine ne sont pas ceux de l'hôte Windows.
+      - /app/node_modules
+      # Les enregistrements de récitation survivent à la recréation du conteneur.
+      - api-uploads:/app/uploads
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: salifz-web
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:8088/api/v1}
+      VITE_WS_URL: ${VITE_WS_URL:-http://localhost:8088}
+    depends_on:
+      - api
+
+volumes:
+  mongo-data:
+  redis-data:
+  api-uploads:

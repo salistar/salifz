@@ -76,3 +76,7 @@ coverage/
 
 # Enregistrements de recitation (stockage local de developpement)
 backendv2/uploads/
+
+# Application web
+web/node_modules/
+web/dist/

@@ -111,6 +111,8 @@ router.use('/chat', authMiddleware, requireFeature('chat'), require('./chat'));
 router.use('/halaqa', authMiddleware, requireFeature('halaqa_chat'), require('./halaqa'));
 // Validation des recitations par l'enseignant (cf. models/Recitation.js)
 router.use('/recitations', authMiddleware, require('./recitations'));
+// Serveurs ICE (STUN/TURN) pour les appels audio et video
+router.use('/rtc', authMiddleware, require('./rtc'));
 router.use('/social', authMiddleware, requireFeature('social'), require('./social'));
 
 module.exports = router;
