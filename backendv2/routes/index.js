@@ -109,6 +109,8 @@ router.use('/khatam', authMiddleware, safeRequire('./khatam'));
 // fonctionnalités sociales, au lieu d'être seulement stocké sur le compte.
 router.use('/chat', authMiddleware, requireFeature('chat'), require('./chat'));
 router.use('/halaqa', authMiddleware, requireFeature('halaqa_chat'), require('./halaqa'));
+// Validation des recitations par l'enseignant (cf. models/Recitation.js)
+router.use('/recitations', authMiddleware, require('./recitations'));
 router.use('/social', authMiddleware, requireFeature('social'), require('./social'));
 
 module.exports = router;

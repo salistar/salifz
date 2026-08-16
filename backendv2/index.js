@@ -99,6 +99,13 @@ if (process.env.REDIS_URL) {
   );
 }
 
+// Enregistrements de recitation. En production, ces fichiers doivent
+// partir vers un stockage objet : le disque d'une instance est ephemere.
+app.use('/uploads', express.static(require('path').join(__dirname, 'uploads'), {
+  maxAge: '1h',
+  setHeaders: (res) => res.setHeader('X-Content-Type-Options', 'nosniff'),
+}));
+
 // Routes
 const routes = require('./routes');
 app.use('/api/v1', routes);

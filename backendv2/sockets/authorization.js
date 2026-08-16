@@ -37,35 +37,52 @@ async function isKhatamModerator(userId, khatamId) {
   return false;
 }
 
-/** L'utilisateur est-il membre de la halaqa ? */
+/**
+ * L'utilisateur est-il membre de la halaqa ?
+ *
+ * Le champ propriétaire du schéma est `creator` ; `members` contient des
+ * sous-documents dont l'identifiant est `user`.
+ */
 async function canJoinHalaqa(userId, halaqaId) {
   if (!isObjectId(halaqaId)) return false;
   const Halaqa = model('Halaqa');
   if (!Halaqa) return false;
 
-  const halaqa = await Halaqa.findById(halaqaId).select('members owner createdBy isPublic').lean();
+  const halaqa = await Halaqa.findById(halaqaId)
+    .select('members admins creator owner createdBy').lean();
   if (!halaqa) return false;
 
   const uid = String(userId);
-  if (String(halaqa.owner || halaqa.createdBy || '') === uid) return true;
+  if (String(halaqa.creator || halaqa.owner || halaqa.createdBy || '') === uid) return true;
+  if ((halaqa.admins || []).some((a) => String(a) === uid)) return true;
 
-  return (halaqa.members || []).some((m) => String(m?.userId || m?.user || m) === uid);
+  return (halaqa.members || []).some((m) => String(m?.user || m?.userId || m) === uid);
 }
 
-/** L'utilisateur peut-il modérer la halaqa (propriétaire ou administrateur) ? */
+/**
+ * L'utilisateur peut-il modérer la halaqa ?
+ *
+ * Le schéma nomme le propriétaire `creator` et tient une liste `admins`.
+ * Les noms `owner` / `createdBy` sont conservés en repli pour les documents
+ * plus anciens, mais ils ne sont pas ceux du modèle actuel — s'appuyer sur
+ * eux seuls refusait l'accès au créateur lui-même.
+ */
 async function isHalaqaModerator(userId, halaqaId) {
   if (!isObjectId(halaqaId)) return false;
   const Halaqa = model('Halaqa');
   if (!Halaqa) return false;
 
-  const halaqa = await Halaqa.findById(halaqaId).select('members owner createdBy').lean();
+  const halaqa = await Halaqa.findById(halaqaId)
+    .select('members admins creator owner createdBy').lean();
   if (!halaqa) return false;
 
   const uid = String(userId);
-  if (String(halaqa.owner || halaqa.createdBy || '') === uid) return true;
+  if (String(halaqa.creator || halaqa.owner || halaqa.createdBy || '') === uid) return true;
+  if ((halaqa.admins || []).some((a) => String(a) === uid)) return true;
 
   return (halaqa.members || []).some(
-    (m) => String(m?.userId || m?.user || m) === uid && ['admin', 'moderator', 'teacher'].includes(m?.role)
+    (m) => String(m?.user || m?.userId || m) === uid &&
+      ['admin', 'moderator', 'teacher', 'creator'].includes(m?.role)
   );
 }
 

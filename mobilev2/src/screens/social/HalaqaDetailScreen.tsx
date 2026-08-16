@@ -270,6 +270,20 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
     });
   };
 
+  /**
+   * Validation par l'enseignant : l'élève soumet un passage récité, le
+   * responsable de la halaqa écoute et valide. C'est le cœur de
+   * l'apprentissage traditionnel, et il manquait entièrement.
+   */
+  const navigateToRecitation = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (isAdminUser()) {
+      navigation.navigate('TeacherReview', { halaqaId });
+    } else {
+      navigation.navigate('SubmitRecitation', { halaqaId, halaqaName: getName() });
+    }
+  };
+
   // Handlers
   const handleLeaveHalaqa = () => {
     if (isCreatorUser()) {
@@ -543,6 +557,26 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
     if (activeTab === 'activities') {
       return (
         <View>
+          {/* Récitation : soumettre pour l'élève, file d'attente pour le responsable */}
+          <TouchableOpacity
+            accessible
+            accessibilityRole="button"
+            accessibilityLabel={
+              isAdminUser() ? t('recitation.openReview') : t('recitation.openSubmit')
+            }
+            style={styles.addActivityButton}
+            onPress={navigateToRecitation}
+          >
+            <Ionicons
+              name={isAdminUser() ? 'headset' : 'mic'}
+              size={24}
+              color={colors.primary}
+            />
+            <Text style={styles.addActivityButtonText}>
+              {isAdminUser() ? t('recitation.openReview') : t('recitation.openSubmit')}
+            </Text>
+          </TouchableOpacity>
+
           {isAdminUser() && (
             <TouchableOpacity accessible accessibilityRole="button" style={styles.addActivityButton} onPress={() => setShowCreateActivityModal(true)}>
               <Ionicons name="add-circle" size={24} color={colors.primary} />

@@ -540,6 +540,25 @@ export const progressAPI = {
 // ============================================
 // QURAN API
 // ============================================
+
+/**
+ * Validation des recitations par l'enseignant.
+ * `submit` envoie un FormData : on laisse axios poser lui-meme la frontiere
+ * multipart, forcer le Content-Type casserait l'upload.
+ */
+export const recitationsAPI = {
+  submit: (form: FormData): Promise<any> => {
+    console.log(`${FILE_NAME} 🎙️ recitationsAPI.submit() called`);
+    return api.post('/recitations', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 60000,
+    });
+  },
+  mine: (): Promise<any> => api.get('/recitations/mine'),
+  pending: (halaqaId: string): Promise<any> => api.get(`/recitations/pending/${halaqaId}`),
+  review: (id: string, payload: any): Promise<any> => api.post(`/recitations/${id}/review`, payload),
+};
+
 export const quranAPI = {
   getSurahs: (): Promise<any> => {
     console.log(`${FILE_NAME} 📥 quranAPI.getSurahs() called`);
