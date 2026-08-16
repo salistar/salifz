@@ -6,40 +6,14 @@
 
 const express = require('express');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
 
-// Auth Middleware
-const authMiddleware = async (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ success: false, error: 'No token' });
-    
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'salifz_secret_2024');
-    req.userId = decoded.userId || decoded.id;
-    
-    const User = require('../models/User');
-    req.user = await User.findById(req.userId);
-    
-    if (!req.user) return res.status(401).json({ success: false, error: 'User not found' });
-    next();
-  } catch (e) { 
-    console.error('Auth error:', e.message);
-    res.status(401).json({ success: false, error: 'Invalid token' }); 
-  }
-};
-
-const optionalAuth = async (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (token) {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'salifz_secret_2024');
-      req.userId = decoded.userId || decoded.id;
-      const User = require('../models/User');
-      req.user = await User.findById(req.userId);
-    }
-  } catch (e) {}
-  next();
-};
+// Middleware d'authentification unique de l'application.
+// L'ancienne copie locale est supprimée : elle utilisait un secret de repli en
+// dur (S7), ne vérifiait pas le type de jeton (S2) et laissait passer les
+// comptes bannis (S10).
+const { auth: authMiddleware, optionalAuth } = require('../middleware/auth');
+const { requireFeature } = require('../middleware/parentalControls');
+const { otpLimiter, heavyLimiter } = require('../middleware/rateLimit');
 
 // Health check
 router.get('/health', (req, res) => res.json({ 
@@ -60,12 +34,17 @@ router.get('/', (req, res) => res.json({
 // ============================================
 router.use('/auth', require('./auth'));
 
-// Safe require with fallback
+// Chargement d'un routeur. En production, une route manquante ou cassée est une
+// erreur de déploiement : on refuse de démarrer plutôt que de servir un routeur
+// vide, qui donnait des 404 impossibles à distinguer d'un bug applicatif.
 const safeRequire = (path) => {
   try {
     return require(path);
   } catch (e) {
-    console.warn(`Route not found: ${path}`);
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(`[ROUTES] Impossible de charger ${path} : ${e.message}`);
+    }
+    console.error(`[ROUTES] ⚠️  ${path} non chargé (${e.message}) — routeur vide en dev.`);
     return express.Router();
   }
 };
@@ -88,11 +67,12 @@ router.use('/challenges', authMiddleware, safeRequire('./challenges'));
 router.use('/streaks', authMiddleware, safeRequire('./streaks'));
 router.use('/rewards', authMiddleware, safeRequire('./rewards'));
 router.use('/notifications', authMiddleware, safeRequire('./notifications'));
-router.use('/ai', authMiddleware, safeRequire('./ai'));
+// Routes coûteuses (upload audio, analyse) : limitées plus strictement.
+router.use('/ai', authMiddleware, heavyLimiter, safeRequire('./ai'));
 router.use('/audio', optionalAuth, safeRequire('./audio'));
 router.use('/face', authMiddleware, safeRequire('./face'));
 router.use('/parental', authMiddleware, safeRequire('./parental'));
-router.use('/tajwid', authMiddleware, safeRequire('./tajwid'));
+router.use('/tajwid', authMiddleware, heavyLimiter, safeRequire('./tajwid'));
 router.use('/analytics', authMiddleware, safeRequire('./analytics'));
 router.use('/badges', authMiddleware, safeRequire('./badges'));
 router.use('/competitions', authMiddleware, safeRequire('./competitions'));
@@ -101,7 +81,8 @@ router.use('/reminders', authMiddleware, safeRequire('./reminders'));
 router.use('/bookmarks', authMiddleware, safeRequire('./bookmarks'));
 router.use('/export', authMiddleware, safeRequire('./export'));
 router.use('/settings', authMiddleware, safeRequire('./settings'));
-router.use('/verification', authMiddleware, safeRequire('./verification'));
+// Envoi et vérification de codes OTP : cible privilégiée du bourrinage (S8).
+router.use('/verification', authMiddleware, otpLimiter, safeRequire('./verification'));
 
 // ============================================
 // ✅ NEW: KHATAM QURAN ROUTES
@@ -111,8 +92,10 @@ router.use('/khatam', authMiddleware, safeRequire('./khatam'));
 // ============================================
 // SOCIAL ROUTES (chat, halaqa, social)
 // ============================================
-router.use('/chat', authMiddleware, require('./chat'));
-router.use('/halaqa', authMiddleware, require('./halaqa'));
-router.use('/social', authMiddleware, require('./social'));
+// S13 : le contrôle parental est désormais réellement appliqué sur les
+// fonctionnalités sociales, au lieu d'être seulement stocké sur le compte.
+router.use('/chat', authMiddleware, requireFeature('chat'), require('./chat'));
+router.use('/halaqa', authMiddleware, requireFeature('halaqa_chat'), require('./halaqa'));
+router.use('/social', authMiddleware, requireFeature('social'), require('./social'));
 
 module.exports = router;

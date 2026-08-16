@@ -7,6 +7,7 @@
 
 import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getSecureItem, setSecureItem, clearTokens, TOKEN_KEY, REFRESH_TOKEN_KEY } from './secureStorage';
 import { ENV } from '../config';
 
 const FILE_NAME = '[API]';
@@ -70,7 +71,7 @@ api.setToken = (token: string | null): void => {
 export const initializeToken = async (): Promise<boolean> => {
   console.log(`${FILE_NAME} 🔐 initializeToken() called`);
   try {
-    const token = await AsyncStorage.getItem('token');
+    const token = await getSecureItem(TOKEN_KEY);
     if (token) {
       authToken = token;
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -92,7 +93,7 @@ api.interceptors.request.use(
     
     if (!authToken) {
       try {
-        const token = await AsyncStorage.getItem('token');
+        const token = await getSecureItem(TOKEN_KEY);
         if (token) {
           authToken = token;
           api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -146,7 +147,7 @@ export const authAPI = {
     if (token) {
       authToken = token;
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      await AsyncStorage.setItem('token', token);
+      await setSecureItem(TOKEN_KEY, token);
       justLoggedIn = true;
       setTimeout(() => { justLoggedIn = false; }, 5000);
       console.log(`${FILE_NAME} ✅ Token saved after register`);
@@ -163,7 +164,7 @@ export const authAPI = {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       justLoggedIn = true;
       setTimeout(() => { justLoggedIn = false; }, 5000);
-      AsyncStorage.setItem('token', token).catch(console.error);
+      setSecureItem(TOKEN_KEY, token).catch(console.error);
       console.log(`${FILE_NAME} ✅ Token set after login`);
     } else {
       console.error(`${FILE_NAME} ❌ No token in login response`);
@@ -191,7 +192,7 @@ export const authAPI = {
     authToken = null;
     justLoggedIn = false;
     delete api.defaults.headers.common['Authorization'];
-    await AsyncStorage.multiRemove(['token', 'user', 'refreshToken']);
+    await Promise.all([clearTokens(), AsyncStorage.removeItem('user')]);
     console.log(`${FILE_NAME} ✅ Logged out, token cleared`);
     return { success: true };
   },
@@ -213,7 +214,7 @@ export const authAPI = {
     if (token) {
       authToken = token;
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      await AsyncStorage.setItem('token', token);
+      await setSecureItem(TOKEN_KEY, token);
       console.log(`${FILE_NAME} ✅ Token refreshed`);
     }
     return response;

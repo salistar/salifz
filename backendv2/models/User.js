@@ -367,7 +367,13 @@ const userSchema = new mongoose.Schema({
       ref: 'User'
     },
     dailyTimeLimit: Number, // minutes
-    contentRestrictions: [String]
+    contentRestrictions: [String],
+    // Compteur de temps d'écran du jour, remis à zéro au changement de date.
+    // Sans lui, `dailyTimeLimit` n'était qu'une valeur stockée (S13).
+    usageToday: {
+      date: String,   // AAAA-MM-JJ
+      minutes: { type: Number, default: 0 }
+    }
   },
 
   // Device & Session Info

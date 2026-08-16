@@ -99,36 +99,87 @@ socialRouter.get('/search', async (req, res, next) => {
  */
 const subscriptionsRouter = express.Router();
 
+const billing = require('../services/billing');
+
+// Catalogue servi depuis le serveur : les prix ne sont plus dupliqués ici et
+// dans l'écran mobile (voir la section « valeurs en dur » de l'audit).
 subscriptionsRouter.get('/plans', (req, res) => {
-  const plans = [
-    { id: 'free', name: 'Free', price: 0, features: ['1 lesson/day', 'Basic streaks', 'Ads'] },
-    { id: 'salifz_plus', name: 'Salifz+', priceMonthly: 7.99, priceYearly: 59.99, features: ['Unlimited lessons', 'AI Tajwid', 'No ads', 'Offline mode'] },
-    { id: 'salifz_family', name: 'Salifz Family', priceMonthly: 14.99, priceYearly: 99.99, features: ['6 accounts', 'Parental controls', 'All Salifz+ features'] },
-    { id: 'lifetime', name: 'Lifetime', priceOnce: 149.99, features: ['Forever access', 'All features', 'Early access'] }
-  ];
-  res.json({ success: true, data: { plans, currentPlan: req.user.subscription } });
+  res.json({
+    success: true,
+    data: {
+      plans: Object.values(billing.PLANS),
+      currentPlan: req.user.subscription,
+      billingConfigured: billing.isConfigured(),
+    },
+  });
 });
 
 subscriptionsRouter.get('/status', (req, res) => {
-  res.json({ success: true, data: { subscription: req.user.subscription, isPremium: req.user.isPremium() } });
+  res.json({
+    success: true,
+    data: { subscription: req.user.subscription, isPremium: req.user.isPremium() },
+  });
 });
 
-subscriptionsRouter.post('/subscribe', async (req, res, next) => {
+/**
+ * Synchronise l'abonnement avec le fournisseur de paiement.
+ *
+ * S1 : cette route s'appelait `/subscribe` et accordait l'offre demandée par
+ * le client sans le moindre paiement. Elle ne prend plus aucun `planId` : le
+ * serveur va lire les droits réellement achetés chez RevenueCat, qui a lui-même
+ * validé le reçu auprès de l'App Store ou de Google Play.
+ */
+subscriptionsRouter.post('/sync', async (req, res, next) => {
   try {
-    const { planId } = req.body;
-    // In production, integrate with Stripe/RevenueCat
-    req.user.subscription = { plan: planId, status: 'active', startDate: new Date() };
-    await req.user.save();
-    res.json({ success: true, message: 'Subscription activated', data: { subscription: req.user.subscription } });
-  } catch (error) { next(error); }
+    const subscription = await billing.syncSubscription(req.user);
+    res.json({
+      success: true,
+      message: 'Abonnement synchronisé',
+      data: { subscription },
+    });
+  } catch (error) {
+    if (error instanceof billing.BillingError) {
+      return res.status(error.status).json({
+        success: false,
+        error: error.message,
+        code: error.code,
+      });
+    }
+    next(error);
+  }
 });
 
+// Ancienne route conservée pour ne pas casser les clients déjà installés :
+// elle refuse désormais explicitement au lieu d'accorder l'abonnement.
+subscriptionsRouter.post('/subscribe', (req, res) => {
+  res.status(410).json({
+    success: false,
+    error:
+      "L'achat se fait dans l'application via l'App Store ou Google Play, " +
+      'puis POST /subscriptions/sync pour confirmer.',
+    code: 'USE_STORE_PURCHASE',
+  });
+});
+
+/**
+ * La résiliation se fait chez Apple ou Google. Le serveur ne fait que relire
+ * l'état réel : il ne peut ni accorder ni retirer un abonnement de lui-même.
+ */
 subscriptionsRouter.post('/cancel', async (req, res, next) => {
   try {
-    req.user.subscription.status = 'canceled';
-    await req.user.save();
-    res.json({ success: true, message: 'Subscription canceled' });
-  } catch (error) { next(error); }
+    const subscription = await billing.syncSubscription(req.user);
+    res.json({
+      success: true,
+      message:
+        'La résiliation se gère depuis les abonnements de votre compte App Store ou Google Play.',
+      data: { subscription },
+    });
+  } catch (error) {
+    if (error instanceof billing.BillingError) {
+      return res.status(error.status).json({ success: false, error: error.message, code: error.code });
+    }
+    next(error);
+  }
 });
 
 module.exports = { achievementsRouter, socialRouter, subscriptionsRouter };

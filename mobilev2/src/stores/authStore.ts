@@ -12,6 +12,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getSecureItem, setSecureItem, clearTokens, TOKEN_KEY, REFRESH_TOKEN_KEY } from '../services/secureStorage';
 import api, { initializeToken } from '../services/api';
 import { initializeSocket, disconnectSocket } from '../services/socket';
 
@@ -142,7 +143,7 @@ const isNetworkError = (error: any): boolean => {
 const clearAuthData = async () => {
   console.log(`${LOG_PREFIX} 🗑️ Clearing all auth data...`);
   try {
-    await AsyncStorage.multiRemove(['token', 'refreshToken', 'user']);
+    await Promise.all([clearTokens(), AsyncStorage.removeItem('user')]);
     if (api.setToken) {
       api.setToken(null);
     } else {
@@ -261,11 +262,11 @@ export const useAuthStore = create<AuthState>()(
           console.log(`${LOG_PREFIX} Token received, saving...`);
           
           // ✅ Save token BEFORE setting in API
-          await AsyncStorage.setItem('token', token);
+          await setSecureItem(TOKEN_KEY, token);
           console.log(`${LOG_PREFIX} Token saved to storage`);
           
           if (refreshTokenValue) {
-            await AsyncStorage.setItem('refreshToken', refreshTokenValue);
+            await setSecureItem(REFRESH_TOKEN_KEY, refreshTokenValue);
           }
           
           await AsyncStorage.setItem('user', JSON.stringify(user));
@@ -292,7 +293,7 @@ export const useAuthStore = create<AuthState>()(
           console.log(`${LOG_PREFIX} ✅ Login successful:`, user.username);
           
           // ✅ Verify token is set
-          const storedToken = await AsyncStorage.getItem('token');
+          const storedToken = await getSecureItem(TOKEN_KEY);
           console.log(`${LOG_PREFIX} Token verification:`, storedToken ? 'OK' : 'FAILED');
           
           // ✅ Initialize socket after successful login
@@ -329,9 +330,9 @@ export const useAuthStore = create<AuthState>()(
           }
           
           // ✅ Save in correct order
-          await AsyncStorage.setItem('token', token);
+          await setSecureItem(TOKEN_KEY, token);
           if (refreshTokenValue) {
-            await AsyncStorage.setItem('refreshToken', refreshTokenValue);
+            await setSecureItem(REFRESH_TOKEN_KEY, refreshTokenValue);
           }
           await AsyncStorage.setItem('user', JSON.stringify(user));
           
@@ -421,9 +422,9 @@ export const useAuthStore = create<AuthState>()(
           const newRefreshToken = response?.refreshToken || response?.data?.refreshToken;
           
           if (newToken) {
-            await AsyncStorage.setItem('token', newToken);
+            await setSecureItem(TOKEN_KEY, newToken);
             if (newRefreshToken) {
-              await AsyncStorage.setItem('refreshToken', newRefreshToken);
+              await setSecureItem(REFRESH_TOKEN_KEY, newRefreshToken);
             }
             
             if (api.setToken) {
@@ -497,7 +498,7 @@ export const useAuthStore = create<AuthState>()(
           }
           
           // Step 2: Get token from storage
-          const token = await AsyncStorage.getItem('token');
+          const token = await getSecureItem(TOKEN_KEY);
           
           if (!token) {
             console.log(`${LOG_PREFIX} ⚠️ Token is null`);

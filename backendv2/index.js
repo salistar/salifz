@@ -13,15 +13,36 @@ const morgan = require('morgan');
 const http = require('http');
 const { Server } = require('socket.io');
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
+
+const { loadConfig } = require('./config/env');
+const { verifyAccessToken } = require('./utils/tokens');
+const { globalLimiter } = require('./middleware/rateLimit');
+const { resolveRoom, isKhatamModerator } = require('./sockets/authorization');
+
+// Charge et valide la configuration. Si un secret manque, est trop court ou
+// est resté à sa valeur d'exemple, le démarrage échoue ici — plutôt que de
+// retomber silencieusement sur un secret en dur (S7).
+let config;
+try {
+  config = loadConfig();
+} catch (error) {
+  console.error(`\n❌ ${error.message}\n`);
+  process.exit(1);
+}
 
 const app = express();
 const server = http.createServer(app);
 
+// Nécessaire derrière un reverse proxy pour que la limitation de débit voie
+// la vraie IP cliente et non celle du proxy.
+app.set('trust proxy', 1);
+
 // Socket.IO avec configuration avancée
 const io = new Server(server, {
-  cors: { 
-    origin: process.env.SOCKET_CORS_ORIGIN || '*', 
+  // S9 : `origin: '*'` avec `credentials: true` est à la fois invalide et
+  // permissif. La liste est désormais explicite et obligatoire en production.
+  cors: {
+    origin: config.corsOrigins,
     methods: ['GET', 'POST'],
     credentials: true
   },
@@ -33,60 +54,74 @@ const io = new Server(server, {
 // Middleware
 app.use(helmet());
 app.use(compression());
-app.use(cors());
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
-app.use(morgan('dev'));
+app.use(cors({ origin: config.corsOrigins, credentials: true }));
+
+// S17 : 10 Mo étaient acceptés sur toutes les routes, y compris /auth/login.
+// Les uploads (audio du tajwid, photos) passent par multer, qui a ses propres
+// limites — le JSON n'a pas besoin d'aller au-delà de 256 Ko.
+app.use(express.json({ limit: '256kb' }));
+app.use(express.urlencoded({ extended: true, limit: '256kb' }));
+app.use(morgan(config.isProduction ? 'combined' : 'dev'));
+
+// S8 : filet général de limitation de débit, avant toute route.
+app.use(globalLimiter);
 
 // MongoDB Connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/salifz';
+const MONGODB_URI = config.mongoUri;
 mongoose.connect(MONGODB_URI)
   .then(() => console.log('✅ MongoDB connected'))
   .catch(err => console.error('❌ MongoDB error:', err));
+
+// S16 : présence, sessions de khatam et signalisation d'appel vivent dans des
+// Map locales au processus. Avec plus d'une instance, deux utilisateurs servis
+// par des instances différentes ne se voient pas. L'adaptateur Redis rétablit
+// la diffusion inter-instances dès qu'une URL Redis est fournie ; en son
+// absence, le serveur reste mono-instance et le dit clairement.
+if (process.env.REDIS_URL) {
+  (async () => {
+    try {
+      const { createAdapter } = require('@socket.io/redis-adapter');
+      const { createClient } = require('redis');
+      const pubClient = createClient({ url: process.env.REDIS_URL });
+      const subClient = pubClient.duplicate();
+      await Promise.all([pubClient.connect(), subClient.connect()]);
+      io.adapter(createAdapter(pubClient, subClient));
+      console.log('✅ Socket.IO : adaptateur Redis actif (multi-instance)');
+    } catch (err) {
+      console.error('❌ Adaptateur Redis indisponible :', err.message);
+      if (config.isProduction) process.exit(1);
+    }
+  })();
+} else if (config.isProduction) {
+  console.warn(
+    '⚠️  REDIS_URL absent : le temps réel ne fonctionnera correctement ' +
+    "qu'avec une seule instance de ce serveur."
+  );
+}
 
 // Routes
 const routes = require('./routes');
 app.use('/api/v1', routes);
 
-// ============================================
-// VERIFICATION ROUTES
-// ============================================
-// Routes pour Phone/Email/Biometric verification
-try {
-  const verificationRoutes = require('./routes/verification');
-  app.use('/api/v1/verification', verificationRoutes);
-  console.log('✅ Verification routes loaded');
-} catch (err) {
-  console.warn('⚠️ Verification routes not found, skipping...');
-}
+// `/verification`, `/chat` et `/khatam` étaient montés une seconde fois ici,
+// après `routes/index.js` qui les monte déjà — mais sans middleware
+// d'authentification. Ces montages morts sont supprimés : routes/index.js est
+// le point de montage unique.
 
-// ============================================
-// CHAT ROUTES
-// ============================================
-// Routes pour le système de chat REST
-try {
-  const chatRoutes = require('./routes/chat');
-  app.use('/api/v1/chat', chatRoutes);
-  console.log('✅ Chat routes loaded');
-} catch (err) {
-  console.warn('⚠️ Chat routes not found, skipping...');
-}
-
-// ============================================
-// KHATAM ROUTES
-// ============================================
-try {
-  const khatamRoutes = require('./routes/khatam');
-  app.use('/api/v1/khatam', khatamRoutes);
-  console.log('✅ Khatam routes loaded');
-} catch (err) {
-  console.warn('⚠️ Khatam routes not found, skipping...');
-}
-
-// Error Handler
+// S12 : `err.message` était renvoyé brut au client, exposant messages
+// Mongoose, contraintes de schéma et chemins internes. Le détail reste dans
+// les logs ; le client ne reçoit un message que pour les erreurs
+// intentionnelles (statut < 500).
 app.use((err, req, res, next) => {
-  console.error('Error:', err.message);
-  res.status(err.status || 500).json({ success: false, error: err.message || 'Internal Server Error' });
+  const status = err.status || err.statusCode || 500;
+
+  console.error(`[ERROR] ${req.method} ${req.originalUrl} → ${status}`, err.stack || err.message);
+
+  res.status(status).json({
+    success: false,
+    error: status < 500 ? err.message : 'Erreur interne du serveur',
+    ...(err.code && { code: err.code }),
+  });
 });
 
 // 404 Handler
@@ -109,17 +144,15 @@ const khatamSessions = new Map(); // khatamId -> { participants: Set, currentHiz
 const getUserFromToken = async (token) => {
   try {
     if (!token) return null;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // Try to get user from database
-    try {
-      const User = require('./models/User');
-      const user = await User.findById(decoded.id).select('-password');
-      return user;
-    } catch (err) {
-      // If User model not found, return decoded token data
-      return { _id: decoded.id, id: decoded.id };
-    }
+
+    // Vérifie la signature, le secret dédié ET le type « access » : un jeton
+    // de rafraîchissement ou de réinitialisation est refusé ici (S2).
+    const payload = verifyAccessToken(token);
+
+    const User = require('./models/User');
+    // L'ancien code retombait sur les données du jeton si le modèle n'était pas
+    // chargeable : un jeton suffisait alors à exister sans compte en base.
+    return await User.findById(payload.sub).select('-password');
   } catch (err) {
     return null;
   }
@@ -154,29 +187,30 @@ const getOnlineUsers = () => {
 // ============================================
 // SOCKET.IO - Authentication Middleware
 // ============================================
+// S4 : une connexion sans jeton valide était acceptée, `socket.user` restait
+// à null, et tous les handlers continuaient de fonctionner. Un client anonyme
+// pouvait rejoindre n'importe quel salon et y publier des messages.
+// La connexion est désormais refusée sans authentification.
 io.use(async (socket, next) => {
+  const token = socket.handshake.auth?.token || socket.handshake.query?.token;
+
+  if (!token) {
+    return next(new Error('UNAUTHENTICATED'));
+  }
+
   try {
-    const token = socket.handshake.auth.token || socket.handshake.query.token;
-    
-    if (!token) {
-      // Allow connection without auth for public features
-      socket.user = null;
-      return next();
-    }
-    
     const user = await getUserFromToken(token);
-    if (user) {
-      socket.user = user;
-      next();
-    } else {
-      // Allow connection but mark as unauthenticated
-      socket.user = null;
-      next();
+    if (!user) return next(new Error('UNAUTHENTICATED'));
+
+    if (user.status === 'banned' || user.status === 'suspended' || user.isActive === false) {
+      return next(new Error('ACCOUNT_BLOCKED'));
     }
+
+    socket.user = user;
+    return next();
   } catch (err) {
     console.error('[SOCKET] Auth error:', err.message);
-    socket.user = null;
-    next();
+    return next(new Error('UNAUTHENTICATED'));
   }
 });
 
@@ -209,19 +243,24 @@ io.on('connection', (socket) => {
   // ============================================
   // ROOM MANAGEMENT (Original)
   // ============================================
-  socket.on('join-room', (roomId) => {
-    socket.join(roomId);
-    console.log(`[SOCKET] ${socket.id} joined room: ${roomId}`);
-    
-    // Notify room members
-    socket.to(roomId).emit('user-joined', {
+  socket.on('join-room', async (roomId) => {
+    // S4 : aucun contrôle d'appartenance n'était fait ici.
+    const allowed = await resolveRoom(userId, roomId);
+    if (!allowed) {
+      return socket.emit('room-denied', { roomId, reason: 'FORBIDDEN' });
+    }
+
+    socket.join(allowed);
+    console.log(`[SOCKET] ${socket.id} joined room: ${allowed}`);
+
+    socket.to(allowed).emit('user-joined', {
       socketId: socket.id,
       userId: userId,
-      roomId: roomId,
+      roomId: allowed,
       timestamp: new Date()
     });
   });
-  
+
   socket.on('leave-room', (roomId) => {
     socket.leave(roomId);
     console.log(`[SOCKET] ${socket.id} left room: ${roomId}`);
@@ -239,15 +278,25 @@ io.on('connection', (socket) => {
   // CHAT MESSAGES
   // ============================================
   socket.on('send-message', (data) => {
+    // On ne peut écrire que dans un salon qu'on a effectivement rejoint,
+    // donc qui a passé le contrôle d'appartenance de `join-room`.
+    if (!socket.rooms.has(data?.roomId)) {
+      return socket.emit('message-rejected', { roomId: data?.roomId, reason: 'NOT_IN_ROOM' });
+    }
+
     const messageData = {
-      ...data,
-      id: data.id || Date.now().toString(),
-      senderId: userId || data.senderId,
-      senderName: socket.user?.username || data.senderName || 'Anonymous',
+      // L'identité vient du jeton, jamais du payload : `senderId: userId ||
+      // data.senderId` permettait d'usurper n'importe quel expéditeur (S4).
+      id: Date.now().toString(),
+      roomId: data.roomId,
+      text: typeof data.text === 'string' ? data.text.slice(0, 4000) : '',
+      type: data.type === 'audio' || data.type === 'image' ? data.type : 'text',
+      senderId: userId,
+      senderName: socket.user.username,
       timestamp: new Date(),
       status: 'sent'
     };
-    
+
     io.to(data.roomId).emit('new-message', messageData);
     console.log(`[CHAT] Message sent to room ${data.roomId}`);
   });
@@ -272,11 +321,16 @@ io.on('connection', (socket) => {
   // ============================================
   // HALAQA (Study Groups)
   // ============================================
-  socket.on('joinHalaqa', (data) => {
-    const halaqaRoom = `halaqa:${data.halaqaId}`;
+  socket.on('joinHalaqa', async (data) => {
+    const halaqaRoom = `halaqa:${data?.halaqaId}`;
+    // S4 : n'importe quel identifiant de halaqa était accepté.
+    if (!(await resolveRoom(userId, halaqaRoom))) {
+      return socket.emit('room-denied', { roomId: halaqaRoom, reason: 'NOT_A_MEMBER' });
+    }
+
     socket.join(halaqaRoom);
     console.log(`[HALAQA] ${socket.id} joined halaqa: ${data.halaqaId}`);
-    
+
     // Notify halaqa members
     io.to(halaqaRoom).emit('memberJoined', {
       userId: userId,
@@ -301,27 +355,41 @@ io.on('connection', (socket) => {
   });
   
   socket.on('halaqaMessage', (data) => {
-    const halaqaRoom = `halaqa:${data.halaqaId}`;
+    const halaqaRoom = `halaqa:${data?.halaqaId}`;
+    if (!socket.rooms.has(halaqaRoom)) {
+      return socket.emit('message-rejected', { roomId: halaqaRoom, reason: 'NOT_IN_ROOM' });
+    }
+
     const messageData = {
       id: Date.now().toString(),
       senderId: userId,
-      senderName: socket.user?.username || 'Anonymous',
-      text: data.message,
-      type: data.type || 'text',
+      senderName: socket.user.username,
+      text: typeof data.message === 'string' ? data.message.slice(0, 4000) : '',
+      type: data.type === 'audio' ? 'audio' : 'text',
       timestamp: new Date()
     };
-    
+
     io.to(halaqaRoom).emit('halaqaMessage', messageData);
     console.log(`[HALAQA] Message sent to halaqa ${data.halaqaId}`);
   });
-  
-  socket.on('halaqaAnnouncement', (data) => {
-    const halaqaRoom = `halaqa:${data.halaqaId}`;
+
+  socket.on('halaqaAnnouncement', async (data) => {
+    const halaqaRoom = `halaqa:${data?.halaqaId}`;
+    if (!socket.rooms.has(halaqaRoom)) {
+      return socket.emit('message-rejected', { roomId: halaqaRoom, reason: 'NOT_IN_ROOM' });
+    }
+
+    // Une annonce s'affiche différemment d'un message : elle est réservée aux
+    // responsables de la halaqa.
+    if (!(await isHalaqaModerator(userId, data.halaqaId))) {
+      return socket.emit('message-rejected', { roomId: halaqaRoom, reason: 'NOT_A_MODERATOR' });
+    }
+
     io.to(halaqaRoom).emit('halaqaMessage', {
       id: Date.now().toString(),
       senderId: userId,
-      senderName: socket.user?.username,
-      text: data.message,
+      senderName: socket.user.username,
+      text: typeof data.message === 'string' ? data.message.slice(0, 4000) : '',
       type: 'announcement',
       timestamp: new Date()
     });
@@ -332,8 +400,13 @@ io.on('connection', (socket) => {
   // ============================================
   
   // Join Khatam Room
-  socket.on('joinKhatam', (data) => {
-    const khatamRoom = `khatam:${data.khatamId}`;
+  socket.on('joinKhatam', async (data) => {
+    const khatamRoom = `khatam:${data?.khatamId}`;
+    // S4 : idem, aucun contrôle de participation n'était fait.
+    if (!(await resolveRoom(userId, khatamRoom))) {
+      return socket.emit('room-denied', { roomId: khatamRoom, reason: 'NOT_A_PARTICIPANT' });
+    }
+
     socket.join(khatamRoom);
     console.log(`[KHATAM] ${socket.id} joined khatam: ${data.khatamId}`);
     
@@ -534,11 +607,14 @@ io.on('connection', (socket) => {
   });
   
   // End Live Session
-  socket.on('khatamSessionEnd', (data) => {
-    const session = khatamSessions.get(data.khatamId);
+  socket.on('khatamSessionEnd', async (data) => {
+    const session = khatamSessions.get(data?.khatamId);
     if (session) {
-      // Only session starter or admin can end
-      if (session.startedBy === userId || data.isAdmin) {
+      // S5 : la condition était `session.startedBy === userId || data.isAdmin`,
+      // et `data.isAdmin` venait du client. Le statut de modérateur est
+      // maintenant lu en base.
+      const isModerator = await isKhatamModerator(userId, data.khatamId);
+      if (session.startedBy === userId || isModerator) {
         const khatamRoom = `khatam:${data.khatamId}`;
         io.to(khatamRoom).emit('khatamSessionEnded', {
           khatamId: data.khatamId,
@@ -729,16 +805,17 @@ io.on('connection', (socket) => {
   // ============================================
   // NOTIFICATIONS
   // ============================================
-  socket.on('subscribeNotifications', (data) => {
-    if (data.userId) {
-      socket.join(`notifications:${data.userId}`);
-    }
+  socket.on('subscribeNotifications', () => {
+    // On ne s'abonne qu'à son propre canal. L'ancien code prenait
+    // `data.userId` du client : il suffisait d'envoyer l'identifiant d'un
+    // autre utilisateur pour recevoir ses notifications.
+    socket.join(`notifications:${userId}`);
   });
-  
-  socket.on('sendNotification', (data) => {
-    // Admin/System can send notifications to users
-    sendNotificationToUser(data.userId, data.notification);
-  });
+
+  // S6 : l'événement `sendNotification` permettait à n'importe quel client
+  // d'envoyer une notification arbitraire à n'importe quel utilisateur.
+  // Les notifications sont désormais émises exclusivement côté serveur, via
+  // `io.sendNotificationToUser` appelé depuis les routes.
   
   // ============================================
   // DISCONNECT
