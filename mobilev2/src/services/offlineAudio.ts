@@ -100,12 +100,38 @@ class OfflineAudioService {
     return () => this.listeners.delete(listener);
   }
 
-  /** Taille annoncée par le serveur, pour prévenir avant de lancer. */
+  /**
+   * Taille annoncée par le serveur, pour prévenir avant de lancer.
+   *
+   * `Accept-Encoding: identity` est indispensable : React Native demande
+   * `gzip` par défaut, et le CDN répond alors sans `content-length` — la
+   * taille revenait toujours nulle, ce qui privait l'écran de son avertissement
+   * et la barre de progression de son dénominateur.
+   *
+   * Une requête `Range: bytes=0-0` sert de repli : elle renvoie
+   * `content-range: bytes 0-0/<taille>` pour un seul octet transféré.
+   */
   async getRemoteSize(surah: number, reciter = 'ar.alafasy'): Promise<number | null> {
+    const url = `${AUDIO_CDN}/${reciter}/${surah}.mp3`;
+
     try {
-      const response = await fetch(`${AUDIO_CDN}/${reciter}/${surah}.mp3`, { method: 'HEAD' });
-      const length = response.headers.get('content-length');
-      return length ? Number(length) : null;
+      const head = await fetch(url, {
+        method: 'HEAD',
+        headers: { 'Accept-Encoding': 'identity' },
+      });
+      const length = head.headers.get('content-length');
+      if (length) return Number(length);
+    } catch {
+      // On tente le repli ci-dessous.
+    }
+
+    try {
+      const ranged = await fetch(url, {
+        headers: { 'Accept-Encoding': 'identity', Range: 'bytes=0-0' },
+      });
+      const range = ranged.headers.get('content-range');
+      const total = range?.split('/')[1];
+      return total ? Number(total) : null;
     } catch {
       return null;
     }
@@ -165,25 +191,51 @@ class OfflineAudioService {
     const path = this.pathFor(surah, reciter);
     await FileSystem.makeDirectoryAsync(`${ROOT}${reciter}/`, { intermediates: true });
 
+    // Le CDN répond `content-encoding: gzip` à React Native, et omet alors
+    // `content-length` : la fonction de progression reçoit
+    // `totalBytesExpectedToWrite = -1`, et le pourcentage restait figé à 0 %
+    // pendant tout le téléchargement. On récupère donc la taille réelle par
+    // une requête HEAD, qui elle la renvoie, et on s'en sert de dénominateur.
+    const knownSize = await this.getRemoteSize(surah, reciter);
+
+    const onProgress = ({ totalBytesWritten, totalBytesExpectedToWrite }: any) => {
+      const total =
+        totalBytesExpectedToWrite > 0 ? totalBytesExpectedToWrite : knownSize || 0;
+      this.emit(surah, {
+        status: 'downloading',
+        // Sans taille connue, on ne prétend pas à un pourcentage : l'écran
+        // affiche alors les octets reçus.
+        progress: total > 0 ? Math.min(1, totalBytesWritten / total) : -1,
+        received: totalBytesWritten,
+        total,
+      });
+    };
+
+    // État de reprise laissé par une pause précédente. Sans cette relecture,
+    // `pause()` enregistrait l'état mais le téléchargement repartait de zéro :
+    // sur une sourate de 116 Mo, la reprise ne servait à rien.
+    let resumeData: string | undefined;
+    try {
+      const saved = await AsyncStorage.getItem(`${RESUME_KEY}:${key}`);
+      if (saved) resumeData = JSON.parse(saved)?.resumeData;
+    } catch {
+      // État illisible : on repart du début, ce qui reste correct.
+    }
+
     const task = FileSystem.createDownloadResumable(
       `${AUDIO_CDN}/${reciter}/${surah}.mp3`,
       path,
       {},
-      ({ totalBytesWritten, totalBytesExpectedToWrite }) => {
-        const total = totalBytesExpectedToWrite || 0;
-        this.emit(surah, {
-          status: 'downloading',
-          progress: total > 0 ? totalBytesWritten / total : 0,
-          received: totalBytesWritten,
-          total,
-        });
-      }
+      onProgress,
+      resumeData
     );
 
     this.tasks.set(key, task);
 
     try {
-      const result = await task.downloadAsync();
+      // `resumeAsync` reprend là où la pause s'est arrêtée ; `downloadAsync`
+      // démarre un téléchargement neuf.
+      const result = resumeData ? await task.resumeAsync() : await task.downloadAsync();
       if (!result) throw new Error('Téléchargement interrompu');
 
       const info = await FileSystem.getInfoAsync(result.uri);

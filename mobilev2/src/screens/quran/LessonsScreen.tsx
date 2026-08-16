@@ -153,8 +153,6 @@ export const SURAHS = [
 
 // Generate blocks (5 ayat each)
 export const getBlocks = (surahId: number) => {
-  const { colors } = useTheme();
-  const styles = useThemedStyles(makeStyles);
 
   const s = SURAHS.find(x => x.id === surahId);
   if (!s) return [];

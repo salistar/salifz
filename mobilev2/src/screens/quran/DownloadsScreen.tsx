@@ -86,7 +86,7 @@ export default function DownloadsScreen({ navigation }: any) {
     return size;
   }, [sizes]);
 
-  const handlePress = async (surah: number, name: string) => {
+  const handlePress = async (surah: number, name: string, ayahCount: number) => {
     const state = states[surah] ?? { status: 'idle' };
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
@@ -96,18 +96,15 @@ export default function DownloadsScreen({ navigation }: any) {
     }
 
     if (state.status === 'done') {
-      Alert.alert(
-        t('downloads.removeTitle') || 'Supprimer la récitation ?',
-        `${name} — ${formatBytes(state.bytes)}`,
-        [
-          { text: t('common.cancel') || 'Annuler', style: 'cancel' },
-          {
-            text: t('common.delete') || 'Supprimer',
-            style: 'destructive',
-            onPress: () => offlineAudio.remove(surah, RECITER),
-          },
-        ]
-      );
+      // L'écran du lecteur était enregistré dans la navigation mais aucun
+      // écran n'y menait : il était inatteignable. Une sourate conservée sur
+      // l'appareil est justement l'endroit naturel pour l'ouvrir.
+      const surahData = SURAHS_COMPLETE.find((s) => s.id === surah);
+      navigation.navigate('AudioPlayer', {
+        surahId: surah,
+        surahName: surahData?.name ?? name,
+        ayahs: new Array(surahData?.ayahs ?? 0).fill(null),
+      });
       return;
     }
 
@@ -115,7 +112,12 @@ export default function DownloadsScreen({ navigation }: any) {
     const size = await ensureSize(surah);
     const label = size ? formatBytes(size) : t('downloads.unknownSize') || 'taille inconnue';
 
-    if (size && size > 20 * 1024 * 1024) {
+    // Au-delà de 20 Mo on demande confirmation. Si la taille n'a pas pu être
+    // obtenue, on se rabat sur le nombre de versets — une sourate de plus de
+    // 100 versets dépasse largement le seuil. Sans ce repli, un échec de la
+    // requête HEAD lançait en silence un téléchargement de plus de 100 Mo.
+    const looksLarge = !size && ayahCount > 100;
+    if ((size && size > 20 * 1024 * 1024) || looksLarge) {
       Alert.alert(
         t('downloads.confirmTitle') || 'Télécharger cette sourate ?',
         `${name} — ${label}`,
@@ -131,6 +133,25 @@ export default function DownloadsScreen({ navigation }: any) {
     }
 
     offlineAudio.download(surah, RECITER);
+  };
+
+  const confirmRemove = (surah: number, name: string) => {
+    const state = states[surah];
+    if (state?.status !== 'done') return;
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    Alert.alert(
+      t('downloads.removeTitle') || 'Supprimer la récitation ?',
+      `${name} — ${formatBytes(state.bytes)}`,
+      [
+        { text: t('common.cancel') || 'Annuler', style: 'cancel' },
+        {
+          text: t('common.delete') || 'Supprimer',
+          style: 'destructive',
+          onPress: () => offlineAudio.remove(surah, RECITER),
+        },
+      ]
+    );
   };
 
   const confirmRemoveAll = () => {
@@ -170,7 +191,10 @@ export default function DownloadsScreen({ navigation }: any) {
         accessibilityLabel={`${item.nameEn} — ${label}`}
         accessibilityState={{ busy: state.status === 'downloading' }}
         style={styles.row}
-        onPress={() => handlePress(item.id, item.nameEn)}
+        onPress={() => handlePress(item.id, item.nameEn, item.ayahs)}
+        // La suppression passe par un appui long : elle ne doit pas être à un
+        // doigt de la lecture.
+        onLongPress={() => confirmRemove(item.id, item.nameEn)}
       >
         <View style={styles.rowNumber}>
           <Text style={styles.rowNumberText}>{item.id}</Text>
@@ -183,7 +207,8 @@ export default function DownloadsScreen({ navigation }: any) {
             {label ? ` · ${label}` : ''}
           </Text>
 
-          {state.status === 'downloading' && (
+          {/* Barre affichée seulement si la taille totale est connue. */}
+          {state.status === 'downloading' && state.progress >= 0 && (
             <View style={styles.progressTrack}>
               <View
                 style={[styles.progressFill, { width: `${Math.round(state.progress * 100)}%` }]}
@@ -257,7 +282,9 @@ function describe(state: DownloadState, size: number | null | undefined, colors:
   switch (state.status) {
     case 'done':
       return {
-        icon: 'checkmark-circle' as const,
+        // Icone de lecture : la sourate est disponible hors ligne, l'action
+        // principale devient l'ecoute.
+        icon: 'play-circle' as const,
         tint: colors.primary,
         label: formatBytes(state.bytes),
       };
@@ -265,7 +292,12 @@ function describe(state: DownloadState, size: number | null | undefined, colors:
       return {
         icon: 'pause-circle' as const,
         tint: colors.warning,
-        label: `${Math.round(state.progress * 100)} %`,
+        // `progress < 0` signale une taille totale inconnue : on montre alors
+        // les octets reçus plutôt qu'un pourcentage faux.
+        label:
+          state.progress >= 0
+            ? `${Math.round(state.progress * 100)} %`
+            : formatBytes(state.received),
       };
     case 'error':
       return { icon: 'alert-circle' as const, tint: colors.error, label: state.message };
