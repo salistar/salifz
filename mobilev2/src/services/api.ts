@@ -179,7 +179,27 @@ api.interceptors.response.use(
       console.log(`${FILE_NAME} 🚫 401 Unauthorized - Token may be invalid`);
     }
     
-    return Promise.reject(error.response?.data || { error: error.message });
+    // Auparavant : `Promise.reject(error.response?.data || { error: error.message })`.
+    // Le corps de réponse seul ne porte ni le code HTTP ni `response`, si bien
+    // que `is401Error` et `isNetworkError` du magasin d'authentification
+    // retombaient tous deux sur « erreur inconnue ». Le 401 finissait par être
+    // traité correctement, par hasard — mais une coupure réseau prenait le même
+    // chemin et déconnectait l'utilisateur au lieu de lui servir ses données en
+    // cache. Le mode hors ligne était donc du code mort.
+    //
+    // On conserve `error` et les autres champs du corps, dont dépendent les
+    // écrans, et on rétablit ce qui manquait pour décider.
+    const body = error.response?.data;
+    return Promise.reject({
+      ...(typeof body === 'object' && body !== null ? body : {}),
+      status: error.response?.status ?? null,
+      // Certains appelants lisent `.error`, d'autres `.message` : les deux
+      // pointent vers la même explication.
+      message: body?.error ?? body?.message ?? error.message,
+      error: body?.error ?? body?.message ?? error.message,
+      // Forme proche de celle d'axios, pour tout code qui l'attend.
+      response: error.response ? { status: error.response.status, data: body } : undefined,
+    });
   }
 );
 
