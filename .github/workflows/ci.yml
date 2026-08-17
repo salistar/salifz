@@ -91,6 +91,23 @@ jobs:
       - run: npx tsc --noEmit
         working-directory: mobilev2
 
+      # `tsc` ne charge pas `app.config.js` : une dépendance que ce fichier
+      # exige sans la déclarer passe inaperçue tant qu'elle reste remontée
+      # depuis un autre paquet, puis casse au premier `npm ci` propre. C'est
+      # arrivé avec `dotenv`. Évaluer la configuration l'exécute vraiment.
+      - name: La configuration Expo se charge
+        run: npx expo config --type public > /dev/null
+        working-directory: mobilev2
+
+      # Le seul contrôle qui exécute réellement la résolution des imports.
+      # `tsc` valide les types sans jamais construire : un chemin de require
+      # cassé, un module natif absent ou un actif manquant ne se voient qu'ici.
+      # C'est plus lent que le reste du pipeline, et c'est le prix d'une
+      # application qui part sur les stores.
+      - name: Le bundle Android se construit
+        run: npx expo export --platform android --output-dir /tmp/export-ci
+        working-directory: mobilev2
+
   docker:
     name: Images Docker
     runs-on: ubuntu-latest
