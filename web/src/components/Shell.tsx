@@ -4,9 +4,16 @@ import { useAuth, useTheme } from '../store';
 
 const LINKS = [
   { to: '/', label: 'Accueil' },
+  { to: '/lecons', label: 'Leçons' },
   { to: '/mushaf', label: 'Mushaf' },
+  { to: '/khatam', label: 'Khatam' },
   { to: '/halaqat', label: 'Halaqat' },
   { to: '/recitations', label: 'Récitations' },
+  { to: '/classement', label: 'Classement' },
+  { to: '/boutique', label: 'Boutique' },
+  { to: '/priere', label: 'Prière' },
+  { to: '/profil', label: 'Profil' },
+  { to: '/reglages', label: 'Réglages' },
 ];
 
 export default function Shell({ children }: { children: ReactNode }) {
@@ -29,7 +36,7 @@ export default function Shell({ children }: { children: ReactNode }) {
       >
         <strong style={{ fontSize: 20 }}>Salifz</strong>
 
-        <nav style={{ display: 'flex', gap: 6, flex: 1 }}>
+        <nav style={{ display: 'flex', gap: 4, flex: 1, overflowX: 'auto', flexWrap: 'wrap' }}>
           {LINKS.map((link) => {
             const active =
               pathname === link.to || (link.to !== '/' && pathname.startsWith(link.to));
@@ -60,7 +67,9 @@ export default function Shell({ children }: { children: ReactNode }) {
           {theme === 'light' ? '🌙' : '☀️'}
         </button>
 
-        <span style={{ opacity: 0.9 }}>{user?.displayName ?? user?.username}</span>
+        <Link to="/profil" style={{ color: 'var(--on-deep)', opacity: 0.9, textDecoration: 'none' }}>
+          {user?.displayName ?? user?.username}
+        </Link>
         <button className="btn-ghost" onClick={logout}>
           Déconnexion
         </button>

@@ -129,6 +129,71 @@ export const recitationsAPI = {
   review: (id: string, payload: any) => api.post(`/recitations/${id}/review`, payload),
 };
 
+
+// --- Parité avec l'application mobile -------------------------------------
+// Ces points d'entrée existaient déjà côté serveur ; seule l'interface web
+// manquait. Aucune logique n'est réimplémentée ici.
+
+export const progressAPI = {
+  overview: () => api.get('/progress/overview'),
+  surah: (n: number) => api.get(`/progress/surah/${n}`),
+  reviewQueue: () => api.get('/progress/review-queue'),
+  markVerse: (surah: number, ayah: number, payload: any) =>
+    api.post(`/progress/surah/${surah}/verse/${ayah}`, payload),
+};
+
+export const khatamAPI = {
+  mine: () => api.get('/khatam/my'),
+  discover: () => api.get('/khatam/discover'),
+  detail: (id: string) => api.get(`/khatam/${id}`),
+  create: (payload: any) => api.post('/khatam', payload),
+};
+
+export const leaguesAPI = {
+  current: () => api.get('/leagues/current'),
+  leaderboard: () => api.get('/leagues/leaderboard'),
+  global: () => api.get('/leagues/global'),
+  friends: () => api.get('/leagues/friends'),
+};
+
+export const badgesAPI = {
+  all: () => api.get('/badges/all'),
+  unlocked: () => api.get('/badges/unlocked'),
+};
+
+export const shopAPI = {
+  items: () => api.get('/rewards/shop'),
+  buy: (itemId: string) => api.post(`/rewards/shop/${itemId}/buy`),
+  daily: () => api.get('/rewards/daily'),
+  claimDaily: () => api.post('/rewards/daily/claim'),
+};
+
+export const settingsAPI = {
+  get: () => api.get('/settings'),
+  update: (payload: any) => api.put('/settings', payload),
+  reciters: () => api.get('/settings/reciters'),
+  reset: () => api.post('/settings/reset'),
+};
+
+export const prayerAPI = {
+  times: (latitude: number, longitude: number) =>
+    api.get('/prayer/times', { params: { latitude, longitude } }),
+  qibla: (latitude: number, longitude: number) =>
+    api.get('/prayer/qibla', { params: { latitude, longitude } }),
+};
+
+export const notificationsAPI = {
+  list: () => api.get('/notifications'),
+  markRead: (id: string) => api.put(`/notifications/${id}/read`),
+  markAllRead: () => api.put('/notifications/read-all'),
+  remove: (id: string) => api.delete(`/notifications/${id}`),
+};
+
+export const gamificationAPI = {
+  stats: () => api.get('/gamification/stats'),
+  dailyQuests: () => api.get('/gamification/daily-quests'),
+};
+
 export const rtcAPI = {
   iceServers: () => api.get('/rtc/ice-servers'),
 };

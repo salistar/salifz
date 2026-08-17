@@ -111,6 +111,9 @@ const THEME_KEY = 'salifz:theme';
 interface ThemeState {
   theme: ThemeMode;
   toggle: () => void;
+  /** Choix explicite — utilisé par l'écran Réglages, où le thème vient du
+   *  serveur et n'est donc pas une simple bascule. */
+  set: (theme: ThemeMode) => void;
 }
 
 /** Applique le thème sur `<html>`, d'où partent les variables CSS. */
@@ -131,5 +134,9 @@ export const useTheme = create<ThemeState>((set, get) => ({
     const next: ThemeMode = get().theme === 'light' ? 'dark' : 'light';
     apply(next);
     set({ theme: next });
+  },
+  set: (theme: ThemeMode) => {
+    apply(theme);
+    set({ theme });
   },
 }));

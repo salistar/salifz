@@ -91,6 +91,42 @@ const userSchema = new mongoose.Schema({
   },
 
   // ============================================
+  // Préférences d'application
+  // ============================================
+  // `routes/settings.js` écrivait dans `user.settings` alors que le champ
+  // n'était pas déclaré : en mode strict, Mongoose jetait silencieusement
+  // l'écriture. L'API répondait « Settings updated » et le réglage était
+  // perdu au rechargement. Les champs sont donc déclarés explicitement,
+  // avec les mêmes valeurs par défaut que celles renvoyées jusqu'ici.
+  settings: {
+    appearance: {
+      theme: { type: String, enum: ['light', 'dark', 'sepia', 'midnight'], default: 'light' },
+      fontSize: { type: String, enum: ['small', 'medium', 'large'], default: 'medium' },
+      fontFamily: { type: String, enum: ['uthmanic', 'amiri', 'scheherazade', 'naskh'], default: 'uthmanic' },
+      colorScheme: { type: String, default: 'green' }
+    },
+    audio: {
+      autoPlay: { type: Boolean, default: true },
+      repeatCount: { type: Number, min: 1, max: 20, default: 3 },
+      playbackSpeed: { type: Number, min: 0.5, max: 2, default: 1 }
+    },
+    notifications: {
+      streakReminder: { type: Boolean, default: true },
+      dailyVerse: { type: Boolean, default: true }
+    },
+    learning: {
+      showTranslation: { type: Boolean, default: true },
+      translationLanguage: { type: String, enum: ['ar', 'en', 'fr', 'tr', 'ur', 'id', 'ms'], default: 'en' },
+      reviewMode: { type: String, enum: ['spaced', 'sequential', 'random'], default: 'spaced' }
+    },
+    privacy: {
+      publicProfile: { type: Boolean, default: true },
+      showOnLeaderboard: { type: Boolean, default: true },
+      allowFriendRequests: { type: Boolean, default: true }
+    }
+  },
+
+  // ============================================
   // Gamification Stats
   // ============================================
   gamification: {

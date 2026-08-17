@@ -12,11 +12,13 @@ const shopItemSchema = new mongoose.Schema({
   },
   name: {
     ar: { type: String, required: true },
-    en: { type: String, required: true }
+    en: { type: String, required: true },
+    fr: String
   },
   description: {
     ar: String,
-    en: String
+    en: String,
+    fr: String
   },
   icon: {
     type: String,
@@ -41,6 +43,9 @@ const shopItemSchema = new mongoose.Schema({
       enum: ['streak_freeze', 'heart_refill', 'xp_boost', 'time_boost', 'hint', 'avatar', 'theme', 'none']
     },
     value: Number,
+    // Les effets cosmétiques désignent une variante ('night', 'hafiz') et non
+    // une quantité : les forcer dans `value` échouait au cast en nombre.
+    variant: String,
     duration: Number // in seconds, for boosts
   },
   

@@ -18,6 +18,13 @@ import WordByWordPage from './pages/WordByWordPage';
 import HalaqatPage from './pages/HalaqatPage';
 import HalaqaRoomPage from './pages/HalaqaRoomPage';
 import RecitationsPage from './pages/RecitationsPage';
+import LessonsPage from './pages/LessonsPage';
+import KhatamPage from './pages/KhatamPage';
+import LeaderboardPage from './pages/LeaderboardPage';
+import ShopPage from './pages/ShopPage';
+import ProfilePage from './pages/ProfilePage';
+import PrayerPage from './pages/PrayerPage';
+import SettingsPage from './pages/SettingsPage';
 
 function Protected({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -48,6 +55,13 @@ export default function App() {
                   <Route path="/halaqat" element={<HalaqatPage />} />
                   <Route path="/halaqa/:id" element={<HalaqaRoomPage />} />
                   <Route path="/recitations" element={<RecitationsPage />} />
+                  <Route path="/lecons" element={<LessonsPage />} />
+                  <Route path="/khatam" element={<KhatamPage />} />
+                  <Route path="/classement" element={<LeaderboardPage />} />
+                  <Route path="/boutique" element={<ShopPage />} />
+                  <Route path="/priere" element={<PrayerPage />} />
+                  <Route path="/profil" element={<ProfilePage />} />
+                  <Route path="/reglages" element={<SettingsPage />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
               </Shell>

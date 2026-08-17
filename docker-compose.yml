@@ -180,6 +180,11 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile
+      # Cible explicite : le Dockerfile a plusieurs étapes et la dernière est
+      # la production (nginx sur le port 80). Sans cette ligne, la composition
+      # de développement construisait l'image de production et rien n'écoutait
+      # sur 5173.
+      target: dev
     container_name: salifz-web
     restart: unless-stopped
     ports:
@@ -187,6 +192,13 @@ services:
     environment:
       VITE_API_URL: ${VITE_API_URL:-http://localhost:8088/api/v1}
       VITE_WS_URL: ${VITE_WS_URL:-http://localhost:8088}
+    volumes:
+      # Sans ce montage, le conteneur servait le code figé dans l'image : les
+      # modifications de source n'atteignaient jamais le navigateur et il
+      # fallait reconstruire l'image à chaque changement.
+      - ./web:/app
+      # `node_modules` reste celui de l'image (dépendances installées pour Alpine).
+      - /app/node_modules
     depends_on:
       - api
 
