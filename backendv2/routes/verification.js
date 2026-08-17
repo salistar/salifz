@@ -142,3 +142,9 @@ router.post('/email/verify', async (req, res) => {
 // ces routes.
 
 module.exports = router;
+
+// Exposés pour les tests : ces trois fonctions portent les garanties de
+// sécurité du parcours OTP (tirage cryptographique, comparaison à temps
+// constant, plafond de tentatives) et doivent être vérifiables sans démarrer
+// le serveur complet.
+module.exports.__testables = { generateOTP, issueOTP, consumeOTP, MAX_ATTEMPTS, otpStore };

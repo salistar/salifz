@@ -118,15 +118,19 @@ router.post('/shop/:itemId/buy', async (req, res, next) => {
     let effectApplied = null;
     
     switch (item.effect.type) {
-      case 'streak_freeze':
+      // Chaque `case` est délimité : sans accolades, un `let` reste visible
+      // dans les branches suivantes du même `switch`, où il n'est pas
+      // initialisé — accès à la zone morte temporelle au premier usage.
+      case 'streak_freeze': {
         user.gamification.streakFreezes.available += item.effect.value;
         // Also update Streak model
-        let streak = await Streak.findOne({ user: userId });
+        const streak = await Streak.findOne({ user: userId });
         if (streak) {
           await streak.addFreezes(item.effect.value);
         }
         effectApplied = { streakFreezes: user.gamification.streakFreezes.available };
         break;
+      }
         
       case 'heart_refill':
         user.gamification.hearts.current = user.gamification.hearts.max;
@@ -134,7 +138,7 @@ router.post('/shop/:itemId/buy', async (req, res, next) => {
         effectApplied = { hearts: user.gamification.hearts };
         break;
         
-      case 'xp_boost':
+      case 'xp_boost': {
         // Store boost in Redis with expiry
         const boostKey = `xp_boost:${userId}`;
         await RedisService.set(boostKey, {
@@ -147,7 +151,8 @@ router.post('/shop/:itemId/buy', async (req, res, next) => {
           expiresAt: new Date(Date.now() + item.effect.duration * 1000)
         };
         break;
-        
+      }
+
       case 'hint':
         // Add hints to user (you'd need to add this field to User model)
         effectApplied = { hints: item.effect.value };

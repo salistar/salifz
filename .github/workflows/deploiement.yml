@@ -1,0 +1,122 @@
+name: Déploiement
+
+# Déclenchement manuel uniquement, et c'est délibéré : un déploiement
+# automatique à chaque poussée sur `main` retire le moment où quelqu'un décide
+# que la version est bonne. Le dépôt n'a pas encore de branche de
+# préproduction ni de jeu de tests bout en bout qui justifierait ce niveau
+# d'automatisme.
+#
+# Prérequis côté GitHub — ces secrets doivent exister avant le premier
+# lancement, sans quoi le workflow échoue à la connexion :
+#   DEPLOY_HOST         adresse du serveur
+#   DEPLOY_USER         utilisateur SSH (non root)
+#   DEPLOY_SSH_KEY      clé privée, sans phrase de passe
+#   DEPLOY_PATH         répertoire du dépôt sur le serveur
+
+on:
+  workflow_dispatch:
+    inputs:
+      environnement:
+        description: Environnement cible
+        type: choice
+        options: [production]
+        default: production
+      reference:
+        description: Branche, étiquette ou commit à déployer
+        type: string
+        default: main
+
+concurrency:
+  # Deux déploiements simultanés sur la même machine se marchent dessus au
+  # milieu d'un `docker compose up`. Celui-ci n'est pas annulable en vol.
+  group: deploiement-${{ inputs.environnement }}
+  cancel-in-progress: false
+
+jobs:
+  verifier:
+    name: Vérifications avant déploiement
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.reference }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: backendv2/package-lock.json
+
+      - run: npm ci
+        working-directory: backendv2
+
+      # Rejouer les tests sur la référence exacte qui part en production :
+      # un vert obtenu sur `main` il y a trois jours ne dit rien de l'étiquette
+      # que l'on déploie aujourd'hui.
+      - run: npx jest --ci
+        working-directory: backendv2
+
+      - run: npm audit --audit-level=high
+        working-directory: backendv2
+
+  deployer:
+    name: Déployer
+    needs: verifier
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environnement }}
+    steps:
+      - name: Connexion et mise à jour
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.DEPLOY_PATH }}"
+
+            # On note la version en place avant de bouger : sans cela, revenir
+            # en arrière demande de retrouver le commit à la main, au pire
+            # moment pour le faire.
+            precedent=$(git rev-parse HEAD)
+            echo "Version en place : $precedent"
+
+            git fetch --all --tags
+            git checkout "${{ inputs.reference }}"
+            git pull --ff-only || true
+
+            # `--build` reconstruit ce qui a changé ; le fichier de production
+            # sert les images figées et le web via nginx, pas le serveur Vite.
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+
+            echo "Attente de la disponibilité du serveur…"
+            for i in $(seq 1 30); do
+              if curl -fsS --max-time 5 http://localhost:8088/api/v1/health >/dev/null; then
+                echo "Serveur disponible après ${i} tentative(s)."
+                exit 0
+              fi
+              sleep 5
+            done
+
+            # Un déploiement qui ne répond pas doit revenir en arrière tout
+            # seul : laisser une version muette en ligne est pire que de
+            # rejouer la précédente.
+            echo "Le serveur ne répond pas — retour à $precedent"
+            git checkout "$precedent"
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+            exit 1
+
+      - name: Vérification depuis l'extérieur
+        run: |
+          # La vérification précédente tourne sur la machine elle-même : elle
+          # ne dit rien du pare-feu ni du proxy. Celle-ci passe par le réseau.
+          for i in $(seq 1 10); do
+            if curl -fsS --max-time 10 "https://${{ secrets.DEPLOY_HOST }}/api/v1/health"; then
+              echo "Joignable depuis l'extérieur."
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "Serveur injoignable depuis l'extérieur — vérifier proxy, DNS et pare-feu."
+          exit 1

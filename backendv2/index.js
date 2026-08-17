@@ -17,7 +17,7 @@ const mongoose = require('mongoose');
 const { loadConfig } = require('./config/env');
 const { verifyAccessToken } = require('./utils/tokens');
 const { globalLimiter } = require('./middleware/rateLimit');
-const { resolveRoom, isKhatamModerator } = require('./sockets/authorization');
+const { resolveRoom, isHalaqaModerator, isKhatamModerator } = require('./sockets/authorization');
 
 // Charge et valide la configuration. Si un secret manque, est trop court ou
 // est resté à sa valeur d'exemple, le démarrage échoue ici — plutôt que de

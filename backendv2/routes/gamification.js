@@ -290,11 +290,12 @@ router.post('/purchase', async (req, res, next) => {
         user.gamification.hearts.lastRefill = new Date();
         break;
       case 'xp_boost_1h':
-      case 'xp_boost_24h':
+      case 'xp_boost_24h': {
         // Store boost in Redis with expiry
         const duration = itemType === 'xp_boost_1h' ? 3600 : 86400;
         await RedisService.set(`xp_boost:${user._id}`, { multiplier: 2 }, duration);
         break;
+      }
       case 'avatar':
         // Unlock avatar
         user.avatar = itemId;

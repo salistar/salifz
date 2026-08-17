@@ -1,0 +1,135 @@
+name: Sécurité
+
+# Deux risques distincts, deux vérifications :
+#   - une dépendance vulnérable entre par une mise à jour transitive, sans que
+#     rien ne change dans le dépôt ;
+#   - un secret part dans un commit, et reste lisible dans l'historique même
+#     après suppression du fichier.
+# Le second est déjà arrivé sur ce dépôt : le secret TURN a été poussé en clair
+# dans `infra/coturn/turnserver.conf`, puis retiré du fichier et rotationné.
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  schedule:
+    # Une vulnérabilité publiée n'attend pas le prochain commit : audit
+    # hebdomadaire, lundi matin.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dependances:
+    name: Dépendances — serveur et web
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        projet: [backendv2, web]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Barrière stricte : ces deux briques sont à zéro vulnérabilité haute et
+      # doivent le rester. Seuil `high` — au niveau `moderate`, l'écosystème
+      # npm produit assez de bruit pour que l'alerte finisse ignorée, ce qui
+      # revient à ne pas l'avoir.
+      - name: Audit ${{ matrix.projet }}
+        run: npm audit --audit-level=high
+        working-directory: ${{ matrix.projet }}
+
+  dependances-mobile:
+    name: Dépendances — mobile (rapport)
+    runs-on: ubuntu-latest
+    # Volontairement non bloquant, et c'est une décision, pas un renoncement :
+    # les vulnérabilités restantes visent toutes la chaîne de build React
+    # Native (metro, @expo/cli, postcss, image-size). Ce code s'exécute sur la
+    # machine qui compile, jamais sur le téléphone. `npm audit` ne sait pas les
+    # distinguer, car `expo` et `react-native` sont des dépendances de
+    # production qui les tirent en transitif.
+    #
+    # Les corriger exige de passer à Expo SDK 57 — une migration à part
+    # entière, à faire délibérément et non au détour d'un audit. Rendre ce job
+    # bloquant le laisserait rouge en permanence, donc invisible.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Audit mobile
+        run: npm audit --audit-level=high
+        working-directory: mobilev2
+
+      - name: Rappel
+        if: failure()
+        run: echo "Vulnérabilités mobile — à traiter lors du passage à Expo SDK 57."
+
+  secrets:
+    name: Secrets dans l'historique
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Gitleaks doit voir l'historique complet : un secret retiré dans un
+          # commit ultérieur reste extractible depuis les précédents.
+          fetch-depth: 0
+
+      - name: Recherche de secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  configuration:
+    name: Garde-fous de configuration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Le test porte sur ce que Git suit réellement, pas sur le disque : un
+      # `.gitignore` correct n'empêche pas un fichier déjà indexé de le rester.
+      - name: Aucun fichier de secret versionné
+        run: |
+          interdits=$(git ls-files | grep -E '(^|/)\.env$|\.pem$|\.key$' || true)
+          if [ -n "$interdits" ]; then
+            echo "Fichiers sensibles suivis par Git :"
+            echo "$interdits"
+            exit 1
+          fi
+          echo "Aucun fichier sensible versionné."
+
+      # `turnserver.conf` est légitimement versionné — c'est la ligne de secret
+      # qui ne doit pas y être. Un relais TURN dont le secret fuite devient un
+      # proxy ouvert, facturé au propriétaire.
+      - name: Aucun secret TURN dans la configuration
+        run: |
+          if grep -qE '^[[:space:]]*static-auth-secret[[:space:]]*=' infra/coturn/turnserver.conf; then
+            echo "turnserver.conf contient un secret en clair."
+            exit 1
+          fi
+          echo "Le secret TURN reste hors du fichier versionné."
+
+      - name: Aucune valeur d'exemple dans du code réel
+        run: |
+          # `config/env.js` refuse ces valeurs au démarrage, et les tests
+          # vérifient précisément ce refus : les deux citent donc la chaîne
+          # légitimement. Ailleurs, c'est une configuration restée sur sa
+          # valeur de démonstration.
+          trouve=$(grep -rn "salifz_secret_2024\|change_in_production" \
+            --include='*.js' --include='*.ts' \
+            --exclude-dir=node_modules --exclude-dir=__tests__ . \
+            | grep -v '\.example' | grep -v 'config/env.js' || true)
+          if [ -n "$trouve" ]; then
+            echo "Valeurs d'exemple trouvées dans du code réel :"
+            echo "$trouve"
+            exit 1
+          fi
+          echo "Aucune valeur d'exemple en dur."

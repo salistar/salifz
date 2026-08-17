@@ -1,0 +1,107 @@
+name: CI
+
+# Chaque brique est vérifiée séparément : une erreur de type dans le web ne doit
+# pas masquer un test serveur au vert, et inversement. Les trois jobs sont
+# indépendants et tournent en parallèle.
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+# Une nouvelle poussée sur la même branche annule la vérification précédente :
+# sans cela, une série de commits rapides fait la queue pendant des minutes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Serveur — lint et tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: backendv2/package-lock.json
+
+      # `npm ci` plutôt que `npm install` : il installe exactement le
+      # verrouillage du dépôt et échoue si celui-ci diverge du package.json.
+      - run: npm ci
+        working-directory: backendv2
+
+      - run: npx eslint .
+        working-directory: backendv2
+
+      # Les tests démarrent un MongoDB en mémoire ; le binaire est mis en cache
+      # entre les exécutions, faute de quoi chaque lancement le retélécharge.
+      - name: Cache du binaire MongoDB
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/mongodb-binaries
+          key: mongodb-binaries-${{ runner.os }}
+
+      - run: npx jest --ci --passWithNoTests=false
+        working-directory: backendv2
+        env:
+          NODE_ENV: test
+
+  web:
+    name: Web — types et build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - run: npm ci
+        working-directory: web
+
+      - run: npm run typecheck
+        working-directory: web
+
+      # Le build est la seule vérification qui attrape un import cassé ou un
+      # composant absent : `tsc` seul laisse passer une route mal câblée.
+      - run: npm run build
+        working-directory: web
+
+  mobile:
+    name: Mobile — types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: mobilev2/package-lock.json
+
+      - run: npm ci
+        working-directory: mobilev2
+
+      - run: npx tsc --noEmit
+        working-directory: mobilev2
+
+  docker:
+    name: Images Docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Construire les images sans les publier vérifie que les Dockerfile
+      # suivent le code : une dépendance ajoutée au package.json mais absente
+      # de l'image ne se voit qu'ici.
+      - name: Image du serveur
+        run: docker build -t salifz-api:ci ./backendv2
+
+      - name: Image web (cible production)
+        run: docker build --target prod -t salifz-web:ci ./web
