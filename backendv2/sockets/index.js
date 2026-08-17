@@ -3,6 +3,7 @@
  */
 
 const jwt = require('jsonwebtoken');
+const presence = require('../services/presence');
 const User = require('../models/User');
 
 const activeUsers = new Map();
@@ -21,8 +22,13 @@ function initializeSocket(io) {
     } catch (error) { next(new Error('Invalid token')); }
   });
 
+  presence.register(io);
+
   io.on('connection', (socket) => {
     const userId = socket.user._id.toString();
+    // `socket.data` est le seul champ que `fetchSockets()` rapatrie depuis les
+    // autres instances : c'est là que l'identifiant doit vivre.
+    socket.data.userId = userId;
     console.log(`[Socket] User connected: ${userId}`);
     
     if (!activeUsers.has(userId)) activeUsers.set(userId, new Set());

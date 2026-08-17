@@ -4,10 +4,45 @@
  */
 
 const express = require('express');
+const Streak = require('../models/Streak');
 const User = require('../models/User');
 const router = express.Router();
 
 // Créer un compte enfant
+
+/**
+ * Activité réelle d'un enfant, jour par jour, lue depuis `Streak.history` —
+ * la seule trace effectivement écrite par l'application. Un jour absent de
+ * l'historique est un jour sans activité : on le rend à zéro plutôt que de
+ * l'omettre, sans quoi la courbe se resserre et donne l'illusion d'une
+ * pratique continue.
+ */
+async function childDailyActivity(childId, days) {
+  const streak = await Streak.findOne({ user: childId }).lean();
+  const byDay = new Map();
+
+  for (const entry of streak?.history ?? []) {
+    if (!entry?.date) continue;
+    const key = new Date(entry.date).toISOString().split('T')[0];
+    const current = byDay.get(key) ?? { versesLearned: 0, versesReviewed: 0, xpEarned: 0, active: false };
+    current.versesLearned += entry.versesMemorized ?? 0;
+    current.versesReviewed += entry.versesReviewed ?? 0;
+    current.xpEarned += entry.xpEarned ?? 0;
+    current.active = current.active || Boolean(entry.completed);
+    byDay.set(key, current);
+  }
+
+  const out = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() - i);
+    const key = date.toISOString().split('T')[0];
+    out.push({ date: key, ...(byDay.get(key) ?? { versesLearned: 0, versesReviewed: 0, xpEarned: 0, active: false }) });
+  }
+  return out;
+}
+
 router.post('/create-child', async (req, res) => {
   try {
     const { username, password, displayName, dailyTimeLimit, ageGroup } = req.body;
@@ -88,20 +123,26 @@ router.get('/child/:childId/activity', async (req, res) => {
     const child = await User.findOne({ _id: childId, 'parentalControls.parentId': req.userId });
     if (!child) return res.status(404).json({ success: false, error: 'Child not found' });
 
+    // Ce rapport était entièrement tiré au hasard : un parent y lisait que son
+    // enfant avait passé quarante minutes et appris trois versets un jour où
+    // l'application n'avait pas été ouverte, et les chiffres changeaient à
+    // chaque rafraîchissement. Sur un écran de contrôle parental, c'est le
+    // défaut le plus grave possible — l'information y est lue comme un fait.
+    const window = Math.min(Math.max(parseInt(days, 10) || 7, 1), 90);
+    const dailyActivity = await childDailyActivity(child._id, window);
+
     const activity = {
       child: { username: child.username, displayName: child.displayName },
       summary: {
-        totalTimeSpent: Math.floor(Math.random() * 300) + 60,
+        // `totalTimeSpent` a été retiré : rien dans l'application ne mesure
+        // une durée de session. Le nombre de jours actifs est, lui, compté.
+        activeDays: dailyActivity.filter((d) => d.active).length,
+        windowDays: window,
         versesMemorized: child.quranProgress.totalVersesMemorized,
         currentStreak: child.gamification.currentStreak,
         level: child.gamification.level
       },
-      dailyActivity: Array.from({ length: parseInt(days) }, (_, i) => ({
-        date: new Date(Date.now() - (parseInt(days) - 1 - i) * 86400000).toISOString().split('T')[0],
-        timeSpent: Math.floor(Math.random() * 60) + 10,
-        versesLearned: Math.floor(Math.random() * 5),
-        lessonsCompleted: Math.floor(Math.random() * 3)
-      }))
+      dailyActivity
     };
 
     res.json({ success: true, data: { activity } });

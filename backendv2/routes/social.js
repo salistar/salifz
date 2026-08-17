@@ -4,6 +4,7 @@
  */
 
 const express = require('express');
+const presence = require('../services/presence');
 const router = express.Router();
 const User = require('../models/User');
 
@@ -65,11 +66,19 @@ router.get('/friends', async (req, res) => {
       _id: { $in: user.social.friends }
     }).select('username displayName avatar gamification.totalXP gamification.currentStreak gamification.level');
     
+    // Présence réelle, lue depuis la couche temps réel. Auparavant :
+    // `isOnline: Math.random() > 0.5` — un point vert tiré à pile ou face.
+    const online = await presence.onlineUserIds();
+    const presenceKnown = presence.isAvailable();
+
     const friendsWithStatus = friends.map(f => ({
       ...f.toObject(),
-      isOnline: Math.random() > 0.5
+      // `null` plutôt que `false` quand la couche temps réel ne répond pas :
+      // le client peut alors masquer l'indicateur au lieu d'afficher « hors
+      // ligne » à tort.
+      isOnline: presenceKnown ? online.has(String(f._id)) : null
     }));
-    
+
     res.json({ success: true, data: friendsWithStatus });
   } catch (error) {
     console.error('Get friends error:', error);

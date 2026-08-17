@@ -508,12 +508,21 @@ class AIService {
 
   getDailyTip(user) {
     const tips = [
-      { ar: 'اشرب ماءً كافياً للحفاظ على تركيزك', en: 'Stay hydrated to maintain focus' },
-      { ar: 'خذ استراحة قصيرة كل 25 دقيقة', en: 'Take a short break every 25 minutes' },
-      { ar: 'استمع للآيات قبل حفظها', en: 'Listen to verses before memorizing' }
+      { ar: 'اشرب ماءً كافياً للحفاظ على تركيزك', en: 'Stay hydrated to maintain focus', fr: 'Buvez assez d’eau pour rester concentré' },
+      { ar: 'خذ استراحة قصيرة كل 25 دقيقة', en: 'Take a short break every 25 minutes', fr: 'Faites une courte pause toutes les 25 minutes' },
+      { ar: 'استمع للآيات قبل حفظها', en: 'Listen to verses before memorizing', fr: 'Écoutez les versets avant de les mémoriser' }
     ];
-    
-    return tips[Math.floor(Math.random() * tips.length)];
+
+    // Le tirage était aléatoire à chaque appel : le « conseil du jour »
+    // changeait à chaque rafraîchissement de l'écran d'accueil. L'index vient
+    // donc du jour, décalé par l'utilisateur pour que deux personnes ne lisent
+    // pas systématiquement le même conseil au même moment.
+    const dayNumber = Math.floor(Date.now() / 86400000);
+    const userOffset = String(user?._id ?? '')
+      .split('')
+      .reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+
+    return tips[(dayNumber + userOffset) % tips.length];
   }
 
   calculateReviewPriority(verse) {

@@ -1164,18 +1164,10 @@ export const verificationAPI = {
     console.log(`${FILE_NAME} ✅ verificationAPI.verifyEmailOtp() called`);
     return api.post('/verification/email/verify', { email, otp });
   },
-  setupBiometric: (deviceId: string, biometricType: string): Promise<any> => {
-    console.log(`${FILE_NAME} 🔐 verificationAPI.setupBiometric() called`);
-    return api.post('/verification/biometric/setup', { deviceId, biometricType });
-  },
-  verifyBiometric: (userId: string, signature?: string): Promise<any> => {
-    console.log(`${FILE_NAME} 🔐 verificationAPI.verifyBiometric() called`);
-    return api.post('/verification/biometric/verify', { userId, signature });
-  },
-  disableBiometric: (): Promise<any> => {
-    console.log(`${FILE_NAME} 🔐 verificationAPI.disableBiometric() called`);
-    return api.delete('/verification/biometric/disable');
-  },
+  // Les routes biométriques côté serveur ont été retirées : une empreinte se
+  // vérifie sur l'appareil (`expo-local-authentication`), qui garde l'accès au
+  // jeton déjà stocké. Ces trois fonctions n'avaient aucun appelant, et
+  // `disableBiometric` visait une route qui n'a jamais existé.
 };
 
 // ============================================
