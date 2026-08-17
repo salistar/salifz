@@ -213,3 +213,46 @@ Supprimer la v1, les zips, le venv, sortir les 29 Go d'audio. Câbler le ThemeCo
 
 **Étape 5 — Produit**
 Vue Mushaf, masquage progressif, audio hors ligne, puis validation par l'enseignant sur les Halaqat.
+
+---
+
+## Modèles d'IA entraînés mais jamais chargés (constaté le 17/08/2026)
+
+`salifz-ai-model/` occupe **32,2 Go**, soit 98 % du projet sur le disque.
+Correctement exclu de git (seuls 17 Mo de sources et de jeux de données y sont
+suivis), donc sans effet sur le dépôt — mais le contenu mérite une décision.
+
+Le dossier contient deux modèles entraînés :
+
+- `models/tajwid/final/model.safetensors` — 0,4 Go
+- `models/chatbot/final/model.safetensors` — 0,5 Go
+
+**Aucun des deux n'est chargé par quoi que ce soit.** `api/app.py` ne contient
+ni `from_pretrained`, ni import de `torch`, ni référence à un `.safetensors` :
+
+- `POST /tajwid/analyze` appelle `analyze_tajwid_simple()`, dont la
+  documentation indique explicitement « sans modèle ML ». C'est un annotateur
+  de règles écrit à la main, qui prend **du texte** en entrée.
+- `POST /chat` appelle `get_sally_response()`, une table de réponses.
+
+Deux conséquences.
+
+**La notation du tajwid depuis l'audio n'existe nulle part.** Le backend Node
+envoie un enregistrement à `AI_SERVICE_URL` ; le service Python attend une
+chaîne de caractères. Brancher `AI_SERVICE_URL` sur ce service ne rendrait donc
+pas la fonctionnalité — cela livrerait une annotation de texte sous un nom qui
+promet une analyse de récitation. La route Node a le bon comportement
+aujourd'hui : elle déclare la fonctionnalité indisponible plutôt que d'inventer
+une note.
+
+**Les 30 Go restants sont un environnement virtuel Python** (`venv_hifz`,
+essentiellement torch), utile aux scripts d'entraînement de `scripts/` mais
+inutile à l'exécution. Rien n'a été supprimé.
+
+Trois suites possibles, à trancher :
+
+1. Écrire un service de reconnaissance de récitation qui prenne réellement
+   l'audio — c'est un projet en soi, pas un branchement.
+2. Assumer l'annotateur de texte comme fonctionnalité à part entière, sous un
+   nom qui ne promet pas une analyse de la voix.
+3. Archiver le sous-projet hors du dossier de travail et récupérer les 32 Go.
