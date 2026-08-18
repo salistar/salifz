@@ -1,16 +1,16 @@
 {
-  "greeting": "Assalamu alaykum, {{name}}",
+  "goalLesson": "Terminer une leçon",
+  "goalMemorize": "Mémoriser {{count}} nouveaux versets",
+  "goalReview": "Réviser {{count}} versets",
+  "goalsDone": "Objectifs du jour atteints",
   "goalsLeft_one": "{{count}} objectif restant aujourd’hui",
   "goalsLeft_other": "{{count}} objectifs restants aujourd’hui",
+  "greeting": "Assalamu alaykum, {{name}}",
+  "nothingUrgent": "Rien d’urgent aujourd’hui — le bon moment pour avancer.",
   "resume": "Reprendre",
   "resumeAt": "{{surah}} · verset {{ayah}}",
   "start": "Commencer par Al-Fatiha",
-  "todayGoals": "Objectifs du jour",
-  "goalMemorize": "Mémoriser {{count}} nouveaux versets",
-  "goalReview": "Réviser {{count}} versets",
-  "goalLesson": "Terminer une leçon",
-  "goalsDone": "Objectifs du jour atteints",
-  "nothingUrgent": "Rien d’urgent aujourd’hui — le bon moment pour avancer.",
   "toReview_one": "{{count}} verset à réviser aujourd’hui",
-  "toReview_other": "{{count}} versets à réviser aujourd’hui"
+  "toReview_other": "{{count}} versets à réviser aujourd’hui",
+  "todayGoals": "Objectifs du jour"
 }

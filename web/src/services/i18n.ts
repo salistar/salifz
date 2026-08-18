@@ -1,3 +1,5 @@
+import { useTranslation as useTranslationHook } from 'react-i18next';
+
 /**
  * Libellés localisés venus du serveur.
  *
@@ -19,4 +21,18 @@ export function label(valeur: Localise, locale: 'fr' | 'en' | 'ar' = 'fr'): stri
     return valeur[locale] ?? valeur.fr ?? valeur.en ?? valeur.ar ?? '';
   }
   return String(valeur);
+}
+
+/**
+ * Version liée à la locale active.
+ *
+ * `label()` prend la locale en second argument, avec le français par défaut.
+ * Appelée sans ce paramètre — ce qui était le cas partout — elle rendait donc
+ * du français à un utilisateur arabophone, alors que le serveur envoyait bien
+ * les trois langues. Ce hook retire l'occasion de l'oublier.
+ */
+export function useLabel() {
+  const { i18n } = useTranslationHook();
+  const locale = (i18n.resolvedLanguage ?? 'fr') as 'fr' | 'en' | 'ar';
+  return (valeur: Localise) => label(valeur, locale);
 }

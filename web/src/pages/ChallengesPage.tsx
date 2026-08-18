@@ -9,10 +9,11 @@
 import { useState } from 'react';
 import { challengesAPI } from '../services/api';
 import { useResource, asList, StateBlock } from '../components/useResource';
-import { label } from '../services/i18n';
+import { useLabel } from '../services/i18n';
 
 
 export default function ChallengesPage() {
+  const label = useLabel();
   const encours = useResource<any>(() => challengesAPI.all(), []);
   const finis = useResource<any>(() => challengesAPI.completed(), []);
   const [onglet, setOnglet] = useState<'encours' | 'finis'>('encours');

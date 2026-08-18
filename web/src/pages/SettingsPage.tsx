@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { settingsAPI } from '../services/api';
 import { useResource, unwrap, asList, StateBlock } from '../components/useResource';
 import { useTheme } from '../store';
-import { label } from '../services/i18n';
+import { useLabel } from '../services/i18n';
 
 
 function Row({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
@@ -36,6 +36,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 export default function SettingsPage() {
+  const label = useLabel();
   const resource = useResource<any>(() => settingsAPI.get(), []);
   const reciters = useResource<any>(() => settingsAPI.reciters(), []);
   const applyTheme = useTheme((s) => s.set);

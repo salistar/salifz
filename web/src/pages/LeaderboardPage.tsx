@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { leaguesAPI, badgesAPI } from '../services/api';
 import { useResource, asList, unwrap, StateBlock } from '../components/useResource';
 import { useAuth } from '../store';
-import { label } from '../services/i18n';
+import { useLabel } from '../services/i18n';
 
 
 const LEAGUE_COLORS: Record<string, string> = {
@@ -25,6 +25,7 @@ const LEAGUE_COLORS: Record<string, string> = {
 type Tab = 'league' | 'global' | 'badges';
 
 export default function LeaderboardPage() {
+  const label = useLabel();
   const [tab, setTab] = useState<Tab>('league');
   const user = useAuth((s) => s.user);
   const myId = user?._id ?? user?.id;

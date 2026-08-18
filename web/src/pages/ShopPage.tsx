@@ -13,10 +13,11 @@ import { useState } from 'react';
 import { shopAPI } from '../services/api';
 import { useResource, asList, unwrap, StateBlock } from '../components/useResource';
 import { useAuth } from '../store';
-import { label } from '../services/i18n';
+import { useLabel } from '../services/i18n';
 
 
 export default function ShopPage() {
+  const label = useLabel();
   const shop = useResource<any>(() => shopAPI.items(), []);
   const daily = useResource<any>(() => shopAPI.daily(), []);
   const { user, restore } = useAuth();

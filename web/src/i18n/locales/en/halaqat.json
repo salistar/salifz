@@ -1,18 +1,18 @@
 {
-  "title": "Halaqat",
-  "mine": "My halaqat",
-  "discover": "Discover",
+  "collective": "{{count}} verses memorized together",
   "create": "Create a halaqa",
+  "discover": "Discover",
+  "emptyBody": "A halaqa gathers memorizers around a teacher who listens to your recitations.",
+  "emptyTitle": "You’re not in a halaqa yet",
   "join": "Ask to join",
-  "teacher": "Teacher",
+  "joinByCode": "Join with a code",
+  "joinSession": "Join session",
+  "liveNow": "Session in progress",
   "members_one": "{{count}} member",
   "members_other": "{{count}} members",
-  "liveNow": "Session in progress",
+  "mine": "My halaqat",
   "nextSession": "Next session {{when}}",
   "noSession": "No session scheduled",
-  "joinSession": "Join session",
-  "collective": "{{count}} verses memorized together",
-  "emptyTitle": "You’re not in a halaqa yet",
-  "emptyBody": "A halaqa gathers memorizers around a teacher who listens to your recitations.",
-  "joinByCode": "Join with a code"
+  "teacher": "Teacher",
+  "title": "Halaqat"
 }

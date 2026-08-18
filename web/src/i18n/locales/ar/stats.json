@@ -1,6 +1,10 @@
 {
+  "activeDays_few": "{{count}} أيام نشطة",
+  "activeDays_many": "{{count}} يوماً نشطاً",
   "activeDays_one": "يوم نشط واحد",
-  "activeDays_other": "{{count}} أيام نشطة",
+  "activeDays_other": "{{count}} يوم نشط",
+  "activeDays_two": "يومان نشطان",
+  "activeDays_zero": "لا أيام نشطة",
   "avgSession": "متوسط مدة الجلسة",
   "bestHour": "أفضل ساعة للحفظ",
   "consistency": "الانتظام",

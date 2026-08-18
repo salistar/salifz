@@ -10,10 +10,11 @@
 
 import { subscriptionsAPI } from '../services/api';
 import { useResource, asList, unwrap, StateBlock } from '../components/useResource';
-import { label } from '../services/i18n';
+import { useLabel } from '../services/i18n';
 
 
 export default function SubscriptionPage() {
+  const label = useLabel();
   const offres = useResource<any>(() => subscriptionsAPI.plans(), []);
   const etat = useResource<any>(() => subscriptionsAPI.status(), []);
 
