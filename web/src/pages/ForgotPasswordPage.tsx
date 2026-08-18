@@ -9,11 +9,15 @@
 
 import { useState, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import AuthLayout, { Champ } from '../components/AuthLayout';
+import { useTranslation } from 'react-i18next';
+import AuthLayout, { Champ, Alerte } from '../components/AuthLayout';
 import { AuthArtwork } from '../components/Artwork';
+import { HizbStar } from '../components/Ornements';
 import { authAPI } from '../services/api';
+import { isolerLatin } from '../i18n';
 
 export default function ForgotPasswordPage() {
+  const { t } = useTranslation('auth');
   const [email, setEmail] = useState('');
   const [envoye, setEnvoye] = useState(false);
   const [occupe, setOccupe] = useState(false);
@@ -28,7 +32,7 @@ export default function ForgotPasswordPage() {
       setEnvoye(true);
     } catch (err: any) {
       // Seule une panne réelle est signalée ; une adresse inconnue ne l'est pas.
-      setErreur(err?.error ?? 'Envoi impossible pour le moment.');
+      setErreur(err?.error ?? t('sendFailed'));
     } finally {
       setOccupe(false);
     }
@@ -36,32 +40,33 @@ export default function ForgotPasswordPage() {
 
   return (
     <AuthLayout
-      titre="Mot de passe oublié"
-      sous="Indiquez votre adresse : si un compte y est associé, un lien de réinitialisation vous sera envoyé."
-      accroche="Le lien reçu expire rapidement et ne sert qu’une fois."
+      titre={t('forgotTitle')}
+      sous={t('forgotBody')}
+      accroche={t('forgotSide')}
       illustration={<AuthArtwork style={{ width: '100%', maxWidth: 240 }} />}
     >
       {envoye ? (
         <div style={{ display: 'grid', gap: 16 }}>
-          <div
-            role="status"
-            className="card"
-            style={{ background: 'var(--primary-soft)', borderColor: 'var(--primary)' }}
-          >
-            <strong style={{ display: 'block', marginBottom: 6 }}>Demande enregistrée</strong>
-            <span style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-              Si un compte existe pour <strong>{email}</strong>, un message vient
-              d’être envoyé. Pensez à vérifier les indésirables.
-            </span>
+          <div role="status" className="card" style={{ borderColor: 'var(--border-gold)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBlockEnd: 8 }}>
+              <HizbStar size={16} quarters={4} color="var(--accent)" />
+              <strong>{t('linkSentTitle')}</strong>
+            </div>
+            <p style={{ margin: 0, color: 'var(--text-muted)', lineHeight: 1.65 }}>
+              {/* L'adresse est isolée par FSI/PDI : sans cela, un email latin
+                  au milieu d'une phrase arabe se réordonne à l'affichage. */}
+              {t('linkSent', { email: isolerLatin(email) })} {t('checkSpam')}
+            </p>
           </div>
+
           <Link to="/login" className="btn-primary" style={{ textAlign: 'center', textDecoration: 'none' }}>
-            Retour à la connexion
+            {t('backToSignIn')}
           </Link>
         </div>
       ) : (
         <form onSubmit={envoyer} style={{ display: 'grid', gap: 16 }}>
           <Champ
-            label="Adresse email"
+            label={t('emailAddress')}
             name="email"
             type="email"
             autoComplete="email"
@@ -70,18 +75,14 @@ export default function ForgotPasswordPage() {
             onChange={(e) => setEmail(e.target.value)}
           />
 
-          {erreur && (
-            <div role="alert" style={{ background: 'var(--error-soft)', color: 'var(--error)', padding: 12, borderRadius: 8, fontSize: 14 }}>
-              {erreur}
-            </div>
-          )}
+          {erreur && <Alerte>{erreur}</Alerte>}
 
           <button className="btn-primary" type="submit" disabled={occupe} style={{ padding: 13 }}>
-            {occupe ? 'Envoi…' : 'Envoyer le lien'}
+            {occupe ? t('sending') : t('sendLink')}
           </button>
 
-          <p style={{ margin: 0, textAlign: 'center', color: 'var(--text-secondary)', fontSize: 15 }}>
-            <Link to="/login">Retour à la connexion</Link>
+          <p style={{ margin: 0, textAlign: 'center', fontSize: 15 }}>
+            <Link to="/login">{t('backToSignIn')}</Link>
           </p>
         </form>
       )}

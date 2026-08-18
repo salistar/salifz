@@ -5,79 +5,68 @@
  * page en reprend le contenu pour que les liens des pieds de page mènent
  * quelque part. Elle est accessible avec ou sans compte : quelqu'un doit
  * pouvoir lire ce qu'on collecte *avant* de s'inscrire.
+ *
+ * Les points sont désormais des clés de traduction : une politique de
+ * confidentialité affichée en français à un lecteur arabophone n'est pas une
+ * politique de confidentialité — c'est une case cochée.
  */
 
+import { useTranslation } from 'react-i18next';
+import { HizbStar, SeparateurSection } from '../components/Ornements';
+
+/** Chaque section : un titre, et les clés de ses points. */
 const SECTIONS = [
-  {
-    titre: 'Ce qui est enregistré',
-    points: [
-      'Votre adresse email, votre nom d’utilisateur et, si vous le renseignez, votre nom affiché.',
-      'Votre progression : versets mémorisés, révisions, séries, XP et gemmes.',
-      'Les récitations que vous envoyez à un enseignant, jusqu’à ce que vous les supprimiez.',
-      'Vos réglages d’application.',
-    ],
-  },
-  {
-    titre: 'Ce qui n’est pas enregistré',
-    points: [
-      'Aucune durée de session : rien dans l’application ne mesure le temps passé.',
-      'Aucune position n’est conservée. Les coordonnées servent au calcul des heures de prière et de la qibla, puis sont oubliées.',
-      'Aucun traceur publicitaire, aucun partage de données à des fins commerciales.',
-    ],
-  },
-  {
-    titre: 'Comptes enfants',
-    points: [
-      'Un compte enfant est créé par un parent, depuis un compte famille.',
-      'Le rapport d’activité affiché au parent ne contient que des données mesurées : jours actifs, versets, XP.',
-      'La discussion et les appels vidéo y sont restreints par défaut.',
-    ],
-  },
-  {
-    titre: 'Vos droits',
-    points: [
-      'Exporter l’ensemble de vos données depuis les réglages, dans un format lisible.',
-      'Supprimer votre compte, ce qui efface vos données de progression et vos récitations.',
-      'Corriger vos informations de profil à tout moment.',
-    ],
-  },
-  {
-    titre: 'Sources externes',
-    points: [
-      'Le texte coranique et les traductions proviennent de quran.com.',
-      'Les récitations audio sont servies par islamic.network.',
-      'Ces services reçoivent l’adresse IP de votre appareil au moment où vous chargez un verset ou un audio, comme pour toute requête web.',
-    ],
-  },
-];
+  { titre: 'stored', points: ['storedAccount', 'storedProgress', 'storedRecitations', 'storedSettings'] },
+  { titre: 'notStored', points: ['notStoredSession', 'notStoredLocation', 'notStoredTracking'] },
+  { titre: 'children', points: ['childrenCreated', 'childrenReport', 'childrenRestricted'] },
+  { titre: 'rights', points: ['rightExport', 'rightDelete', 'rightCorrect'] },
+  { titre: 'sources', points: ['sourcesBody', 'sourcesIp'] },
+] as const;
 
 export default function PrivacyPage() {
+  const { t } = useTranslation('privacy');
+
   return (
-    <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 20px', display: 'grid', gap: 24 }}>
+    <div style={{ maxWidth: 760, margin: '0 auto', padding: '48px 20px', display: 'grid', gap: 26 }}>
       <header>
-        <h1 style={{ margin: '0 0 8px' }}>Confidentialité</h1>
-        <p style={{ margin: 0, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-          Ce document décrit ce que Salifz enregistre et ce qu’il n’enregistre
-          pas. Il correspond au comportement réel du code, pas à une intention.
-        </p>
+        <span style={{ display: 'inline-block', marginBlockEnd: 12 }} aria-hidden="true">
+          <HizbStar size={20} quarters={4} color="var(--accent)" />
+        </span>
+        <h1 className="display-md" style={{ margin: '0 0 10px' }}>{t('title')}</h1>
+        <p style={{ margin: 0, color: 'var(--text-muted)', lineHeight: 1.75 }}>{t('intro')}</p>
       </header>
+
+      <SeparateurSection />
 
       {SECTIONS.map((s) => (
         <section key={s.titre} className="card">
-          <h2 style={{ margin: '0 0 12px', fontSize: 17 }}>{s.titre}</h2>
-          <ul style={{ margin: 0, paddingInlineStart: 20, display: 'grid', gap: 8 }}>
+          <h2 className="title-md" style={{ margin: '0 0 14px' }}>{t(s.titre)}</h2>
+
+          <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 10 }}>
             {s.points.map((p) => (
-              <li key={p} style={{ color: 'var(--text-secondary)', lineHeight: 1.65 }}>
-                {p}
+              <li key={p} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                {/* Une puce à filet plutôt qu'un disque : discrète, et elle
+                    suit le sens de lecture sans marge conditionnelle. */}
+                <span
+                  aria-hidden="true"
+                  style={{
+                    inlineSize: 5,
+                    blockSize: 5,
+                    borderRadius: 3,
+                    background: 'var(--accent)',
+                    flexShrink: 0,
+                    marginBlockStart: 9,
+                  }}
+                />
+                <span style={{ color: 'var(--text-secondary)', lineHeight: 1.7 }}>{t(p)}</span>
               </li>
             ))}
           </ul>
         </section>
       ))}
 
-      <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 14, lineHeight: 1.6 }}>
-        Cette instance est hébergée par la personne qui l’a déployée. Sur une
-        installation locale, vos données ne quittent pas votre machine.
+      <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: 14, lineHeight: 1.7 }}>
+        {t('selfHosted')}
       </p>
     </div>
   );

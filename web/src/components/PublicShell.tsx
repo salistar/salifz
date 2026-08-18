@@ -12,6 +12,7 @@ import { ReactNode, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Logo } from './Artwork';
 import { useAuth, useTheme } from '../store';
+import { IconeLune, IconeSoleil } from './Icones';
 
 const LIENS = [
   { to: '/#fonctionnalites', label: 'Fonctionnalités' },
@@ -87,7 +88,7 @@ export default function PublicShell({ children }: { children: ReactNode }) {
             onClick={toggle}
             aria-label={theme === 'light' ? 'Passer en thème sombre' : 'Passer en thème clair'}
           >
-            {theme === 'light' ? '🌙' : '☀️'}
+            {theme === 'light' ? <IconeLune size={18} /> : <IconeSoleil size={18} />}
           </button>
 
           {user ? (
@@ -116,7 +117,10 @@ export default function PublicShell({ children }: { children: ReactNode }) {
             onClick={() => setMenuOuvert((v) => !v)}
             style={{ display: 'none' }}
           >
-            ☰
+            <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor"
+                 strokeWidth={1.5} strokeLinecap="round" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h16" />
+            </svg>
           </button>
         </div>
 

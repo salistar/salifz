@@ -10,6 +10,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { halaqaAPI, recitationsAPI, FILES_URL } from '../services/api';
+import { IconeArret, IconeEnregistrer } from '../components/Icones';
 
 interface Halaqa {
   _id: string;
@@ -224,7 +225,8 @@ export default function RecitationsPage() {
             className={recording ? 'btn-danger' : 'btn-primary'}
             onClick={recording ? stopRecording : startRecording}
           >
-            {recording ? '⏹ Arrêter' : '🎙 Enregistrer'}
+            {recording ? <IconeArret size={16} /> : <IconeEnregistrer size={16} />}
+            <span>{recording ? 'Arrêter' : 'Enregistrer'}</span>
           </button>
           <span style={{ fontFamily: 'monospace', fontSize: 18 }}>{mmss}</span>
           {blob && <audio controls src={URL.createObjectURL(blob)} />}

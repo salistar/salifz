@@ -6,9 +6,14 @@
  * la garder pousserait le formulaire sous la ligne de flottaison, et
  * l'utilisateur devrait faire défiler pour trouver le champ qu'il est venu
  * remplir. Elle est donc décorative, jamais porteuse d'information.
+ *
+ * Le titre est précédé d'une étoile de hizb : c'est le seul ornement de la
+ * page, et il rattache ces trois écrans au reste du produit sans encombrer le
+ * formulaire.
  */
 
 import { ReactNode } from 'react';
+import { HizbStar } from './Ornements';
 
 interface Props {
   titre: string;
@@ -34,9 +39,12 @@ export default function AuthLayout({ titre, sous, illustration, accroche, childr
       }}
       className="auth-grille"
     >
-      <div style={{ maxWidth: 420, width: '100%', justifySelf: 'center' }}>
-        <h1 style={{ margin: '0 0 6px', fontSize: 28 }}>{titre}</h1>
-        <p style={{ margin: '0 0 24px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{sous}</p>
+      <div style={{ maxWidth: 420, inlineSize: '100%', justifySelf: 'center' }}>
+        <span style={{ display: 'inline-block', marginBlockEnd: 12 }} aria-hidden="true">
+          <HizbStar size={20} quarters={4} color="var(--accent)" />
+        </span>
+        <h1 className="display-md" style={{ margin: '0 0 8px' }}>{titre}</h1>
+        <p style={{ margin: '0 0 26px', color: 'var(--text-muted)', lineHeight: 1.65 }}>{sous}</p>
         {children}
       </div>
 
@@ -47,8 +55,8 @@ export default function AuthLayout({ titre, sous, illustration, accroche, childr
             margin: 0,
             maxWidth: 320,
             textAlign: 'center',
-            color: 'var(--text-secondary)',
-            lineHeight: 1.6,
+            color: 'var(--text-muted)',
+            lineHeight: 1.65,
           }}
         >
           {accroche}
@@ -79,12 +87,34 @@ export function Champ({
       <label htmlFor={id} style={{ fontSize: 14, fontWeight: 600 }}>
         {label}
       </label>
-      <input id={id} aria-describedby={aide ? `${id}-aide` : undefined} {...props} />
+      {/* Les identifiants et mots de passe sont saisis en caractères latins,
+          y compris en interface arabe : forcer le sens évite que le curseur
+          et la ponctuation partent à l'envers. */}
+      <input id={id} dir="ltr" aria-describedby={aide ? `${id}-aide` : undefined} {...props} />
       {aide && (
         <small id={`${id}-aide`} style={{ color: 'var(--text-muted)' }}>
           {aide}
         </small>
       )}
+    </div>
+  );
+}
+
+/** Bandeau d'erreur de formulaire. Le rôle `alert` le fait annoncer par les
+ *  lecteurs d'écran dès son apparition. */
+export function Alerte({ children }: { children: ReactNode }) {
+  return (
+    <div
+      role="alert"
+      style={{
+        border: '1px solid var(--danger)',
+        color: 'var(--danger)',
+        padding: 12,
+        borderRadius: 'var(--radius-sm)',
+        fontSize: 14,
+      }}
+    >
+      {children}
     </div>
   );
 }

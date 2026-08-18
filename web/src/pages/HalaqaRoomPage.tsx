@@ -12,6 +12,13 @@ import { halaqaAPI } from '../services/api';
 import { connectRealtime, joinHalaqa, sendHalaqaMessage } from '../services/realtime';
 import { GroupCall, RemoteStream } from '../services/groupCall';
 import { useAuth } from '../store';
+import {
+  IconeAppel,
+  IconeVideo,
+  IconeVideoCoupee,
+  IconeMicro,
+  IconeMicroCoupe,
+} from '../components/Icones';
 
 interface Message {
   id: string;
@@ -132,10 +139,10 @@ export default function HalaqaRoomPage() {
         {!call ? (
           <>
             <button className="btn-ghost" onClick={() => startCall(false)}>
-              🎧 Appel audio
+              <IconeAppel size={16} /> Appel audio
             </button>
             <button className="btn-primary" onClick={() => startCall(true)}>
-              📹 Appel vidéo
+              <IconeVideo size={16} /> Appel vidéo
             </button>
           </>
         ) : (
@@ -147,7 +154,8 @@ export default function HalaqaRoomPage() {
                 setMicOn(!micOn);
               }}
             >
-              {micOn ? '🔊 Micro' : '🔇 Muet'}
+              {micOn ? <IconeMicro size={16} /> : <IconeMicroCoupe size={16} />}
+              <span>{micOn ? 'Micro' : 'Muet'}</span>
             </button>
             <button
               className="btn-ghost"
@@ -156,7 +164,8 @@ export default function HalaqaRoomPage() {
                 setCamOn(!camOn);
               }}
             >
-              {camOn ? '📹 Caméra' : '🚫 Caméra'}
+              {camOn ? <IconeVideo size={16} /> : <IconeVideoCoupee size={16} />}
+              <span>Caméra</span>
             </button>
             <button className="btn-danger" onClick={stopCall}>
               Raccrocher

@@ -226,6 +226,85 @@ export const IconeRecompense = (p: IconeProps) => (
   </Base>
 );
 
+// ---------------------------------------------------------------------------
+// Contrôles — thème, appels, capture
+//
+// Ces icônes remplacent les derniers emojis de l'interface. Elles ont un état
+// « barré » explicite plutôt qu'un simple changement de couleur : couper son
+// micro est une action dont on doit voir le résultat sans lire une étiquette,
+// et le rouge seul n'est pas lisible pour tout le monde.
+// ---------------------------------------------------------------------------
+
+/** Thème clair — soleil à huit rayons, la forme du zellige. */
+export const IconeSoleil = (p: IconeProps) => (
+  <Base {...p}>
+    <circle cx="12" cy="12" r="4.2" />
+    <path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6" />
+  </Base>
+);
+
+/** Thème sombre — croissant, orienté comme celui des coupoles. */
+export const IconeLune = (p: IconeProps) => (
+  <Base {...p}>
+    <path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.2 8.2 0 1 0 10.2 10.2z" />
+  </Base>
+);
+
+/** Appel audio. */
+export const IconeAppel = (p: IconeProps) => (
+  <Base {...p}>
+    <path d="M6.5 3.5h3l1.5 4-2 1.4a12 12 0 0 0 6.1 6.1l1.4-2 4 1.5v3a2 2 0 0 1-2.2 2A17 17 0 0 1 4.5 5.7a2 2 0 0 1 2-2.2z" />
+  </Base>
+);
+
+/** Appel vidéo. */
+export const IconeVideo = (p: IconeProps) => (
+  <Base {...p}>
+    <rect x="2.8" y="6.5" width="12.4" height="11" rx="2" />
+    <path d="M15.2 10.6l5-2.6v8l-5-2.6z" />
+  </Base>
+);
+
+/** Micro ouvert. */
+export const IconeMicro = (p: IconeProps) => (
+  <Base {...p}>
+    <rect x="9" y="2.8" width="6" height="11" rx="3" />
+    <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.2" />
+  </Base>
+);
+
+/** Micro coupé — la barre oblique dit l'état, pas seulement la couleur. */
+export const IconeMicroCoupe = (p: IconeProps) => (
+  <Base {...p}>
+    <rect x="9" y="2.8" width="6" height="11" rx="3" />
+    <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.2" />
+    <path d="M3.5 3.5l17 17" />
+  </Base>
+);
+
+/** Caméra coupée. */
+export const IconeVideoCoupee = (p: IconeProps) => (
+  <Base {...p}>
+    <rect x="2.8" y="6.5" width="12.4" height="11" rx="2" />
+    <path d="M15.2 10.6l5-2.6v8l-5-2.6z" />
+    <path d="M3.5 3.5l17 17" />
+  </Base>
+);
+
+/** Enregistrement en cours — disque plein, le seul de la série. */
+export const IconeEnregistrer = (p: IconeProps) => (
+  <Base {...p}>
+    <circle cx="12" cy="12" r="6.2" fill="currentColor" stroke="none" />
+  </Base>
+);
+
+/** Arrêter l'enregistrement. */
+export const IconeArret = (p: IconeProps) => (
+  <Base {...p}>
+    <rect x="6.5" y="6.5" width="11" height="11" rx="1.6" fill="currentColor" stroke="none" />
+  </Base>
+);
+
 /** Correspondance des routes vers leur icône : la sidebar n'a plus d'emoji. */
 export const iconesNavigation = {
   '/accueil': IconeAccueil,

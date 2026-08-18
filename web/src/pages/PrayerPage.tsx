@@ -14,6 +14,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { prayerAPI } from '../services/api';
 import { unwrap } from '../components/useResource';
+import { IconeQibla } from '../components/Icones';
 
 const PRAYERS = [
   ['fajr', 'Fajr'],
@@ -170,7 +171,7 @@ export default function PrayerPage() {
                 transition: 'transform 0.2s ease-out',
               }}
             >
-              🕋
+              <IconeQibla size={52} />
             </div>
             <span style={{ position: 'absolute', top: 6, color: 'var(--text-muted)', fontSize: 12 }}>N</span>
           </div>

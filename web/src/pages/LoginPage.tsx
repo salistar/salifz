@@ -10,11 +10,13 @@
 
 import { useState, FormEvent, ChangeEvent } from 'react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
-import AuthLayout, { Champ } from '../components/AuthLayout';
+import { useTranslation } from 'react-i18next';
+import AuthLayout, { Champ, Alerte } from '../components/AuthLayout';
 import { AuthArtwork } from '../components/Artwork';
 import { useAuth } from '../store';
 
 export default function LoginPage() {
+  const { t } = useTranslation('auth');
   const { user, login, error, loading } = useAuth();
   const location = useLocation() as { state?: { depuis?: string } };
   const [form, setForm] = useState({ emailOrUsername: '', password: '' });
@@ -34,14 +36,14 @@ export default function LoginPage() {
 
   return (
     <AuthLayout
-      titre="Content de vous revoir"
-      sous="Reprenez là où vous vous êtes arrêté."
-      accroche="Votre progression, vos halaqat et vos révisions vous attendent — les mêmes que sur le téléphone."
+      titre={t('welcomeBack')}
+      sous={t('resumeWhereLeft')}
+      accroche={t('sideNote')}
       illustration={<AuthArtwork style={{ width: '100%', maxWidth: 260 }} />}
     >
       <form onSubmit={envoyer} style={{ display: 'grid', gap: 16 }}>
         <Champ
-          label="Email ou nom d’utilisateur"
+          label={t('identifier')}
           name="identifiant"
           autoComplete="username"
           required
@@ -49,7 +51,7 @@ export default function LoginPage() {
         />
 
         <Champ
-          label="Mot de passe"
+          label={t('password')}
           name="mot-de-passe"
           type="password"
           autoComplete="current-password"
@@ -57,34 +59,24 @@ export default function LoginPage() {
           {...champ('password')}
         />
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: -6 }}>
+        {/* `flex-end` suit le sens de lecture : le lien reste du côté de la
+            fin de ligne en arabe comme en français. */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBlockStart: -6 }}>
           <Link to="/mot-de-passe-oublie" style={{ fontSize: 14 }}>
-            Mot de passe oublié ?
+            {t('forgot')}
           </Link>
         </div>
 
-        {error && (
-          <div role="alert" style={alerte}>
-            {error}
-          </div>
-        )}
+        {error && <Alerte>{error}</Alerte>}
 
         <button className="btn-primary" type="submit" disabled={loading} style={{ padding: 13 }}>
-          {loading ? 'Connexion…' : 'Se connecter'}
+          {loading ? `${t('signingIn')}` : t('signIn')}
         </button>
 
-        <p style={{ margin: 0, textAlign: 'center', color: 'var(--text-secondary)', fontSize: 15 }}>
-          Pas encore de compte ? <Link to="/inscription">Créer un compte</Link>
+        <p style={{ margin: 0, textAlign: 'center', color: 'var(--text-muted)', fontSize: 15 }}>
+          {t('noAccount')} <Link to="/inscription">{t('createAccount')}</Link>
         </p>
       </form>
     </AuthLayout>
   );
 }
-
-const alerte = {
-  background: 'var(--error-soft)',
-  color: 'var(--error)',
-  padding: 12,
-  borderRadius: 8,
-  fontSize: 14,
-} as const;
