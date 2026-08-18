@@ -50,6 +50,7 @@ router.get('/ice-servers', (req, res) => {
     TURN_PASSWORD,
     TURN_STATIC_SECRET,
     RTC_PUBLIC_HOST,
+    STUN_FALLBACK_URLS,
   } = process.env;
 
   /**
@@ -71,9 +72,28 @@ router.get('/ice-servers', (req, res) => {
 
   const iceServers = [];
 
-  // Serveur STUN local en premier, repli public ensuite : si la pile locale
-  // est arrêtée, les appels continuent de fonctionner en direct.
+  // Serveur STUN dédié en premier.
   iceServers.push({ urls: withPublicHost(STUN_URL || 'stun:localhost:3478') });
+
+  /**
+   * Serveurs STUN de repli, séparés par des virgules.
+   *
+   * Ils servent quand l'instance dédiée ne répond pas — panne, redémarrage,
+   * port filtré. Le navigateur essaie les candidats dans l'ordre et retient
+   * le premier qui aboutit : ajouter des replis ne ralentit donc pas les cas
+   * où le premier fonctionne.
+   *
+   * Volontairement du STUN et non du TURN : STUN ne demande aucune
+   * authentification, ce qui permet de s'appuyer sur le serveur d'une autre
+   * application sans partager son secret. Un secret TURN partagé entre deux
+   * produits fait qu'une fuite d'un côté ouvre le relais de l'autre — et un
+   * relais ouvert est facturé à son propriétaire.
+   */
+  for (const url of String(STUN_FALLBACK_URLS || '').split(',')) {
+    const propre = url.trim();
+    if (propre) iceServers.push({ urls: propre });
+  }
+
   iceServers.push({ urls: 'stun:stun.l.google.com:19302' });
 
   if (TURN_URL) {
