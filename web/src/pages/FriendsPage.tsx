@@ -7,12 +7,16 @@
  */
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { socialAPI } from '../services/api';
 import { useResource, asList, StateBlock } from '../components/useResource';
+import { HizbStar } from '../components/Ornements';
+import { IconeAmis } from '../components/Icones';
 
 type Onglet = 'amis' | 'demandes' | 'recherche';
 
 export default function FriendsPage() {
+  const { t } = useTranslation(['friends', 'common']);
   const [onglet, setOnglet] = useState<Onglet>('amis');
   const [recherche, setRecherche] = useState('');
   const [resultats, setResultats] = useState<any[]>([]);
@@ -35,7 +39,7 @@ export default function FriendsPage() {
       const data = r?.data ?? r;
       setResultats(Array.isArray(data) ? data : data?.users ?? data?.results ?? []);
     } catch (err: any) {
-      setAvis(err?.error ?? 'Recherche impossible');
+      setAvis(err?.error ?? t('common:errorGeneric'));
       setResultats([]);
     } finally {
       setChercheEnCours(false);
@@ -49,7 +53,7 @@ export default function FriendsPage() {
       amis.reload();
       demandes.reload();
     } catch (err: any) {
-      setAvis(err?.error ?? 'Action impossible');
+      setAvis(err?.error ?? t('common:errorGeneric'));
     }
   };
 
@@ -58,7 +62,7 @@ export default function FriendsPage() {
   return (
     <div style={{ display: 'grid', gap: 16 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <h1 style={{ margin: 0, flex: 1 }}>Amis</h1>
+        <h1 className="display-md" style={{ margin: 0, flex: 1 }}>{t('title')}</h1>
         {avis && (
           <span role="status" style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
             {avis}
@@ -68,9 +72,9 @@ export default function FriendsPage() {
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }} role="tablist">
         {([
-          ['amis', `Mes amis${listeAmis.length ? ` (${listeAmis.length})` : ''}`],
-          ['demandes', `Demandes${recues.length ? ` (${recues.length})` : ''}`],
-          ['recherche', 'Rechercher'],
+          ['amis', listeAmis.length ? `${t('mine')} (${listeAmis.length})` : t('mine')],
+          ['demandes', recues.length ? `${t('requests')} (${recues.length})` : t('requests')],
+          ['recherche', t('search')],
         ] as const).map(([cle, libelle]) => (
           <button
             key={cle}
@@ -91,8 +95,8 @@ export default function FriendsPage() {
           empty={!actif.loading && (onglet === 'amis' ? listeAmis : recues).length === 0}
           emptyText={
             onglet === 'amis'
-              ? 'Aucun ami pour l’instant — cherchez quelqu’un par son nom d’utilisateur.'
-              : 'Aucune demande en attente.'
+              ? t('emptyBody')
+              : t('noRequests')
           }
           onRetry={actif.reload}
         />
@@ -107,9 +111,9 @@ export default function FriendsPage() {
               actions={
                 <button
                   className="btn-danger"
-                  onClick={() => action(() => socialAPI.remove(a._id ?? a.id), 'Ami retiré')}
+                  onClick={() => action(() => socialAPI.remove(a._id ?? a.id), t('common:saved'))}
                 >
-                  Retirer
+                  {t('remove')}
                 </button>
               }
             />
@@ -127,15 +131,15 @@ export default function FriendsPage() {
                 <>
                   <button
                     className="btn-ghost"
-                    onClick={() => action(() => socialAPI.reject(d._id ?? d.id), 'Demande refusée')}
+                    onClick={() => action(() => socialAPI.reject(d._id ?? d.id), t('decline'))}
                   >
-                    Refuser
+                    {t('decline')}
                   </button>
                   <button
                     className="btn-primary"
-                    onClick={() => action(() => socialAPI.accept(d._id ?? d.id), 'Demande acceptée')}
+                    onClick={() => action(() => socialAPI.accept(d._id ?? d.id), t('accept'))}
                   >
-                    Accepter
+                    {t('accept')}
                   </button>
                 </>
               }
@@ -150,17 +154,17 @@ export default function FriendsPage() {
             <input
               value={recherche}
               onChange={(e) => setRecherche(e.target.value)}
-              placeholder="Nom d’utilisateur"
-              aria-label="Rechercher un membre"
+              placeholder={t('searchPlaceholder')}
+              aria-label={t('search')}
               style={{ flex: 1 }}
             />
             <button className="btn-primary" type="submit" disabled={chercheEnCours || recherche.trim().length < 2}>
-              {chercheEnCours ? 'Recherche…' : 'Chercher'}
+              {chercheEnCours ? t('common:loading') : t('search')}
             </button>
           </form>
 
           {recherche.trim().length > 0 && recherche.trim().length < 2 && (
-            <small style={{ color: 'var(--text-muted)' }}>Deux caractères au minimum.</small>
+            <small style={{ color: 'var(--text-muted)' }}>{t('searchPlaceholder')}</small>
           )}
 
           <div style={{ display: 'grid', gap: 8 }}>
@@ -171,9 +175,9 @@ export default function FriendsPage() {
                 actions={
                   <button
                     className="btn-ghost"
-                    onClick={() => action(() => socialAPI.sendRequest(u._id ?? u.id), 'Demande envoyée')}
+                    onClick={() => action(() => socialAPI.sendRequest(u._id ?? u.id), t('requestSent'))}
                   >
-                    Ajouter
+                    {t('add')}
                   </button>
                 }
               />
@@ -186,7 +190,8 @@ export default function FriendsPage() {
 }
 
 function Personne({ personne, actions }: { personne: any; actions: React.ReactNode }) {
-  const nom = personne.displayName ?? personne.username ?? 'Membre';
+  const { t } = useTranslation('friends');
+  const nom = personne.displayName ?? personne.username ?? t('title');
   const enLigne = personne.isOnline;
 
   return (
@@ -211,7 +216,7 @@ function Personne({ personne, actions }: { personne: any; actions: React.ReactNo
       <div style={{ flex: 1, minWidth: 0 }}>
         <strong style={{ display: 'block' }}>{nom}</strong>
         <span style={{ color: 'var(--text-secondary)', fontSize: 13 }}>
-          Niveau {personne.gamification?.level ?? 1}
+          {t('level', { n: personne.gamification?.level ?? 1 })}
           {personne.gamification?.totalXP != null && ` · ${personne.gamification.totalXP} XP`}
         </span>
       </div>
@@ -219,7 +224,7 @@ function Personne({ personne, actions }: { personne: any; actions: React.ReactNo
       {/* `null` signifie « présence inconnue » : on n'affiche alors rien. */}
       {enLigne != null && (
         <span
-          title={enLigne ? 'En ligne' : 'Hors ligne'}
+          title={enLigne ? t('online') : t('offline')}
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -236,7 +241,7 @@ function Personne({ personne, actions }: { personne: any; actions: React.ReactNo
               background: enLigne ? 'var(--primary)' : 'var(--text-muted)',
             }}
           />
-          {enLigne ? 'En ligne' : 'Hors ligne'}
+          {enLigne ? t('online') : t('offline')}
         </span>
       )}
 

@@ -8,6 +8,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { halaqaAPI, recitationsAPI, FILES_URL } from '../services/api';
 
 interface Halaqa {
@@ -33,6 +34,7 @@ const unwrapList = (response: any): any[] => {
 };
 
 export default function RecitationsPage() {
+  const { t } = useTranslation(['recitations', 'common']);
   const [halaqat, setHalaqat] = useState<Halaqa[]>([]);
   const [halaqaId, setHalaqaId] = useState('');
   const [surah, setSurah] = useState('112');
@@ -167,7 +169,7 @@ export default function RecitationsPage() {
 
   return (
     <div style={{ display: 'grid', gap: 16 }}>
-      <h1 style={{ margin: 0 }}>Récitations</h1>
+      <h1 style={{ margin: 0 }}>{t('title')}</h1>
 
       {notice && (
         <div className="card" role="status" style={{ background: 'var(--primary-soft)', color: 'var(--primary-dark)' }}>
@@ -176,11 +178,11 @@ export default function RecitationsPage() {
       )}
 
       <section className="card" style={{ display: 'grid', gap: 12 }}>
-        <strong>Soumettre un passage</strong>
+        <strong>{t('submit')}</strong>
 
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <label style={{ display: 'grid', gap: 4 }}>
-            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Halaqa</span>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{t('halaqa')}</span>
             <select value={halaqaId} onChange={(e) => setHalaqaId(e.target.value)} aria-label="Halaqa">
               {halaqat.map((h) => (
                 <option key={h._id} value={h._id}>
@@ -191,28 +193,28 @@ export default function RecitationsPage() {
           </label>
 
           <label style={{ display: 'grid', gap: 4 }}>
-            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Sourate</span>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{t('surah')}</span>
             <input type="number" min={1} max={114} value={surah}
                    onChange={(e) => setSurah(e.target.value)} style={{ width: 90 }} aria-label="Sourate" />
           </label>
 
           <label style={{ display: 'grid', gap: 4 }}>
-            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Du verset</span>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{t('fromAyah')}</span>
             <input type="number" min={1} value={from}
                    onChange={(e) => setFrom(e.target.value)} style={{ width: 90 }} aria-label="Du verset" />
           </label>
 
           <label style={{ display: 'grid', gap: 4 }}>
-            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Au verset</span>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{t('toAyah')}</span>
             <input type="number" min={1} value={to}
                    onChange={(e) => setTo(e.target.value)} style={{ width: 90 }} aria-label="Au verset" />
           </label>
 
           <label style={{ display: 'grid', gap: 4 }}>
-            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Type</span>
+            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{t('type')}</span>
             <select value={kind} onChange={(e) => setKind(e.target.value as any)} aria-label="Type d’exercice">
-              <option value="hifz">Nouvelle mémorisation</option>
-              <option value="muraja">Révision</option>
+              <option value="hifz">{t('typeNew')}</option>
+              <option value="muraja">{t('typeReview')}</option>
             </select>
           </label>
         </div>
