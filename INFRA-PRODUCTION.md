@@ -15,7 +15,7 @@ reste à faire.
 | TURN/STUN dédié | srv3 | `:3479`, relais 41000-41099 |
 | TURN/STUN (préparé) | `turn.salistar.com` `84.8.218.36` | `:3479` — **bloqué**, voir plus bas |
 
-Chemin sur le serveur : `/home/deploy/apps/salifz-stack`.
+Chemin sur le serveur : `/opt/salifz/stack`.
 Projet Docker : `salifz`, distinct de `salorie-stack` et `sudoku`.
 
 ## Ne rien casser : ce qui a été vérifié
@@ -101,20 +101,30 @@ List du VCN Oracle** qui bloque — un pare-feu réseau hors de portée de SSH.
 Tant que ce n'est pas fait, le TURN de srv3 assure le service — c'est lui qui
 est en tête de la chaîne ICE.
 
-## Secrets GitHub pour le déploiement automatisé
+## Déploiement automatisé
 
-`.github/workflows/deploiement.yml` attend `DEPLOY_HOST`, `DEPLOY_USER`,
-`DEPLOY_SSH_KEY` et `DEPLOY_PATH`.
+Les quatre secrets sont renseignés sur le dépôt. La clé est **dédiée à ce seul
+dépôt** (ed25519, sans phrase de passe) et n'existe nulle part ailleurs : la
+copie locale a été effacée après enregistrement. Pour la révoquer, il suffit de
+retirer sa ligne de `/home/salifz-deploy/.ssh/authorized_keys` — les autres
+clés du serveur ne sont pas concernées.
 
-Je ne les ai **pas** renseignés, délibérément. Déposer une clé SSH dans les
-secrets GitHub donne à toute exécution du workflow un accès shell à une machine
-qui héberge trois autres projets ; et comme le déploiement passe par Docker,
-l'utilisateur doit appartenir au groupe `docker`, ce qui équivaut à root. C'est
-une décision de sécurité qui vous revient, pas un détail de configuration.
+Cloisonnement de l'utilisateur `salifz-deploy`, vérifié :
 
-Si vous la prenez, la façon la moins risquée est une clé dédiée à ce seul
-dépôt, sans phrase de passe, autorisée pour un utilisateur unique, et révocable
-indépendamment de vos autres clés.
+| | |
+|---|---|
+| `sudo` | refusé |
+| `/home/deploy` (Salorie, Sudoku) | inaccessible |
+| `/opt/salifz/stack` | propriétaire, mode 750 |
+| groupe `docker` | oui — nécessaire pour Compose |
+
+L'appartenance au groupe `docker` reste équivalente à un accès root sur la
+machine : c'est inhérent à un déploiement par conteneurs, et c'est la raison
+pour laquelle la pile a été sortie de `/home/deploy` — pour qu'un incident
+côté CI n'ouvre pas directement les fichiers des autres projets.
+
+Le workflow compose **les trois fichiers**, surcouche `srv3` comprise. Sans
+elle il republierait le port 80 et couperait les quatorze domaines de Caddy.
 
 ## Sauvegardes prises avant modification
 

@@ -76,6 +76,12 @@ jobs:
             set -euo pipefail
             cd "${{ secrets.DEPLOY_PATH }}"
 
+            # Une seule définition, réutilisée au déploiement et au retour
+            # arrière : les deux doivent composer exactement les mêmes
+            # fichiers, sinon le retour arrière change la configuration en
+            # même temps qu'il change la version.
+            COMPOSE_FILES="-f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.srv3.yml"
+
             # On note la version en place avant de bouger : sans cela, revenir
             # en arrière demande de retrouver le commit à la main, au pire
             # moment pour le faire.
@@ -86,9 +92,12 @@ jobs:
             git checkout "${{ inputs.reference }}"
             git pull --ff-only || true
 
-            # `--build` reconstruit ce qui a changé ; le fichier de production
-            # sert les images figées et le web via nginx, pas le serveur Vite.
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+            # La surcouche `srv3` est **indispensable** : sans elle, le fichier
+            # de production publie le port 80 — pris par le Caddy qui sert
+            # quatorze autres domaines sur cette machine — et laisse MongoDB
+            # et Redis exposés, parce que Compose fusionne les listes de ports
+            # au lieu de les remplacer.
+            docker compose $COMPOSE_FILES -p salifz up -d --build
 
             echo "Attente de la disponibilité du serveur…"
             for i in $(seq 1 30); do
@@ -104,15 +113,19 @@ jobs:
             # rejouer la précédente.
             echo "Le serveur ne répond pas — retour à $precedent"
             git checkout "$precedent"
-            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+            docker compose $COMPOSE_FILES -p salifz up -d --build
             exit 1
 
       - name: Vérification depuis l'extérieur
         run: |
           # La vérification précédente tourne sur la machine elle-même : elle
           # ne dit rien du pare-feu ni du proxy. Celle-ci passe par le réseau.
+          #
+          # En HTTP sur le port publié, et non en HTTPS sur le domaine : tant
+          # que l'enregistrement DNS n'existe pas, il n'y a pas de certificat,
+          # et une vérification qui échoue toujours ne vérifie rien.
           for i in $(seq 1 10); do
-            if curl -fsS --max-time 10 "https://${{ secrets.DEPLOY_HOST }}/api/v1/health"; then
+            if curl -fsS --max-time 10 "http://${{ secrets.DEPLOY_HOST }}:8088/api/v1/health"; then
               echo "Joignable depuis l'extérieur."
               exit 0
             fi
