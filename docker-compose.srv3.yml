@@ -1,0 +1,58 @@
+# ============================================================
+# Surcouche propre à srv3.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml \
+#                  -f docker-compose.srv3.yml --project-name salifz up -d
+#
+# Cette machine héberge déjà Salorie, Sudoku et un Caddy qui occupe 80 et 443.
+# Rien ici ne doit leur prendre un port : ce fichier existe pour cela, plutôt
+# que de modifier les compositions versionnées du dépôt.
+# ============================================================
+
+services:
+  # `!override` est indispensable : Compose *fusionne* les listes de ports
+  # entre fichiers au lieu de les remplacer. Sans lui, la composition
+  # republierait 80 — pris par Caddy — et exposerait Mongo et Redis en clair.
+  # (`ports: []` du compose de production ne suffit pas : il ne vide rien.)
+  web:
+    ports: !override
+      - "8091:80"
+
+  api:
+    ports: !override
+      - "8088:8088"
+
+  mongo:
+    ports: !reset []
+
+  redis:
+    ports: !reset []
+
+  minio:
+    ports: !reset []
+
+  # Le coturn du dépôt reste éteint : Salifz utilise l instance dédiée
+  # ci-dessous, dont les ports et la plage de relais ne croisent pas ceux de
+  # Salorie (3478, relais 49160-49180).
+  coturn:
+    profiles: ["desactive"]
+
+  coturn-certs:
+    profiles: ["desactive"]
+
+  coturn-salifz:
+    image: coturn/coturn:4.6-alpine
+    container_name: salifz-coturn
+    restart: always
+    ports:
+      - "3479:3479/udp"
+      - "3479:3479/tcp"
+      - "5350:5350/tcp"
+      - "41000-41099:41000-41099/udp"
+    volumes:
+      # Configuration montée plutôt que passée en arguments : la substitution
+      # de variables dans un `command:` s est révélée silencieusement vide, et
+      # le pliage YAML avait collé deux arguments ensemble — coturn démarrait
+      # alors sans secret. Le fichier vit hors du dépôt : il contient un secret.
+      - /etc/salifz/coturn.conf:/etc/coturn/turnserver.conf:ro
+    command: ["-c", "/etc/coturn/turnserver.conf", "--pidfile="]
