@@ -39,6 +39,11 @@ FROM nginx:1.27-alpine AS prod
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
+# `localhost` se résout d'abord en ::1 dans cette image, alors que nginx
+# n'écoute qu'en IPv4 : le conteneur était déclaré « unhealthy » en continu
+# (479 échecs d'affilée en production) tout en servant normalement ses pages.
+# Un état de santé toujours faux équivaut à ne pas en avoir — une vraie panne
+# serait passée inaperçue. L'adresse est donc littérale.
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost/ || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1/ || exit 1
 CMD ["nginx", "-g", "daemon off;"]
