@@ -78,6 +78,10 @@ export default function Shell({ children }: { children: ReactNode }) {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      {/* Premier élément focusable de la page : sans lui, atteindre le contenu
+          au clavier impose de traverser les dix-huit liens de la barre. */}
+      <a href="#contenu" className="saut-contenu">Aller au contenu</a>
+
       <header
         style={{
           position: 'sticky',
@@ -207,7 +211,7 @@ export default function Shell({ children }: { children: ReactNode }) {
           ))}
         </aside>
 
-        <main style={{ flex: 1, minWidth: 0, padding: 20 }}>
+        <main id="contenu" tabIndex={-1} style={{ flex: 1, minWidth: 0, padding: 20 }}>
           <div style={{ maxWidth: 1000, margin: '0 auto' }}>{children}</div>
         </main>
       </div>

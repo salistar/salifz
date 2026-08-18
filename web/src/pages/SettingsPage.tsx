@@ -11,14 +11,8 @@ import { useEffect, useState } from 'react';
 import { settingsAPI } from '../services/api';
 import { useResource, unwrap, asList, StateBlock } from '../components/useResource';
 import { useTheme } from '../store';
+import { label } from '../services/i18n';
 
-/** Certains libellés du serveur sont localisés (`{ ar, en, fr }`). */
-function label(value: any, locale = 'fr'): string {
-  if (value == null) return '';
-  if (typeof value === 'string') return value;
-  if (typeof value === 'object') return value[locale] ?? value.fr ?? value.en ?? value.ar ?? '';
-  return String(value);
-}
 
 function Row({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
   return (

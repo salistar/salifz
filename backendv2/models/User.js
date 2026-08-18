@@ -355,7 +355,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['memorize', 'review', 'streak', 'social', 'tajwid']
       },
-      description: String,
+      // Déclaré `String`, ce champ convertissait un libellé localisé en
+      // « [object Object] ». Même défaut que sur `ShopItem` et `Challenge` :
+      // Mongoose ne prévient pas, il caste.
+      description: {
+        ar: String,
+        en: String,
+        fr: String
+      },
       target: Number,
       current: {
         type: Number,

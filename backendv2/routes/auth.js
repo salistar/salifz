@@ -15,6 +15,7 @@ const {
   passwordFingerprint,
 } = require('../utils/tokens');
 const { authLimiter, passwordResetLimiter } = require('../middleware/rateLimit');
+const { genererQuetesDuJour } = require('../services/dailyQuests');
 
 const router = express.Router();
 
@@ -334,37 +335,8 @@ router.post('/reset-password', passwordResetLimiter, [
   }
 });
 
-// Helper function to generate daily quests
-function generateDailyQuests() {
-  return [
-    {
-      questId: 'daily_memorize',
-      type: 'memorize',
-      description: 'Memorize 5 new verses',
-      target: 5,
-      current: 0,
-      xpReward: 50,
-      completed: false
-    },
-    {
-      questId: 'daily_review',
-      type: 'review',
-      description: 'Review 10 verses',
-      target: 10,
-      current: 0,
-      xpReward: 30,
-      completed: false
-    },
-    {
-      questId: 'daily_streak',
-      type: 'streak',
-      description: 'Complete a lesson today',
-      target: 1,
-      current: 0,
-      xpReward: 20,
-      completed: false
-    }
-  ];
-}
+// Voir `services/dailyQuests.js` — définition unique, partagée avec
+// `routes/gamification.js`.
+const generateDailyQuests = () => genererQuetesDuJour();
 
 module.exports = router;

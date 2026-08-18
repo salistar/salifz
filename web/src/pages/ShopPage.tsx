@@ -13,15 +13,8 @@ import { useState } from 'react';
 import { shopAPI } from '../services/api';
 import { useResource, asList, unwrap, StateBlock } from '../components/useResource';
 import { useAuth } from '../store';
+import { label } from '../services/i18n';
 
-/** Certains libellés du serveur sont localisés (`{ ar, en }`) : les rendre
- *  directement ferait planter React. */
-function label(value: any, locale = 'fr'): string {
-  if (value == null) return '';
-  if (typeof value === 'string') return value;
-  if (typeof value === 'object') return value[locale] ?? value.fr ?? value.en ?? value.ar ?? '';
-  return String(value);
-}
 
 export default function ShopPage() {
   const shop = useResource<any>(() => shopAPI.items(), []);

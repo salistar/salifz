@@ -10,21 +10,8 @@ import { useState } from 'react';
 import { leaguesAPI, badgesAPI } from '../services/api';
 import { useResource, asList, unwrap, StateBlock } from '../components/useResource';
 import { useAuth } from '../store';
+import { label } from '../services/i18n';
 
-/**
- * Le serveur renvoie certains libellés localisés (`{ ar, en, fr }`). Les
- * rendre tels quels fait planter React — « Objects are not valid as a React
- * child » — et la page entière disparaît. On choisit donc une langue, avec un
- * repli sur les autres.
- */
-function label(value: any, locale = 'fr'): string {
-  if (value == null) return '';
-  if (typeof value === 'string') return value;
-  if (typeof value === 'object') {
-    return value[locale] ?? value.fr ?? value.en ?? value.ar ?? '';
-  }
-  return String(value);
-}
 
 const LEAGUE_COLORS: Record<string, string> = {
   bronze: '#CD7F32',

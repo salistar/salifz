@@ -75,3 +75,54 @@ a { color: var(--primary); }
 
 /* Le focus doit rester visible : le masquer rend l'application inutilisable au clavier. */
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* ---------------------------------------------------------------------------
+   Profondeur et réactivité
+   --------------------------------------------------------------------------- */
+
+/* Une ombre très légère détache les cartes du fond sans créer de relief : en
+   thème sombre, une ombre portée classique est invisible, d'où la variable. */
+:root { --ombre: 0 1px 2px rgba(0, 0, 0, 0.05); }
+:root[data-theme='dark'] { --ombre: 0 1px 3px rgba(0, 0, 0, 0.4); }
+
+.card { box-shadow: var(--ombre); }
+
+/* Carte cliquable : le survol doit se voir sans déplacer le texte, sinon la
+   ligne visée bouge sous le curseur. */
+.carte-lien { transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; }
+.carte-lien:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Respecter le réglage système : une animation peut déclencher un malaise
+   vestibulaire, et l'information ne dépend jamais du mouvement ici. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .carte-lien:hover { transform: none; }
+}
+
+/* Le texte arabe garde sa taille propre : les tailles d'interface le
+   rendraient illisible avec ses diacritiques. */
+.arabic { font-family: 'Amiri', 'Scheherazade New', 'Traditional Arabic', serif; }
+
+/* Cible tactile : 44 px est le minimum praticable au doigt. Les boutons de
+   l'interface descendaient à 32 px de haut. */
+button, .btn-primary, .btn-ghost, .btn-danger { min-height: 40px; }
+
+/* Un lien de contournement pour le clavier : sans lui, atteindre le contenu
+   depuis l'en-tête demande de traverser toute la barre latérale. */
+.saut-contenu {
+  position: absolute;
+  inset-inline-start: -9999px;
+  z-index: 100;
+  background: var(--surface);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 8px;
+}
+.saut-contenu:focus { inset-inline-start: 12px; top: 12px; }

@@ -21,13 +21,18 @@ const challengeSchema = new mongoose.Schema({
     enum: ['daily', 'weekly', 'monthly', 'special'],
     default: 'daily'
   },
+  // `fr` était absent du schéma alors que l'interface propose le français :
+  // en mode strict, Mongoose jetait silencieusement la traduction et les
+  // écrans retombaient sur l'anglais. Même défaut que sur `ShopItem`.
   title: {
     ar: { type: String, required: true },
-    en: { type: String, required: true }
+    en: { type: String, required: true },
+    fr: String
   },
   description: {
     ar: String,
-    en: String
+    en: String,
+    fr: String
   },
   icon: {
     type: String,
@@ -129,8 +134,8 @@ Challenge.seedDefaults = async function() {
       challengeId: 'daily_memorize_5',
       type: 'memorize',
       period: 'daily',
-      title: { ar: 'احفظ 5 آيات', en: 'Memorize 5 verses' },
-      description: { ar: 'احفظ 5 آيات جديدة اليوم', en: 'Memorize 5 new verses today' },
+      title: { ar: 'احفظ 5 آيات', en: 'Memorize 5 verses', fr: 'Mémoriser 5 versets' },
+      description: { ar: 'احفظ 5 آيات جديدة اليوم', en: 'Memorize 5 new verses today', fr: 'Mémoriser 5 nouveaux versets aujourd’hui' },
       icon: '📖',
       target: 5,
       targetUnit: 'verses',
@@ -141,8 +146,8 @@ Challenge.seedDefaults = async function() {
       challengeId: 'daily_review_10',
       type: 'review',
       period: 'daily',
-      title: { ar: 'راجع 10 آيات', en: 'Review 10 verses' },
-      description: { ar: 'راجع 10 آيات محفوظة', en: 'Review 10 memorized verses' },
+      title: { ar: 'راجع 10 آيات', en: 'Review 10 verses', fr: 'Réviser 10 versets' },
+      description: { ar: 'راجع 10 آيات محفوظة', en: 'Review 10 memorized verses', fr: 'Réviser 10 versets déjà mémorisés' },
       icon: '🔄',
       target: 10,
       targetUnit: 'verses',
@@ -153,8 +158,8 @@ Challenge.seedDefaults = async function() {
       challengeId: 'daily_xp_100',
       type: 'xp',
       period: 'daily',
-      title: { ar: 'اكسب 100 XP', en: 'Earn 100 XP' },
-      description: { ar: 'اجمع 100 نقطة خبرة اليوم', en: 'Collect 100 XP today' },
+      title: { ar: 'اكسب 100 XP', en: 'Earn 100 XP', fr: 'Gagner 100 XP' },
+      description: { ar: 'اجمع 100 نقطة خبرة اليوم', en: 'Collect 100 XP today', fr: 'Cumuler 100 XP aujourd’hui' },
       icon: '⚡',
       target: 100,
       targetUnit: 'xp',
@@ -165,8 +170,8 @@ Challenge.seedDefaults = async function() {
       challengeId: 'daily_perfect_session',
       type: 'accuracy',
       period: 'daily',
-      title: { ar: 'جلسة مثالية', en: 'Perfect Session' },
-      description: { ar: 'أكمل جلسة بدون أخطاء', en: 'Complete a session without mistakes' },
+      title: { ar: 'جلسة مثالية', en: 'Perfect Session', fr: 'Séance sans faute' },
+      description: { ar: 'أكمل جلسة بدون أخطاء', en: 'Complete a session without mistakes', fr: 'Terminer une séance sans erreur' },
       icon: '💯',
       target: 100,
       targetUnit: 'percent',

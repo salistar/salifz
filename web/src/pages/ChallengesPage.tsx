@@ -9,14 +9,8 @@
 import { useState } from 'react';
 import { challengesAPI } from '../services/api';
 import { useResource, asList, StateBlock } from '../components/useResource';
+import { label } from '../services/i18n';
 
-/** Certains libellés du serveur sont localisés (`{ ar, en, fr }`). */
-function label(valeur: any, locale = 'fr'): string {
-  if (valeur == null) return '';
-  if (typeof valeur === 'string') return valeur;
-  if (typeof valeur === 'object') return valeur[locale] ?? valeur.fr ?? valeur.en ?? valeur.ar ?? '';
-  return String(valeur);
-}
 
 export default function ChallengesPage() {
   const encours = useResource<any>(() => challengesAPI.all(), []);

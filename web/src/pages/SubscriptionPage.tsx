@@ -10,13 +10,8 @@
 
 import { subscriptionsAPI } from '../services/api';
 import { useResource, asList, unwrap, StateBlock } from '../components/useResource';
+import { label } from '../services/i18n';
 
-function label(valeur: any, locale = 'fr'): string {
-  if (valeur == null) return '';
-  if (typeof valeur === 'string') return valeur;
-  if (typeof valeur === 'object') return valeur[locale] ?? valeur.fr ?? valeur.en ?? valeur.ar ?? '';
-  return String(valeur);
-}
 
 export default function SubscriptionPage() {
   const offres = useResource<any>(() => subscriptionsAPI.plans(), []);

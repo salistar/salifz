@@ -8,6 +8,7 @@ const User = require('../models/User');
 const Achievement = require('../models/Achievement');
 const RedisService = require('../services/redis');
 const { AppError } = require('../middleware/errorHandler');
+const { genererQuetesDuJour } = require('../services/dailyQuests');
 
 const router = express.Router();
 
@@ -127,11 +128,15 @@ router.get('/daily-quests', async (req, res, next) => {
   try {
     const user = req.user;
     
-    // Check if quests need to be reset
+    // Régénérer si le jour a changé, **ou** si la liste est vide. La seconde
+    // condition manquait : un compte dont les objectifs avaient disparu (pour
+    // n'importe quelle raison) restait sans aucun objectif jusqu'au lendemain,
+    // puisque la date, elle, était bien celle du jour.
     const today = new Date().toDateString();
-    const questDate = new Date(user.dailyQuests.date).toDateString();
-    
-    if (today !== questDate) {
+    const questDate = new Date(user.dailyQuests?.date ?? 0).toDateString();
+    const listeVide = !user.dailyQuests?.quests?.length;
+
+    if (today !== questDate || listeVide) {
       // Reset quests for new day
       user.dailyQuests = {
         date: new Date(),
@@ -354,52 +359,9 @@ router.post('/lose-heart', async (req, res, next) => {
 });
 
 // Helper functions
-function generateDailyQuests(user) {
-  const quests = [
-    {
-      questId: 'daily_memorize',
-      type: 'memorize',
-      description: `Memorize ${user.profile.dailyGoal} new verses`,
-      target: user.profile.dailyGoal,
-      current: 0,
-      xpReward: user.profile.dailyGoal * 10,
-      completed: false
-    },
-    {
-      questId: 'daily_review',
-      type: 'review',
-      description: 'Review 10 verses',
-      target: 10,
-      current: 0,
-      xpReward: 30,
-      completed: false
-    },
-    {
-      questId: 'daily_lesson',
-      type: 'streak',
-      description: 'Complete a lesson',
-      target: 1,
-      current: 0,
-      xpReward: 20,
-      completed: false
-    }
-  ];
-
-  // Add premium quest
-  if (user.isPremium()) {
-    quests.push({
-      questId: 'daily_tajwid',
-      type: 'tajwid',
-      description: 'Get 80%+ on a tajwid exercise',
-      target: 1,
-      current: 0,
-      xpReward: 40,
-      completed: false
-    });
-  }
-
-  return quests;
-}
+// La liste vit désormais dans `services/dailyQuests.js` : elle existait en
+// trois exemplaires qui avaient déjà divergé sur les identifiants.
+const generateDailyQuests = (user) => genererQuetesDuJour(user);
 
 function getNextRefillTime(lastRefill) {
   const refillInterval = (parseInt(process.env.HEARTS_REFILL_HOURS) || 4) * 60 * 60 * 1000;
