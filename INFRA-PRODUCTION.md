@@ -8,7 +8,7 @@ reste à faire.
 | Élément | Emplacement | Accès |
 |---|---|---|
 | API + socket | srv3 `46.225.77.64` | `:8088`, et `/api/v1` + `/socket.io` par la même origine que le web |
-| Web | srv3 | `:8091` |
+| Web | srv3 | `https://salifz.46-225-77-64.sslip.io` et `:8091` |
 | MongoDB | srv3 | **non publié** — réseau Docker uniquement |
 | Redis | srv3 | **non publié** |
 | MinIO | srv3 | **non publié** |
@@ -73,7 +73,20 @@ par la clé dédiée, reconstruction, sonde locale puis sonde externe. Après qu
 
 ## Ce qui reste à faire — deux actions hors de ma portée
 
-### 1. Créer l'enregistrement DNS
+### 1. Créer l'enregistrement DNS — le HTTPS marche déjà sans
+
+`salistar.com` est géré par Cloudflare (`asa.ns` / `buck.ns.cloudflare.com`),
+donc créer l'enregistrement demande un jeton de cette zone.
+
+En attendant, le site est **déjà en HTTPS** sur
+`https://salifz.46-225-77-64.sslip.io`, avec un certificat Let's Encrypt
+valide. sslip.io résout `<n-importe-quoi>.<ip>.sslip.io` vers l'IP qu'il
+contient : aucun enregistrement à créer, et le domaine étant publiquement
+résolvable, Let's Encrypt délivre un certificat normal. Les deux noms sont
+servis par le même bloc Caddy, via un snippet — une route ajoutée à un seul
+des deux serait un écart invisible.
+
+Quand vous créerez l'enregistrement :
 
 ```
 salifz.salistar.com    A    46.225.77.64
@@ -82,14 +95,18 @@ salifz.salistar.com    A    46.225.77.64
 Chez Cloudflare, laisser le nuage **gris** (DNS only), comme `db.salorie.com` :
 sinon Caddy ne peut pas obtenir son certificat Let's Encrypt.
 
-Le bloc Caddy est déjà écrit et validé. Dès que le DNS résout, Caddy obtient le
-certificat seul et `https://salifz.salistar.com` répond. En attendant, l'accès
-direct par `:8091` fonctionne.
+Le bloc est déjà en place : dès que le DNS résout, Caddy obtient le certificat
+seul et `https://salifz.salistar.com` répond, sans autre intervention.
 
 Ensuite, remplacer dans `.env` :
 `CORS_ORIGINS=https://salifz.salistar.com` — en retirant l'adresse IP.
 
-### 2. Ouvrir les ports sur Oracle Cloud
+### 2. Ouvrir les ports sur Oracle Cloud — aucun contournement possible
+
+J'ai cherché un port déjà autorisé où déplacer l'instance, pour éviter la
+console. Il n'y en a pas : sur `84.8.218.36`, seuls **3478 et 5349** passent le
+pare-feu Oracle, et tous deux sont pris par le coturn de Salorie. 80, 443,
+3479, 5350, 8443 et les ports applicatifs sont tous fermés en entrée.
 
 L'instance TURN dédiée est **installée et démarrée** sur `84.8.218.36`
 (service systemd `coturn-salifz`, ports 3479/5350, relais 32768-40959, secret

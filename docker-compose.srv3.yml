@@ -17,10 +17,16 @@ services:
   web:
     ports: !override
       - "8091:80"
+    networks:
+      - default
+      - edge
 
   api:
     ports: !override
       - "8088:8088"
+    networks:
+      - default
+      - edge
 
   mongo:
     ports: !reset []
@@ -56,3 +62,10 @@ services:
       # alors sans secret. Le fichier vit hors du dépôt : il contient un secret.
       - /etc/salifz/coturn.conf:/etc/coturn/turnserver.conf:ro
     command: ["-c", "/etc/coturn/turnserver.conf", "--pidfile="]
+
+networks:
+  # Reseau de Caddy, cree hors de cette composition. Le rattachement doit etre
+  # declare ici : fait a la main avec `docker network connect`, il disparait a
+  # la premiere recreation des conteneurs — et Caddy repond alors 502.
+  edge:
+    external: true
