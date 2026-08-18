@@ -1,5 +1,7 @@
 {
   "active": "Active",
+  "all": "All",
+  "challenge": "Challenge",
   "challengeFriend": "Challenge a friend",
   "claim": "Claim",
   "claimed": "Claimed",
@@ -8,11 +10,19 @@
   "emptyBody": "Meanwhile, a review still counts toward your streak.",
   "emptyDone": "No completed challenges yet.",
   "emptyTitle": "Today’s challenges arrive at midnight",
+  "expired": "Expired",
+  "familyDaily": "Renewed every night at midnight.",
+  "familyFriend": "Started by your friends, or by you.",
+  "familyWeekly": "Renewed every Monday.",
   "friend": "With friends",
+  "gems": "gems",
   "inProgress": "In progress",
+  "noneInFamily": "No challenge of this kind right now.",
   "reward": "Reward",
   "start": "Start",
+  "startedMsg": "Challenge started",
   "timeLeft": "{{time}} left",
   "title": "Challenges",
+  "wait": "Please wait",
   "weekly": "Weekly"
 }

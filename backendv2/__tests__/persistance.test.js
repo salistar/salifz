@@ -147,4 +147,52 @@ describe('Historique de série', () => {
     expect(jour.versesMemorized).toBe(3);
     expect(jour.versesReviewed).toBe(5);
   });
+
+  test('la serie de l’utilisateur suit celle du modele Streak', async () => {
+    // Deux calculs de serie coexistaient : `User.updateStreak` ecrivait dans
+    // `gamification.currentStreak`, `Streak.checkAndUpdate` dans
+    // `Streak.current`. Rien ne les reliait, si bien que l’en-tete et la page
+    // Serie affichaient deux nombres differents pour la meme personne.
+    const User = require('../models/User');
+
+    const user = await User.create({
+      email: 'serie@salifz.test',
+      password: 'MotDePasse2026',
+      username: 'serie',
+      displayName: 'Serie',
+    });
+
+    // Hier : le modele Streak part d’un jour de pratique la veille.
+    const hier = new Date();
+    hier.setDate(hier.getDate() - 1);
+    await Streak.create({ user: user._id, current: 4, longest: 9, lastActivityDate: hier });
+
+    await user.updateStreak();
+
+    const streak = await Streak.findOne({ user: user._id }).lean();
+    const releu = await User.findById(user._id).lean();
+
+    expect(streak.current).toBe(5);
+    expect(releu.gamification.currentStreak).toBe(streak.current);
+    expect(releu.gamification.longestStreak).toBe(streak.longest);
+  });
+
+  test('deux appels le meme jour n’incrementent la serie qu’une fois', async () => {
+    // L’application appelle deux routes distinctes apres une lecon ; sans
+    // idempotence dans la journee, une seance comptait pour deux jours.
+    const User = require('../models/User');
+
+    const user = await User.create({
+      email: 'serie2@salifz.test',
+      password: 'MotDePasse2026',
+      username: 'serie2',
+      displayName: 'Serie deux',
+    });
+
+    await user.updateStreak();
+    const premier = user.gamification.currentStreak;
+    await user.updateStreak();
+
+    expect(user.gamification.currentStreak).toBe(premier);
+  });
 });

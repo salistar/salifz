@@ -1,5 +1,7 @@
 {
   "active": "En cours",
+  "all": "Tous",
+  "challenge": "Defi",
   "challengeFriend": "Défier un ami",
   "claim": "Réclamer",
   "claimed": "Réclamé",
@@ -8,11 +10,19 @@
   "emptyBody": "En attendant, une révision compte toujours pour votre série.",
   "emptyDone": "Aucun défi terminé pour l’instant.",
   "emptyTitle": "Les défis du jour arrivent à minuit",
+  "expired": "Expire",
+  "familyDaily": "Renouveles chaque nuit a minuit.",
+  "familyFriend": "Lances par vos amis, ou par vous.",
+  "familyWeekly": "Renouveles chaque lundi.",
   "friend": "Entre amis",
+  "gems": "gemmes",
   "inProgress": "En cours",
+  "noneInFamily": "Aucun defi de ce type en ce moment.",
   "reward": "Récompense",
   "start": "Commencer",
+  "startedMsg": "Defi commence",
   "timeLeft": "{{time}} restant",
   "title": "Défis",
+  "wait": "Patientez",
   "weekly": "Hebdomadaire"
 }

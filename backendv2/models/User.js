@@ -487,40 +487,40 @@ userSchema.methods.addXP = async function(amount, source) {
   return this.gamification;
 };
 
-// Update streak
+/**
+ * Met a jour la serie de l'utilisateur.
+ *
+ * Il existait ici un second calcul de serie, independant de celui du modele
+ * `Streak`. Les deux ecrivaient dans des champs differents et divergeaient :
+ * l'en-tete lisait `gamification.currentStreak`, la page Serie lisait
+ * `Streak.current`, et les deux affichaient des nombres differents.
+ *
+ * Deux raisons de garder celui de `Streak` :
+ *   - il compare des jours calendaires (minuit a minuit) la ou celui-ci
+ *     comparait des tranches de 24 h, si bien qu'une session a 22 h suivie
+ *     d'une session a 9 h le lendemain ne comptait pas comme un jour de plus ;
+ *   - il tient l'historique, les gels et les jalons.
+ *
+ * Cette methode devient donc un simple relais : `Streak` calcule, `User`
+ * recopie. La recopie reste utile — le classement, les succes et l'en-tete
+ * lisent la valeur sur le document utilisateur sans requete supplementaire.
+ */
 userSchema.methods.updateStreak = async function() {
-  const now = new Date();
-  const lastActivity = this.gamification.lastActivityDate;
-  
-  if (!lastActivity) {
-    this.gamification.currentStreak = 1;
-  } else {
-    const diffDays = Math.floor((now - lastActivity) / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 0) {
-      // Same day, streak unchanged
-    } else if (diffDays === 1) {
-      // Consecutive day, increment streak
-      this.gamification.currentStreak += 1;
-    } else if (diffDays === 2 && this.gamification.streakFreezes.available > 0) {
-      // Missed one day but has freeze
-      this.gamification.streakFreezes.available -= 1;
-      this.gamification.streakFreezes.usedThisWeek += 1;
-      this.gamification.currentStreak += 1;
-    } else {
-      // Streak broken
-      this.gamification.currentStreak = 1;
-    }
+  const Streak = mongoose.model('Streak');
+
+  let streak = await Streak.findOne({ user: this._id });
+  if (!streak) {
+    streak = await Streak.create({ user: this._id });
   }
-  
-  // Update longest streak
-  if (this.gamification.currentStreak > this.gamification.longestStreak) {
-    this.gamification.longestStreak = this.gamification.currentStreak;
-  }
-  
-  this.gamification.lastActivityDate = now;
+
+  const resultat = await streak.checkAndUpdate();
+
+  this.gamification.currentStreak = resultat.current;
+  this.gamification.longestStreak = resultat.longest;
+  this.gamification.streakFreezes.available = resultat.freezesAvailable;
+  this.gamification.lastActivityDate = streak.lastActivityDate;
   await this.save();
-  
+
   return this.gamification.currentStreak;
 };
 
