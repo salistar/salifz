@@ -7,10 +7,13 @@
   "khatamComplete": "Le khatam « {{name}} » est achevé",
   "markAllRead": "Tout marquer comme lu",
   "markRead": "Lu",
+  "notification": "Notification",
   "recitationReviewed": "{{teacher}} a écouté votre récitation",
   "settings": "Réglages des notifications",
   "streakAtRisk": "Votre série s’arrête ce soir",
+  "thisWeek": "Cette semaine",
   "title": "Notifications",
   "today": "Aujourd’hui",
+  "unread": "{{count}} non lues",
   "yesterday": "Hier"
 }

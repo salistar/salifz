@@ -7,10 +7,13 @@
   "khatamComplete": "اكتملت ختمة «{{name}}»",
   "markAllRead": "تحديد الكل كمقروء",
   "markRead": "مقروء",
+  "notification": "إشعار",
   "recitationReviewed": "استمع {{teacher}} إلى تلاوتك",
   "settings": "إعدادات الإشعارات",
   "streakAtRisk": "تنتهي مواظبتك الليلة",
+  "thisWeek": "هذا الأسبوع",
   "title": "الإشعارات",
   "today": "اليوم",
+  "unread": "{{count}} غير مقروء",
   "yesterday": "أمس"
 }

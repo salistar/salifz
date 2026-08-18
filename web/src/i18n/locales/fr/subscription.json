@@ -1,5 +1,6 @@
 {
   "active": "Formule active",
+  "benefits": "Ce que la formule apporte",
   "current": "Formule actuelle",
   "empty": "Aucune formule publiée pour le moment.",
   "free": "Gratuite",
@@ -8,8 +9,10 @@
   "none": "Aucun abonnement payant",
   "perMonth": "{{price}} / mois",
   "perYear": "{{price}} / an",
+  "plan": "Formule",
   "renewsOn": "Renouvellement le {{date}}",
   "saveYearly": "{{percent}} % d’économie à l’année",
   "storeNote": "Les abonnements se souscrivent et se résilient depuis l’App Store ou Google Play. Le serveur n’accorde une formule qu’après validation du reçu.",
-  "title": "Abonnement"
+  "title": "Abonnement",
+  "whyNoPayment": "Aucun paiement ne part de cette page : les deux boutiques exigent que les contenus numeriques passent par leur facturation, et le serveur n'accorde une formule qu'apres avoir valide le recu."
 }

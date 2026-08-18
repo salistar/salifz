@@ -7,10 +7,13 @@
   "khatamComplete": "The khatam \"{{name}}\" is complete",
   "markAllRead": "Mark all as read",
   "markRead": "Read",
+  "notification": "Notification",
   "recitationReviewed": "{{teacher}} listened to your recitation",
   "settings": "Notification settings",
   "streakAtRisk": "Your streak ends tonight",
+  "thisWeek": "This week",
   "title": "Notifications",
   "today": "Today",
+  "unread": "{{count}} unread",
   "yesterday": "Yesterday"
 }

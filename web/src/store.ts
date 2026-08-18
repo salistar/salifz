@@ -27,6 +27,9 @@ export interface User {
     league?: string;
   };
   quranProgress?: { totalVersesMemorized?: number };
+  // `timestamps: true` sur le schema Mongoose : /users/me renvoie le
+  // document entier, la date d'inscription en fait partie.
+  createdAt?: string;
 }
 
 interface AuthState {
