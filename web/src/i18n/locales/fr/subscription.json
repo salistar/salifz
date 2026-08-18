@@ -1,0 +1,15 @@
+{
+  "active": "Formule active",
+  "current": "Formule actuelle",
+  "empty": "Aucune formule publiée pour le moment.",
+  "free": "Gratuite",
+  "manage": "Gérer l’abonnement",
+  "mobileOnly": "Souscription depuis l’application mobile.",
+  "none": "Aucun abonnement payant",
+  "perMonth": "{{price}} / mois",
+  "perYear": "{{price}} / an",
+  "renewsOn": "Renouvellement le {{date}}",
+  "saveYearly": "{{percent}} % d’économie à l’année",
+  "storeNote": "Les abonnements se souscrivent et se résilient depuis l’App Store ou Google Play. Le serveur n’accorde une formule qu’après validation du reçu.",
+  "title": "Abonnement"
+}

@@ -1,0 +1,18 @@
+{
+  "active": "En cours",
+  "challengeFriend": "Défier un ami",
+  "claim": "Réclamer",
+  "claimed": "Réclamé",
+  "daily": "Quotidien",
+  "done": "Terminés",
+  "emptyBody": "En attendant, une révision compte toujours pour votre série.",
+  "emptyDone": "Aucun défi terminé pour l’instant.",
+  "emptyTitle": "Les défis du jour arrivent à minuit",
+  "friend": "Entre amis",
+  "inProgress": "En cours",
+  "reward": "Récompense",
+  "start": "Commencer",
+  "timeLeft": "{{time}} restant",
+  "title": "Défis",
+  "weekly": "Hebdomadaire"
+}

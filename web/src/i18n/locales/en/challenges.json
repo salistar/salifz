@@ -1,0 +1,18 @@
+{
+  "active": "Active",
+  "challengeFriend": "Challenge a friend",
+  "claim": "Claim",
+  "claimed": "Claimed",
+  "daily": "Daily",
+  "done": "Completed",
+  "emptyBody": "Meanwhile, a review still counts toward your streak.",
+  "emptyDone": "No completed challenges yet.",
+  "emptyTitle": "Today’s challenges arrive at midnight",
+  "friend": "With friends",
+  "inProgress": "In progress",
+  "reward": "Reward",
+  "start": "Start",
+  "timeLeft": "{{time}} left",
+  "title": "Challenges",
+  "weekly": "Weekly"
+}

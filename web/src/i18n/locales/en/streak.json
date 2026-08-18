@@ -1,0 +1,19 @@
+{
+  "buyFreeze": "Buy a freeze",
+  "current_few": "{{count}} days in a row",
+  "current_many": "{{count}} days in a row",
+  "current_one": "{{count}} day in a row",
+  "current_other": "{{count}} days in a row",
+  "current_two": "{{count}} days in a row",
+  "days": "days",
+  "freezeExplain": "A freeze covers one missed day and keeps your streak alive. You have {{count}} left.",
+  "freezes": "Streak freezes",
+  "milestones": "Milestones",
+  "nothingToFreeze": "No day to recover right now.",
+  "record": "Record: {{count}} days",
+  "reminder": "Set the daily reminder",
+  "reset": "Streak reset — consistency matters more than the number.",
+  "title": "Streak",
+  "totalDays": "{{count}} days practiced",
+  "useFreeze": "Use a freeze"
+}

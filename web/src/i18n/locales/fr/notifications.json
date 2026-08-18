@@ -1,0 +1,16 @@
+{
+  "all": "Toutes",
+  "earlier": "Plus tôt",
+  "emptyBody": "Les retours de votre enseignant, les demandes d’amis et vos paliers apparaîtront ici.",
+  "emptyTitle": "Rien de neuf",
+  "friendRequest": "{{name}} souhaite vous ajouter",
+  "khatamComplete": "Le khatam « {{name}} » est achevé",
+  "markAllRead": "Tout marquer comme lu",
+  "markRead": "Lu",
+  "recitationReviewed": "{{teacher}} a écouté votre récitation",
+  "settings": "Réglages des notifications",
+  "streakAtRisk": "Votre série s’arrête ce soir",
+  "title": "Notifications",
+  "today": "Aujourd’hui",
+  "yesterday": "Hier"
+}

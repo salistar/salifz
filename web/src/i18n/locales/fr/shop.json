@@ -1,0 +1,16 @@
+{
+  "balance": "{{count}} gemmes",
+  "buy": "Acheter",
+  "categoryBundles": "Lots",
+  "categoryLook": "Apparence",
+  "categoryProgress": "Progression",
+  "claimReward": "Récupérer",
+  "confirmPurchase": "Acheter {{item}} pour {{price}} gemmes ?",
+  "dailyReward": "Récompense quotidienne disponible",
+  "empty": "La boutique est vide pour le moment.",
+  "howToEarn": "Comment gagner des gemmes",
+  "missingGems": "Il vous manque {{count}} gemmes",
+  "nextReward": "Prochaine récompense dans {{time}}",
+  "owned": "Possédé",
+  "title": "Boutique"
+}

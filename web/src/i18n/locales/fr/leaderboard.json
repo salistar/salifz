@@ -1,0 +1,16 @@
+{
+  "achievements": "Succès",
+  "emptyBadges": "Aucun succès disponible pour l’instant.",
+  "emptyRanking": "Le classement est encore vide — il se remplit avec l’activité.",
+  "endsIn": "Fin dans {{time}}",
+  "global": "Global",
+  "locked": "Verrouillé",
+  "myLeague": "Ma ligue",
+  "promotion": "Zone de promotion",
+  "relegation": "Zone de relégation",
+  "startsMonday": "Votre ligue démarre lundi",
+  "title": "Classement",
+  "unlockedOn": "Obtenu le {{date}}",
+  "weeklyXp": "{{xp}} XP cette semaine",
+  "you": "vous"
+}

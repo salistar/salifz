@@ -1,0 +1,16 @@
+{
+  "achievements": "Achievements",
+  "emptyBadges": "No achievements available yet.",
+  "emptyRanking": "The ranking is still empty — it fills with activity.",
+  "endsIn": "Ends in {{time}}",
+  "global": "Global",
+  "locked": "Locked",
+  "myLeague": "My league",
+  "promotion": "Promotion zone",
+  "relegation": "Relegation zone",
+  "startsMonday": "Your league starts Monday",
+  "title": "Leaderboard",
+  "unlockedOn": "Earned on {{date}}",
+  "weeklyXp": "{{xp}} XP this week",
+  "you": "you"
+}

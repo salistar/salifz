@@ -1,0 +1,22 @@
+{
+  "activeDays_one": "{{count}} active day",
+  "activeDays_other": "{{count}} active days",
+  "avgSession": "Average session length",
+  "bestHour": "Most productive hour",
+  "consistency": "Consistency",
+  "currentStreak": "Current streak",
+  "export": "Export my statistics",
+  "juzDone": "Juz completed",
+  "longestStreak": "Longest streak",
+  "noDuration": "No duration is shown: nothing in the app measures time spent.",
+  "ofQuran": "Of the Quran",
+  "period12w": "12 weeks",
+  "period1y": "1 year",
+  "period4w": "4 weeks",
+  "quranMap": "Quran map",
+  "retention": "Retention rate",
+  "thisWeek": "This week",
+  "title": "Statistics",
+  "tooEarly": "Your statistics sharpen after a week of practice.",
+  "versesMemorized": "Verses memorized"
+}

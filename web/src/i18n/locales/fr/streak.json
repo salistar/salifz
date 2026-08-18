@@ -1,0 +1,19 @@
+{
+  "buyFreeze": "Acheter un gel",
+  "current_few": "{{count}} jours d’affilée",
+  "current_many": "{{count}} jours d’affilée",
+  "current_one": "{{count}} jour d’affilée",
+  "current_other": "{{count}} jours d’affilée",
+  "current_two": "{{count}} jours d’affilée",
+  "days": "jours",
+  "freezeExplain": "Un gel couvre une journée sans pratique et empêche la série de retomber à zéro. Il vous en reste {{count}}.",
+  "freezes": "Gels de série",
+  "milestones": "Jalons",
+  "nothingToFreeze": "Aucune journée à récupérer pour l’instant.",
+  "record": "Record : {{count}} jours",
+  "reminder": "Régler le rappel quotidien",
+  "reset": "Série remise à zéro — la constance compte plus que le chiffre.",
+  "title": "Série",
+  "totalDays": "{{count}} jours pratiqués",
+  "useFreeze": "Utiliser un gel"
+}

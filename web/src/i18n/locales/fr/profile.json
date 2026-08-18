@@ -1,0 +1,13 @@
+{
+  "editProfile": "Modifier le profil",
+  "level": "Niveau",
+  "memberSince": "Membre depuis {{date}}",
+  "myHalaqat": "Mes halaqat",
+  "recentAchievements": "Succès récents",
+  "roleMember": "Membre",
+  "roleTeacher": "Enseignant",
+  "signOut": "Se déconnecter",
+  "title": "Profil",
+  "viewStats": "Voir mes statistiques",
+  "xp": "XP"
+}

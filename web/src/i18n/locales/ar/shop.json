@@ -1,0 +1,16 @@
+{
+  "balance": "{{count}} جوهرة",
+  "buy": "شراء",
+  "categoryBundles": "الحزم",
+  "categoryLook": "المظهر",
+  "categoryProgress": "التقدّم",
+  "claimReward": "استلام",
+  "confirmPurchase": "شراء {{item}} مقابل {{price}} جوهرة؟",
+  "dailyReward": "المكافأة اليومية متاحة",
+  "empty": "المتجر فارغ حالياً.",
+  "howToEarn": "كيف تكسب الجواهر",
+  "missingGems": "ينقصك {{count}} جوهرة",
+  "nextReward": "المكافأة القادمة بعد {{time}}",
+  "owned": "مملوك",
+  "title": "المتجر"
+}

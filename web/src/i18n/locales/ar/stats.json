@@ -1,0 +1,22 @@
+{
+  "activeDays_one": "يوم نشط واحد",
+  "activeDays_other": "{{count}} أيام نشطة",
+  "avgSession": "متوسط مدة الجلسة",
+  "bestHour": "أفضل ساعة للحفظ",
+  "consistency": "الانتظام",
+  "currentStreak": "المواظبة الحالية",
+  "export": "تصدير إحصائياتي",
+  "juzDone": "الأجزاء المكتملة",
+  "longestStreak": "أطول مواظبة",
+  "noDuration": "لا تُعرض أي مدة: لا شيء في التطبيق يقيس الوقت المستغرق.",
+  "ofQuran": "من القرآن",
+  "period12w": "12 أسبوعاً",
+  "period1y": "سنة",
+  "period4w": "4 أسابيع",
+  "quranMap": "خريطة القرآن",
+  "retention": "نسبة الاحتفاظ",
+  "thisWeek": "هذا الأسبوع",
+  "title": "الإحصائيات",
+  "tooEarly": "تتضح إحصائياتك بعد أسبوع من الممارسة.",
+  "versesMemorized": "الآيات المحفوظة"
+}

@@ -1,0 +1,16 @@
+{
+  "all": "All",
+  "earlier": "Earlier",
+  "emptyBody": "Your teacher’s feedback, friend requests and milestones will appear here.",
+  "emptyTitle": "Nothing new",
+  "friendRequest": "{{name}} wants to add you",
+  "khatamComplete": "The khatam \"{{name}}\" is complete",
+  "markAllRead": "Mark all as read",
+  "markRead": "Read",
+  "recitationReviewed": "{{teacher}} listened to your recitation",
+  "settings": "Notification settings",
+  "streakAtRisk": "Your streak ends tonight",
+  "title": "Notifications",
+  "today": "Today",
+  "yesterday": "Yesterday"
+}

@@ -1,0 +1,15 @@
+{
+  "active": "Active plan",
+  "current": "Current plan",
+  "empty": "No plan published yet.",
+  "free": "Free",
+  "manage": "Manage subscription",
+  "mobileOnly": "Subscribe from the mobile app.",
+  "none": "No paid subscription",
+  "perMonth": "{{price}} / month",
+  "perYear": "{{price}} / year",
+  "renewsOn": "Renews on {{date}}",
+  "saveYearly": "Save {{percent}}% yearly",
+  "storeNote": "Subscriptions are purchased and cancelled in the App Store or Google Play. The server grants a plan only after receipt validation.",
+  "title": "Subscription"
+}

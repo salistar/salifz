@@ -1,0 +1,16 @@
+{
+  "balance": "{{count}} gems",
+  "buy": "Buy",
+  "categoryBundles": "Bundles",
+  "categoryLook": "Appearance",
+  "categoryProgress": "Progress",
+  "claimReward": "Claim",
+  "confirmPurchase": "Buy {{item}} for {{price}} gems?",
+  "dailyReward": "Daily reward available",
+  "empty": "The shop is empty for now.",
+  "howToEarn": "How to earn gems",
+  "missingGems": "You need {{count}} more gems",
+  "nextReward": "Next reward in {{time}}",
+  "owned": "Owned",
+  "title": "Shop"
+}

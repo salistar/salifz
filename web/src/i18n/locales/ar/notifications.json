@@ -1,0 +1,16 @@
+{
+  "all": "الكل",
+  "earlier": "سابقاً",
+  "emptyBody": "ستظهر هنا ملاحظات معلّمك وطلبات الأصدقاء وإنجازاتك.",
+  "emptyTitle": "لا جديد",
+  "friendRequest": "يريد {{name}} إضافتك",
+  "khatamComplete": "اكتملت ختمة «{{name}}»",
+  "markAllRead": "تحديد الكل كمقروء",
+  "markRead": "مقروء",
+  "recitationReviewed": "استمع {{teacher}} إلى تلاوتك",
+  "settings": "إعدادات الإشعارات",
+  "streakAtRisk": "تنتهي مواظبتك الليلة",
+  "title": "الإشعارات",
+  "today": "اليوم",
+  "yesterday": "أمس"
+}

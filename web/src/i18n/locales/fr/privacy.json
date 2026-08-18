@@ -1,0 +1,23 @@
+{
+  "cndp": "Traitement déclaré auprès de la CNDP conformément à la loi 09-08.",
+  "contact": "Contact",
+  "intro": "Ce document décrit ce que Salifz enregistre et ce qu’il n’enregistre pas. Il correspond au comportement réel du code, pas à une intention.",
+  "notStored": "Ce qui n’est pas enregistré",
+  "notStoredLocation": "Aucune position : la qibla et les horaires se calculent sur votre appareil.",
+  "notStoredSession": "Aucune durée de session : rien dans l’application ne mesure le temps passé.",
+  "notStoredTracking": "Aucun traceur publicitaire, aucun partage de données à des fins commerciales.",
+  "retention": "Durée de conservation",
+  "rightCorrect": "Corriger vos informations de profil à tout moment.",
+  "rightDelete": "Supprimer votre compte, ce qui efface vos données de progression et vos récitations.",
+  "rightExport": "Exporter l’ensemble de vos données depuis les réglages, dans un format lisible.",
+  "rights": "Vos droits",
+  "sources": "Sources externes",
+  "sourcesBody": "Le texte coranique et les traductions proviennent de quran.com. Les récitations audio sont servies par islamic.network.",
+  "stored": "Ce qui est enregistré",
+  "storedAccount": "Votre adresse email, votre nom d’utilisateur et, si vous le renseignez, votre nom affiché.",
+  "storedProgress": "Votre progression : versets mémorisés, révisions, séries, XP et gemmes.",
+  "storedRecitations": "Les récitations que vous envoyez à un enseignant, jusqu’à ce que vous les supprimiez.",
+  "storedSettings": "Vos réglages d’application.",
+  "title": "Confidentialité",
+  "updated": "Mise à jour le {{date}}"
+}

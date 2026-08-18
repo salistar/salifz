@@ -1,0 +1,16 @@
+{
+  "achievements": "الإنجازات",
+  "emptyBadges": "لا توجد إنجازات متاحة حالياً.",
+  "emptyRanking": "الترتيب فارغ بعد — يمتلئ مع النشاط.",
+  "endsIn": "تنتهي بعد {{time}}",
+  "global": "عام",
+  "locked": "مقفل",
+  "myLeague": "دوريتي",
+  "promotion": "منطقة الصعود",
+  "relegation": "منطقة الهبوط",
+  "startsMonday": "تبدأ دوريتك يوم الاثنين",
+  "title": "الترتيب",
+  "unlockedOn": "حُصل عليه في {{date}}",
+  "weeklyXp": "{{xp}} نقطة هذا الأسبوع",
+  "you": "أنت"
+}

@@ -1,0 +1,21 @@
+{
+  "asr": "Asr",
+  "asrSchool": "École pour Asr",
+  "chooseCity": "Choisir une ville",
+  "dhuhr": "Dhuhr",
+  "distance": "{{km}} km de La Mecque",
+  "fajr": "Fajr",
+  "inTime": "dans {{time}}",
+  "isha": "Isha",
+  "maghrib": "Maghrib",
+  "method": "Méthode de calcul",
+  "next": "Prochaine prière",
+  "noCompass": "Boussole indisponible. La direction est approximative.",
+  "privacy": "Les heures de prière et la direction de la qibla se calculent à partir de votre position. Elle n’est ni enregistrée ni transmise.",
+  "qibla": "Qibla",
+  "qiblaAngle": "{{deg}}° depuis le nord",
+  "reminders": "Rappels de prière",
+  "sunrise": "Shourouq",
+  "title": "Prière & Qibla",
+  "useLocation": "Utiliser ma position"
+}
