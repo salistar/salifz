@@ -1,103 +1,228 @@
-/* Thème Salifz — mêmes jetons sémantiques que l'application mobile,
-   pour que les deux interfaces restent reconnaissables comme un seul produit. */
+/* ==========================================================================
+   Salifz — « émeraude anobli »
+
+   L'émeraude change de nature : de peinture, elle devient pierre. Vert profond
+   et sourd dans les fonds ; l'émeraude vive n'apparaît plus qu'en signal
+   d'action et de progression. L'or est un filet, jamais une surface.
+
+   Référence : un mushaf relié en maroquin vert sombre, tranche dorée,
+   encadrements au filet fin. Pas un décor oriental de catalogue.
+
+   Aucune valeur de couleur n'est écrite ailleurs que dans ce fichier.
+   L'ancienne palette est conservée dans theme.css.avant-redesign.
+   ========================================================================== */
+
+/* --- Thème clair — pensé au même niveau que le sombre ---------------------
+   Beaucoup mémorisent le matin. Le clair est ivoire chaud, jamais blanc pur
+   en fond, avec des filets d'or plus soutenus pour compenser la perte de
+   contraste. */
 :root {
-  --background: #f5f5f5;
-  --background-alt: #f0f0f0;
+  --bg: #fbf8f1;
+  --bg-elevated: #ffffff;
   --surface: #ffffff;
-  --surface-alt: #fafafa;
-  --canvas-deep: #1a1a2e;
-  --text: #333333;
-  --text-secondary: #666666;
-  --text-muted: #9e9e9e;
-  --on-deep: #ffffff;
-  --primary: #4caf50;
-  --primary-dark: #2e7d32;
-  --primary-soft: #e8f5e9;
-  --accent: #667eea;
-  --error: #f44336;
-  --error-soft: #ffebee;
-  --warning: #ff9800;
-  --border: #e0e0e0;
-  --divider: #eeeeee;
-  --radius: 12px;
+  --surface-hover: #f4efe3;
+  --surface-sunken: #f0eadc;
+  --border: #e7decb;
+  --border-strong: #d6c9ae;
+  --border-gold: rgba(168, 135, 28, 0.35);
+  --text: #0b1f17;
+  --text-muted: #4a5d54;
+  --text-faint: #8a7f6a;
+  --text-on-brand: #ffffff;
+  --brand: #0f7b5a;
+  --brand-hover: #0c6449;
+  --brand-sunken: #149a70;
+  --accent: #a8871c;
+  --accent-text: #8a6e12;
+  --danger: #a63a2e;
+  --warning: #b4720f;
+  --info: #2e5e8a;
+  --focus-ring: #0f7b5a;
+  --overlay: rgba(11, 31, 23, 0.45);
+
+  --font-display: 'Amiri', Georgia, serif;
+  --font-ui: 'IBM Plex Sans Arabic', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-data: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-quran: 'KFGQPC HAFS Uthmanic Script', 'Amiri Quran', 'Scheherazade New', serif;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius: var(--radius-lg);
+
+  --e1: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --e2: 0 4px 16px rgba(0, 0, 0, 0.10);
+  --e3: 0 12px 32px rgba(0, 0, 0, 0.14);
+
+  --content-max: 880px;
+  --reading-max: 680px;
+  --mushaf-max: 720px;
+
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Compatibilité : ces alias laissent les écrans non encore repris
+     fonctionner pendant la reprise progressive. Ils disparaîtront. */
+  --background: var(--bg);
+  --background-alt: var(--bg-elevated);
+  --surface-alt: var(--surface-hover);
+  --canvas-deep: var(--surface-sunken);
+  --text-secondary: var(--text-muted);
+  --on-deep: var(--text-on-brand);
+  --primary: var(--brand);
+  --primary-dark: var(--brand-sunken);
+  --primary-soft: var(--surface-hover);
+  --error: var(--danger);
+  --error-soft: var(--surface-hover);
+  --divider: var(--border);
+  --ombre: var(--e1);
 }
 
 :root[data-theme='dark'] {
-  --background: #12121c;
-  --background-alt: #1a1a2e;
-  --surface: #1e1e32;
-  --surface-alt: #252540;
-  --canvas-deep: #12121c;
-  --text: #f5f5f5;
-  --text-secondary: #b0b6c4;
-  --text-muted: #7a8194;
-  --primary: #66bb6a;
-  --primary-dark: #43a047;
-  --primary-soft: #1f3325;
-  --accent: #8b9cf7;
-  --error: #ef5350;
-  --error-soft: #3a1f1f;
-  --warning: #ffa726;
-  --border: #33344a;
-  --divider: #2a2b3d;
+  --bg: #06120e;
+  --bg-elevated: #0a1b15;
+  --surface: #0f251d;
+  --surface-hover: #163227;
+  --surface-sunken: #040d0a;
+  --border: #1e4034;
+  --border-strong: #2a5442;
+  --border-gold: rgba(201, 162, 39, 0.28);
+  --text: #f4efe3;
+  --text-muted: #9fb3a9;
+  --text-faint: #6c8479;
+  --text-on-brand: #04120c;
+  --brand: #149a70;
+  --brand-hover: #34c08a;
+  --brand-sunken: #0f7b5a;
+  --accent: #c9a227;
+  --accent-text: #e8ce7a;
+  --danger: #c4503f;
+  --warning: #d98e23;
+  --info: #5b92c4;
+  --focus-ring: #34c08a;
+  --overlay: rgba(4, 13, 10, 0.72);
+
+  --e1: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --e2: 0 4px 16px rgba(0, 0, 0, 0.28);
+  --e3: 0 12px 32px rgba(0, 0, 0, 0.34);
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  background: var(--background);
+  background: var(--bg);
   color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  transition: background 0.2s, color 0.2s;
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 24px;
+  transition: background 200ms var(--ease), color 200ms var(--ease);
 }
 
-/* Le texte coranique se lit de droite à gauche et demande de l'interligne. */
-.arabic { direction: rtl; font-size: 1.6rem; line-height: 2.4; }
+/* --- Texte coranique ------------------------------------------------------
+   Interligne jamais inférieur à 2.0 : en dessous, les signes de waqf, la
+   hamza et les voyelles superposées se chevauchent. Vérifié sur اللَّهِ et sur
+   les versets d'Al-Baqara portant un signe de sajda.
 
-button { font: inherit; cursor: pointer; border: none; border-radius: 8px; }
-button:disabled { opacity: 0.45; cursor: not-allowed; }
-input, textarea, select {
-  font: inherit; padding: 10px 12px; border-radius: 8px;
-  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+   Toujours en RTL, quelle que soit la locale de l'interface : un francophone
+   lisant l'application en français voit le mushaf dans son sens. */
+.quran, .arabic {
+  font-family: var(--font-quran);
+  direction: rtl;
+  text-align: right;
+  font-size: 26px;
+  line-height: 2.15;
+  font-feature-settings: 'kern' 1, 'liga' 1;
 }
-a { color: var(--primary); }
+.quran-lg { font-size: 34px; line-height: 2.0; }
+.quran-sm { font-size: 20px; line-height: 2.2; }
 
+/* --- Échelle typographique ------------------------------------------------ */
+.display-xl { font-family: var(--font-display); font-size: 56px; line-height: 60px; font-weight: 700; }
+.display-lg { font-family: var(--font-display); font-size: 40px; line-height: 46px; font-weight: 700; }
+.display-md { font-family: var(--font-display); font-size: 30px; line-height: 38px; font-weight: 600; }
+.title-lg   { font-size: 22px; line-height: 30px; font-weight: 600; }
+.title-md   { font-size: 18px; line-height: 26px; font-weight: 600; }
+.body-lg    { font-size: 17px; line-height: 28px; }
+.caption    { font-size: 13px; line-height: 18px; color: var(--text-muted); }
+.overline {
+  font-size: 11px; line-height: 14px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint);
+}
+.data     { font-family: var(--font-data); font-size: 15px; line-height: 20px; font-weight: 500;
+            font-variant-numeric: tabular-nums; }
+.data-xl  { font-family: var(--font-data); font-size: 36px; line-height: 40px; font-weight: 500;
+            font-variant-numeric: tabular-nums; }
+
+/* L'arabe se lit plus petit à hauteur d'œil équivalente, et l'arabe fin se
+   délave sur fond sombre. */
+:root[lang='ar'] body { font-size: 16px; }
+:root[lang='ar'][data-theme='dark'] body { font-weight: 500; }
+
+/* --- Surfaces ------------------------------------------------------------- */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px;
-}
-.btn-primary { background: var(--primary); color: var(--on-deep); padding: 10px 18px; font-weight: 600; }
-.btn-ghost { background: var(--primary-soft); color: var(--primary-dark); padding: 8px 14px; font-weight: 600; }
-.btn-danger { background: var(--error-soft); color: var(--error); padding: 8px 14px; font-weight: 600; }
-
-/* Le focus doit rester visible : le masquer rend l'application inutilisable au clavier. */
-:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-
-/* ---------------------------------------------------------------------------
-   Profondeur et réactivité
-   --------------------------------------------------------------------------- */
-
-/* Une ombre très légère détache les cartes du fond sans créer de relief : en
-   thème sombre, une ombre portée classique est invisible, d'où la variable. */
-:root { --ombre: 0 1px 2px rgba(0, 0, 0, 0.05); }
-:root[data-theme='dark'] { --ombre: 0 1px 3px rgba(0, 0, 0, 0.4); }
-
-.card { box-shadow: var(--ombre); }
-
-/* Carte cliquable : le survol doit se voir sans déplacer le texte, sinon la
-   ligne visée bouge sous le curseur. */
-.carte-lien { transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; }
-.carte-lien:hover {
-  border-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
+  box-shadow: var(--e1);
 }
 
-/* Respecter le réglage système : une animation peut déclencher un malaise
-   vestibulaire, et l'information ne dépend jamais du mouvement ici. */
+/* Le filet d'or marque le contenu qui compte — mushaf, verset du jour, khatam —
+   et lui seul. S'il apparaît partout, il ne signale plus rien. */
+.sacred-card {
+  background: var(--surface);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--e2);
+}
+
+.carte-lien { transition: border-color 150ms var(--ease), box-shadow 150ms var(--ease), transform 150ms var(--ease); }
+.carte-lien:hover { border-color: var(--brand); box-shadow: var(--e2); transform: translateY(-2px); }
+
+/* --- Contrôles ------------------------------------------------------------ */
+button { font: inherit; cursor: pointer; border: none; border-radius: var(--radius-sm); min-height: 40px; }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-primary {
+  background: var(--brand); color: var(--text-on-brand);
+  padding: 10px 18px; font-weight: 600;
+  transition: background 120ms var(--ease);
+}
+.btn-primary:hover:not(:disabled) { background: var(--brand-hover); }
+
+.btn-ghost {
+  background: transparent; color: var(--brand);
+  border: 1px solid var(--border-strong);
+  padding: 9px 16px; font-weight: 600;
+}
+.btn-ghost:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--brand); }
+
+.btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 9px 16px; font-weight: 600; }
+
+input, textarea, select {
+  font: inherit; padding: 10px 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  min-height: 40px;
+}
+input::placeholder { color: var(--text-faint); }
+
+a { color: var(--brand); }
+
+/* Le focus est visible et jamais supprimé : le masquer rend l'application
+   inutilisable au clavier. */
+:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+/* --- RTL ------------------------------------------------------------------
+   Aucune propriété physique `left` / `right` : uniquement des propriétés
+   logiques, pour que la bascule arabe n'exige aucune condition dans le code. */
+[dir='rtl'] .chevron { transform: scaleX(-1); }
+
+/* --- Mouvement ------------------------------------------------------------
+   Une animation peut déclencher un malaise vestibulaire, et aucune
+   information ici ne dépend du mouvement. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -106,23 +231,12 @@ a { color: var(--primary); }
   .carte-lien:hover { transform: none; }
 }
 
-/* Le texte arabe garde sa taille propre : les tailles d'interface le
-   rendraient illisible avec ses diacritiques. */
-.arabic { font-family: 'Amiri', 'Scheherazade New', 'Traditional Arabic', serif; }
-
-/* Cible tactile : 44 px est le minimum praticable au doigt. Les boutons de
-   l'interface descendaient à 32 px de haut. */
-button, .btn-primary, .btn-ghost, .btn-danger { min-height: 40px; }
-
-/* Un lien de contournement pour le clavier : sans lui, atteindre le contenu
-   depuis l'en-tête demande de traverser toute la barre latérale. */
+/* Lien de contournement : sans lui, atteindre le contenu au clavier impose de
+   traverser les dix-huit liens de la barre latérale. */
 .saut-contenu {
-  position: absolute;
-  inset-inline-start: -9999px;
-  z-index: 100;
-  background: var(--surface);
-  color: var(--text);
-  padding: 10px 16px;
-  border-radius: 8px;
+  position: absolute; inset-inline-start: -9999px; z-index: 100;
+  background: var(--surface); color: var(--text);
+  padding: 10px 16px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border-gold);
 }
 .saut-contenu:focus { inset-inline-start: 12px; top: 12px; }

@@ -1,65 +1,75 @@
 /**
- * Coquille du tableau de bord — en-tête, barre latérale, pied de page.
+ * Coquille du tableau de bord — Salifz
  *
- * La navigation était auparavant une seule rangée de liens dans l'en-tête.
- * À onze entrées elle débordait déjà ; à dix-huit elle devenait illisible. Une
- * barre latérale groupée par thème permet de croître sans se réorganiser, et
- * laisse à l'en-tête ce qu'il fait bien : l'identité, l'état du compte et les
- * actions permanentes.
+ * Ce qui change par rapport à la version précédente, et pourquoi :
  *
- * Sur écran étroit la barre latérale devient un tiroir : la superposer au
- * contenu vaut mieux que de comprimer les deux.
+ * **Le bandeau vert plein disparaît.** Il occupait toute la largeur en aplat
+ * criard, écrasait la page et n'évoquait rien du sujet. L'en-tête devient une
+ * surface élevée discrète, tenue par un filet d'or : la couleur ne sert plus
+ * de décor, elle redevient un signal.
+ *
+ * **Les emojis disparaissent.** Ils se rendaient différemment sur chaque
+ * plateforme et ne disaient rien à un lecteur d'écran — « livre vert fermé »
+ * n'aide personne à comprendre qu'il s'agit du mushaf.
+ *
+ * **Le contenu est contraint.** Le débordement horizontal constaté venait de
+ * l'absence de largeur maximale.
  */
 
 import { ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Logo } from './Artwork';
 import { useAuth, useTheme } from '../store';
+import { HizbStar } from './Ornements';
+import {
+  iconesNavigation,
+  IconeSerie,
+  IconeGemmes,
+  IconeCoeurs,
+} from './Icones';
 
 interface Entree {
   to: string;
   label: string;
-  icone: string;
 }
 
 const GROUPES: { titre: string; entrees: Entree[] }[] = [
   {
     titre: 'Apprendre',
     entrees: [
-      { to: '/accueil', label: 'Accueil', icone: '🏠' },
-      { to: '/lecons', label: 'Leçons', icone: '📚' },
-      { to: '/revision', label: 'Révision', icone: '🔄' },
-      { to: '/mushaf', label: 'Mushaf', icone: '📗' },
-      { to: '/verset-du-jour', label: 'Verset du jour', icone: '✨' },
+      { to: '/accueil', label: 'Accueil' },
+      { to: '/lecons', label: 'Leçons' },
+      { to: '/revision', label: 'Révision' },
+      { to: '/mushaf', label: 'Mushaf' },
+      { to: '/verset-du-jour', label: 'Verset du jour' },
     ],
   },
   {
     titre: 'Communauté',
     entrees: [
-      { to: '/halaqat', label: 'Halaqat', icone: '🕌' },
-      { to: '/khatam', label: 'Khatam', icone: '📖' },
-      { to: '/amis', label: 'Amis', icone: '👥' },
-      { to: '/recitations', label: 'Récitations', icone: '🎙️' },
+      { to: '/halaqat', label: 'Halaqat' },
+      { to: '/khatam', label: 'Khatam' },
+      { to: '/amis', label: 'Amis' },
+      { to: '/recitations', label: 'Récitations' },
     ],
   },
   {
     titre: 'Progression',
     entrees: [
-      { to: '/classement', label: 'Classement', icone: '🏆' },
-      { to: '/defis', label: 'Défis', icone: '🎯' },
-      { to: '/serie', label: 'Série', icone: '🔥' },
-      { to: '/statistiques', label: 'Statistiques', icone: '📊' },
-      { to: '/boutique', label: 'Boutique', icone: '🛍️' },
+      { to: '/classement', label: 'Classement' },
+      { to: '/defis', label: 'Défis' },
+      { to: '/serie', label: 'Série' },
+      { to: '/statistiques', label: 'Statistiques' },
+      { to: '/boutique', label: 'Boutique' },
     ],
   },
   {
     titre: 'Compte',
     entrees: [
-      { to: '/priere', label: 'Prière & Qibla', icone: '🧭' },
-      { to: '/notifications', label: 'Notifications', icone: '🔔' },
-      { to: '/abonnement', label: 'Abonnement', icone: '💳' },
-      { to: '/profil', label: 'Profil', icone: '👤' },
-      { to: '/reglages', label: 'Réglages', icone: '⚙️' },
+      { to: '/priere', label: 'Prière & Qibla' },
+      { to: '/notifications', label: 'Notifications' },
+      { to: '/abonnement', label: 'Abonnement' },
+      { to: '/profil', label: 'Profil' },
+      { to: '/reglages', label: 'Réglages' },
     ],
   },
 ];
@@ -70,90 +80,103 @@ export default function Shell({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   const [tiroirOuvert, setTiroirOuvert] = useState(false);
 
-  // Refermer le tiroir après navigation : le laisser ouvert masquerait la page
-  // que l'on vient d'ouvrir.
   useEffect(() => setTiroirOuvert(false), [pathname]);
 
   const g: any = user?.gamification ?? {};
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Premier élément focusable de la page : sans lui, atteindre le contenu
-          au clavier impose de traverser les dix-huit liens de la barre. */}
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
       <a href="#contenu" className="saut-contenu">Aller au contenu</a>
 
+      {/* --- En-tête : surface élevée, filet d'or, plus d'aplat vert -------- */}
       <header
         style={{
           position: 'sticky',
           top: 0,
           zIndex: 30,
-          background: 'var(--primary-dark)',
-          color: 'var(--on-deep)',
+          background: 'var(--bg-elevated)',
+          borderBottom: '1px solid var(--border-gold)',
           display: 'flex',
           alignItems: 'center',
           gap: 12,
-          padding: '10px 16px',
+          padding: '0 16px',
+          height: 56,
         }}
       >
         <button
-          className="bascule-tiroir"
+          className="bascule-tiroir btn-ghost"
           onClick={() => setTiroirOuvert((v) => !v)}
           aria-expanded={tiroirOuvert}
           aria-label="Afficher la navigation"
-          style={{ display: 'none', background: 'rgba(255,255,255,0.18)', color: 'inherit', padding: '8px 12px' }}
+          style={{ display: 'none', padding: '6px 10px', minHeight: 36 }}
         >
-          ☰
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
+          </svg>
         </button>
 
         <Link
           to="/accueil"
-          style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'inherit', textDecoration: 'none' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'var(--text)', textDecoration: 'none' }}
         >
-          <Logo size={32} />
-          <strong style={{ fontSize: 18 }}>Salifz</strong>
+          <HizbStar size={26} quarters={4} color="var(--accent)" />
+          <strong style={{ fontFamily: 'var(--font-display)', fontSize: 20, letterSpacing: '0.01em' }}>
+            Salifz
+          </strong>
         </Link>
 
         <div style={{ flex: 1 }} />
 
-        {/* Les mêmes trois compteurs que le mobile affiche en permanence, pour
-            que l'état du compte se lise sans changer d'écran. */}
-        <div className="compteurs" style={{ display: 'flex', gap: 8 }}>
-          <Compteur icone="🔥" valeur={g.currentStreak ?? 0} titre="Série" />
-          <Compteur icone="💎" valeur={g.gems ?? 0} titre="Gemmes" />
-          <Compteur icone="❤️" valeur={`${g.hearts?.current ?? 0}/${g.hearts?.max ?? 5}`} titre="Cœurs" />
+        {/* Les compteurs deviennent des pastilles discrètes. Chaque valeur a sa
+            couleur de rôle : la série en safran, les gemmes en or, les cœurs en
+            grenat — l'émeraude reste réservée à l'action. */}
+        <div className="compteurs" style={{ display: 'flex', gap: 6 }}>
+          <Compteur icone={<IconeSerie size={15} />} valeur={g.currentStreak ?? 0} titre="Série" couleur="var(--warning)" />
+          <Compteur icone={<IconeGemmes size={15} />} valeur={g.gems ?? 0} titre="Gemmes" couleur="var(--accent-text)" />
+          <Compteur
+            icone={<IconeCoeurs size={15} />}
+            valeur={`${g.hearts?.current ?? 0}/${g.hearts?.max ?? 5}`}
+            titre="Cœurs"
+            couleur="var(--danger)"
+          />
         </div>
 
         <button
+          className="btn-ghost"
           onClick={toggle}
           aria-label={theme === 'light' ? 'Passer en thème sombre' : 'Passer en thème clair'}
-          style={{ background: 'rgba(255,255,255,0.18)', color: 'inherit', padding: '8px 12px' }}
+          style={{ padding: '6px 10px', minHeight: 36 }}
         >
-          {theme === 'light' ? '🌙' : '☀️'}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            {theme === 'light' ? (
+              <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z" />
+            ) : (
+              <>
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2.5v2M12 19.5v2M21.5 12h-2M4.5 12h-2M18.4 5.6l-1.4 1.4M7 17l-1.4 1.4M18.4 18.4L17 17M7 7 5.6 5.6" strokeLinecap="round" />
+              </>
+            )}
+          </svg>
         </button>
 
         <Link
           to="/profil"
-          style={{ color: 'inherit', textDecoration: 'none', opacity: 0.92 }}
           className="nom-compte"
+          style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: 14 }}
         >
           {user?.displayName ?? user?.username}
         </Link>
 
-        <button
-          onClick={logout}
-          style={{ background: 'rgba(255,255,255,0.18)', color: 'inherit', padding: '8px 14px' }}
-        >
+        <button className="btn-ghost" onClick={logout} style={{ padding: '6px 12px', minHeight: 36 }}>
           Quitter
         </button>
       </header>
 
       <div style={{ flex: 1, display: 'flex', alignItems: 'stretch' }}>
-        {/* Voile du tiroir : cliquer à côté referme, ce qu'on attend d'un
-            panneau superposé. */}
         {tiroirOuvert && (
           <div
             onClick={() => setTiroirOuvert(false)}
-            style={{ position: 'fixed', inset: 0, top: 56, background: 'rgba(0,0,0,0.45)', zIndex: 18 }}
+            style={{ position: 'fixed', inset: 0, top: 56, background: 'var(--overlay)', zIndex: 18 }}
           />
         )}
 
@@ -161,30 +184,24 @@ export default function Shell({ children }: { children: ReactNode }) {
           className={tiroirOuvert ? 'barre-laterale ouverte' : 'barre-laterale'}
           aria-label="Navigation principale"
           style={{
-            width: 232,
+            width: 248,
             flexShrink: 0,
-            background: 'var(--surface)',
+            background: 'var(--bg-elevated)',
+            // Propriété logique : la barre passe à droite en arabe sans
+            // condition dans le code.
             borderInlineEnd: '1px solid var(--border)',
             padding: '16px 10px',
             overflowY: 'auto',
           }}
         >
           {GROUPES.map((groupe) => (
-            <nav key={groupe.titre} style={{ marginBottom: 18 }}>
-              <h2
-                style={{
-                  fontSize: 11,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.07em',
-                  color: 'var(--text-muted)',
-                  margin: '0 0 6px 12px',
-                }}
-              >
-                {groupe.titre}
-              </h2>
+            <nav key={groupe.titre} style={{ marginBottom: 20 }}>
+              <h2 className="overline" style={{ margin: '0 0 6px 12px' }}>{groupe.titre}</h2>
 
               {groupe.entrees.map((e) => {
                 const actif = pathname === e.to || (e.to !== '/accueil' && pathname.startsWith(e.to));
+                const Icone = iconesNavigation[e.to as keyof typeof iconesNavigation];
+
                 return (
                   <Link
                     key={e.to}
@@ -195,14 +212,17 @@ export default function Shell({ children }: { children: ReactNode }) {
                       alignItems: 'center',
                       gap: 10,
                       padding: '9px 12px',
-                      borderRadius: 8,
+                      borderRadius: 'var(--radius-sm)',
                       textDecoration: 'none',
                       fontWeight: actif ? 600 : 400,
-                      color: actif ? 'var(--primary-dark)' : 'var(--text-secondary)',
-                      background: actif ? 'var(--primary-soft)' : 'transparent',
+                      color: actif ? 'var(--brand-hover)' : 'var(--text-muted)',
+                      background: actif ? 'var(--surface-hover)' : 'transparent',
+                      // Le filet d'or marque l'entrée active, du côté du début
+                      // de ligne : il passe à droite en arabe.
+                      borderInlineStart: actif ? '2px solid var(--accent)' : '2px solid transparent',
                     }}
                   >
-                    <span aria-hidden="true" style={{ width: 20, textAlign: 'center' }}>{e.icone}</span>
+                    {Icone && <Icone size={19} />}
                     {e.label}
                   </Link>
                 );
@@ -211,48 +231,42 @@ export default function Shell({ children }: { children: ReactNode }) {
           ))}
         </aside>
 
-        <main id="contenu" tabIndex={-1} style={{ flex: 1, minWidth: 0, padding: 20 }}>
-          <div style={{ maxWidth: 1000, margin: '0 auto' }}>{children}</div>
+        <main
+          id="contenu"
+          tabIndex={-1}
+          style={{ flex: 1, minWidth: 0, padding: 32, overflowX: 'hidden' }}
+        >
+          <div style={{ maxWidth: 'var(--content-max)', margin: '0 auto' }}>{children}</div>
         </main>
       </div>
 
       <footer
         style={{
           borderTop: '1px solid var(--border)',
-          background: 'var(--surface)',
+          background: 'var(--bg-elevated)',
           padding: '14px 20px',
           display: 'flex',
           flexWrap: 'wrap',
           gap: 12,
           alignItems: 'center',
-          color: 'var(--text-muted)',
-          fontSize: 13,
         }}
       >
-        <span>Salifz — instance locale</span>
+        <span className="caption">Salifz</span>
         <div style={{ flex: 1 }} />
-        <Link to="/confidentialite" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>
-          Confidentialité
-        </Link>
-        <Link to="/reglages" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>
-          Réglages
-        </Link>
-        <a
-          href="https://github.com/salistar/salifz"
-          style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}
-        >
-          Code source
-        </a>
+        <Link to="/confidentialite" className="caption" style={{ textDecoration: 'none' }}>Confidentialité</Link>
+        <Link to="/reglages" className="caption" style={{ textDecoration: 'none' }}>Réglages</Link>
       </footer>
 
       <style>{`
-        @media (max-width: 900px) {
+        @media (max-width: 1024px) {
           .bascule-tiroir { display: inline-flex !important; }
           .barre-laterale {
             position: fixed; top: 56px; bottom: 0; inset-inline-start: 0;
-            z-index: 19; transform: translateX(-105%); transition: transform .18s ease;
+            z-index: 19; transform: translateX(-105%); transition: transform 180ms var(--ease);
           }
-          .barre-laterale.ouverte { transform: translateX(0); }
+          [dir='rtl'] .barre-laterale { transform: translateX(105%); }
+          .barre-laterale.ouverte, [dir='rtl'] .barre-laterale.ouverte { transform: translateX(0); }
+          main { padding: 20px !important; }
         }
         @media (max-width: 620px) {
           .compteurs, .nom-compte { display: none !important; }
@@ -262,23 +276,38 @@ export default function Shell({ children }: { children: ReactNode }) {
   );
 }
 
-function Compteur({ icone, valeur, titre }: { icone: string; valeur: number | string; titre: string }) {
+function Compteur({
+  icone,
+  valeur,
+  titre,
+  couleur,
+}: {
+  icone: ReactNode;
+  valeur: number | string;
+  titre: string;
+  couleur: string;
+}) {
   return (
     <span
       title={titre}
+      // `aria-live` : la valeur change en cours de session (XP gagné, cœur
+      // perdu) et le changement doit être annoncé sans voler le focus.
+      aria-live="polite"
       style={{
         display: 'inline-flex',
         alignItems: 'center',
-        gap: 5,
-        background: 'rgba(255,255,255,0.18)',
-        borderRadius: 20,
+        gap: 6,
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
+        borderRadius: 'var(--radius-full, 999px)',
         padding: '5px 11px',
-        fontWeight: 600,
-        fontSize: 14,
+        color: couleur,
       }}
     >
-      <span aria-hidden="true">{icone}</span>
-      <span aria-label={titre}>{valeur}</span>
+      <span aria-hidden="true" style={{ display: 'flex' }}>{icone}</span>
+      <span className="data" style={{ color: 'var(--text)', fontSize: 14 }} aria-label={titre}>
+        {valeur}
+      </span>
     </span>
   );
 }
