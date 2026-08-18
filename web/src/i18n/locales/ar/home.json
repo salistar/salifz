@@ -1,0 +1,16 @@
+{
+  "greeting": "السلام عليكم، {{name}}",
+  "goalsLeft_one": "بقي {{count}} هدف اليوم",
+  "goalsLeft_other": "بقيت {{count}} أهداف اليوم",
+  "resume": "متابعة",
+  "resumeAt": "{{surah}} · الآية {{ayah}}",
+  "start": "ابدأ بسورة الفاتحة",
+  "todayGoals": "أهداف اليوم",
+  "goalMemorize": "احفظ {{count}} آيات جديدة",
+  "goalReview": "راجع {{count}} آية",
+  "goalLesson": "أكمل درساً",
+  "goalsDone": "تم بلوغ أهداف اليوم",
+  "nothingUrgent": "لا شيء عاجل اليوم — وقت مناسب للتقدّم.",
+  "toReview_one": "آية واحدة للمراجعة اليوم",
+  "toReview_other": "{{count}} آية للمراجعة اليوم"
+}

@@ -1,0 +1,21 @@
+{
+  "title": "Friends",
+  "mine": "My friends",
+  "requests": "Requests",
+  "search": "Search",
+  "searchPlaceholder": "Username",
+  "add": "Add",
+  "requestSent": "Request sent",
+  "accept": "Accept",
+  "decline": "Decline",
+  "remove": "Remove",
+  "encourage": "Encourage",
+  "encouraged": "Encouragement sent",
+  "online": "Online",
+  "offline": "Offline",
+  "level": "Level {{n}}",
+  "emptyTitle": "Your friends will appear here",
+  "emptyBody": "Search someone by username, or share yours.",
+  "copyUsername": "Copy my username",
+  "noRequests": "No pending requests."
+}

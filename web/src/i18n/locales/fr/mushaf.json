@@ -1,0 +1,17 @@
+{
+  "title": "Mushaf",
+  "pageOf": "Page {{page}} · Juz {{juz}} · Hizb {{hizb}}",
+  "maskLabel": "Masquage",
+  "maskNone": "Texte complet",
+  "maskPartial": "Premiers mots",
+  "maskFirst": "Premier mot",
+  "maskAll": "Masqué",
+  "reveal": "Maintenir pour révéler",
+  "jumpTo": "Aller à",
+  "listen": "Écouter",
+  "markMemorized": "Marquer comme mémorisé",
+  "addToReview": "Ajouter à la révision",
+  "textSize": "Taille du texte",
+  "previousPage": "Page précédente",
+  "nextPage": "Page suivante"
+}

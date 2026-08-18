@@ -1,0 +1,12 @@
+{
+  "title": "Verset du jour",
+  "reference": "{{surah}} · {{ayah}}",
+  "reciter": "Récitateur",
+  "share": "Partager en image",
+  "addToLessons": "Ajouter à mes leçons",
+  "previous": "Versets précédents",
+  "tafsirSoon": "Le commentaire viendra lorsqu’une source d’exégèse validée sera intégrée.",
+  "sources": "Texte et traduction : quran.com · Récitation : islamic.network",
+  "unavailable": "Texte indisponible",
+  "unavailableBody": "La source du texte coranique ne répond pas. Rien n’est affiché à la place : mieux vaut un écran vide qu’un texte approximatif."
+}

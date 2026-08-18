@@ -1,0 +1,21 @@
+{
+  "title": "الأصدقاء",
+  "mine": "أصدقائي",
+  "requests": "الطلبات",
+  "search": "بحث",
+  "searchPlaceholder": "اسم المستخدم",
+  "add": "إضافة",
+  "requestSent": "تم إرسال الطلب",
+  "accept": "قبول",
+  "decline": "رفض",
+  "remove": "إزالة",
+  "encourage": "تشجيع",
+  "encouraged": "تم إرسال التشجيع",
+  "online": "متصل",
+  "offline": "غير متصل",
+  "level": "المستوى {{n}}",
+  "emptyTitle": "سيظهر أصدقاؤك هنا",
+  "emptyBody": "ابحث عن شخص باسم المستخدم، أو شارك اسمك.",
+  "copyUsername": "نسخ اسم المستخدم",
+  "noRequests": "لا توجد طلبات معلّقة."
+}

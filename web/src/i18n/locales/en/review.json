@@ -1,0 +1,18 @@
+{
+  "title": "Review",
+  "dueToday": "Due today",
+  "overdue": "Overdue",
+  "nextDue": "Next due",
+  "start": "Start review",
+  "estimate": "about {{minutes}} min",
+  "emptyTitle": "Nothing to review today",
+  "emptyBody": "The queue fills as you memorize. Come back tomorrow, or learn a new passage.",
+  "goToLessons": "Go to lessons",
+  "lastReviewed": "Reviewed {{when}}",
+  "mastery": "Mastery",
+  "reveal": "Show the verse",
+  "reciteFirst": "Recite from memory, then check.",
+  "knewIt": "I knew it",
+  "reviewSoon": "Review again soon",
+  "sessionDone": "Session complete"
+}

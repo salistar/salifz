@@ -18,7 +18,9 @@
 
 import { ReactNode, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth, useTheme } from '../store';
+import SelecteurLangue from './SelecteurLangue';
 import { HizbStar } from './Ornements';
 import {
   iconesNavigation,
@@ -29,47 +31,48 @@ import {
 
 interface Entree {
   to: string;
-  label: string;
+  /** Clé i18n dans le namespace `nav`, jamais le libellé en dur. */
+  cle: string;
 }
 
 const GROUPES: { titre: string; entrees: Entree[] }[] = [
   {
-    titre: 'Apprendre',
+    titre: 'navLearn',
     entrees: [
-      { to: '/accueil', label: 'Accueil' },
-      { to: '/lecons', label: 'Leçons' },
-      { to: '/revision', label: 'Révision' },
-      { to: '/mushaf', label: 'Mushaf' },
-      { to: '/verset-du-jour', label: 'Verset du jour' },
+      { to: '/accueil', cle: 'home' },
+      { to: '/lecons', cle: 'lessons' },
+      { to: '/revision', cle: 'review' },
+      { to: '/mushaf', cle: 'mushaf' },
+      { to: '/verset-du-jour', cle: 'daily' },
     ],
   },
   {
-    titre: 'Communauté',
+    titre: 'navCommunity',
     entrees: [
-      { to: '/halaqat', label: 'Halaqat' },
-      { to: '/khatam', label: 'Khatam' },
-      { to: '/amis', label: 'Amis' },
-      { to: '/recitations', label: 'Récitations' },
+      { to: '/halaqat', cle: 'halaqat' },
+      { to: '/khatam', cle: 'khatam' },
+      { to: '/amis', cle: 'friends' },
+      { to: '/recitations', cle: 'recitations' },
     ],
   },
   {
-    titre: 'Progression',
+    titre: 'navProgress',
     entrees: [
-      { to: '/classement', label: 'Classement' },
-      { to: '/defis', label: 'Défis' },
-      { to: '/serie', label: 'Série' },
-      { to: '/statistiques', label: 'Statistiques' },
-      { to: '/boutique', label: 'Boutique' },
+      { to: '/classement', cle: 'leaderboard' },
+      { to: '/defis', cle: 'challenges' },
+      { to: '/serie', cle: 'streak' },
+      { to: '/statistiques', cle: 'stats' },
+      { to: '/boutique', cle: 'shop' },
     ],
   },
   {
-    titre: 'Compte',
+    titre: 'navAccount',
     entrees: [
-      { to: '/priere', label: 'Prière & Qibla' },
-      { to: '/notifications', label: 'Notifications' },
-      { to: '/abonnement', label: 'Abonnement' },
-      { to: '/profil', label: 'Profil' },
-      { to: '/reglages', label: 'Réglages' },
+      { to: '/priere', cle: 'prayer' },
+      { to: '/notifications', cle: 'notifications' },
+      { to: '/abonnement', cle: 'subscription' },
+      { to: '/profil', cle: 'profile' },
+      { to: '/reglages', cle: 'settings' },
     ],
   },
 ];
@@ -78,6 +81,7 @@ export default function Shell({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
   const { theme, toggle } = useTheme();
   const { pathname } = useLocation();
+  const { t } = useTranslation(['common', 'nav']);
   const [tiroirOuvert, setTiroirOuvert] = useState(false);
 
   useEffect(() => setTiroirOuvert(false), [pathname]);
@@ -86,7 +90,7 @@ export default function Shell({ children }: { children: ReactNode }) {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
-      <a href="#contenu" className="saut-contenu">Aller au contenu</a>
+      <a href="#contenu" className="saut-contenu">{t('skipToContent')}</a>
 
       {/* --- En-tête : surface élevée, filet d'or, plus d'aplat vert -------- */}
       <header
@@ -107,7 +111,7 @@ export default function Shell({ children }: { children: ReactNode }) {
           className="bascule-tiroir btn-ghost"
           onClick={() => setTiroirOuvert((v) => !v)}
           aria-expanded={tiroirOuvert}
-          aria-label="Afficher la navigation"
+          aria-label={t('showNavigation')}
           style={{ display: 'none', padding: '6px 10px', minHeight: 36 }}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
@@ -131,20 +135,22 @@ export default function Shell({ children }: { children: ReactNode }) {
             couleur de rôle : la série en safran, les gemmes en or, les cœurs en
             grenat — l'émeraude reste réservée à l'action. */}
         <div className="compteurs" style={{ display: 'flex', gap: 6 }}>
-          <Compteur icone={<IconeSerie size={15} />} valeur={g.currentStreak ?? 0} titre="Série" couleur="var(--warning)" />
-          <Compteur icone={<IconeGemmes size={15} />} valeur={g.gems ?? 0} titre="Gemmes" couleur="var(--accent-text)" />
+          <Compteur icone={<IconeSerie size={15} />} valeur={g.currentStreak ?? 0} titre={t('streak')} couleur="var(--warning)" />
+          <Compteur icone={<IconeGemmes size={15} />} valeur={g.gems ?? 0} titre={t('gems')} couleur="var(--accent-text)" />
           <Compteur
             icone={<IconeCoeurs size={15} />}
             valeur={`${g.hearts?.current ?? 0}/${g.hearts?.max ?? 5}`}
-            titre="Cœurs"
+            titre={t('hearts')}
             couleur="var(--danger)"
           />
         </div>
 
+        <SelecteurLangue compact />
+
         <button
           className="btn-ghost"
           onClick={toggle}
-          aria-label={theme === 'light' ? 'Passer en thème sombre' : 'Passer en thème clair'}
+          aria-label={theme === 'light' ? t('themeToDark') : t('themeToLight')}
           style={{ padding: '6px 10px', minHeight: 36 }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
@@ -168,7 +174,7 @@ export default function Shell({ children }: { children: ReactNode }) {
         </Link>
 
         <button className="btn-ghost" onClick={logout} style={{ padding: '6px 12px', minHeight: 36 }}>
-          Quitter
+          {t('signOut')}
         </button>
       </header>
 
@@ -196,7 +202,7 @@ export default function Shell({ children }: { children: ReactNode }) {
         >
           {GROUPES.map((groupe) => (
             <nav key={groupe.titre} style={{ marginBottom: 20 }}>
-              <h2 className="overline" style={{ margin: '0 0 6px 12px' }}>{groupe.titre}</h2>
+              <h2 className="overline" style={{ margin: '0 0 6px 12px' }}>{t(groupe.titre)}</h2>
 
               {groupe.entrees.map((e) => {
                 const actif = pathname === e.to || (e.to !== '/accueil' && pathname.startsWith(e.to));
@@ -223,7 +229,7 @@ export default function Shell({ children }: { children: ReactNode }) {
                     }}
                   >
                     {Icone && <Icone size={19} />}
-                    {e.label}
+                    {t(`nav:${e.cle}`)}
                   </Link>
                 );
               })}
@@ -253,8 +259,8 @@ export default function Shell({ children }: { children: ReactNode }) {
       >
         <span className="caption">Salifz</span>
         <div style={{ flex: 1 }} />
-        <Link to="/confidentialite" className="caption" style={{ textDecoration: 'none' }}>Confidentialité</Link>
-        <Link to="/reglages" className="caption" style={{ textDecoration: 'none' }}>Réglages</Link>
+        <Link to="/confidentialite" className="caption" style={{ textDecoration: 'none' }}>{t('privacy')}</Link>
+        <Link to="/reglages" className="caption" style={{ textDecoration: 'none' }}>{t('nav:settings')}</Link>
       </footer>
 
       <style>{`

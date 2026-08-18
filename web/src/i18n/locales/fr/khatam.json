@@ -1,0 +1,15 @@
+{
+  "title": "Khatam",
+  "intro": "Les 60 hizb répartis entre les membres : le groupe achève le Coran ensemble.",
+  "create": "Créer un khatam",
+  "name": "Titre du khatam",
+  "deadline": "Date d’objectif",
+  "intention": "Intention (facultatif)",
+  "takeHizb": "Prendre un hizb",
+  "hizbFree": "Libre",
+  "hizbTaken": "Pris par {{name}}",
+  "progress": "{{done}} / 60 hizb achevés",
+  "completed": "Khatam achevé",
+  "emptyTitle": "Aucun khatam en cours",
+  "emptyBody": "Créez-en un pour votre halaqa : chacun prend un hizb, le groupe achève le Coran."
+}

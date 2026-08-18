@@ -1,0 +1,18 @@
+{
+  "title": "Révision",
+  "dueToday": "À revoir aujourd’hui",
+  "overdue": "En retard",
+  "nextDue": "Prochaine échéance",
+  "start": "Commencer la révision",
+  "estimate": "environ {{minutes}} min",
+  "emptyTitle": "Rien à réviser aujourd’hui",
+  "emptyBody": "La file se remplit à mesure que vous mémorisez. Revenez demain, ou apprenez un nouveau passage.",
+  "goToLessons": "Aller aux leçons",
+  "lastReviewed": "Revu {{when}}",
+  "mastery": "Maîtrise",
+  "reveal": "Afficher le verset",
+  "reciteFirst": "Récitez de mémoire, puis vérifiez.",
+  "knewIt": "Je le savais",
+  "reviewSoon": "À revoir bientôt",
+  "sessionDone": "Série terminée"
+}

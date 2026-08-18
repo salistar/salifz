@@ -1,0 +1,22 @@
+{
+  "title": "Leçons",
+  "search": "Rechercher une sourate",
+  "filterAll": "Toutes",
+  "filterInProgress": "En cours",
+  "filterDone": "Mémorisées",
+  "filterNotStarted": "Non commencées",
+  "sortMushaf": "Ordre du mushaf",
+  "sortRevelation": "Ordre de révélation",
+  "verses_one": "{{count}} verset",
+  "verses_two": "{{count}} versets",
+  "verses_few": "{{count}} versets",
+  "verses_many": "{{count}} versets",
+  "verses_other": "{{count}} versets",
+  "meccan": "Mecquoise",
+  "medinan": "Médinoise",
+  "juz": "Juz {{n}}",
+  "progress": "{{percent}} % mémorisé",
+  "noResult": "Aucune sourate ne correspond à « {{q}} »",
+  "clearSearch": "Effacer la recherche",
+  "study": "Étudier"
+}

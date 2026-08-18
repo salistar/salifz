@@ -1,0 +1,16 @@
+{
+  "greeting": "Assalamu alaykum, {{name}}",
+  "goalsLeft_one": "{{count}} goal left today",
+  "goalsLeft_other": "{{count}} goals left today",
+  "resume": "Resume",
+  "resumeAt": "{{surah}} · verse {{ayah}}",
+  "start": "Start with Al-Fatiha",
+  "todayGoals": "Today’s goals",
+  "goalMemorize": "Memorize {{count}} new verses",
+  "goalReview": "Review {{count}} verses",
+  "goalLesson": "Finish a lesson",
+  "goalsDone": "Today’s goals complete",
+  "nothingUrgent": "Nothing urgent today — a good time to move ahead.",
+  "toReview_one": "{{count}} verse to review today",
+  "toReview_other": "{{count}} verses to review today"
+}

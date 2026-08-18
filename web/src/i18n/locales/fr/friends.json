@@ -1,0 +1,21 @@
+{
+  "title": "Amis",
+  "mine": "Mes amis",
+  "requests": "Demandes",
+  "search": "Rechercher",
+  "searchPlaceholder": "Nom d’utilisateur",
+  "add": "Ajouter",
+  "requestSent": "Demande envoyée",
+  "accept": "Accepter",
+  "decline": "Refuser",
+  "remove": "Retirer",
+  "encourage": "Encourager",
+  "encouraged": "Encouragement envoyé",
+  "online": "En ligne",
+  "offline": "Hors ligne",
+  "level": "Niveau {{n}}",
+  "emptyTitle": "Vos amis apparaîtront ici",
+  "emptyBody": "Cherchez quelqu’un par son nom d’utilisateur, ou partagez le vôtre.",
+  "copyUsername": "Copier mon nom d’utilisateur",
+  "noRequests": "Aucune demande en attente."
+}

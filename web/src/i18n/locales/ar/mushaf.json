@@ -1,0 +1,17 @@
+{
+  "title": "المصحف",
+  "pageOf": "الصفحة {{page}} · الجزء {{juz}} · الحزب {{hizb}}",
+  "maskLabel": "الإخفاء",
+  "maskNone": "النص كاملاً",
+  "maskPartial": "أوائل الكلمات",
+  "maskFirst": "الكلمة الأولى",
+  "maskAll": "مخفي",
+  "reveal": "اضغط مطولاً للكشف",
+  "jumpTo": "الانتقال إلى",
+  "listen": "استمع",
+  "markMemorized": "تحديد كمحفوظ",
+  "addToReview": "أضف إلى المراجعة",
+  "textSize": "حجم النص",
+  "previousPage": "الصفحة السابقة",
+  "nextPage": "الصفحة التالية"
+}

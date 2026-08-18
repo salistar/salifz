@@ -1,0 +1,22 @@
+{
+  "title": "Lessons",
+  "search": "Search a surah",
+  "filterAll": "All",
+  "filterInProgress": "In progress",
+  "filterDone": "Memorized",
+  "filterNotStarted": "Not started",
+  "sortMushaf": "Mushaf order",
+  "sortRevelation": "Revelation order",
+  "verses_one": "{{count}} verse",
+  "verses_two": "{{count}} verses",
+  "verses_few": "{{count}} verses",
+  "verses_many": "{{count}} verses",
+  "verses_other": "{{count}} verses",
+  "meccan": "Meccan",
+  "medinan": "Medinan",
+  "juz": "Juz {{n}}",
+  "progress": "{{percent}}% memorized",
+  "noResult": "No surah matches \"{{q}}\"",
+  "clearSearch": "Clear search",
+  "study": "Study"
+}

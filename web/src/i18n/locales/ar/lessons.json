@@ -1,0 +1,22 @@
+{
+  "title": "الدروس",
+  "search": "ابحث عن سورة",
+  "filterAll": "الكل",
+  "filterInProgress": "قيد الحفظ",
+  "filterDone": "محفوظة",
+  "filterNotStarted": "لم تبدأ",
+  "sortMushaf": "ترتيب المصحف",
+  "sortRevelation": "ترتيب النزول",
+  "verses_one": "آية واحدة",
+  "verses_two": "آيتان",
+  "verses_few": "{{count}} آيات",
+  "verses_many": "{{count}} آية",
+  "verses_other": "{{count}} آية",
+  "meccan": "مكية",
+  "medinan": "مدنية",
+  "juz": "الجزء {{n}}",
+  "progress": "{{percent}}٪ محفوظ",
+  "noResult": "لا توجد سورة تطابق «{{q}}»",
+  "clearSearch": "مسح البحث",
+  "study": "ادرس"
+}

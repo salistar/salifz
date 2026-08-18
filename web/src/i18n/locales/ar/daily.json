@@ -1,0 +1,12 @@
+{
+  "title": "آية اليوم",
+  "reference": "{{surah}} · {{ayah}}",
+  "reciter": "القارئ",
+  "share": "مشاركة كصورة",
+  "addToLessons": "أضف إلى دروسي",
+  "previous": "آيات سابقة",
+  "tafsirSoon": "سيتوفر التفسير عند اعتماد مصدر موثوق.",
+  "sources": "النص والترجمة: quran.com · التلاوة: islamic.network",
+  "unavailable": "النص غير متاح",
+  "unavailableBody": "مصدر النص القرآني لا يستجيب. لا يُعرض بديل: الشاشة الفارغة خير من نص غير دقيق."
+}

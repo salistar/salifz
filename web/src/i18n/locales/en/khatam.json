@@ -1,0 +1,15 @@
+{
+  "title": "Khatam",
+  "intro": "The 60 hizb split between members: the group completes the Quran together.",
+  "create": "Create a khatam",
+  "name": "Khatam title",
+  "deadline": "Target date",
+  "intention": "Intention (optional)",
+  "takeHizb": "Take a hizb",
+  "hizbFree": "Available",
+  "hizbTaken": "Taken by {{name}}",
+  "progress": "{{done}} / 60 hizb complete",
+  "completed": "Khatam complete",
+  "emptyTitle": "No khatam under way",
+  "emptyBody": "Create one for your halaqa: everyone takes a hizb, the group finishes the Quran."
+}

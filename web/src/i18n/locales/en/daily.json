@@ -1,0 +1,12 @@
+{
+  "title": "Verse of the day",
+  "reference": "{{surah}} · {{ayah}}",
+  "reciter": "Reciter",
+  "share": "Share as image",
+  "addToLessons": "Add to my lessons",
+  "previous": "Previous verses",
+  "tafsirSoon": "Commentary will arrive once a verified tafsir source is integrated.",
+  "sources": "Text and translation: quran.com · Recitation: islamic.network",
+  "unavailable": "Text unavailable",
+  "unavailableBody": "The Quran text source is not responding. Nothing is shown instead: an empty screen beats an approximate text."
+}
