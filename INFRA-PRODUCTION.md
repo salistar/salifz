@@ -63,6 +63,14 @@ application sans partager son secret. Un secret TURN partagé entre deux
 produits fait qu'une fuite d'un côté ouvre le relais de l'autre — et un relais
 ouvert est facturé à son propriétaire.
 
+## Déploiement vérifié de bout en bout
+
+Le workflow `deploiement.yml` a été déclenché et s'est terminé avec succès :
+tests rejoués sur la référence déployée, audit des dépendances, connexion SSH
+par la clé dédiée, reconstruction, sonde locale puis sonde externe. Après quoi
+`salorie.com`, `api.salorie.com`, `sallysudo.com`, `salorie.salistar.com` et
+`db.salorie.com` répondent toujours, et le port 80 appartient toujours à Caddy.
+
 ## Ce qui reste à faire — deux actions hors de ma portée
 
 ### 1. Créer l'enregistrement DNS
@@ -139,7 +147,7 @@ elle il republierait le port 80 et couperait les quatorze domaines de Caddy.
 Mettre à jour la production depuis le dépôt :
 
 ```bash
-cd /home/deploy/apps/salifz-stack && git pull && docker compose -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.srv3.yml -p salifz up -d --build
+cd /opt/salifz/stack && git pull && docker compose -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.srv3.yml -p salifz up -d --build
 ```
 
 Revenir en arrière sur le Caddyfile :
