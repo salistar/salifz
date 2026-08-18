@@ -104,6 +104,53 @@ export const authAPI = {
     displayName?: string;
   }) => api.post('/auth/register', payload),
   me: () => api.get('/users/me'),
+  forgotPassword: (email: string) => api.post('/auth/forgot-password', { email }),
+};
+
+export const verseAPI = {
+  daily: () => api.get('/verse/daily'),
+  random: (theme?: string) => api.get('/verse/random', { params: theme ? { theme } : {} }),
+  themes: () => api.get('/verse/themes'),
+  byTheme: (theme: string) => api.get(`/verse/theme/${theme}`),
+  // `/verse/tafsir` répond 501 : le commentaire attribué à des savants a été
+  // retiré faute de source réelle. Pas de méthode cliente pour une route qui
+  // n'a rien à rendre.
+};
+
+export const socialAPI = {
+  friends: () => api.get('/social/friends'),
+  requests: () => api.get('/social/requests'),
+  search: (q: string) => api.get('/social/search', { params: { q, query: q } }),
+  sendRequest: (userId: string) => api.post(`/social/request/${userId}`),
+  accept: (userId: string) => api.post(`/social/accept/${userId}`),
+  reject: (userId: string) => api.post(`/social/reject/${userId}`),
+  remove: (userId: string) => api.delete(`/social/friends/${userId}`),
+};
+
+export const challengesAPI = {
+  all: () => api.get('/challenges'),
+  completed: () => api.get('/challenges/completed'),
+  start: (id: string) => api.post(`/challenges/${id}/start`),
+  claim: (id: string) => api.post(`/challenges/${id}/claim`),
+};
+
+export const streaksAPI = {
+  get: () => api.get('/streaks'),
+  freeze: () => api.post('/streaks/freeze'),
+  buyFreeze: () => api.post('/streaks/buy-freeze'),
+  claimMilestone: (days: number) => api.post(`/streaks/milestones/${days}/claim`),
+};
+
+export const analyticsAPI = {
+  overview: () => api.get('/analytics/overview'),
+  weekly: () => api.get('/analytics/weekly'),
+  heatmap: (months = 3) => api.get('/analytics/heatmap', { params: { months } }),
+};
+
+export const subscriptionsAPI = {
+  plans: () => api.get('/subscriptions/plans'),
+  // Le serveur nomme ce point d'entrée `/status` ; `/current` n'existe pas.
+  status: () => api.get('/subscriptions/status'),
 };
 
 export const quranAPI = {

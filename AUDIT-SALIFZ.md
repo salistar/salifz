@@ -256,3 +256,41 @@ Trois suites possibles, à trancher :
 2. Assumer l'annotateur de texte comme fonctionnalité à part entière, sous un
    nom qui ne promet pas une analyse de la voix.
 3. Archiver le sous-projet hors du dossier de travail et récupérer les 32 Go.
+
+---
+
+## Deux sources de vérité pour la série (constaté le 18/08/2026)
+
+L'en-tête du tableau de bord web affichait une série de 6 pendant que la page
+Série en affichait 3, pour le même compte au même instant.
+
+Ce n'est pas un défaut d'affichage : les deux valeurs viennent de champs
+différents, tous deux persistés.
+
+- `User.gamification.currentStreak` — lu par `/users/me`, donc par l'en-tête,
+  l'écran d'accueil et le profil.
+- `Streak.current` — lu par `/streaks`, donc par la page Série, et seul champ
+  mis à jour par `streakSchema.methods.checkAndUpdate()`.
+
+Rien ne les synchronise. `checkAndUpdate()` écrit dans le document `Streak` et
+ne touche pas au compteur du document `User` ; à l'inverse, les routes qui
+récompensent l'activité incrémentent parfois `gamification.currentStreak` sans
+passer par le modèle `Streak`. Les deux dérivent donc dès la première
+divergence, et l'utilisateur voit deux nombres contradictoires selon l'écran.
+
+L'écart observé ici provient d'un historique injecté pour tester les analyses,
+mais la cause est structurelle et se reproduira en usage réel.
+
+Deux issues possibles :
+
+1. Faire de `Streak` la source unique et transformer
+   `User.gamification.currentStreak` en valeur dérivée, recalculée à la lecture
+   ou maintenue par un même point de passage.
+2. Supprimer le champ du document `User` et faire lire `/users/me` depuis le
+   document `Streak`, au prix d'une jointure supplémentaire sur un appel très
+   fréquent.
+
+La première est moins coûteuse à l'exécution ; la seconde supprime le problème
+plutôt que de le contenir. Le choix n'est pas fait : il engage la forme du
+document utilisateur, et mérite d'être tranché délibérément plutôt qu'au
+détour d'une correction d'affichage.

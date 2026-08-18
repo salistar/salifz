@@ -1,123 +1,90 @@
+/**
+ * Connexion.
+ *
+ * L'écran contenait auparavant la connexion *et* l'inscription, permutées par
+ * un bouton. Les deux parcours n'ont ni les mêmes champs, ni la même adresse
+ * partageable, ni le même moment dans la vie d'un compte ; les séparer permet
+ * aussi d'envoyer quelqu'un directement vers /inscription depuis la page de
+ * présentation.
+ */
+
 import { useState, FormEvent, ChangeEvent } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
+import AuthLayout, { Champ } from '../components/AuthLayout';
+import { AuthArtwork } from '../components/Artwork';
 import { useAuth } from '../store';
 
 export default function LoginPage() {
-  const { user, login, register, error, loading } = useAuth();
-  const [mode, setMode] = useState<'login' | 'register'>('login');
-  const [form, setForm] = useState({
-    emailOrUsername: '',
-    password: '',
-    email: '',
-    username: '',
-    displayName: '',
+  const { user, login, error, loading } = useAuth();
+  const location = useLocation() as { state?: { depuis?: string } };
+  const [form, setForm] = useState({ emailOrUsername: '', password: '' });
+
+  // Revenir là où l'on voulait aller avant d'être renvoyé vers la connexion.
+  if (user) return <Navigate to={location.state?.depuis ?? '/accueil'} replace />;
+
+  const champ = (cle: keyof typeof form) => ({
+    value: form[cle],
+    onChange: (e: ChangeEvent<HTMLInputElement>) => setForm({ ...form, [cle]: e.target.value }),
   });
 
-  if (user) return <Navigate to="/" replace />;
-
-  const submit = async (event: FormEvent) => {
-    event.preventDefault();
-    if (mode === 'login') {
-      await login(form.emailOrUsername.trim(), form.password);
-    } else {
-      await register({
-        email: form.email.trim(),
-        username: form.username.trim(),
-        password: form.password,
-        displayName: form.displayName.trim() || undefined,
-      });
-    }
+  const envoyer = async (e: FormEvent) => {
+    e.preventDefault();
+    await login(form.emailOrUsername.trim(), form.password);
   };
 
-  const field = (key: keyof typeof form) => ({
-    value: form[key],
-    onChange: (event: ChangeEvent<HTMLInputElement>) =>
-      setForm({ ...form, [key]: event.target.value }),
-  });
-
   return (
-    <div style={{ display: 'grid', placeItems: 'center', minHeight: '100vh', padding: 20 }}>
-      <form className="card" onSubmit={submit} style={{ width: 380, display: 'grid', gap: 12 }}>
-        <h1 style={{ margin: 0, textAlign: 'center' }}>Salifz</h1>
-        <p style={{ margin: 0, textAlign: 'center', color: 'var(--text-secondary)' }}>
-          {mode === 'login' ? 'Connexion' : 'Créer un compte'}
-        </p>
-
-        {mode === 'login' ? (
-          <input
-            placeholder="Email ou nom d’utilisateur"
-            aria-label="Email ou nom d’utilisateur"
-            autoComplete="username"
-            required
-            {...field('emailOrUsername')}
-          />
-        ) : (
-          <>
-            <input
-              placeholder="Email"
-              aria-label="Email"
-              type="email"
-              autoComplete="email"
-              required
-              {...field('email')}
-            />
-            <input
-              placeholder="Nom d’utilisateur"
-              aria-label="Nom d’utilisateur"
-              autoComplete="username"
-              required
-              {...field('username')}
-            />
-            <input
-              placeholder="Nom affiché (facultatif)"
-              aria-label="Nom affiché"
-              {...field('displayName')}
-            />
-          </>
-        )}
-
-        <input
-          placeholder="Mot de passe"
-          aria-label="Mot de passe"
-          type="password"
-          autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+    <AuthLayout
+      titre="Content de vous revoir"
+      sous="Reprenez là où vous vous êtes arrêté."
+      accroche="Votre progression, vos halaqat et vos révisions vous attendent — les mêmes que sur le téléphone."
+      illustration={<AuthArtwork style={{ width: '100%', maxWidth: 260 }} />}
+    >
+      <form onSubmit={envoyer} style={{ display: 'grid', gap: 16 }}>
+        <Champ
+          label="Email ou nom d’utilisateur"
+          name="identifiant"
+          autoComplete="username"
           required
-          {...field('password')}
+          {...champ('emailOrUsername')}
         />
 
-        {mode === 'register' && (
-          <small style={{ color: 'var(--text-muted)' }}>
-            10 caractères minimum, une majuscule, une minuscule et un chiffre.
-          </small>
-        )}
+        <Champ
+          label="Mot de passe"
+          name="mot-de-passe"
+          type="password"
+          autoComplete="current-password"
+          required
+          {...champ('password')}
+        />
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: -6 }}>
+          <Link to="/mot-de-passe-oublie" style={{ fontSize: 14 }}>
+            Mot de passe oublié ?
+          </Link>
+        </div>
 
         {error && (
-          <div
-            role="alert"
-            style={{
-              background: 'var(--error-soft)',
-              color: 'var(--error)',
-              padding: 10,
-              borderRadius: 8,
-              fontSize: 14,
-            }}
-          >
+          <div role="alert" style={alerte}>
             {error}
           </div>
         )}
 
-        <button className="btn-primary" type="submit" disabled={loading}>
-          {loading ? 'Patientez…' : mode === 'login' ? 'Se connecter' : 'Créer le compte'}
+        <button className="btn-primary" type="submit" disabled={loading} style={{ padding: 13 }}>
+          {loading ? 'Connexion…' : 'Se connecter'}
         </button>
 
-        <button
-          type="button"
-          className="btn-ghost"
-          onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
-        >
-          {mode === 'login' ? 'Pas encore de compte ?' : 'J’ai déjà un compte'}
-        </button>
+        <p style={{ margin: 0, textAlign: 'center', color: 'var(--text-secondary)', fontSize: 15 }}>
+          Pas encore de compte ? <Link to="/inscription">Créer un compte</Link>
+        </p>
       </form>
-    </div>
+    </AuthLayout>
   );
 }
+
+const alerte = {
+  background: 'var(--error-soft)',
+  color: 'var(--error)',
+  padding: 12,
+  borderRadius: 8,
+  fontSize: 14,
+} as const;
