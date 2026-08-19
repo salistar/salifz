@@ -123,7 +123,9 @@ Le test `tests/test_corpus.py` fige ce niveau.
 
 ---
 
-## 3. Les trois pièges rencontrés
+## 3. Les pièges rencontrés
+
+### Dans la reconnaissance
 
 **La basmala.** Les jeux de données préfixent le verset 1 de chaque sourate par
 `بسم الله الرحمن الرحيم` — sauf la 1re, où elle *est* le verset, et la 9e, qui
@@ -142,6 +144,34 @@ coupé afficherait une récitation juste.
 que la suite du verset. L'aligner sur le texte entier ferait passer tout le
 début pour oublié — le récitant verrait rougir des mots qu'il vient de dire
 correctement. D'où le paramètre `depuis`.
+
+### À la mise en production
+
+Les deux se ressemblent : quelque chose existait sur la machine de
+développement sans exister ailleurs, et rien ne le signalait avant srv3.
+
+**`quran_uthmani.json` n'était pas dans le dépôt.** La règle qui écarte les
+29 Go d'audio l'emportait aussi. Le fichier vivait donc sur un seul disque au
+monde, et la construction de l'image échouait sur srv3 en réussissant en
+local. Ce n'est pas un jeu de données d'entraînement mais un actif du service :
+c'est lui qui définit le verset attendu. Il est versionné, 2,8 Mo.
+
+**`huggingface_hub` 1.0 a retiré `requests`.** faster-whisper 1.0.3 l'importe
+encore ; sans plafond, pip installait le hub 1.x et l'import échouait. Le
+service se rabattait alors sur transformers et annonçait « No module named
+'torch' » — un message qui désigne le mauvais coupable et envoie chercher au
+mauvais endroit.
+
+L'asymétrie a livré la cause : l'étape de conversion fonctionnait, parce que
+`transformers` y tire `requests` avec lui. Seule l'image finale, qui n'a ni
+torch ni transformers, en manquait.
+
+**La leçon vaut plus que le correctif** : `_backend_retenu()` avalait
+l'exception d'import du moteur préféré. Un repli silencieux transforme une
+cause précise en symptôme trompeur. Elle est désormais conservée, jointe au
+message d'erreur et exposée par `/recitation/etat` — et le filet attrape
+`Exception`, pas seulement `ImportError`, une bibliothèque native mal appariée
+levant tout autre chose.
 
 ---
 
