@@ -56,6 +56,8 @@ _etat = {
     # None tant que la convention de génération du modèle est inconnue ;
     # False si `language=` suffit, sinon les jetons de décodeur à forcer.
     "jetons_forces": None,
+    # Pourquoi le moteur préféré a été écarté, le cas échéant.
+    "repli": None,
 }
 
 
@@ -68,14 +70,29 @@ def backend_demande():
 
 
 def _backend_retenu():
-    """Tranche entre les deux implémentations."""
+    """Tranche entre les deux implémentations.
+
+    L'échec d'import de faster-whisper est **conservé**, pas avalé. Sans cela,
+    le repli sur transformers produit un message qui accuse le mauvais
+    coupable : en production, « No module named 'torch' » désignait torch,
+    alors que la vraie cause était faster-whisper devenu inimportable. Une
+    heure de recherche au mauvais endroit.
+    """
     demande = backend_demande()
     if demande in (FASTER_WHISPER, TRANSFORMERS):
         return demande
     try:
         import faster_whisper  # noqa: F401
+        _etat["repli"] = None
         return FASTER_WHISPER
-    except ImportError:
+    except Exception as erreur:
+        # `Exception` et non `ImportError` : une bibliothèque native mal
+        # appariée — CTranslate2 compilé pour une autre version de numpy —
+        # lève autre chose, et le repli passerait tout aussi silencieusement.
+        _etat["repli"] = "faster-whisper indisponible (%s: %s)" % (
+            type(erreur).__name__, erreur
+        )
+        LOGGER.warning(_etat["repli"])
         return TRANSFORMERS
 
 
@@ -123,7 +140,10 @@ def charger():
             LOGGER.info("Moteur de récitation prêt : %s / %s", backend, nom)
             return _etat
         except Exception as erreur:  # pragma: no cover - dépend de l'environnement
-            _etat["erreur"] = "Modèle %s indisponible via %s : %s" % (nom, backend, erreur)
+            detail = "Modèle %s indisponible via %s : %s" % (nom, backend, erreur)
+            if _etat.get("repli"):
+                detail += " — " + _etat["repli"]
+            _etat["erreur"] = detail
             LOGGER.warning(_etat["erreur"])
             raise MoteurIndisponible(_etat["erreur"])
 

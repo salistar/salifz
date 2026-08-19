@@ -439,6 +439,8 @@ async def etat_recitation(charger: bool = False):
         "charge": charge,
         "ffmpeg": prep_audio.ffmpeg_disponible(),
         "erreur": moteur._etat["erreur"],
+        "repli": moteur._etat.get("repli"),
+        "backend": moteur._backend_retenu(),
         "versets_charges": sum(len(s.get("ayahs", [])) for s in quran_data.values()),
     }
 

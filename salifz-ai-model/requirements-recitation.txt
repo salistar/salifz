@@ -20,5 +20,12 @@ uvicorn>=0.24.0,<0.30.0
 pydantic>=2.5.0,<2.8.0
 python-multipart>=0.0.6,<0.1.0
 
-faster-whisper>=1.0.0,<1.2.0
-numpy>=1.24.0,<2.0.0
+# Version figee, pas une fourchette : la 1.1 entraine une pile CTranslate2
+# compilee pour numpy 2, et le plafond ci-dessous la rendait inimportable
+# dans le conteneur — sans aucun message, le service se repliait sur
+# transformers et se plaignait de torch.
+faster-whisper==1.0.3
+# Le plafond venait des exigences d entrainement, recopiees sans raison :
+# ce service n a pas besoin de brider numpy. On laisse pip accorder numpy
+# avec la version de CTranslate2 qu il installe.
+numpy>=1.24.0
