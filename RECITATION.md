@@ -67,6 +67,22 @@ ne se déclencherait donc jamais. Ce qui protège réellement de l'invention est
 le test d'énergie de `audio.est_silencieux()`, vérifié sur un fichier muet :
 silence reconnu, aucun texte produit.
 
+### En production, sur srv3
+
+Le serveur va nettement plus vite que la machine de mesure : douze cœurs au
+lieu de huit, et Linux plutôt que Docker Desktop.
+
+| Verset | Audio | Réponse complète | Facteur | Mots |
+|---|---|---|---|---|
+| 1:7 | 14,9 s | 2,05 s | **0,14×** | 9 / 9 |
+| 112:4 | 8,1 s | 1,31 s | 0,16× | 5 / 5 |
+| 114:5 | 10,5 s | 1,82 s | 0,17× | 5 / 5 |
+
+Ces durées sont mesurées **de bout en bout depuis un poste distant** : elles
+incluent le trajet réseau, Caddy, le backend Node et le service Python. Six
+fois plus rapide que l'audio lui-même laisse toute la marge nécessaire au
+suivi par extraits.
+
 ### Les deux modes de l'écran
 
 **Bilan complet** — un seul enregistrement du début à la fin, puis le verdict
