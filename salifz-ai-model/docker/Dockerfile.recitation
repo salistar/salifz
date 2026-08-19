@@ -30,7 +30,8 @@ ENV USE_TF=0 TRANSFORMERS_NO_TF=1
 # La roue CPU de torch pèse le quart de la variante CUDA, dont ce service n'a
 # aucun usage : la machine de production n'a pas de carte graphique.
 RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu && \
-    pip install --no-cache-dir transformers ctranslate2 faster-whisper huggingface_hub
+    pip install --no-cache-dir transformers ctranslate2 faster-whisper \
+        "huggingface_hub>=0.20,<1.0"
 
 COPY scripts/convertir_modele_ct2.py /convertir.py
 

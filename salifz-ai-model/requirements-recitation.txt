@@ -20,12 +20,19 @@ uvicorn>=0.24.0,<0.30.0
 pydantic>=2.5.0,<2.8.0
 python-multipart>=0.0.6,<0.1.0
 
-# Version figee, pas une fourchette : la 1.1 entraine une pile CTranslate2
-# compilee pour numpy 2, et le plafond ci-dessous la rendait inimportable
-# dans le conteneur — sans aucun message, le service se repliait sur
-# transformers et se plaignait de torch.
+# Version figee : c'est celle sur laquelle les 100 % de reconnaissance ont
+# ete mesures. Une fourchette laisserait pip changer de moteur entre deux
+# constructions, sans que la mesure suive.
 faster-whisper==1.0.3
-# Le plafond venait des exigences d entrainement, recopiees sans raison :
-# ce service n a pas besoin de brider numpy. On laisse pip accorder numpy
-# avec la version de CTranslate2 qu il installe.
+
+# Plafond indispensable, decouvert en production. huggingface_hub 1.0 a
+# remplace `requests` par `httpx` ; faster-whisper 1.0.3, lui, importe
+# toujours `requests`. Sans ce plafond, pip installe le hub 1.x, l'import de
+# faster-whisper leve ModuleNotFoundError, et le service se rabat en silence
+# sur transformers — ou il se plaint de torch, qui n'a rien a voir.
+huggingface_hub>=0.20,<1.0
+
+# Le plafond `numpy<2` venait des exigences d'entrainement, recopiees sans
+# raison : ce service n'a pas a brider numpy. On laisse pip l'accorder avec
+# la version de CTranslate2 qu'il installe.
 numpy>=1.24.0
