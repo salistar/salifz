@@ -26,6 +26,7 @@ import api from '../../services/api';
 import { COLORS } from '../../config';
 import { t } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 import { HizbStar } from '../../components/common/Ornements';
 import {
@@ -38,18 +39,22 @@ import {
   IconeMushaf,
   IconeRevision,
   IconeDefis,
+  IconeLecons,
+  IconeVersetDuJour,
+  IconeAmis,
+  IconeProfil,
 } from '../../components/common/Icones';
 
 const LOG_PREFIX = '[HomeScreen.tsx]';
 const { width } = Dimensions.get('window');
 
 const LEAGUES = [
-  { id: 'bronze', nameKey: 'home.leagues.bronze', icon: '🥉', color: fixedColors.bronze, minXP: 0 },
-  { id: 'silver', nameKey: 'home.leagues.silver', icon: '🥈', color: fixedColors.silver, minXP: 1000 },
-  { id: 'gold', nameKey: 'home.leagues.gold', icon: '🥇', color: fixedColors.gold, minXP: 5000 },
-  { id: 'platinum', nameKey: 'home.leagues.platinum', icon: '💎', color: fixedColors.silver, minXP: 15000 },
-  { id: 'diamond', nameKey: 'home.leagues.diamond', icon: '💠', color: fixedColors.diamond, minXP: 30000 },
-  { id: 'master', nameKey: 'home.leagues.master', icon: '👑', color: fixedColors.master, minXP: 50000 },
+  { id: 'bronze', nameKey: 'home.leagues.bronze', color: fixedColors.bronze, minXP: 0 },
+  { id: 'silver', nameKey: 'home.leagues.silver', color: fixedColors.silver, minXP: 1000 },
+  { id: 'gold', nameKey: 'home.leagues.gold', color: fixedColors.gold, minXP: 5000 },
+  { id: 'platinum', nameKey: 'home.leagues.platinum', color: fixedColors.silver, minXP: 15000 },
+  { id: 'diamond', nameKey: 'home.leagues.diamond', color: fixedColors.diamond, minXP: 30000 },
+  { id: 'master', nameKey: 'home.leagues.master', color: fixedColors.master, minXP: 50000 },
 ];
 
 interface NextPrayer {
@@ -77,9 +82,9 @@ export default function HomeScreen({ navigation }: any) {
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [dailyChallenges, setDailyChallenges] = useState<any[]>([
-    { icon: '🎯', titleKey: 'home.challenges.memorize5', rewards: { xp: 50 } },
-    { icon: '🔄', titleKey: 'home.challenges.review10', rewards: { xp: 30 } },
-    { icon: '⏱️', titleKey: 'home.challenges.practice15', rewards: { xp: 40 } },
+    { Icone: IconeMushaf, titleKey: 'home.challenges.memorize5', rewards: { xp: 50 } },
+    { Icone: IconeRevision, titleKey: 'home.challenges.review10', rewards: { xp: 30 } },
+    { Icone: IconeSerie, titleKey: 'home.challenges.practice15', rewards: { xp: 40 } },
   ]);
   const [dailyGoals, setDailyGoals] = useState<any>({
     ayahsCompleted: 0, ayahsTarget: 5, xpEarned: 0, xpTarget: 100
@@ -238,19 +243,23 @@ export default function HomeScreen({ navigation }: any) {
       <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
         <View style={styles.headerTop}>
           <TouchableOpacity accessible accessibilityRole="button" style={styles.avatarContainer} onPress={() => navigation.navigate('ProfileTab')}>
-            <Text style={styles.avatarEmoji}>👤</Text>
+            {/* L'initiale identifie sans rien inventer. Quatrieme ecran ou
+                cette correction s'applique. */}
+            <Text style={styles.avatarEmoji}>
+              {(user?.displayName || user?.username || '?').charAt(0).toUpperCase()}
+            </Text>
           </TouchableOpacity>
           <View style={styles.statsRow}>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.statItem} onPress={() => navigation.navigate('StreakTab')}>
-              <Text style={styles.statIcon}>🔥</Text>
+              <IconeSerie size={16} color={colors.onDeep} />
               <Text style={styles.statValue}>{streak}</Text>
             </TouchableOpacity>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.statItem} onPress={() => navigation.navigate('Shop')}>
-              <Text style={styles.statIcon}>💎</Text>
+              <IconeGemmes size={16} color={colors.onDeep} />
               <Text style={styles.statValue}>{gems}</Text>
             </TouchableOpacity>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.statItem} onPress={() => navigation.navigate('Shop')}>
-              <Text style={styles.statIcon}>❤️</Text>
+              <IconeCoeurs size={16} color={colors.onDeep} />
               <Text style={styles.statValue}>{hearts}/{maxHearts}</Text>
             </TouchableOpacity>
           </View>
@@ -276,7 +285,7 @@ export default function HomeScreen({ navigation }: any) {
                   {hijriDate && <Text style={styles.hijriDate}>{hijriDate}</Text>}
                 </View>
                 <TouchableOpacity accessible accessibilityRole="button" style={styles.qiblaButton} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('Qibla'); }}>
-                  <Text style={styles.qiblaIcon}>🧭</Text>
+                  <IconeQibla size={22} color={colors.primary} />
                   <Text style={styles.qiblaText}>{t('qibla.title') || 'القبلة'}</Text>
                 </TouchableOpacity>
               </View>
@@ -311,24 +320,24 @@ export default function HomeScreen({ navigation }: any) {
         {/* Quick Actions */}
         <View style={styles.quickActions}>
           <TouchableOpacity accessible accessibilityRole="button" style={styles.actionButton} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('LessonsTab'); }}>
-            <View style={[styles.actionIcon, { backgroundColor: colors.infoSoft }]}><Text style={styles.actionEmoji}>📖</Text></View>
+            <View style={[styles.actionIcon, { backgroundColor: colors.infoSoft }]}><IconeMushaf size={24} color={colors.info} /></View>
             <Text style={styles.actionText}>{t('home.actions.learn')}</Text>
           </TouchableOpacity>
           <TouchableOpacity accessible accessibilityRole="button" style={styles.actionButton} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('Review'); }}>
-            <View style={[styles.actionIcon, { backgroundColor: colors.warningSoft }]}><Text style={styles.actionEmoji}>🔄</Text></View>
+            <View style={[styles.actionIcon, { backgroundColor: colors.warningSoft }]}><IconeRevision size={24} color={colors.warning} /></View>
             <Text style={styles.actionText}>{t('home.actions.review')}</Text>
           </TouchableOpacity>
           <TouchableOpacity accessible accessibilityRole="button" style={styles.actionButton} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('Khatam'); }}>
-            <View style={[styles.actionIcon, { backgroundColor: colors.primarySoft }]}><Text style={styles.actionEmoji}>📚</Text></View>
+            <View style={[styles.actionIcon, { backgroundColor: colors.primarySoft }]}><IconeLecons size={24} color={colors.primary} /></View>
             <Text style={styles.actionText}>{t('khatam.title') || 'ختم'}</Text>
           </TouchableOpacity>
           {/* Mushaf : vue page par page, repère de mémorisation des hafiz */}
           <TouchableOpacity accessible accessibilityRole="button" accessibilityLabel={t('mushaf.openMushaf')} style={styles.actionButton} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('Mushaf', { page: 1 }); }}>
-            <View style={[styles.actionIcon, { backgroundColor: colors.successSoft }]}><Text style={styles.actionEmoji}>📗</Text></View>
+            <View style={[styles.actionIcon, { backgroundColor: colors.successSoft }]}><IconeVersetDuJour size={24} color={colors.success} /></View>
             <Text style={styles.actionText}>{t('mushaf.title')}</Text>
           </TouchableOpacity>
           <TouchableOpacity accessible accessibilityRole="button" style={styles.actionButton} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('SocialTab'); }}>
-            <View style={[styles.actionIcon, { backgroundColor: colors.accentSoft }]}><Text style={styles.actionEmoji}>💬</Text></View>
+            <View style={[styles.actionIcon, { backgroundColor: colors.accentSoft }]}><IconeHalaqat size={24} color={colors.accent} /></View>
             <Text style={styles.actionText}>{t('home.actions.social')}</Text>
           </TouchableOpacity>
         </View>
@@ -337,7 +346,7 @@ export default function HomeScreen({ navigation }: any) {
           <TouchableOpacity accessible accessibilityRole="button" style={styles.khatamCard} onPress={() => navigation.navigate('KhatamDetail', { khatamId: activeKhatam._id })} activeOpacity={0.8}>
             <LinearGradient colors={['#11998e', '#38ef7d']} style={styles.khatamGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
               <View style={styles.khatamHeader}>
-                <Text style={styles.khatamIconBig}>📚</Text>
+                <IconeKhatam size={34} color={colors.onDeep} />
                 <View style={styles.khatamInfo}>
                   <Text style={styles.khatamTitle}>{activeKhatam.title}</Text>
                   <Text style={styles.khatamSubtitle}>{activeKhatam.readingConfig?.amountPerDay || 1} {activeKhatam.readingConfig?.unit || 'hizb'}/{t('khatam.perDay') || 'يومياً'}</Text>
@@ -358,19 +367,19 @@ export default function HomeScreen({ navigation }: any) {
           <View style={styles.islamicRow}>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.islamicCard} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('PrayerTimes'); }}>
               <LinearGradient colors={[colors.accent, colors.accentDeep]} style={styles.islamicGradient}>
-                <Text style={styles.islamicIcon}>🕐</Text>
+                <IconeQibla size={22} color={colors.primary} />
                 <Text style={styles.islamicText}>{t('prayer.title') || 'مواقيت الصلاة'}</Text>
               </LinearGradient>
             </TouchableOpacity>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.islamicCard} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('Qibla'); }}>
               <LinearGradient colors={['#f093fb', '#f5576c']} style={styles.islamicGradient}>
-                <Text style={styles.islamicIcon}>🧭</Text>
+                <IconeQibla size={22} color={colors.primary} />
                 <Text style={styles.islamicText}>{t('qibla.title') || 'القبلة'}</Text>
               </LinearGradient>
             </TouchableOpacity>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.islamicCard} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('Khatam'); }}>
               <LinearGradient colors={['#11998e', '#38ef7d']} style={styles.islamicGradient}>
-                <Text style={styles.islamicIcon}>📚</Text>
+                <IconeMushaf size={22} color={colors.primary} />
                 <Text style={styles.islamicText}>{t('khatam.title') || 'ختم القرآن'}</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -383,19 +392,19 @@ export default function HomeScreen({ navigation }: any) {
           <View style={styles.socialButtons}>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.socialButton} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('ConversationsList'); }}>
               <View style={[styles.socialIconContainer, { backgroundColor: colors.infoSoft }]}>
-                <Text style={styles.socialIcon}>💬</Text>
+                <IconeHalaqat size={20} color={colors.primary} />
                 {unreadMessages > 0 && (<View style={styles.badge}><Text style={styles.badgeText}>{unreadMessages > 99 ? '99+' : unreadMessages}</Text></View>)}
               </View>
               <Text style={styles.socialLabel}>{t('home.social.conversations')}</Text>
               <Text style={styles.socialSubLabel}>{t('home.social.conversationCount', { count: conversations.length })}</Text>
             </TouchableOpacity>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.socialButton} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('Halaqa'); }}>
-              <View style={[styles.socialIconContainer, { backgroundColor: colors.primarySoft }]}><Text style={styles.socialIcon}>🕌</Text></View>
+              <View style={[styles.socialIconContainer, { backgroundColor: colors.primarySoft }]}><IconeHalaqat size={20} color={colors.primary} /></View>
               <Text style={styles.socialLabel}>{t('home.social.halaqat')}</Text>
               <Text style={styles.socialSubLabel}>{t('home.social.halaqaCount', { count: halaqat.length })}</Text>
             </TouchableOpacity>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.socialButton} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('Friends'); }}>
-              <View style={[styles.socialIconContainer, { backgroundColor: colors.warningSoft }]}><Text style={styles.socialIcon}>👥</Text></View>
+              <View style={[styles.socialIconContainer, { backgroundColor: colors.warningSoft }]}><IconeAmis size={20} color={colors.warning} /></View>
               <Text style={styles.socialLabel}>{t('home.social.friends')}</Text>
               <Text style={styles.socialSubLabel}>{t('home.social.addFriend')}</Text>
             </TouchableOpacity>
@@ -411,7 +420,7 @@ export default function HomeScreen({ navigation }: any) {
             </View>
             {conversations.map((conv, index) => (
               <TouchableOpacity accessible accessibilityRole="button" key={conv._id || index} style={styles.conversationItem} onPress={() => navigation.navigate('Chat', { conversationId: conv._id, recipientId: conv.participants?.[0]?._id })}>
-                <View style={styles.conversationAvatar}><Text style={styles.conversationAvatarText}>{conv.type === 'group' ? '👥' : '👤'}</Text></View>
+                <View style={styles.conversationAvatar}>{conv.type === 'group' ? <IconeAmis size={18} color={colors.primary} /> : <IconeProfil size={18} color={colors.primary} />}</View>
                 <View style={styles.conversationInfo}>
                   <Text style={styles.conversationName} numberOfLines={1}>{conv.type === 'group' ? conv.name : conv.participants?.[0]?.displayName || conv.participants?.[0]?.username || t('home.conversation')}</Text>
                   <Text style={styles.conversationLastMessage} numberOfLines={1}>{conv.lastMessageText || t('home.noMessages')}</Text>
@@ -432,13 +441,13 @@ export default function HomeScreen({ navigation }: any) {
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {halaqat.map((halaqa, index) => (
                 <TouchableOpacity accessible accessibilityRole="button" key={halaqa._id || index} style={styles.halaqaCard} onPress={() => navigation.navigate('HalaqaDetail', { halaqaId: halaqa._id })}>
-                  <View style={styles.halaqaIconContainer}><Text style={styles.halaqaIcon}>🕌</Text></View>
+                  <View style={styles.halaqaIconContainer}><IconeHalaqat size={20} color={colors.primary} /></View>
                   <Text style={styles.halaqaName} numberOfLines={1}>{halaqa.name}</Text>
                   <Text style={styles.halaqaMembers}>{t('home.memberCount', { count: halaqa.membersCount || halaqa.participants?.length || 0 })}</Text>
                 </TouchableOpacity>
               ))}
               <TouchableOpacity accessible accessibilityRole="button" style={[styles.halaqaCard, styles.createHalaqaCard]} onPress={() => navigation.navigate('Halaqa')}>
-                <View style={[styles.halaqaIconContainer, { backgroundColor: colors.border }]}><Text style={styles.halaqaIcon}>➕</Text></View>
+                <View style={[styles.halaqaIconContainer, { backgroundColor: colors.border }]}><Ionicons name="add" size={20} color={colors.textSecondary} /></View>
                 <Text style={styles.halaqaName}>{t('home.joinHalaqa')}</Text>
                 <Text style={styles.halaqaMembers}>{t('home.orCreateHalaqa')}</Text>
               </TouchableOpacity>
@@ -468,7 +477,13 @@ export default function HomeScreen({ navigation }: any) {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {dailyChallenges.map((challenge, index) => (
               <TouchableOpacity accessible accessibilityRole="button" key={index} style={styles.challengeCard}>
-                <Text style={styles.challengeIcon}>{challenge.icon || '🎯'}</Text>
+                <View style={styles.challengeIcon}>
+                  {challenge.Icone ? (
+                    <challenge.Icone size={22} color={colors.primary} />
+                  ) : (
+                    <IconeDefis size={22} color={colors.primary} />
+                  )}
+                </View>
                 <Text style={styles.challengeTitle}>{t(challenge.titleKey) || t('home.challenge')}</Text>
                 <Text style={styles.challengeReward}>+{challenge.rewards?.xp || 50} XP</Text>
               </TouchableOpacity>
@@ -478,7 +493,7 @@ export default function HomeScreen({ navigation }: any) {
 
         {/* League Card */}
         <TouchableOpacity accessible accessibilityRole="button" style={styles.leagueCard} onPress={() => navigation.navigate('Leaderboard')}>
-          <View style={[styles.leagueBadge, { backgroundColor: currentLeague.color + '30' }]}><Text style={styles.leagueIconText}>{currentLeague.icon}</Text></View>
+          <View style={[styles.leagueBadge, { backgroundColor: currentLeague.color + '30' }]}><HizbStar size={22} quarters={4} color={currentLeague.color} /></View>
           <View style={styles.leagueInfo}>
             <Text style={styles.leagueName}>{t(currentLeague.nameKey)}</Text>
             <Text style={styles.leagueRank}>{t('home.rankNumber', { rank: userLeagueRank })}</Text>
@@ -497,10 +512,10 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   header: { paddingTop: 50, paddingBottom: 25, paddingHorizontal: 20 },
   headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   avatarContainer: { width: 45, height: 45, borderRadius: 22.5, backgroundColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center' },
-  avatarEmoji: { fontSize: 24 },
+  avatarEmoji: {},
   statsRow: { flexDirection: 'row' },
   statItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 15, marginLeft: 8 },
-  statIcon: { fontSize: 16, marginRight: 4 },
+  statIcon: { marginRight: 4 },
   statValue: { color: c.onDeep, fontWeight: 'bold' },
   levelContainer: { marginTop: 20, alignItems: 'center' },
   levelText: { color: c.onDeep, fontSize: 16, fontWeight: 'bold', marginBottom: 8 },
@@ -516,7 +531,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   prayerLabel: { fontSize: 14, color: 'rgba(255,255,255,0.8)' },
   hijriDate: { fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
   qiblaButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
-  qiblaIcon: { fontSize: 16, marginRight: 6 },
+  qiblaIcon: { marginRight: 6 },
   qiblaText: { fontSize: 12, color: c.onDeep, fontWeight: '600' },
   prayerName: { fontSize: 32, fontWeight: 'bold', color: c.onDeep, marginBottom: 12 },
   countdownRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
@@ -530,7 +545,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   khatamCard: { borderRadius: 20, overflow: 'hidden', marginBottom: 20, elevation: 3 },
   khatamGradient: { padding: 20 },
   khatamHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
-  khatamIconBig: { fontSize: 40, marginRight: 15 },
+  khatamIconBig: { marginRight: 15 },
   khatamInfo: { flex: 1 },
   khatamTitle: { fontSize: 18, fontWeight: 'bold', color: c.onDeep },
   khatamSubtitle: { fontSize: 13, color: 'rgba(255,255,255,0.8)', marginTop: 4 },
@@ -544,7 +559,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   islamicRow: { flexDirection: 'row', justifyContent: 'space-between' },
   islamicCard: { width: (width - 56) / 3, borderRadius: 15, overflow: 'hidden', elevation: 3 },
   islamicGradient: { paddingVertical: 20, alignItems: 'center' },
-  islamicIcon: { fontSize: 28, marginBottom: 8 },
+  islamicIcon: { marginBottom: 8 },
   islamicText: { fontSize: 11, fontWeight: '600', color: c.onDeep, textAlign: 'center' },
 
   // Continue Card
@@ -557,7 +572,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   quickActions: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 25 },
   actionButton: { alignItems: 'center', width: (width - 60) / 4 },
   actionIcon: { width: 55, height: 55, borderRadius: 15, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
-  actionEmoji: { fontSize: 26 },
+  actionEmoji: {},
   actionText: { fontSize: 12, color: c.textSecondary },
 
   // Social Section
@@ -565,7 +580,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   socialButtons: { flexDirection: 'row', justifyContent: 'space-around' },
   socialButton: { alignItems: 'center', flex: 1 },
   socialIconContainer: { width: 60, height: 60, borderRadius: 30, justifyContent: 'center', alignItems: 'center', marginBottom: 8, position: 'relative' },
-  socialIcon: { fontSize: 28 },
+  socialIcon: {},
   socialLabel: { fontSize: 13, fontWeight: '600', color: c.text },
   socialSubLabel: { fontSize: 11, color: c.textMuted, marginTop: 2 },
   badge: { position: 'absolute', top: -5, right: -5, backgroundColor: c.error, borderRadius: 10, minWidth: 20, height: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 5 },
@@ -575,7 +590,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   conversationsSection: { backgroundColor: c.surface, borderRadius: 15, padding: 15, marginBottom: 20, elevation: 2 },
   conversationItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: c.backgroundAlt },
   conversationAvatar: { width: 45, height: 45, borderRadius: 22.5, backgroundColor: c.infoSoft, justifyContent: 'center', alignItems: 'center' },
-  conversationAvatarText: { fontSize: 20 },
+  conversationAvatarText: {},
   conversationInfo: { flex: 1, marginLeft: 12 },
   conversationName: { fontSize: 14, fontWeight: '600', color: c.text },
   conversationLastMessage: { fontSize: 12, color: c.textMuted, marginTop: 2 },
@@ -587,7 +602,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   halaqaCard: { backgroundColor: c.surface, borderRadius: 15, padding: 15, marginRight: 12, width: 120, alignItems: 'center', elevation: 2 },
   createHalaqaCard: { borderStyle: 'dashed', borderWidth: 2, borderColor: c.border, backgroundColor: 'transparent' },
   halaqaIconContainer: { width: 50, height: 50, borderRadius: 25, backgroundColor: c.primarySoft, justifyContent: 'center', alignItems: 'center', marginBottom: 10 },
-  halaqaIcon: { fontSize: 24 },
+  halaqaIcon: {},
   halaqaName: { fontSize: 13, fontWeight: '600', color: c.text, textAlign: 'center' },
   halaqaMembers: { fontSize: 11, color: c.textMuted, marginTop: 4 },
 
@@ -602,12 +617,12 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 },
   seeAll: { color: c.primary, fontWeight: '600' },
   challengeCard: { backgroundColor: c.surface, borderRadius: 15, padding: 15, marginRight: 12, width: 130, alignItems: 'center', elevation: 2 },
-  challengeIcon: { fontSize: 30, marginBottom: 8 },
+  challengeIcon: { marginBottom: 8 },
   challengeTitle: { fontSize: 12, color: c.text, textAlign: 'center', marginBottom: 5 },
   challengeReward: { color: c.primary, fontWeight: 'bold', fontSize: 12 },
   leagueCard: { backgroundColor: c.surface, borderRadius: 15, padding: 15, flexDirection: 'row', alignItems: 'center', elevation: 2 },
   leagueBadge: { width: 50, height: 50, borderRadius: 25, justifyContent: 'center', alignItems: 'center' },
-  leagueIconText: { fontSize: 28 },
+  leagueIconText: {},
   leagueInfo: { flex: 1, marginLeft: 15 },
   leagueName: { fontSize: 16, fontWeight: 'bold', color: c.text },
   leagueRank: { color: c.textSecondary, marginTop: 2 },
