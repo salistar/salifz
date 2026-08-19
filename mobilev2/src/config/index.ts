@@ -5,46 +5,62 @@
 // Importer et exporter l'environnement
 export { ENV, default as environment } from './env';
 
-// Couleurs de l'application
+/**
+ * Palette figee — heritage.
+ *
+ * Deux sources de verite coexistent pour la couleur : ce tableau, importe par
+ * 36 fichiers, et `ThemeContext`, utilise par 56. Celui-ci ne connait pas le
+ * theme : un ecran qui l'importe reste en clair meme quand l'utilisateur a
+ * choisi le sombre.
+ *
+ * Les valeurs sont ici alignees sur la palette claire du `ThemeContext` — et
+ * donc sur celle du web. C'est une correction partielle assumee : elle
+ * supprime le probleme le plus visible (deux verts differents dans la meme
+ * application) sans faire semblant de resoudre le second, qui demande de
+ * migrer les 36 fichiers vers `useTheme()`.
+ *
+ * Ne pas ajouter de couleur ici. Tout nouvel ecran passe par `useTheme()`.
+ */
 export const COLORS = {
-  primary: '#4CAF50',
-  primaryDark: '#2E7D32',
-  primaryLight: '#81C784',
-  secondary: '#FF9800',
-  secondaryDark: '#F57C00',
-  accent: '#FFD700',
-  
-  // Backgrounds
-  background: '#f5f5f5',
-  backgroundDark: '#1a1a2e',
-  backgroundDarker: '#16213e',
+  primary: '#0f7b5a',
+  primaryDark: '#0c6449',
+  primaryLight: '#149a70',
+  secondary: '#b4720f',
+  secondaryDark: '#8f5a0b',
+  accent: '#a8871c',
+
+  // Fonds
+  background: '#fbf8f1',
+  backgroundDark: '#06120e',
+  backgroundDarker: '#040d0a',
   card: '#ffffff',
-  cardDark: '#252540',
-  
-  // Text
-  text: '#333333',
-  textLight: '#666666',
-  textMuted: '#999999',
+  cardDark: '#0f251d',
+
+  // Texte
+  text: '#0b1f17',
+  textLight: '#4a5d54',
+  textMuted: '#8a7f6a',
   textWhite: '#ffffff',
-  
-  // Status
-  success: '#4CAF50',
-  error: '#F44336',
-  warning: '#FFC107',
-  info: '#2196F3',
-  
-  // Leagues
+
+  // Etats
+  success: '#0f7b5a',
+  error: '#a63a2e',
+  warning: '#b4720f',
+  info: '#2e5e8a',
+
+  // Metaux des ligues : volontairement inchanges dans les deux themes, un
+  // bronze inverse n'est plus reconnaissable comme du bronze.
   bronze: '#CD7F32',
   silver: '#C0C0C0',
-  gold: '#FFD700',
-  diamond: '#B9F2FF',
-  platinum: '#E5E4E2',
-  master: '#9B59B6',
-  
-  // Misc
-  border: '#e0e0e0',
-  divider: '#f0f0f0',
-  overlay: 'rgba(0,0,0,0.5)',
+  gold: '#c9a227',
+  diamond: '#8FD3E8',
+  platinum: '#C9CBC8',
+  master: '#8E6BB5',
+
+  // Structure
+  border: '#e7decb',
+  divider: '#f0eadc',
+  overlay: 'rgba(11, 31, 23, 0.45)',
 };
 
 // Configuration des Leagues

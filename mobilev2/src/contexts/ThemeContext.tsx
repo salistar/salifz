@@ -77,107 +77,127 @@ interface ThemeColors {
  * récompenses. Les inverser en mode sombre les rendrait méconnaissables.
  */
 export const fixedColors = {
-  gold: '#FFD700',
+  gold: '#c9a227',
   silver: '#C0C0C0',
   bronze: '#CD7F32',
   diamond: '#B9F2FF',
   platinum: '#E5E4E2',
   master: '#9B59B6',
-  streak: '#FF6B35',
+  streak: '#b4720f',
   gem: '#4FC3F7',
   heart: '#F44336',
 } as const;
 
+/**
+ * Palette claire — ivoire et emeraude.
+ *
+ * Les valeurs sont exactement celles de `web/src/theme.css` : le meme compte
+ * ouvre les deux applications, et deux verts differents pour un meme produit
+ * se remarquent immediatement. Le contrat de jetons ne change pas, seules les
+ * valeurs bougent — les quarante ecrans adoptent la palette sans etre touches.
+ *
+ * Le vert Material `#4CAF50` qui servait de marque est celui de trois mille
+ * applications ; l'emeraude sombre porte l'identite du produit et laisse a
+ * l'or le role d'accent, comme dans les enluminures de mushaf.
+ */
 const lightColors: ThemeColors = {
-  background: '#F5F5F5',
-  backgroundAlt: '#F0F0F0',
-  surface: '#FFFFFF',
-  surfaceAlt: '#FAFAFA',
-  surfaceRaised: '#FFFFFF',
+  background: '#fbf8f1',
+  backgroundAlt: '#f0eadc',
+  surface: '#ffffff',
+  surfaceAlt: '#f4efe3',
+  surfaceRaised: '#ffffff',
 
-  canvasDeep: '#1A1A2E',
-  canvasDeepAlt: '#16213E',
+  canvasDeep: '#0b1f17',
+  canvasDeepAlt: '#0f2b20',
 
-  text: '#333333',
-  textSecondary: '#666666',
-  textMuted: '#9E9E9E',
-  onPrimary: '#FFFFFF',
-  onDeep: '#FFFFFF',
+  text: '#0b1f17',
+  textSecondary: '#4a5d54',
+  textMuted: '#8a7f6a',
+  onPrimary: '#ffffff',
+  onDeep: '#ffffff',
 
-  primary: '#4CAF50',
-  primaryDark: '#2E7D32',
-  primaryLight: '#6BCB77',
-  primarySoft: '#E8F5E9',
+  primary: '#0f7b5a',
+  primaryDark: '#0c6449',
+  primaryLight: '#149a70',
+  primarySoft: '#e4f0ea',
 
-  accent: '#667EEA',
-  accentDeep: '#764BA2',
-  accentSoft: '#FCE4EC',
+  // L'accent n'est plus un violet : c'est l'or des enluminures, la seule
+  // couleur du produit qui ne vienne pas du vert.
+  accent: '#a8871c',
+  accentDeep: '#8a6e12',
+  accentSoft: '#f7f0dd',
 
-  error: '#F44336',
-  errorSoft: '#FFEBEE',
-  success: '#4CAF50',
-  successSoft: '#E8F5E9',
-  warning: '#FF9800',
-  warningSoft: '#FFF3E0',
-  warningStrong: '#F57C00',
-  info: '#2196F3',
-  infoSoft: '#E3F2FD',
-  infoStrong: '#1976D2',
+  error: '#a63a2e',
+  errorSoft: '#f7e6e3',
+  success: '#0f7b5a',
+  successSoft: '#e4f0ea',
+  warning: '#b4720f',
+  warningSoft: '#f9efdd',
+  warningStrong: '#8f5a0b',
+  info: '#2e5e8a',
+  infoSoft: '#e3ecf4',
+  infoStrong: '#1f4463',
 
-  border: '#E0E0E0',
-  divider: '#EEEEEE',
-  overlay: 'rgba(0, 0, 0, 0.5)',
-  shadow: '#000000',
+  border: '#e7decb',
+  divider: '#f0eadc',
+  overlay: 'rgba(11, 31, 23, 0.45)',
+  shadow: '#0b1f17',
 
-  neutral: '#9E9E9E',
-  neutralSoft: '#F0F0F0',
+  neutral: '#8a7f6a',
+  neutralSoft: '#f0eadc',
 };
 
+/**
+ * Palette sombre — vert profond, pas gris bleute.
+ *
+ * L'ancienne version virait au bleu nuit (`#12121C`), sans rapport avec la
+ * marque. Ici le fond reste vert : c'est la meme identite a la tombee du jour,
+ * et l'or y gagne le contraste qu'il n'avait pas sur l'ivoire.
+ */
 const darkColors: ThemeColors = {
-  background: '#12121C',
-  backgroundAlt: '#1A1A2E',
-  surface: '#1E1E32',
-  surfaceAlt: '#252540',
-  surfaceRaised: '#2A2A45',
+  background: '#06120e',
+  backgroundAlt: '#0a1b15',
+  surface: '#0f251d',
+  surfaceAlt: '#163227',
+  surfaceRaised: '#1a3b2e',
 
-  // En mode sombre, les fonds profonds sont ceux de toute l'application.
-  canvasDeep: '#12121C',
-  canvasDeepAlt: '#1A1A2E',
+  canvasDeep: '#040d0a',
+  canvasDeepAlt: '#0a1b15',
 
-  text: '#F5F5F5',
-  textSecondary: '#B0B6C4',
-  textMuted: '#7A8194',
-  onPrimary: '#0E1611',
-  onDeep: '#FFFFFF',
+  text: '#f4efe3',
+  textSecondary: '#9fb3a9',
+  textMuted: '#6c8479',
+  onPrimary: '#04120c',
+  onDeep: '#f4efe3',
 
-  // Verts éclaircis : sur fond sombre, #4CAF50 n'atteint pas 4.5:1.
-  primary: '#66BB6A',
-  primaryDark: '#43A047',
-  primaryLight: '#81C784',
-  primarySoft: '#1F3325',
+  // Verts eclaircis : sur fond sombre, `#0f7b5a` n'atteint pas 4,5:1.
+  primary: '#149a70',
+  primaryDark: '#0f7b5a',
+  primaryLight: '#34c08a',
+  primarySoft: '#0f2b20',
 
-  accent: '#8B9CF7',
-  accentDeep: '#9B6BC7',
-  accentSoft: '#33243A',
+  accent: '#c9a227',
+  accentDeep: '#e8ce7a',
+  accentSoft: '#1a1608',
 
-  error: '#EF5350',
-  errorSoft: '#3A1F1F',
-  success: '#66BB6A',
-  successSoft: '#1F3325',
-  warning: '#FFA726',
-  warningSoft: '#3A2E1C',
-  warningStrong: '#FFB74D',
-  info: '#64B5F6',
-  infoSoft: '#1C2A3A',
-  infoStrong: '#90CAF9',
+  error: '#c4503f',
+  errorSoft: '#2e1512',
+  success: '#149a70',
+  successSoft: '#0f2b20',
+  warning: '#d98e23',
+  warningSoft: '#2e2109',
+  warningStrong: '#f0ab45',
+  info: '#5b92c4',
+  infoSoft: '#132231',
+  infoStrong: '#8ab6de',
 
-  border: '#33344A',
-  divider: '#2A2B3D',
-  overlay: 'rgba(0, 0, 0, 0.7)',
+  border: '#1e4034',
+  divider: '#163227',
+  overlay: 'rgba(4, 13, 10, 0.72)',
   shadow: '#000000',
 
-  neutral: '#7A8194',
-  neutralSoft: '#252540',
+  neutral: '#6c8479',
+  neutralSoft: '#163227',
 };
 
 /** Dégradés courants, dérivés des jetons pour rester cohérents. */
