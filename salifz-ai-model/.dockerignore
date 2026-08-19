@@ -1,0 +1,54 @@
+# Sans ce fichier, le contexte de construction fait 33 Go — Docker les
+# transmet au démon avant même de lire la première instruction, et la
+# construction paraît figée pour une raison qui ne s'affiche nulle part.
+
+# Tout le jeu de données, sauf le seul fichier que le service lit vraiment.
+#
+# Les 29 Go de récitations servent à mesurer la qualité du suivi
+# (scripts/evaluer_recitation.py), jamais à le rendre. Mais `text/` pèse à lui
+# seul 68 Mo — le Coran entier en trois orthographes plus 114 fichiers par
+# sourate — dont l'API n'ouvre que `quran_uthmani.json`. Les transférer au
+# démon avant chaque construction coûtait plusieurs minutes pour rien.
+data/
+!data/raw/
+!data/raw/quran/
+!data/raw/quran/text/
+data/raw/quran/text/*
+!data/raw/quran/text/quran_uthmani.json
+
+# Poids entraînés et environnements virtuels.
+models/
+venv/
+venv_hifz/
+checkpoints/
+exports/
+*.safetensors
+*.ckpt
+*.pt
+
+# Traces d'entraînement.
+logs/
+runs/
+wandb/
+mlruns/
+data/processed/
+data/datasets/
+
+# Sources non nécessaires au service de récitation — sauf la conversion du
+# modèle, dont la première étape de construction a besoin. L'exclure ferait
+# échouer le build sur un « fichier introuvable » sans rapport apparent.
+scripts/*
+!scripts/convertir_modele_ct2.py
+notebooks/
+docs,md/
+tests/
+
+# Habituels.
+__pycache__/
+*.py[cod]
+.git/
+.gitignore
+.pytest_cache/
+.venv/
+*.egg-info/
+.env

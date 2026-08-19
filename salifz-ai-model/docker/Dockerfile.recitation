@@ -1,0 +1,114 @@
+# ============================================
+# Salifz — service de suivi de récitation
+# ============================================
+#
+# Distinct de `Dockerfile`, qui sert à l'entraînement. Celui-ci ne contient que
+# ce qu'il faut pour transcrire et comparer : ni Jupyter, ni les 29 Go d'audio
+# du jeu d'entraînement — et, grâce au découpage ci-dessous, pas torch non plus.
+#
+#   docker build -f docker/Dockerfile.recitation .                  → modèle coranique
+#   docker build -f docker/Dockerfile.recitation --target leger .    → sans modèle
+#
+# Mesures ayant conduit à ce découpage (22 versets d'al-Husary, 155 s d'audio) :
+#
+#   faster-whisper small, généraliste     88,5 % des mots   1,72× le temps réel
+#   Tarteel affiné, format PyTorch        100 %             2,54×
+#   Tarteel affiné, converti (ici)        100 %             0,80×
+#
+# La conversion donne les deux : la précision du modèle affiné et une vitesse
+# sous le temps réel. Elle exige torch — d'où l'étape séparée, dont rien ne
+# subsiste dans l'image finale hormis 76 Mo de poids.
+
+# ------------------------------------------------------------------
+# Étape 1 — conversion du modèle. Jetée après usage.
+# ------------------------------------------------------------------
+FROM python:3.11-slim AS convertisseur
+
+ARG MODELE_SOURCE=tarteel-ai/whisper-base-ar-quran
+ENV USE_TF=0 TRANSFORMERS_NO_TF=1
+
+# La roue CPU de torch pèse le quart de la variante CUDA, dont ce service n'a
+# aucun usage : la machine de production n'a pas de carte graphique.
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir transformers ctranslate2 faster-whisper huggingface_hub
+
+COPY scripts/convertir_modele_ct2.py /convertir.py
+
+# `--telecharger` est explicite : le script refuse par défaut de rapatrier
+# 277 Mo, pour qu'un lancement à la main ne le fasse jamais par surprise. Ici
+# c'est le travail attendu de l'étape.
+RUN python /convertir.py --modele "${MODELE_SOURCE}" --sortie /modele --telecharger
+
+# ------------------------------------------------------------------
+# Étape 2 — socle commun aux deux images finales.
+# ------------------------------------------------------------------
+FROM python:3.11-slim AS socle
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app \
+    # Cache des modèles rapatriés à l'exécution, monté sur un volume. Sans
+    # cela, chaque reconstruction retélécharge les poids et laisse le service
+    # muet le temps du rapatriement.
+    HF_HOME=/modeles \
+    # Le serveur partage ses cœurs avec l'API Node, Mongo et Redis. Un Whisper
+    # qui prend tout fait passer le reste pour lent.
+    RECITATION_FILS=4
+
+WORKDIR /app
+
+# ffmpeg décode le m4a d'Android et le webm du web. Sans lui le service démarre
+# mais rejette chaque extrait — panne silencieuse s'il n'était pas vérifié par
+# /recitation/etat.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements-recitation.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements-recitation.txt
+
+# Seuls le code et le texte de référence entrent dans l'image : un fichier de
+# 2,8 Mo, et non les 68 Mo du dossier `text/` ni les 29 Go d'audio. Voir
+# .dockerignore, qui borne aussi le contexte transmis au démon.
+COPY api/ ./api/
+COPY src/ ./src/
+COPY data/raw/quran/text/quran_uthmani.json ./data/raw/quran/text/
+
+RUN mkdir -p /modeles /opt/salifz && \
+    useradd --create-home --uid 10001 salifz && \
+    chown -R salifz:salifz /app /modeles /opt/salifz
+
+EXPOSE 8000
+
+# La sonde n'appelle pas `/recitation/etat?charger=1` : forcer le chargement du
+# modèle ferait échouer chaque vérification pendant la première mise en route,
+# et Docker déclarerait mort un conteneur qui s'installe.
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+    CMD curl -fsS http://localhost:8000/health || exit 1
+
+CMD ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# ------------------------------------------------------------------
+# Image sans modèle embarqué.
+#
+# Utile quand la construction n'a pas accès à HuggingFace, ou pour désigner un
+# autre modèle par `MODELE_RECITATION`. Celui indiqué est rapatrié au premier
+# appel, sur le volume : le premier utilisateur attend.
+# ------------------------------------------------------------------
+FROM socle AS leger
+ENV MODELE_RECITATION=small
+USER salifz
+
+# ------------------------------------------------------------------
+# Image par défaut : modèle coranique embarqué.
+#
+# Les 76 Mo de poids convertis sont copiés hors de `/modeles`, qui est un point
+# de montage : un volume monté par-dessus masquerait le modèle et le service
+# repartirait le chercher sur le réseau.
+# ------------------------------------------------------------------
+FROM socle AS coranique
+COPY --from=convertisseur --chown=salifz:salifz /modele /opt/salifz/modele
+ENV MODELE_RECITATION=/opt/salifz/modele
+USER salifz

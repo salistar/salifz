@@ -15,12 +15,13 @@ Usage:
 """
 
 import os
+import sys
 import json
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, Form, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -29,6 +30,12 @@ from pydantic import BaseModel
 # ============================================
 
 BASE_DIR = Path(__file__).parent.parent
+
+# L'image docker pose PYTHONPATH=/app ; en lancement local, uvicorn part du
+# dossier api/ et ne verrait pas src/. On l'ajoute plutot que d'imposer une
+# variable d'environnement pour un simple essai.
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
 DATA_DIR = BASE_DIR / "data" / "raw"
 MODELS_DIR = BASE_DIR / "models"
 
@@ -384,6 +391,113 @@ async def get_stats():
             "uptime": datetime.now().isoformat()
         }
     }
+
+# ============================================
+# Endpoints - Suivi de recitation
+# ============================================
+
+# Plafond aligne sur celui du backend Node : un extrait de recitation depasse
+# rarement 300 Ko, au-dela c'est une erreur d'appel.
+TAILLE_AUDIO_MAX = 10 * 1024 * 1024
+
+
+def texte_du_verset(surah_num: int, verse_num: int) -> Optional[str]:
+    """Retrouve le verset attendu dans les donnees chargees au demarrage.
+
+    Le texte de reference vient du serveur, pas du client : c'est lui qui
+    definit ce qui est juste, et le faire remonter du telephone reviendrait a
+    laisser l'application noter sa propre copie.
+    """
+    from src.recitation.reference import retirer_basmala
+
+    sourate = quran_data.get(surah_num)
+    if not sourate:
+        return None
+    for ayah in sourate.get("ayahs", []):
+        if ayah.get("numberInSurah") == verse_num:
+            return retirer_basmala(ayah.get("text", ""), surah_num, verse_num)
+    return None
+
+
+@app.get("/recitation/etat")
+async def etat_recitation(charger: bool = False):
+    """Ce que le moteur peut faire, ici et maintenant.
+
+    Ne charge pas le modele par defaut : cette route sert de sonde, et une
+    sonde qui declenche le telechargement de 277 Mo fait expirer le premier
+    appel venu.
+    """
+    from src.recitation import audio as prep_audio
+    from src.recitation import moteur
+
+    charge = moteur._etat["modele"] is not None
+    if charger and not charge:
+        charge = moteur.disponible()
+
+    return {
+        "modele": moteur.nom_du_modele(),
+        "charge": charge,
+        "ffmpeg": prep_audio.ffmpeg_disponible(),
+        "erreur": moteur._etat["erreur"],
+        "versets_charges": sum(len(s.get("ayahs", [])) for s in quran_data.values()),
+    }
+
+
+@app.post("/recitation/suivre")
+async def suivre_recitation(
+    audio: UploadFile = File(...),
+    surah: int = Form(...),
+    ayah: int = Form(...),
+    partiel: bool = Form(False),
+    depuis: int = Form(0),
+    texte: Optional[str] = Form(None),
+):
+    """Compare un extrait recite au verset attendu.
+
+    `partiel=true` pendant la recitation : les mots pas encore prononces sont
+    rendus « en_attente ». `false` pour le verdict final, ou ils deviennent
+    « oublie ».
+
+    `depuis` est l'indice du premier mot que cet extrait couvre. Indispensable
+    en mode par extraits : sans lui, le deuxieme extrait ferait passer tout le
+    debut du verset pour oublie.
+    """
+    from src.recitation.audio import AudioIllisible
+    from src.recitation.moteur import MoteurIndisponible
+    from src.recitation.suivi import suivre
+
+    if not 1 <= surah <= 114:
+        raise HTTPException(status_code=400, detail="Numero de sourate invalide")
+    if ayah < 1:
+        raise HTTPException(status_code=400, detail="Numero de verset invalide")
+
+    # Le texte transmis n'est accepte que pour un passage de plusieurs versets,
+    # ou la reference du serveur ne suffit pas.
+    attendu = texte or texte_du_verset(surah, ayah)
+    if not attendu:
+        raise HTTPException(
+            status_code=404,
+            detail="Verset %d:%d introuvable dans les donnees du service" % (surah, ayah),
+        )
+
+    donnees = await audio.read()
+    if len(donnees) > TAILLE_AUDIO_MAX:
+        raise HTTPException(status_code=413, detail="Extrait audio trop volumineux")
+
+    try:
+        resultat = suivre(attendu, donnees, partiel=partiel, depuis=max(0, depuis))
+    except AudioIllisible as erreur:
+        raise HTTPException(status_code=400, detail="Audio illisible : %s" % erreur)
+    except MoteurIndisponible as erreur:
+        # 503 et non 200 avec un resultat vide : l'appelant doit pouvoir
+        # distinguer « rien reconnu » de « rien tente ».
+        raise HTTPException(status_code=503, detail=str(erreur))
+
+    resultat["surah"] = surah
+    resultat["ayah"] = ayah
+    resultat["analyse_le"] = datetime.now().isoformat()
+    return resultat
+
 
 # ============================================
 # Main

@@ -159,6 +159,9 @@ services:
       S3_ACCESS_KEY: ${S3_ACCESS_KEY:-salifz}
       S3_SECRET_KEY: ${S3_SECRET_KEY:-salifz_minio_dev}
       S3_REGION: ${S3_REGION:-us-east-1}
+      # Suivi de recitation. Vide, la route repond 503 en le disant
+      # plutot que de rendre un resultat de complaisance.
+      AI_SERVICE_URL: ${AI_SERVICE_URL:-http://recitation:8000}
     volumes:
       # Le code est monté depuis l'hôte : une modification est prise en compte
       # au redémarrage du conteneur, sans reconstruire l'image. À retirer pour
@@ -178,6 +181,31 @@ services:
         condition: service_healthy
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  # Suivi de recitation : transcrit l'extrait et le compare au verset attendu.
+  # Aucun port publie — seule l'API Node le joint, par le reseau interne.
+  recitation:
+    build:
+      context: ./salifz-ai-model
+      dockerfile: docker/Dockerfile.recitation
+    container_name: salifz-recitation
+    restart: unless-stopped
+    environment:
+      # `auto` prend faster-whisper s'il est installe, ce qui est le cas de
+      # l'image. Passer a `transformers` suppose d'ajouter torch aux
+      # dependances : voir requirements-recitation.txt.
+      BACKEND_RECITATION: ${BACKEND_RECITATION:-auto}
+      # Laisse par defaut le modele embarque dans l'image (coranique,
+      # converti en CTranslate2). Poser une valeur ici l'emporterait sur
+      # celle de l'image, et le service repartirait chercher un modele sur
+      # le reseau alors qu'il en a un sous la main.
+      MODELE_RECITATION: ${MODELE_RECITATION:-/opt/salifz/modele}
+      RECITATION_FILS: ${RECITATION_FILS:-4}
+    volumes:
+      # Les poids survivent a la reconstruction de l'image. Sans ce volume,
+      # chaque deploiement retelecharge 460 Mo et laisse le service muet
+      # pendant ce temps.
+      - recitation-modeles:/modeles
 
   web:
     build:
@@ -211,3 +239,4 @@ volumes:
   redis-data:
   minio-data:
   api-uploads:
+  recitation-modeles:

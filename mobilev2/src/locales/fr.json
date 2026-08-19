@@ -1408,6 +1408,34 @@
     "tajwidPlaceholder": "Madd, idgham, makharij…",
     "toAyah": "Au verset"
   },
+  "recitationLive": {
+    "arreter": "Arrêter et analyser",
+    "audioInvalide": "L'extrait n'a pas pu être lu.",
+    "commencer": "Commencer à réciter",
+    "consigne": "Appuie et récite le verset",
+    "consigneSuivi": "Appuie : les mots se colorent à mesure",
+    "enAnalyse": "Analyse en cours…",
+    "enCours": "Récite le verset, puis appuie pour arrêter",
+    "erreurAnalyse": "L'analyse n'a pas abouti. Réessaie.",
+    "erreurMicro": "L'enregistrement n'a pas pu démarrer.",
+    "etat": {
+      "aRevoir": "à revoir",
+      "approximatif": "approximatif",
+      "enAttente": "pas encore récité",
+      "errone": "erroné",
+      "juste": "juste",
+      "oublie": "oublié"
+    },
+    "indisponibleTexte": "Le moteur d'analyse ne répond pas. Réessaie plus tard.",
+    "indisponibleTitre": "Suivi de récitation indisponible",
+    "malEntendu": "Je n'ai pas bien entendu — les mots ci-dessous ne sont pas fiables.",
+    "microRefuse": "L'accès au micro a été refusé.",
+    "modeSuivi": "Suivi en direct",
+    "modeVerdict": "Bilan complet",
+    "motsReconnus": "des mots reconnus",
+    "silence": "Aucun son n'a été capté. Vérifie ton micro.",
+    "titre": "Récitation suivie"
+  },
   "review": {
     "ayahCount": "{{count}} versets",
     "dueForReview": "À réviser",

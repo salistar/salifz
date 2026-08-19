@@ -49,3 +49,17 @@ services:
 
   coturn:
     restart: always
+
+  # Suivi de récitation. Aucun port publié — l'API Node le joint par le réseau
+  # interne, et le service n'a rien à exposer au dehors.
+  recitation:
+    restart: always
+    deploy:
+      resources:
+        limits:
+          # Le modèle quantifié occupe environ 500 Mo une fois chargé ; la
+          # marge couvre le décodage d'un extrait. La borne n'est pas une
+          # précaution de principe : la machine héberge aussi Salorie et
+          # Sudoku, et un service d'inférence sans plafond les emporte avec
+          # lui le jour où deux récitations arrivent ensemble.
+          memory: 2g

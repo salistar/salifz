@@ -38,7 +38,19 @@ const verseProgressSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  
+
+  // Suivi de récitation — délibérément séparé des scores de tajwid ci-dessus.
+  // Ce sont deux mesures différentes : ici la part de mots effectivement
+  // prononcés, là une appréciation de la prononciation. Les mêler ferait
+  // afficher l'une sous le nom de l'autre.
+  recitationScores: [{
+    accuracy: Number,        // part de mots reconnus, en pourcentage
+    wordsTotal: Number,
+    wordsCorrect: Number,
+    confidence: Number,      // confiance du moteur, null s'il n'en donne pas
+    timestamp: Date
+  }],
+
   // Error tracking
   commonErrors: [{
     errorType: String,

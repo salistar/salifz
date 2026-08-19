@@ -1408,6 +1408,34 @@
     "tajwidPlaceholder": "Madd, idgham, makharij…",
     "toAyah": "To verse"
   },
+  "recitationLive": {
+    "arreter": "Stop and analyse",
+    "audioInvalide": "The recording could not be read.",
+    "commencer": "Start reciting",
+    "consigne": "Tap and recite the verse",
+    "consigneSuivi": "Tap: words light up as you go",
+    "enAnalyse": "Analysing…",
+    "enCours": "Recite the verse, then tap to stop",
+    "erreurAnalyse": "The analysis did not complete. Try again.",
+    "erreurMicro": "Recording could not start.",
+    "etat": {
+      "aRevoir": "to review",
+      "approximatif": "close",
+      "enAttente": "not recited yet",
+      "errone": "wrong",
+      "juste": "correct",
+      "oublie": "missed"
+    },
+    "indisponibleTexte": "The analysis engine is not responding. Try again later.",
+    "indisponibleTitre": "Recitation tracking unavailable",
+    "malEntendu": "I did not hear you clearly — the words below are not reliable.",
+    "microRefuse": "Microphone access was denied.",
+    "modeSuivi": "Live tracking",
+    "modeVerdict": "Full report",
+    "motsReconnus": "of the words recognised",
+    "silence": "No sound was captured. Check your microphone.",
+    "titre": "Guided recitation"
+  },
   "review": {
     "ayahCount": "{{count}} ayahs",
     "dueForReview": "Due for Review",

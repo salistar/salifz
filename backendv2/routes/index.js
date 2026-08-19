@@ -13,7 +13,7 @@ const router = express.Router();
 // comptes bannis (S10).
 const { auth: authMiddleware, optionalAuth } = require('../middleware/auth');
 const { requireFeature } = require('../middleware/parentalControls');
-const { otpLimiter, heavyLimiter } = require('../middleware/rateLimit');
+const { otpLimiter, heavyLimiter, recitationLimiter } = require('../middleware/rateLimit');
 
 // Health check
 router.get('/health', (req, res) => res.json({ 
@@ -84,6 +84,11 @@ router.use('/audio', optionalAuth, safeRequire('./audio'));
 // L'accès à l'espace femmes s'appuie dessus, complété par la modération.
 router.use('/parental', authMiddleware, safeRequire('./parental'));
 router.use('/tajwid', authMiddleware, heavyLimiter, safeRequire('./tajwid'));
+// Suivi de récitation en direct : quels mots ont été prononcés.
+// Le chemin est explicite pour ne pas se confondre avec `/recitations`
+// (validation par l'enseignant, plus bas) ni avec `/tajwid` ci-dessus, qui
+// porte sur la manière de prononcer et non sur ce qui a été dit.
+router.use('/recitation-live', authMiddleware, recitationLimiter, safeRequire('./recitationLive'));
 router.use('/analytics', authMiddleware, safeRequire('./analytics'));
 router.use('/badges', authMiddleware, safeRequire('./badges'));
 router.use('/competitions', authMiddleware, safeRequire('./competitions'));

@@ -1,0 +1,24 @@
+# ============================================
+# Salifz — service de suivi de récitation
+# ============================================
+#
+# Volontairement séparé de `requirements.txt`, qui sert à l'entraînement et
+# tire 80 paquets : torch, TensorFlow, Jupyter, MLflow, wandb, OpenCV. Rien de
+# tout cela ne tourne en production, et l'image dépasserait 3 Go pour un
+# service qui n'a qu'à transcrire de l'audio.
+#
+# faster-whisper s'appuie sur CTranslate2, qui embarque son propre moteur
+# d'inférence : ni torch ni transformers ne sont nécessaires. L'image tombe
+# sous 400 Mo, ce qui compte sur un serveur partagé avec quatorze domaines.
+#
+# Pour utiliser à la place un Whisper affiné publié au format PyTorch
+# (BACKEND_RECITATION=transformers), il faut ajouter ici torch et transformers
+# — et accepter l'image correspondante.
+
+fastapi>=0.104.0,<0.112.0
+uvicorn>=0.24.0,<0.30.0
+pydantic>=2.5.0,<2.8.0
+python-multipart>=0.0.6,<0.1.0
+
+faster-whisper>=1.0.0,<1.2.0
+numpy>=1.24.0,<2.0.0

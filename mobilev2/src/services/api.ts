@@ -579,6 +579,34 @@ export const recitationsAPI = {
   review: (id: string, payload: any): Promise<any> => api.post(`/recitations/${id}/review`, payload),
 };
 
+/**
+ * Suivi de recitation : le serveur transcrit l'extrait et le compare au verset.
+ *
+ * A ne pas confondre avec `recitationsAPI` ci-dessus (envoi a un enseignant)
+ * ni avec l'analyse du tajwid : ici on constate quels mots ont ete prononces,
+ * pas la maniere de les prononcer.
+ */
+export const recitationLiveAPI = {
+  /** Le moteur est-il joignable ? Sert a masquer l'entree plutot qu'a offrir un bouton qui echouera. */
+  etat: (): Promise<any> => api.get('/recitation-live/etat'),
+
+  /**
+   * `partiel` a true pendant la recitation : les mots pas encore dits sont
+   * rendus « en_attente ». A false pour le verdict, ou ils deviennent
+   * « oublie ».
+   *
+   * Le delai est plus court en direct : un extrait qui tarde n'a plus d'objet,
+   * mieux vaut abandonner celui-la et suivre le suivant.
+   */
+  suivre: (form: FormData, partiel: boolean): Promise<any> => {
+    console.log(`${FILE_NAME} 🎙️ recitationLiveAPI.suivre(partiel=${partiel})`);
+    return api.post('/recitation-live/suivre', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: partiel ? 15000 : 60000,
+    });
+  },
+};
+
 export const quranAPI = {
   getSurahs: (): Promise<any> => {
     console.log(`${FILE_NAME} 📥 quranAPI.getSurahs() called`);

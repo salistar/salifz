@@ -45,6 +45,7 @@ import ReviewScreen from '../screens/quran/ReviewScreen';
 import MushafScreen from '../screens/quran/MushafScreen';
 import DownloadsScreen from '../screens/quran/DownloadsScreen';
 import WordByWordScreen from '../screens/quran/WordByWordScreen';
+import RecitationLiveScreen from '../screens/quran/RecitationLiveScreen';
 import SubmitRecitationScreen from '../screens/social/SubmitRecitationScreen';
 import TeacherReviewScreen from '../screens/social/TeacherReviewScreen';
 import AudioPlayerScreen from '../screens/quran/AudioPlayerScreen';
@@ -241,6 +242,9 @@ export default function RootNavigator() {
         <Stack.Screen name="Mushaf" component={MushafScreen} />
         <Stack.Screen name="Downloads" component={DownloadsScreen} />
         <Stack.Screen name="WordByWord" component={WordByWordScreen} />
+        {/* Suivi de recitation : distinct de SubmitRecitation ci-dessous,
+            qui envoie un enregistrement a un enseignant. */}
+        <Stack.Screen name="RecitationLive" component={RecitationLiveScreen} />
         <Stack.Screen name="SubmitRecitation" component={SubmitRecitationScreen} />
         <Stack.Screen name="TeacherReview" component={TeacherReviewScreen} />
         

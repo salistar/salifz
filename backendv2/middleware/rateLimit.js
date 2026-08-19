@@ -76,10 +76,22 @@ const heavyLimiter = rateLimit({
   limit: 10,
 });
 
+// Suivi de récitation en direct. `heavyLimiter` (10/min) couperait un
+// utilisateur légitime : réciter en continu par extraits de 5 secondes émet
+// une douzaine d'appels par minute. La limite reste basse pour autant — chaque
+// extrait coûte plus de temps de calcul que sa propre durée sur un serveur
+// sans carte graphique, et trente par minute saturent déjà un cœur.
+const recitationLimiter = rateLimit({
+  ...base,
+  windowMs: 60 * 1000,
+  limit: 30,
+});
+
 module.exports = {
   globalLimiter,
   authLimiter,
   passwordResetLimiter,
   otpLimiter,
   heavyLimiter,
+  recitationLimiter,
 };

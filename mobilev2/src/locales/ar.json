@@ -1408,6 +1408,34 @@
     "tajwidPlaceholder": "مد، إدغام، مخارج…",
     "toAyah": "إلى الآية"
   },
+  "recitationLive": {
+    "arreter": "إيقاف وتحليل",
+    "audioInvalide": "تعذرت قراءة التسجيل.",
+    "commencer": "ابدأ التلاوة",
+    "consigne": "اضغط ثم اتل الآية",
+    "consigneSuivi": "اضغط: تتلون الكلمات أثناء التلاوة",
+    "enAnalyse": "جارٍ التحليل…",
+    "enCours": "اتل الآية ثم اضغط للإيقاف",
+    "erreurAnalyse": "لم يكتمل التحليل. حاول مرة أخرى.",
+    "erreurMicro": "تعذر بدء التسجيل.",
+    "etat": {
+      "aRevoir": "للمراجعة",
+      "approximatif": "قريبة",
+      "enAttente": "لم تُتل بعد",
+      "errone": "خاطئة",
+      "juste": "صحيحة",
+      "oublie": "منسية"
+    },
+    "indisponibleTexte": "محرك التحليل لا يستجيب. حاول لاحقًا.",
+    "indisponibleTitre": "تتبع التلاوة غير متاح",
+    "malEntendu": "لم أسمعك بوضوح — الكلمات أدناه غير موثوقة.",
+    "microRefuse": "تم رفض الوصول إلى الميكروفون.",
+    "modeSuivi": "تتبع مباشر",
+    "modeVerdict": "التقرير الكامل",
+    "motsReconnus": "من الكلمات تم التعرف عليها",
+    "silence": "لم يُلتقط أي صوت. تحقق من الميكروفون.",
+    "titre": "التلاوة الموجهة"
+  },
   "review": {
     "ayahCount": "{{count}} آية",
     "dueForReview": "للمراجعة الآن",

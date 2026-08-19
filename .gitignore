@@ -39,6 +39,13 @@ salifz-ai-model/venv/
 salifz-ai-model/data/raw/quran/
 salifz-ai-model/data/raw/audio/
 salifz-ai-model/data/processed/
+# Modeles convertis par scripts/convertir_modele_ct2.py : produits par la
+# construction, jamais versionnes. Le dossier entier, et pas seulement les
+# poids : les regles par extension ci-dessous laissent passer 3,5 Mo de
+# JSON, soit un demi-modele que git conserverait sans qu'il serve a rien —
+# et que le suivant prendrait pour le modele.
+salifz-ai-model/models/recitation/
+
 salifz-ai-model/models/**/*.safetensors
 salifz-ai-model/models/**/*.bin
 salifz-ai-model/models/**/*.pt
