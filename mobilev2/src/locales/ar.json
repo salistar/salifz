@@ -1,297 +1,870 @@
 {
-  "common": {
-    "appName": "سالفز",
-    "loading": "جاري التحميل...",
-    "error": "خطأ",
-    "success": "تم بنجاح",
-    "cancel": "إلغاء",
-    "confirm": "تأكيد",
-    "save": "حفظ",
-    "delete": "حذف",
-    "edit": "تعديل",
-    "back": "رجوع",
-    "next": "التالي",
-    "skip": "تخطي",
-    "done": "✓ تم!",
-    "yes": "نعم",
-    "no": "لا",
-    "or": "أو",
-    "ok": "حسناً",
-    "continue": "متابعة",
-    "errorOccurred": "حدث خطأ",
-    "and": "و",
-    "user": "مستخدم",
-    "yesterday": "أمس",
-    "notice": "تنبيه",
-    "failed": "فشل",
-    "share": "مشاركة",
-    "create": "إنشاء",
-    "close": "إغلاق",
-    "retry": "إعادة المحاولة"
+  "achievements": {
+    "categories": {
+      "all": "الكل",
+      "memorization": "الحفظ",
+      "social": "الاجتماعي",
+      "special": "خاص",
+      "streak": "السلسلة"
+    },
+    "items": {
+      "earlyBird": "الباكر",
+      "firstAyah": "أول آية",
+      "firstFriend": "أول صديق",
+      "firstJuz": "أول جزء",
+      "hafiz100": "حافظ 100",
+      "leagueGold": "الدوري الذهبي",
+      "nightOwl": "بومة الليل",
+      "perfectWeek": "أسبوع مثالي",
+      "streak100": "100 يوم",
+      "streak30": "30 يوم",
+      "streak7": "7 أيام",
+      "surahFatiha": "سورة الفاتحة"
+    },
+    "lockedStatus": "مقفل",
+    "rarity": {
+      "common": "عادي",
+      "epic": "ملحمي",
+      "legendary": "أسطوري",
+      "rare": "نادر",
+      "uncommon": "غير شائع"
+    },
+    "reward": "المكافأة",
+    "title": "الإنجازات",
+    "unlocked": "مفتوح",
+    "unlockedStatus": "مفتوح",
+    "xpEarned": "XP مكتسب"
+  },
+  "audioPlayer": {
+    "ayahNumber": "الآية {{number}}",
+    "ayahX": "آية {{number}}",
+    "ayahsList": "قائمة الآيات",
+    "reciters": {
+      "husary": "محمود الحصري",
+      "mishary": "مشاري العفاسي",
+      "sudais": "عبدالرحمن السديس"
+    },
+    "selectReciter": "اختر القارئ"
   },
   "auth": {
-    "login": "تسجيل الدخول",
-    "register": "إنشاء حساب",
-    "logout": "تسجيل الخروج",
-    "email": "البريد الإلكتروني",
-    "password": "كلمة المرور",
-    "username": "اسم المستخدم",
-    "displayName": "الاسم الكامل",
-    "forgotPassword": "نسيت كلمة المرور؟",
-    "noAccount": "ليس لديك حساب؟",
-    "hasAccount": "لديك حساب بالفعل؟",
+    "agreeToTerms": "أوافق على",
+    "codeSent": "تم إرسال الرمز إلى",
+    "confirmPassword": "تأكيد كلمة المرور",
     "createAccount": "إنشاء حساب جديد",
-    "loginButton": "دخول",
-    "registerButton": "تسجيل",
+    "createAccountButton": "إنشاء الحساب",
+    "displayName": "الاسم الكامل",
+    "email": "البريد الإلكتروني",
+    "emailOrUsername": "البريد الإلكتروني أو اسم المستخدم",
     "emailPlaceholder": "example@email.com",
+    "enterCode": "أدخل رمز التحقق",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "hasAccount": "لديك حساب بالفعل؟",
+    "invalidCode": "رمز غير صالح",
+    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+    "joinUsSubtitle": "انضم إلينا وابدأ رحلة الحفظ",
+    "loggingIn": "جاري تسجيل الدخول...",
+    "login": "تسجيل الدخول",
+    "loginButton": "دخول",
+    "loginError": "خطأ في تسجيل الدخول",
+    "loginToContinue": "سجل دخولك للمتابعة",
+    "logout": "تسجيل الخروج",
+    "noAccount": "ليس لديك حساب؟",
+    "orRegisterWith": "أو سجل باستخدام",
+    "password": "كلمة المرور",
     "passwordPlaceholder": "6 أحرف على الأقل",
+    "privacyPolicy": "سياسة الخصوصية",
+    "register": "إنشاء حساب",
+    "registerButton": "تسجيل",
+    "registerError": "خطأ في التسجيل",
+    "registerNow": "سجل الآن",
+    "resendCode": "إعادة إرسال الرمز",
+    "sendCode": "إرسال الرمز",
+    "termsAgree": "بإنشائك للحساب، أنت توافق على",
+    "termsAndConditions": "الشروط والأحكام",
+    "termsLink": "الشروط والأحكام",
+    "username": "اسم المستخدم",
     "usernamePlaceholder": "اسم_المستخدم",
     "verifyEmail": "تأكيد البريد الإلكتروني",
     "verifyPhone": "تأكيد رقم الهاتف",
-    "sendCode": "إرسال الرمز",
-    "resendCode": "إعادة إرسال الرمز",
-    "enterCode": "أدخل رمز التحقق",
-    "codeSent": "تم إرسال الرمز إلى",
-    "invalidCode": "رمز غير صالح",
-    "termsAgree": "بإنشائك للحساب، أنت توافق على",
-    "termsLink": "الشروط والأحكام",
-    "welcomeBack": "مرحباً بعودتك! 👋",
-    "loginToContinue": "سجل دخولك للمتابعة",
-    "emailOrUsername": "البريد الإلكتروني أو اسم المستخدم",
-    "loggingIn": "جاري تسجيل الدخول...",
-    "registerNow": "سجل الآن",
-    "loginError": "خطأ في تسجيل الدخول",
-    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-    "joinUsSubtitle": "انضم إلينا وابدأ رحلة الحفظ",
-    "confirmPassword": "تأكيد كلمة المرور",
-    "agreeToTerms": "أوافق على",
-    "termsAndConditions": "الشروط والأحكام",
-    "privacyPolicy": "سياسة الخصوصية",
-    "createAccountButton": "إنشاء الحساب",
-    "orRegisterWith": "أو سجل باستخدام",
-    "registerError": "خطأ في التسجيل"
+    "welcomeBack": "مرحباً بعودتك! 👋"
   },
-  "validation": {
-    "required": "هذا الحقل مطلوب",
-    "emailInvalid": "بريد إلكتروني غير صالح",
-    "emailRequired": "البريد الإلكتروني مطلوب",
-    "passwordTooShort": "6 أحرف على الأقل",
-    "passwordRequired": "كلمة المرور مطلوبة",
-    "usernameTooShort": "3 أحرف على الأقل",
-    "usernameInvalid": "أحرف وأرقام و _ فقط",
-    "usernameRequired": "اسم المستخدم مطلوب",
-    "termsRequired": "يجب الموافقة على الشروط والأحكام",
-    "passwordMismatch": "كلمتا المرور غير متطابقتين"
+  "biometric": {
+    "authenticating": "جاري التحقق...",
+    "errors": {
+      "deviceNotSupported": "جهازك لا يدعم المصادقة البيومترية",
+      "notEnrolled": "لم يتم إعداد المصادقة البيومترية على جهازك.",
+      "notSetup": "غير مُعد",
+      "notSupported": "غير مدعوم"
+    },
+    "failed": {
+      "attempt": "المحاولة {{current}} من {{max}}",
+      "retry": "إعادة المحاولة",
+      "title": "فشلت المصادقة"
+    },
+    "locked": {
+      "message": "تم تجاوز عدد المحاولات المسموحة.",
+      "title": "🔒 تم القفل",
+      "usePIN": "تم القفل - استخدم رمز PIN"
+    },
+    "names": {
+      "default": "المصادقة البيومترية",
+      "facial": "التعرف على الوجه",
+      "fingerprint": "بصمة الإصبع"
+    },
+    "prompts": {
+      "default": "تحقق من هويتك للمتابعة",
+      "facial": "استخدم Face ID للمتابعة",
+      "fingerprint": "استخدم بصمة الإصبع للمتابعة"
+    },
+    "setup": {
+      "success": "✅ تم الإعداد",
+      "successMessage": "تم تفعيل المصادقة البيومترية بنجاح!"
+    },
+    "startAuth": "ابدأ المصادقة",
+    "subtitle": {
+      "setup": "اضغط للتفعيل والإعداد",
+      "verify": "اضغط للتحقق من هويتك"
+    },
+    "usePIN": "استخدام رمز PIN",
+    "usePINInstead": "استخدام رمز PIN بدلاً من ذلك"
   },
-  "password": {
-    "weak": "ضعيفة",
-    "medium": "متوسطة",
-    "strong": "قوية"
+  "call": {
+    "accept": "قبول",
+    "cameraOff": "الكاميرا مغلقة",
+    "connecting": "جاري الاتصال...",
+    "enableVideo": "تشغيل الفيديو",
+    "encrypted": "مكالمة مشفرة",
+    "end": "إنهاء",
+    "ended": "انتهت المكالمة",
+    "flip": "تبديل",
+    "incomingAudio": "مكالمة صوتية واردة",
+    "incomingVideo": "مكالمة فيديو واردة...",
+    "mute": "كتم",
+    "reject": "رفض",
+    "rejected": "تم رفض المكالمة",
+    "ringing": "جاري الرنين...",
+    "speaker": "مكبر",
+    "speakerOff": "مكبر",
+    "speakerOn": "سماعة",
+    "title": "المكالمة",
+    "unmute": "إلغاء الكتم",
+    "videoOff": "إيقاف",
+    "videoOn": "تشغيل"
   },
-  "onboarding": {
-    "welcome": "مرحباً بك في سالفز",
-    "subtitle": "طريقك لحفظ القرآن الكريم",
-    "slogan": "احفظ القرآن بطريقة ممتعة",
-    "feature1": "تعلّم بالألعاب والتحديات",
-    "feature2": "حافظ على streak يومي",
-    "feature3": "تنافس مع أصدقائك",
-    "feature4": "تحليل التجويد بالذكاء الاصطناعي",
-    "getStarted": "ابدأ الآن مجاناً",
-    "haveAccount": "لدي حساب بالفعل",
-    "startNow": "ابدأ الآن",
-    "slide1": {
-      "title": "احفظ القرآن بسهولة",
-      "subtitle": "طريقة مبتكرة وممتعة",
-      "description": "نظام تعليمي متكامل يساعدك على الحفظ والمراجعة"
+  "challenges": {
+    "claimReward": "استلم المكافأة 🎁",
+    "claimed": "✓ تم الاستلام",
+    "congratulations": "🎉 مبروك!",
+    "defaultTitle": "تحدي",
+    "difficulty": {
+      "easy": "سهل",
+      "hard": "صعب",
+      "medium": "متوسط"
     },
-    "slide2": {
-      "title": "تحديات يومية",
-      "subtitle": "ابقَ متحمساً مع التحديات والمكافآت",
-      "description": "أكمل التحديات اليومية واربح النقاط والجواهر"
+    "empty": "لا توجد تحديات متاحة حالياً",
+    "inProgress": "جاري التقدم...",
+    "rewardMessage": "حصلت على {{xp}} XP و {{gems}} جواهر",
+    "start": "ابدأ التحدي",
+    "tabs": {
+      "daily": "يومي",
+      "special": "خاص",
+      "weekly": "أسبوعي"
     },
-    "slide3": {
-      "title": "حافظ على سلسلتك",
-      "subtitle": "تدرب يومياً وشاهد تقدمك",
-      "description": "نظام السلسلة يحفزك للتدرب كل يوم"
-    },
-    "slide4": {
-      "title": "تنافس مع الأصدقاء",
-      "subtitle": "انضم للدوريات وتسلق الترتيب",
-      "description": "تنافس مع الآخرين في الدوريات الأسبوعية"
-    },
-    "slide5": {
-      "title": "مدعوم بالذكاء الاصطناعي",
-      "subtitle": "خطط مخصصة لك",
-      "description": "الذكاء الاصطناعي يحلل أداءك ويقدم لك خطة حفظ مخصصة"
+    "title": "التحديات"
+  },
+  "chat": {
+    "isTyping": "يكتب...",
+    "noMessages": "لا توجد رسائل بعد",
+    "offline": "غير متصل",
+    "online": "متصل الآن",
+    "placeholder": "اكتب رسالتك...",
+    "send": "إرسال",
+    "startConversation": "ابدأ المحادثة",
+    "typing": "يكتب..."
+  },
+  "common": {
+    "and": "و",
+    "appName": "سالفز",
+    "back": "رجوع",
+    "cancel": "إلغاء",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "continue": "متابعة",
+    "create": "إنشاء",
+    "delete": "حذف",
+    "done": "✓ تم!",
+    "edit": "تعديل",
+    "error": "خطأ",
+    "errorOccurred": "حدث خطأ",
+    "failed": "فشل",
+    "loading": "جاري التحميل...",
+    "next": "التالي",
+    "no": "لا",
+    "notice": "تنبيه",
+    "ok": "حسناً",
+    "or": "أو",
+    "retry": "إعادة المحاولة",
+    "save": "حفظ",
+    "share": "مشاركة",
+    "skip": "تخطي",
+    "success": "تم بنجاح",
+    "user": "مستخدم",
+    "yes": "نعم",
+    "yesterday": "أمس"
+  },
+  "conversations": {
+    "conversation": "محادثة",
+    "empty": "لا توجد محادثات",
+    "emptySubtitle": "ابحث عن أصدقاء لبدء محادثة جديدة",
+    "findFriends": "البحث عن أصدقاء",
+    "group": "مجموعة",
+    "noMessages": "لا توجد رسائل",
+    "noResults": "لا توجد نتائج",
+    "searchPlaceholder": "ابحث عن شخص...",
+    "title": "المحادثات"
+  },
+  "dailyVerse": {
+    "ayahNumber": "الآية {{number}}",
+    "copy": "نسخ",
+    "listen": "استمع",
+    "memorize": "احفظ",
+    "share": "مشاركة",
+    "stop": "إيقاف",
+    "title": "آية اليوم",
+    "verses": {
+      "ayatulKursi": "الله - لا إله إلا هو الحي القيوم",
+      "basmala": "بسم الله الرحمن الرحيم",
+      "ikhlas1": "قل هو الله أحد",
+      "raad28": "ألا بذكر الله تطمئن القلوب",
+      "sharh5": "فإن مع العسر يسرا"
     }
   },
-  "splash": {
-    "learnWithGames": "تعلم بالألعاب",
-    "competeWithFriends": "تنافس مع الأصدقاء",
-    "trackProgress": "تابع تقدمك"
+  "downloads": {
+    "confirmTitle": "تحميل هذه السورة؟",
+    "download": "تحميل",
+    "freeSpace": "متاحة",
+    "manage": "إدارة التلاوات",
+    "removeAllBody": "ستُحذف جميع التلاوات المحفوظة.",
+    "removeAllTitle": "حذف الكل؟",
+    "removeTitle": "حذف التلاوة؟",
+    "surahsStored": "سورة على الجهاز",
+    "title": "بدون اتصال",
+    "unknownSize": "حجم غير معروف"
+  },
+  "emailVerification": {
+    "errors": {
+      "invalidCode": "رمز التحقق غير صحيح"
+    },
+    "resend": {
+      "code": "إعادة إرسال الرمز",
+      "link": "إعادة إرسال الرابط",
+      "linkSentMessage": "تم إرسال رابط التحقق إلى بريدك الإلكتروني",
+      "linkSentTitle": "📧 تم الإرسال",
+      "newCodeMessage": "رمز التحقق الجديد: {{code}}",
+      "newCodeTitle": "📧 رمز جديد",
+      "timer": "إعادة الإرسال بعد {{seconds}} ثانية"
+    },
+    "simulation": {
+      "badge": "وضع التجربة - الرمز: {{code}}",
+      "message": "رمز التحقق المرسل:\n\n{{code}}",
+      "title": "📧 رمز التحقق (للتجربة)"
+    },
+    "subtitle": {
+      "link": "تم إرسال رابط التحقق إلى",
+      "otp": "أدخل رمز التحقق المرسل إلى"
+    },
+    "success": {
+      "redirecting": "جاري نقلك إلى الصفحة الرئيسية...",
+      "title": "تم التحقق بنجاح!"
+    },
+    "title": "التحقق من البريد الإلكتروني",
+    "verify": "تحقق"
+  },
+  "errors": {
+    "generic": "حدث خطأ"
   },
   "forgotPassword": {
-    "title": "نسيت كلمة المرور؟",
-    "subtitle": "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين",
+    "backToLogin": "العودة لتسجيل الدخول",
+    "resend": "إعادة الإرسال",
     "sendLink": "إرسال الرابط",
     "sent": "تم الإرسال!",
     "sentDescription": "تم إرسال رابط إعادة تعيين كلمة المرور",
-    "backToLogin": "العودة لتسجيل الدخول",
-    "resend": "إعادة الإرسال"
+    "subtitle": "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة التعيين",
+    "title": "نسيت كلمة المرور؟"
+  },
+  "friends": {
+    "actions": {
+      "accept": "قبول",
+      "add": "إضافة",
+      "reject": "رفض",
+      "remove": "إزالة"
+    },
+    "alerts": {
+      "acceptError": "فشل قبول الطلب",
+      "nowFriendsWith": "أنت الآن صديق مع {{name}}",
+      "removeFriendConfirm": "هل تريد إزالة {{name}} من قائمة أصدقائك؟",
+      "removeFriendTitle": "إزالة صديق",
+      "requestSentTo": "تم إرسال طلب صداقة إلى {{name}}"
+    },
+    "empty": {
+      "noFriendsSubtitle": "ابحث عن أصدقاء وأضفهم للتنافس معهم",
+      "noFriendsTitle": "لا يوجد أصدقاء بعد",
+      "noRequestsSubtitle": "ستظهر هنا طلبات الصداقة الواردة",
+      "noRequestsTitle": "لا توجد طلبات",
+      "noResultsSubtitle": "جرب البحث باسم مستخدم آخر",
+      "noResultsTitle": "لا توجد نتائج",
+      "searchFriends": "البحث عن أصدقاء",
+      "searchSubtitle": "اكتب اسم المستخدم للبحث",
+      "searchTitle": "ابحث عن أصدقاء"
+    },
+    "friendCount": "{{count}} صديق",
+    "incomingRequests": "الطلبات الواردة",
+    "level": "المستوى {{level}}",
+    "search": {
+      "minChars": "أدخل 3 أحرف على الأقل",
+      "placeholder": "ابحث باسم المستخدم..."
+    },
+    "searchResults": "نتائج البحث",
+    "status": {
+      "friend": "صديق",
+      "sent": "تم الإرسال"
+    },
+    "streakDays": "{{days}} يوم 🔥",
+    "tabs": {
+      "friends": "الأصدقاء",
+      "requests": "الطلبات",
+      "search": "بحث"
+    },
+    "title": "الأصدقاء",
+    "unknownUser": "مستخدم"
+  },
+  "gamification": {
+    "available": "متاح",
+    "getMore": "احصل على المزيد",
+    "levelUp": "مستوى جديد!",
+    "newAchievement": "إنجاز جديد!",
+    "questComplete": "تمت المهمة!",
+    "streakFreeze": "تجميد السلسلة",
+    "xpEarned": "نقاط مكتسبة"
+  },
+  "goalSetup": {
+    "goals": {
+      "advanced": "متقدم",
+      "advancedDesc": "للحفاظ المتمرسين",
+      "ayahsDaily": "{{count}} آيات يومياً",
+      "beginner": "مبتدئ",
+      "beginnerDesc": "بداية رائعة للحفظ",
+      "regular": "منتظم",
+      "regularDesc": "خطوة ثابتة للتقدم",
+      "serious": "جاد",
+      "seriousDesc": "تقدم ملحوظ",
+      "time10min": "10 دقائق",
+      "time20min": "20 دقيقة",
+      "time30min": "30 دقيقة",
+      "time5min": "5 دقائق"
+    },
+    "reminders": {
+      "afterFajr": "بعد الفجر",
+      "afternoon": "بعد الظهر",
+      "evening": "المساء",
+      "morning": "الصباح",
+      "night": "الليل"
+    },
+    "skipReminder": "تخطي التذكير",
+    "startMemorizing": "ابدأ الحفظ",
+    "step1": {
+      "subtitle": "كم من الوقت تريد أن تخصص للحفظ يومياً؟",
+      "title": "حدد هدفك اليومي"
+    },
+    "step2": {
+      "subtitle": "متى تفضل أن نذكرك بالحفظ؟",
+      "title": "اختر وقت التذكير"
+    },
+    "stepOf": "الخطوة {{current}} من {{total}}",
+    "tip": "💡 يمكنك تغيير هذه الإعدادات لاحقاً"
+  },
+  "halaqa": {
+    "activityTypes": {
+      "achievement": "إنجاز",
+      "achievementDesc": "احتفال بالإنجازات",
+      "challenge": "تحدي",
+      "challengeDesc": "تحدي جماعي",
+      "competition": "مسابقة",
+      "competitionDesc": "تنافس مع الأعضاء",
+      "discussion": "نقاش",
+      "discussionDesc": "نقاش جماعي",
+      "dua": "دعاء",
+      "duaDesc": "أدعية وأذكار",
+      "lecture": "محاضرة",
+      "lectureDesc": "درس أو محاضرة",
+      "lesson": "درس",
+      "lessonDesc": "حصة تعليمية",
+      "memorize": "حفظ جديد",
+      "memorizeDesc": "حفظ آيات جديدة",
+      "other": "أخرى",
+      "otherDesc": "نشاط آخر",
+      "quiz": "اختبار",
+      "quizDesc": "اختبار المحفوظ",
+      "recitation": "تلاوة",
+      "recitationDesc": "تلاوة جماعية",
+      "review": "مراجعة",
+      "reviewDesc": "مراجعة المحفوظ",
+      "tafseer": "تفسير",
+      "tafseerDesc": "دراسة معاني الآيات",
+      "tafsir": "تفسير",
+      "tafsirDesc": "دراسة معاني الآيات",
+      "tajweed": "تجويد",
+      "tajweedDesc": "تعلم أحكام التجويد",
+      "tajwid": "تجويد",
+      "tajwidDesc": "تعلم أحكام التجويد",
+      "workshop": "ورشة عمل",
+      "workshopDesc": "ورشة تدريبية"
+    },
+    "admin": "مشرف",
+    "alerts": {
+      "createError": "فشل إنشاء الحلقة",
+      "createSuccess": "تم إنشاء الحلقة بنجاح!",
+      "invalidCode": "كود الانضمام غير صحيح",
+      "joinError": "فشل الانضمام للحلقة",
+      "joinSuccess": "تم الانضمام للحلقة بنجاح!",
+      "nameRequired": "اسم الحلقة مطلوب",
+      "selectActivity": "اختر نشاطاً واحداً على الأقل"
+    },
+    "card": {
+      "admin": "مشرف",
+      "join": "انضمام",
+      "member": "عضو"
+    },
+    "create": {
+      "activities": "الأنشطة المتاحة",
+      "activityTypesSubtitle": "اختر الأنشطة المتاحة في الحلقة",
+      "activityTypesTitle": "أنواع الأنشطة",
+      "allowChat": "تفعيل المحادثة",
+      "allowChatDescription": "السماح للأعضاء بالتواصل",
+      "allowVoice": "تفعيل الصوت",
+      "allowVoiceDescription": "السماح بالمكالمات الصوتية",
+      "basicInfo": "المعلومات الأساسية",
+      "createButton": "إنشاء الحلقة",
+      "creating": "جاري الإنشاء...",
+      "dailyGoal": "الهدف اليومي",
+      "description": "الوصف",
+      "descriptionPlaceholder": "وصف مختصر للحلقة...",
+      "errors": {
+        "failed": "تعذّر الإنشاء",
+        "nameRequired": "الاسم مطلوب",
+        "selectActivity": "اختر نشاطاً واحداً على الأقل"
+      },
+      "maxMembers": "الحد الأقصى للأعضاء",
+      "name": "اسم الحلقة",
+      "namePlaceholder": "مثال: حلقة الفجر",
+      "privacy": "نوع الحلقة",
+      "private": "خاصة",
+      "privateDesc": "بكود الانضمام فقط",
+      "public": "عامة",
+      "publicDesc": "أي شخص يمكنه الانضمام",
+      "publicDescription": "يمكن لأي شخص الانضمام والمشاركة",
+      "publicHalaqa": "حلقة عامة",
+      "settings": "الإعدادات",
+      "success": "تم إنشاء الحلقة",
+      "title": "إنشاء حلقة جديدة",
+      "viewHalaqa": "عرض الحلقة"
+    },
+    "defaultDescription": "مجموعة دراسة",
+    "defaultName": "حلقة",
+    "empty": {
+      "createButton": "إنشاء حلقة",
+      "createHalaqa": "إنشاء حلقة",
+      "join": {
+        "subtitle": "أدخل كود الانضمام للدخول لحلقة خاصة",
+        "title": "انضم لحلقة"
+      },
+      "joinButton": "انضم لحلقة",
+      "joinSubtitle": "أدخل كود الانضمام للدخول لحلقة خاصة",
+      "joinTitle": "انضم لحلقة",
+      "my": {
+        "subtitle": "أنشئ حلقة جديدة أو انضم لحلقة",
+        "title": "لا توجد حلقات"
+      },
+      "mySubtitle": "أنشئ حلقة جديدة أو انضم لحلقة",
+      "myTitle": "لا توجد حلقات",
+      "public": {
+        "subtitle": "لا توجد حلقات عامة متاحة حالياً",
+        "title": "لا توجد حلقات عامة"
+      },
+      "publicSubtitle": "لا توجد حلقات عامة متاحة حالياً",
+      "publicTitle": "لا توجد حلقات عامة",
+      "refreshButton": "تحديث"
+    },
+    "join": {
+      "browsePublic": "تصفح الحلقات العامة",
+      "button": "انضمام",
+      "codePlaceholder": "أدخل الكود هنا",
+      "confirmMessage": "الانضمام إلى هذه الحلقة؟",
+      "errors": {
+        "codeRequired": "الرمز مطلوب",
+        "failed": "تعذّر الانضمام",
+        "invalidCode": "رمز غير صالح"
+      },
+      "joining": "جاري الانضمام...",
+      "placeholder": "أدخل كود الانضمام",
+      "privateSubtitle": "أدخل كود الدعوة للانضمام",
+      "privateTitle": "انضم لحلقة خاصة",
+      "success": "تم الانضمام إلى الحلقة",
+      "title": "الانضمام برمز"
+    },
+    "stats": {
+      "verse": "آية"
+    },
+    "tabs": {
+      "join": "انضم بكود",
+      "my": "حلقاتي",
+      "public": "الحلقات العامة"
+    },
+    "title": "الحلقات"
+  },
+  "halaqaChat": {
+    "dates": {
+      "today": "اليوم",
+      "yesterday": "أمس"
+    },
+    "defaultTitle": "حلقة",
+    "empty": {
+      "subtitle": "كن أول من يبدأ المحادثة!",
+      "title": "لا توجد رسائل بعد"
+    },
+    "errors": {
+      "noHalaqaId": "معرف الحلقة غير موجود",
+      "sendFailed": "فشل إرسال الرسالة"
+    },
+    "input": {
+      "placeholder": "اكتب رسالتك..."
+    },
+    "member": "عضو",
+    "status": {
+      "connected": "متصل",
+      "disconnected": "غير متصل"
+    },
+    "typing": "{{names}} يكتب...",
+    "you": "أنت"
+  },
+  "halaqaDetail": {
+    "activity": "نشاط",
+    "activityTypes": {
+      "achievement": "إنجاز",
+      "achievementDesc": "هدف نبلغه معاً",
+      "challenge": "تحدي",
+      "challengeDesc": "تحدي جماعي",
+      "competition": "مسابقة",
+      "competitionDesc": "تنافس مع الأعضاء",
+      "discussion": "نقاش",
+      "discussionDesc": "نقاش جماعي",
+      "dua": "دعاء",
+      "duaDesc": "أدعية وأذكار",
+      "lecture": "محاضرة",
+      "lectureDesc": "درس أو محاضرة",
+      "lesson": "درس",
+      "lessonDesc": "درس يقدّمه المعلم",
+      "memorize": "حفظ جديد",
+      "memorizeDesc": "حفظ آيات جديدة",
+      "other": "أخرى",
+      "otherDesc": "نشاط آخر",
+      "quiz": "اختبار",
+      "quizDesc": "اختبار المحفوظ",
+      "recitation": "تلاوة",
+      "recitationDesc": "تلاوة جماعية",
+      "review": "مراجعة",
+      "reviewDesc": "مراجعة المحفوظ",
+      "tafseer": "تفسير",
+      "tafseerDesc": "شرح معاني الآيات",
+      "tafsir": "تفسير",
+      "tafsirDesc": "دراسة معاني الآيات",
+      "tajweed": "تجويد",
+      "tajweedDesc": "تدريب على أحكام التلاوة",
+      "tajwid": "تجويد",
+      "tajwidDesc": "تعلم أحكام التجويد",
+      "workshop": "ورشة",
+      "workshopDesc": "جلسة تطبيقية جماعية"
+    },
+    "admin": "مشرف",
+    "alerts": {
+      "completeError": "فشل إتمام النشاط",
+      "createError": "فشل إنشاء النشاط",
+      "leaveButton": "مغادرة",
+      "leaveConfirm": "هل تريد مغادرة هذه الحلقة؟",
+      "leaveTitle": "مغادرة الحلقة",
+      "leftSuccess": "تمت المغادرة بنجاح",
+      "loadError": "فشل تحميل بيانات الحلقة"
+    },
+    "chat": "المحادثة",
+    "completeActivity": {
+      "alreadyCompleted": "تم إكمال هذا النشاط",
+      "message": "أحسنت! حصلت على {{xp}} XP",
+      "title": "إتمام النشاط"
+    },
+    "createActivity": {
+      "button": "إنشاء نشاط",
+      "create": "إنشاء النشاط",
+      "descriptionPlaceholder": "الوصف (اختياري)",
+      "detailsLabel": "التفاصيل",
+      "errors": {
+        "fillRequired": "يرجى ملء الحقول المطلوبة"
+      },
+      "modalTitle": "نشاط جديد",
+      "newButton": "نشاط جديد",
+      "selectType": "اختر نوع النشاط",
+      "success": "تم إنشاء النشاط",
+      "title": "إنشاء نشاط جديد",
+      "titlePlaceholder": "عنوان النشاط",
+      "typeLabel": "نوع النشاط"
+    },
+    "createdBy": "أنشأها",
+    "createdByLabel": "أنشأها",
+    "defaultDescription": "مجموعة دراسة",
+    "defaultName": "حلقة",
+    "deleteHalaqa": {
+      "confirm": "لا يمكن التراجع عن هذا.",
+      "success": "تم حذف الحلقة",
+      "title": "حذف الحلقة؟"
+    },
+    "empty": {
+      "activities": "لا توجد أنشطة بعد",
+      "activitiesAdmin": "أنشئ نشاطاً جديداً للبدء",
+      "leaderboard": "لا توجد نقاط بعد",
+      "members": "لا يوجد أعضاء"
+    },
+    "errors": {
+      "chatDisabled": "المحادثة معطّلة",
+      "creatorCannotLeave": "لا يمكن للمنشئ مغادرة حلقته",
+      "noHalaqaId": "الحلقة غير موجودة"
+    },
+    "inviteCode": {
+      "copied": "تم نسخ الرمز",
+      "label": "رمز الدعوة",
+      "shareMessage": "انضم إلى حلقة {{name}} في Salifz!\n\nكود: {{code}}\n\n#Salifz",
+      "title": "كود الانضمام"
+    },
+    "leave": "مغادرة",
+    "leaveHalaqa": {
+      "confirm": "ستفقد الوصول إلى أنشطتها.",
+      "leave": "مغادرة",
+      "success": "غادرت الحلقة",
+      "title": "مغادرة الحلقة؟"
+    },
+    "member": "عضو",
+    "private": "خاصة",
+    "public": "عامة",
+    "stats": {
+      "activities": "نشاط",
+      "activity": "نشاط",
+      "member": "عضو",
+      "verse": "آية",
+      "verses": "آية"
+    },
+    "tabs": {
+      "activities": "الأنشطة",
+      "leaderboard": "الترتيب",
+      "members": "الأعضاء"
+    },
+    "time": {
+      "daysAgo": "منذ {{count}} يوم",
+      "hoursAgo": "منذ {{count}} ساعة",
+      "minutesAgo": "منذ {{count}} دقيقة",
+      "now": "الآن"
+    },
+    "title": "الحلقة"
   },
   "home": {
-    "greeting": "السلام عليكم",
-    "greetingWithName": "مرحباً {{name}}! 👋",
-    "dailyQuests": "المهام اليومية",
-    "continueLearn": "أكمل حفظك",
-    "continueMemorizing": "تابع الحفظ",
-    "surah": "سورة",
-    "ayah": "آية",
-    "ofQuran": "من القرآن الكريم",
-    "level": "المستوى",
-    "levelX": "المستوى {{level}}",
-    "streak": "السلسلة",
-    "days": "أيام",
-    "hearts": "القلوب",
-    "gems": "الجواهر",
-    "xp": "نقاط",
-    "unlimitedHearts": "قلوب غير محدودة",
-    "surahBaqarahAyah25": "سورة البقرة - الآية 25",
-    "defaultUsername": "مستخدم",
     "actions": {
+      "challenges": "تحديات",
+      "khatam": "ختم",
       "learn": "تعلم",
       "review": "مراجعة",
-      "challenges": "تحديات",
-      "social": "التواصل",
-      "khatam": "ختم"
+      "social": "التواصل"
     },
-    "social": {
-      "title": "التواصل",
-      "conversations": "المحادثات",
-      "conversationCount": "{{count}} محادثة",
-      "halaqat": "الحلقات",
-      "halaqaCount": "{{count}} حلقة",
-      "friends": "الأصدقاء",
-      "addFriend": "إضافة صديق"
-    },
-    "recentConversations": "المحادثات الأخيرة",
-    "seeAll": "عرض الكل",
-    "noMessages": "لا توجد رسائل",
-    "conversation": "محادثة",
-    "myHalaqat": "حلقاتي",
-    "memberCount": "{{count}} عضو",
-    "joinHalaqa": "انضم لحلقة",
-    "orCreateHalaqa": "أو أنشئ حلقة",
-    "dailyGoals": "أهداف اليوم",
+    "ayah": "آية",
     "ayahsProgress": "الآيات: {{current}}/{{target}}",
-    "todaysChallenges": "تحديات اليوم",
     "challenge": "تحدي",
     "challenges": {
       "memorize5": "احفظ 5 آيات",
-      "review10": "راجع 10 آيات",
-      "practice15": "تدرب 15 دقيقة"
+      "practice15": "تدرب 15 دقيقة",
+      "review10": "راجع 10 آيات"
     },
+    "continueLearn": "أكمل حفظك",
+    "continueMemorizing": "تابع الحفظ",
+    "conversation": "محادثة",
+    "dailyGoals": "أهداف اليوم",
+    "dailyQuests": "المهام اليومية",
+    "days": "أيام",
+    "defaultUsername": "مستخدم",
+    "features": {
+      "khatam": "ختم القرآن",
+      "prayerTimes": "مواقيت الصلاة",
+      "qibla": "القبلة"
+    },
+    "gems": "الجواهر",
+    "greeting": "السلام عليكم",
+    "greetingWithName": "مرحباً {{name}}! 👋",
+    "hearts": "القلوب",
+    "islamicFeatures": "الميزات الإسلامية",
+    "joinHalaqa": "انضم لحلقة",
     "leagues": {
       "bronze": "البرونزي",
-      "silver": "الفضي",
-      "gold": "الذهبي",
-      "platinum": "البلاتيني",
       "diamond": "الماسي",
+      "gold": "الذهبي",
+      "hafiz": "الحافظ",
       "master": "الحافظ",
-      "hafiz": "الحافظ"
+      "platinum": "البلاتيني",
+      "silver": "الفضي"
     },
+    "level": "المستوى",
+    "levelX": "المستوى {{level}}",
+    "memberCount": "{{count}} عضو",
+    "myHalaqat": "حلقاتي",
+    "noMessages": "لا توجد رسائل",
+    "ofQuran": "من القرآن الكريم",
+    "orCreateHalaqa": "أو أنشئ حلقة",
     "rankNumber": "المرتبة #{{rank}}",
-    "islamicFeatures": "الميزات الإسلامية",
-    "features": {
-      "prayerTimes": "مواقيت الصلاة",
-      "qibla": "القبلة",
-      "khatam": "ختم القرآن"
-    }
-  },
-  "prayer": {
-    "title": "مواقيت الصلاة",
-    "nextPrayer": "الصلاة القادمة",
-    "fajr": "الفجر",
-    "fajrAr": "الفجر",
-    "sunrise": "الشروق",
-    "sunriseAr": "الشروق",
-    "dhuhr": "الظهر",
-    "dhuhrAr": "الظهر",
-    "asr": "العصر",
-    "asrAr": "العصر",
-    "maghrib": "المغرب",
-    "maghribAr": "المغرب",
-    "isha": "العشاء",
-    "ishaAr": "العشاء",
-    "adhanAt": "الأذان",
-    "hours": "ساعة",
-    "minutes": "دقيقة",
-    "seconds": "ثانية",
-    "today": "أوقات اليوم",
-    "loading": "جاري تحميل أوقات الصلاة...",
-    "locationError": "يرجى السماح بالوصول للموقع",
-    "refresh": "تحديث",
-    "settings": "الإعدادات",
-    "method": "طريقة الحساب",
-    "methods": {
-      "mwl": "رابطة العالم الإسلامي",
-      "isna": "الجمعية الإسلامية لأمريكا الشمالية",
-      "egypt": "الهيئة المصرية العامة للمساحة",
-      "makkah": "جامعة أم القرى",
-      "karachi": "جامعة العلوم الإسلامية كراتشي",
-      "tehran": "معهد الجيوفيزياء طهران",
-      "morocco": "وزارة الأوقاف المغربية"
+    "recentConversations": "المحادثات الأخيرة",
+    "seeAll": "عرض الكل",
+    "social": {
+      "addFriend": "إضافة صديق",
+      "conversationCount": "{{count}} محادثة",
+      "conversations": "المحادثات",
+      "friends": "الأصدقاء",
+      "halaqaCount": "{{count}} حلقة",
+      "halaqat": "الحلقات",
+      "title": "التواصل"
     },
-    "notifications": {
-      "enabled": "تفعيل التنبيهات",
-      "beforeAdhan": "قبل الأذان بـ",
-      "atAdhan": "عند الأذان",
-      "minutes": "{{count}} دقيقة"
-    }
+    "streak": "السلسلة",
+    "surah": "سورة",
+    "surahBaqarahAyah25": "سورة البقرة - الآية 25",
+    "todaysChallenges": "تحديات اليوم",
+    "unlimitedHearts": "قلوب غير محدودة",
+    "xp": "نقاط"
   },
-  "qibla": {
-    "title": "اتجاه القبلة",
-    "direction": "الاتجاه",
-    "distance": "المسافة إلى مكة",
-    "distanceKm": "{{distance}} كم",
-    "facingQibla": "أنت تواجه القبلة! ✓",
-    "turnRight": "استدر لليمين",
-    "turnLeft": "استدر لليسار",
-    "north": "شمال",
-    "south": "جنوب",
-    "east": "شرق",
-    "west": "غرب",
-    "loading": "جاري تحديد اتجاه القبلة...",
-    "compassActive": "البوصلة نشطة",
-    "movePhone": "حرك هاتفك لتحديد الاتجاه",
-    "staticMode": "وضع ثابت",
-    "staticModeDesc": "الاتجاه محسوب من موقعك",
-    "mecca": "مكة المكرمة",
-    "kaaba": "الكعبة المشرفة",
-    "calibrate": "معايرة البوصلة",
-    "calibrateDesc": "حرك هاتفك بشكل دائري لتحسين الدقة",
-    "accuracy": "الدقة",
-    "high": "عالية",
-    "medium": "متوسطة",
-    "low": "منخفضة",
-    "permissionRequired": "يرجى السماح بالوصول للموقع",
-    "sensorError": "خطأ في مستشعر البوصلة",
-    "notSupported": "البوصلة غير مدعومة على هذا الجهاز"
+  "insights": {
+    "aiRecommendations": "توصيات الذكاء الاصطناعي",
+    "averageAccuracy": "متوسط الدقة",
+    "ayah": "آية",
+    "ayahsMemorized": "آية محفوظة",
+    "bestDay": "أفضل يوم",
+    "correctAnswers": "إجابات صحيحة",
+    "currentLevel": "المستوى الحالي",
+    "days": {
+      "fri": "جمع",
+      "mon": "إثن",
+      "sat": "سبت",
+      "sun": "أحد",
+      "thu": "خمي",
+      "tue": "ثلا",
+      "wed": "أرب"
+    },
+    "daysStreak": "{{days}} يوم",
+    "fullDays": {
+      "friday": "الجمعة",
+      "monday": "الإثنين",
+      "saturday": "السبت",
+      "sunday": "الأحد",
+      "thursday": "الخميس",
+      "tuesday": "الثلاثاء",
+      "wednesday": "الأربعاء"
+    },
+    "gemsEarned": "الجواهر المكتسبة",
+    "juz": "جزء",
+    "levelX": "المستوى {{level}}",
+    "longestStreak": "أطول سلسلة",
+    "memorizationAccuracy": "دقة الحفظ",
+    "memorizationStats": "إحصائيات الحفظ",
+    "minutes": "دقيقة",
+    "needsImprovement": "يحتاج تحسين",
+    "progressSummary": "ملخص التقدم",
+    "recommendation1": "أداؤك ممتاز في أيام الجمعة!",
+    "recommendation2": "دقة حفظك عالية. جرب زيادة عدد الآيات.",
+    "recommendation3": "سلسلتك الحالية {{streak}} يوم!",
+    "reviews": "مراجعة",
+    "surah": "سورة",
+    "title": "تحليلات الأداء",
+    "totalPoints": "إجمالي النقاط",
+    "weeklyActivity": "نشاط الأسبوع",
+    "wrongAnswers": "إجابات خاطئة"
   },
   "khatam": {
-    "title": "ختم القرآن",
-    "myKhatams": "ختماتي",
-    "discover": "اكتشف",
-    "newKhatam": "ختمة جديدة",
+    "actions": {
+      "assign": "احجز",
+      "complete": "إتمام",
+      "unassign": "إلغاء الحجز",
+      "verify": "توثيق"
+    },
+    "alerts": {
+      "assignError": "فشل حجز الحزب",
+      "assignSuccess": "تم حجز الحزب بنجاح",
+      "completeError": "فشل تسجيل الإتمام",
+      "completeSuccess": "أحسنت! تم إتمام الحزب +50 XP",
+      "deleteConfirm": "هل تريد حذف هذه الختمة؟",
+      "deleteSuccess": "تم حذف الختمة",
+      "hizbNotAvailable": "هذا الحزب غير متاح",
+      "joinError": "فشل الانضمام للختمة",
+      "joinSuccess": "تم الانضمام للختمة بنجاح",
+      "khatamComplete": "🎉 مبارك! تم ختم القرآن الكريم",
+      "leaveConfirm": "هل تريد مغادرة هذه الختمة؟",
+      "leaveSuccess": "تمت المغادرة بنجاح",
+      "notYourHizb": "هذا الحزب محجوز لشخص آخر",
+      "onlyAdminVerify": "التوثيق متاح للمشرفين فقط",
+      "verifyError": "فشل التوثيق",
+      "verifySuccess": "تم توثيق الحزب"
+    },
+    "amountPerDay": "الكمية اليومية",
+    "create": {
+      "createButton": "إنشاء الختمة",
+      "creating": "جاري الإنشاء...",
+      "description": "الوصف",
+      "descriptionPlaceholder": "وصف مختصر للختمة...",
+      "isPublic": "ختمة عامة",
+      "isPublicDesc": "يمكن لأي شخص الانضمام",
+      "maxParticipants": "الحد الأقصى للمشاركين",
+      "name": "اسم الختمة",
+      "namePlaceholder": "مثال: ختمة رمضان",
+      "selectMode": "اختر طريقة القراءة",
+      "selectType": "اختر نوع الختمة",
+      "selectUnit": "اختر وحدة القراءة",
+      "title": "إنشاء ختمة جديدة"
+    },
     "createKhatam": "إنشاء ختمة",
+    "dedication": {
+      "deceased": "لمتوفى",
+      "general": "عام",
+      "message": "رسالة الإهداء",
+      "name": "الاسم",
+      "other": "آخر",
+      "sick": "لمريض",
+      "title": "إهداء الختمة"
+    },
+    "detail": {
+      "active": "نشطة",
+      "completed": "مكتملة",
+      "createdAt": "تاريخ الإنشاء",
+      "creator": "المنشئ",
+      "info": "معلومات الختمة",
+      "paused": "متوقفة",
+      "status": "الحالة"
+    },
+    "discover": "اكتشف",
+    "empty": {
+      "discover": "لا توجد ختمات عامة",
+      "discoverSubtitle": "لا توجد ختمات عامة متاحة حالياً",
+      "myKhatams": "لا توجد ختمات بعد",
+      "myKhatamsSubtitle": "أنشئ ختمة جديدة أو انضم لختمة"
+    },
+    "hizbGrid": "جدول الأحزاب",
+    "hizbNumber": "حزب {{number}}",
+    "infiniteRepeat": "تكرار لا نهائي",
+    "infiniteRepeatDesc": "الختمة تتكرر تلقائياً عند الإتمام",
     "joinKhatam": "انضم لختمة",
-    "perDay": "يومياً",
-    "startNow": "ابدأ الآن",
-    "type": {
-      "solo": "فردي",
-      "soloDesc": "ختمة فردية بإيقاعك الخاص",
-      "group": "جماعي",
-      "groupDesc": "شارك مع الآخرين في إتمام الختمة"
+    "juzNumber": "جزء {{number}}",
+    "leaderboard": {
+      "completedHizbs": "أحزاب مكتملة",
+      "rank": "المرتبة",
+      "title": "ترتيب المشاركين"
     },
     "mode": {
       "offline": "ذاتي",
@@ -299,505 +872,153 @@
       "realtime": "مباشر",
       "realtimeDesc": "جلسات قراءة مباشرة مع الآخرين"
     },
+    "myKhatams": "ختماتي",
+    "newKhatam": "ختمة جديدة",
+    "participantCount": "{{count}} مشارك",
+    "participants": "المشاركون",
+    "perDay": "يومياً",
+    "progress": "التقدم",
+    "session": {
+      "active": "جلسة نشطة",
+      "currentHizb": "الحزب الحالي: {{number}}",
+      "end": "إنهاء الجلسة",
+      "join": "انضم للجلسة",
+      "leave": "مغادرة",
+      "noActiveSession": "لا توجد جلسة نشطة",
+      "participants": "{{count}} مشارك",
+      "start": "بدء جلسة",
+      "title": "جلسة مباشرة"
+    },
+    "startNow": "ابدأ الآن",
+    "status": {
+      "assigned": "محجوز",
+      "available": "متاح",
+      "completed": "مكتمل",
+      "verified": "موثق"
+    },
+    "title": "ختم القرآن",
+    "type": {
+      "group": "جماعي",
+      "groupDesc": "شارك مع الآخرين في إتمام الختمة",
+      "solo": "فردي",
+      "soloDesc": "ختمة فردية بإيقاعك الخاص"
+    },
     "unit": {
-      "title": "وحدة القراءة",
       "eighth": "⅛ حزب",
       "eighthDesc": "ثُمن الحزب",
-      "quarter": "¼ حزب",
-      "quarterDesc": "ربع الحزب",
       "half": "½ حزب",
       "halfDesc": "نصف الحزب",
       "hizb": "حزب",
       "hizbDesc": "حزب كامل",
       "juz": "جزء",
-      "juzDesc": "جزء كامل (حزبان)"
-    },
-    "amountPerDay": "الكمية اليومية",
-    "infiniteRepeat": "تكرار لا نهائي",
-    "infiniteRepeatDesc": "الختمة تتكرر تلقائياً عند الإتمام",
-    "progress": "التقدم",
-    "participants": "المشاركون",
-    "participantCount": "{{count}} مشارك",
-    "hizbGrid": "جدول الأحزاب",
-    "hizbNumber": "حزب {{number}}",
-    "juzNumber": "جزء {{number}}",
-    "status": {
-      "available": "متاح",
-      "assigned": "محجوز",
-      "completed": "مكتمل",
-      "verified": "موثق"
-    },
-    "actions": {
-      "assign": "احجز",
-      "complete": "إتمام",
-      "verify": "توثيق",
-      "unassign": "إلغاء الحجز"
-    },
-    "session": {
-      "title": "جلسة مباشرة",
-      "start": "بدء جلسة",
-      "join": "انضم للجلسة",
-      "leave": "مغادرة",
-      "end": "إنهاء الجلسة",
-      "active": "جلسة نشطة",
-      "participants": "{{count}} مشارك",
-      "currentHizb": "الحزب الحالي: {{number}}",
-      "noActiveSession": "لا توجد جلسة نشطة"
-    },
-    "dedication": {
-      "title": "إهداء الختمة",
-      "general": "عام",
-      "deceased": "لمتوفى",
-      "sick": "لمريض",
-      "other": "آخر",
-      "name": "الاسم",
-      "message": "رسالة الإهداء"
-    },
-    "leaderboard": {
-      "title": "ترتيب المشاركين",
-      "completedHizbs": "أحزاب مكتملة",
-      "rank": "المرتبة"
-    },
-    "alerts": {
-      "assignSuccess": "تم حجز الحزب بنجاح",
-      "assignError": "فشل حجز الحزب",
-      "completeSuccess": "أحسنت! تم إتمام الحزب +50 XP",
-      "completeError": "فشل تسجيل الإتمام",
-      "verifySuccess": "تم توثيق الحزب",
-      "verifyError": "فشل التوثيق",
-      "khatamComplete": "🎉 مبارك! تم ختم القرآن الكريم",
-      "joinSuccess": "تم الانضمام للختمة بنجاح",
-      "joinError": "فشل الانضمام للختمة",
-      "leaveConfirm": "هل تريد مغادرة هذه الختمة؟",
-      "leaveSuccess": "تمت المغادرة بنجاح",
-      "deleteConfirm": "هل تريد حذف هذه الختمة؟",
-      "deleteSuccess": "تم حذف الختمة",
-      "hizbNotAvailable": "هذا الحزب غير متاح",
-      "notYourHizb": "هذا الحزب محجوز لشخص آخر",
-      "onlyAdminVerify": "التوثيق متاح للمشرفين فقط"
-    },
-    "empty": {
-      "myKhatams": "لا توجد ختمات بعد",
-      "myKhatamsSubtitle": "أنشئ ختمة جديدة أو انضم لختمة",
-      "discover": "لا توجد ختمات عامة",
-      "discoverSubtitle": "لا توجد ختمات عامة متاحة حالياً"
-    },
-    "create": {
-      "title": "إنشاء ختمة جديدة",
-      "name": "اسم الختمة",
-      "namePlaceholder": "مثال: ختمة رمضان",
-      "description": "الوصف",
-      "descriptionPlaceholder": "وصف مختصر للختمة...",
-      "selectType": "اختر نوع الختمة",
-      "selectMode": "اختر طريقة القراءة",
-      "selectUnit": "اختر وحدة القراءة",
-      "isPublic": "ختمة عامة",
-      "isPublicDesc": "يمكن لأي شخص الانضمام",
-      "maxParticipants": "الحد الأقصى للمشاركين",
-      "createButton": "إنشاء الختمة",
-      "creating": "جاري الإنشاء..."
-    },
-    "detail": {
-      "info": "معلومات الختمة",
-      "creator": "المنشئ",
-      "createdAt": "تاريخ الإنشاء",
-      "status": "الحالة",
-      "active": "نشطة",
-      "completed": "مكتملة",
-      "paused": "متوقفة"
+      "juzDesc": "جزء كامل (حزبان)",
+      "quarter": "¼ حزب",
+      "quarterDesc": "ربع الحزب",
+      "title": "وحدة القراءة"
     }
-  },
-  "learn": {
-    "title": "تعلّم",
-    "juzAmma": "جزء عمّ",
-    "verses": "آيات",
-    "completed": "مكتمل",
-    "inProgress": "جاري",
-    "notStarted": "لم يبدأ",
-    "start": "ابدأ",
-    "continue": "أكمل",
-    "review": "مراجعة",
-    "memorize": "حفظ",
-    "listen": "استماع",
-    "record": "تسجيل"
   },
   "leaderboard": {
-    "title": "المتصدرين",
-    "league": "الدوري",
+    "bronze": "البرونزي",
+    "daysLeft": "أيام متبقية",
+    "demotionZone": "منطقة الهبوط",
+    "diamond": "الماسي",
+    "endsIn": "ينتهي خلال: {{days}} أيام",
     "friends": "الأصدقاء",
     "global": "العالمي",
-    "rank": "الترتيب",
-    "daysLeft": "أيام متبقية",
-    "promotionZone": "منطقة الترقية",
-    "demotionZone": "منطقة الهبوط",
-    "bronze": "البرونزي",
-    "silver": "الفضي",
     "gold": "الذهبي",
-    "diamond": "الماسي",
     "hafiz": "الحفاظ",
-    "promotionInfo": "الـ 5 الأوائل يصعدون • الـ 5 الأخيرين يهبطون",
-    "endsIn": "ينتهي خلال: {{days}} أيام",
-    "relegationZone": "منطقة الهبوط",
-    "you": "أنت",
+    "league": "الدوري",
+    "leagues": {
+      "bronze": "البرونزي",
+      "diamond": "الماسي",
+      "gold": "الذهبي",
+      "hafiz": "الحافظ",
+      "silver": "الفضي"
+    },
     "levelX": "المستوى {{level}}",
     "noData": "لا توجد بيانات",
+    "promotionInfo": "الـ 5 الأوائل يصعدون • الـ 5 الأخيرين يهبطون",
+    "promotionZone": "منطقة الترقية",
+    "rank": "الترتيب",
+    "relegationZone": "منطقة الهبوط",
+    "silver": "الفضي",
     "startLearning": "ابدأ التعلم للظهور في الترتيب!",
     "tabs": {
-      "league": "الدوري",
+      "friends": "الأصدقاء",
       "global": "عالمي",
-      "friends": "الأصدقاء"
-    },
-    "leagues": {
-      "bronze": "البرونزي",
-      "silver": "الفضي",
-      "gold": "الذهبي",
-      "diamond": "الماسي",
-      "hafiz": "الحافظ"
-    }
-  },
-  "profile": {
-    "title": "حسابي",
-    "settings": "الإعدادات",
-    "dailyGoal": "الهدف اليومي",
-    "notifications": "التنبيهات",
-    "premium": "سالفز+ بريميوم",
-    "language": "اللغة",
-    "about": "حول التطبيق",
-    "help": "المساعدة",
-    "totalVerses": "آيات محفوظة",
-    "achievements": "الإنجازات",
-    "defaultUsername": "مستخدم",
-    "levelX": "المستوى {{level}}",
-    "memorizationStats": "📖 إحصائيات الحفظ",
-    "ayahsMemorized": "آيات محفوظة",
-    "surahsCompleted": "سور مكتملة",
-    "juz": "أجزاء",
-    "seeAll": "عرض الكل",
-    "logout": "تسجيل الخروج",
-    "logoutConfirm": "هل أنت متأكد من تسجيل الخروج؟",
-    "logoutButton": "خروج",
-    "stats": {
-      "streak": "السلسلة",
-      "xp": "XP",
-      "gems": "جواهر",
-      "coins": "عملات",
-      "hearts": "قلوب",
       "league": "الدوري"
     },
-    "menu": {
-      "settings": "الإعدادات",
-      "insights": "الإحصائيات",
-      "friends": "الأصدقاء",
-      "achievements": "الإنجازات",
-      "notifications": "الإشعارات",
-      "help": "المساعدة"
-    },
-    "leagues": {
-      "bronze": "البرونزي",
-      "silver": "الفضي",
-      "gold": "الذهبي",
-      "diamond": "الماسي",
-      "hafiz": "الحافظ"
-    }
+    "title": "المتصدرين",
+    "you": "أنت"
   },
-  "gamification": {
-    "streakFreeze": "تجميد السلسلة",
-    "available": "متاح",
-    "getMore": "احصل على المزيد",
-    "questComplete": "تمت المهمة!",
-    "levelUp": "مستوى جديد!",
-    "newAchievement": "إنجاز جديد!",
-    "xpEarned": "نقاط مكتسبة"
-  },
-  "quests": {
-    "memorize": "احفظ {{count}} آيات جديدة",
-    "review": "راجع {{count}} آيات",
-    "lesson": "أكمل درساً واحداً",
-    "tajwid": "احصل على 80%+ في التجويد"
-  },
-  "call": {
-    "title": "المكالمة",
-    "connecting": "جاري الاتصال...",
-    "ringing": "جاري الرنين...",
-    "incomingAudio": "مكالمة صوتية واردة",
-    "incomingVideo": "مكالمة فيديو واردة...",
-    "ended": "انتهت المكالمة",
-    "rejected": "تم رفض المكالمة",
-    "encrypted": "مكالمة مشفرة",
-    "accept": "قبول",
-    "reject": "رفض",
-    "end": "إنهاء",
-    "mute": "كتم",
-    "unmute": "إلغاء الكتم",
-    "speakerOn": "سماعة",
-    "speakerOff": "مكبر",
-    "enableVideo": "تشغيل الفيديو",
-    "cameraOff": "الكاميرا مغلقة",
-    "videoOn": "تشغيل",
-    "videoOff": "إيقاف",
-    "flip": "تبديل",
-    "speaker": "مكبر"
-  },
-  "permissions": {
-    "cameraTitle": "إذن الكاميرا",
-    "cameraMessage": "يحتاج التطبيق إلى إذن الكاميرا"
-  },
-  "chat": {
-    "typing": "يكتب...",
-    "isTyping": "يكتب...",
-    "online": "متصل الآن",
-    "offline": "غير متصل",
-    "placeholder": "اكتب رسالتك...",
-    "send": "إرسال",
-    "noMessages": "لا توجد رسائل بعد",
-    "startConversation": "ابدأ المحادثة"
-  },
-  "conversations": {
-    "title": "المحادثات",
-    "conversation": "محادثة",
-    "group": "مجموعة",
-    "noMessages": "لا توجد رسائل",
-    "noResults": "لا توجد نتائج",
-    "empty": "لا توجد محادثات",
-    "emptySubtitle": "ابحث عن أصدقاء لبدء محادثة جديدة",
-    "findFriends": "البحث عن أصدقاء",
-    "searchPlaceholder": "ابحث عن شخص..."
-  },
-  "achievements": {
-    "title": "الإنجازات",
-    "unlocked": "مفتوح",
-    "xpEarned": "XP مكتسب",
-    "reward": "المكافأة",
-    "unlockedStatus": "مفتوح",
-    "lockedStatus": "مقفل",
-    "categories": {
-      "all": "الكل",
-      "memorization": "الحفظ",
-      "streak": "السلسلة",
-      "social": "الاجتماعي",
-      "special": "خاص"
-    },
-    "rarity": {
-      "common": "عادي",
-      "uncommon": "غير شائع",
-      "rare": "نادر",
-      "epic": "ملحمي",
-      "legendary": "أسطوري"
-    },
-    "items": {
-      "firstAyah": "أول آية",
-      "surahFatiha": "سورة الفاتحة",
-      "firstJuz": "أول جزء",
-      "hafiz100": "حافظ 100",
-      "streak7": "7 أيام",
-      "streak30": "30 يوم",
-      "streak100": "100 يوم",
-      "firstFriend": "أول صديق",
-      "leagueGold": "الدوري الذهبي",
-      "earlyBird": "الباكر",
-      "nightOwl": "بومة الليل",
-      "perfectWeek": "أسبوع مثالي"
-    }
-  },
-  "challenges": {
-    "title": "التحديات",
-    "empty": "لا توجد تحديات متاحة حالياً",
-    "defaultTitle": "تحدي",
-    "congratulations": "🎉 مبروك!",
-    "rewardMessage": "حصلت على {{xp}} XP و {{gems}} جواهر",
-    "claimed": "✓ تم الاستلام",
-    "claimReward": "استلم المكافأة 🎁",
-    "inProgress": "جاري التقدم...",
-    "start": "ابدأ التحدي",
-    "tabs": {
-      "daily": "يومي",
-      "weekly": "أسبوعي",
-      "special": "خاص"
-    },
-    "difficulty": {
-      "easy": "سهل",
-      "medium": "متوسط",
-      "hard": "صعب"
-    }
-  },
-  "insights": {
-    "title": "تحليلات الأداء",
-    "ayahsMemorized": "آية محفوظة",
-    "reviews": "مراجعة",
-    "minutes": "دقيقة",
-    "weeklyActivity": "نشاط الأسبوع",
-    "memorizationAccuracy": "دقة الحفظ",
-    "averageAccuracy": "متوسط الدقة",
-    "correctAnswers": "إجابات صحيحة",
-    "wrongAnswers": "إجابات خاطئة",
-    "bestDay": "أفضل يوم",
-    "needsImprovement": "يحتاج تحسين",
-    "aiRecommendations": "توصيات الذكاء الاصطناعي",
-    "recommendation1": "أداؤك ممتاز في أيام الجمعة!",
-    "recommendation2": "دقة حفظك عالية. جرب زيادة عدد الآيات.",
-    "recommendation3": "سلسلتك الحالية {{streak}} يوم!",
-    "progressSummary": "ملخص التقدم",
-    "currentLevel": "المستوى الحالي",
-    "levelX": "المستوى {{level}}",
-    "totalPoints": "إجمالي النقاط",
-    "gemsEarned": "الجواهر المكتسبة",
-    "longestStreak": "أطول سلسلة",
-    "daysStreak": "{{days}} يوم",
-    "memorizationStats": "إحصائيات الحفظ",
-    "ayah": "آية",
-    "surah": "سورة",
-    "juz": "جزء",
-    "days": {
-      "sat": "سبت",
-      "sun": "أحد",
-      "mon": "إثن",
-      "tue": "ثلا",
-      "wed": "أرب",
-      "thu": "خمي",
-      "fri": "جمع"
-    },
-    "fullDays": {
-      "friday": "الجمعة",
-      "monday": "الإثنين",
-      "tuesday": "الثلاثاء",
-      "wednesday": "الأربعاء",
-      "thursday": "الخميس",
-      "saturday": "السبت",
-      "sunday": "الأحد"
-    }
-  },
-  "shop": {
-    "title": "🏪 المتجر",
-    "dailyReward": "🎁 المكافأة اليومية",
-    "collectDaily": "اجمع المكافآت كل يوم!",
-    "dayX": "يوم {{day}}",
-    "claimed": "✓ تم الاستلام",
-    "claimReward": "استلم المكافأة",
-    "items": "🛒 العناصر",
-    "congratulations": "🎉 مبروك!",
-    "dailyRewardMessage": "حصلت على {{gems}} جوهرة!",
-    "notEnoughGems": "جواهر غير كافية!",
-    "needGemsMessage": "تحتاج {{price}} جوهرة لشراء {{item}}",
-    "confirmPurchase": "تأكيد الشراء",
-    "buy": "شراء",
-    "done": "تم!",
-    "purchaseSuccessMessage": "تم شراء {{item}} بنجاح!",
-    "itemsList": {
-      "heartRefill": "إعادة القلوب",
-      "streakFreeze": "تجميد السلسلة",
-      "xpBoost": "مضاعف XP",
-      "avatarGold": "إطار ذهبي",
-      "gems100": "100 جوهرة",
-      "gems500": "500 جوهرة"
-    },
-    "confirmPurchaseMessage": "تأكيد عملية الشراء؟"
-  },
-  "streak": {
-    "consecutiveDays": "يوم متتالي",
-    "longestStreak": "أطول سلسلة: {{days}} يوم",
-    "nextGoal": "الهدف القادم: {{days}} يوم",
-    "progressDays": "{{current}}/{{total}} يوم",
-    "reward": "المكافأة",
-    "streakFreeze": "تجميد السلسلة",
-    "availableCount": "{{count}} متاح",
-    "use": "استخدم",
-    "buyPrice": "شراء ({{price}} 💎)",
-    "milestones": "🏆 المراحل",
-    "last30Days": "📅 آخر 30 يوم",
-    "benefits": "🎁 فوائد السلسلة",
-    "dailyXPBonus": "مكافأة XP يومية: +{{xp}} XP",
-    "gemsMultiplier": "مضاعف الجواهر: x{{multiplier}}",
-    "exclusiveBadges": "شارات حصرية عند كل مرحلة",
-    "noFreeze": "لا يوجد تجميد!",
-    "buyFreezeFromShop": "يمكنك شراء تجميد من المتجر",
-    "shop": "المتجر",
-    "useFreeze": "استخدام التجميد",
-    "useFreezeConfirm": "هل تريد استخدام تجميد للحفاظ على سلسلتك؟",
-    "freezeUsedSuccess": "تم استخدام التجميد بنجاح",
-    "notEnoughGems": "جواهر غير كافية!",
-    "need200Gems": "تحتاج 200 جوهرة لشراء تجميد"
-  },
-  "notifications": {
-    "title": "الإشعارات",
-    "newCount": "{{count}} جديد",
-    "markAllAsRead": "تحديد الكل كمقروء",
-    "empty": "لا توجد إشعارات",
-    "emptySubtitle": "ستظهر هنا الإشعارات الجديدة",
-    "groups": {
-      "today": "اليوم",
-      "yesterday": "أمس",
-      "older": "سابقاً"
-    },
-    "timeAgo": {
-      "now": "الآن",
-      "minutes": "منذ {{count}} دقيقة",
-      "hours": "منذ {{count}} ساعة",
-      "days": "منذ {{count}} يوم"
-    }
-  },
-  "audioPlayer": {
-    "ayahNumber": "الآية {{number}}",
-    "ayahX": "آية {{number}}",
-    "ayahsList": "قائمة الآيات",
-    "selectReciter": "اختر القارئ",
-    "reciters": {
-      "mishary": "مشاري العفاسي",
-      "sudais": "عبدالرحمن السديس",
-      "husary": "محمود الحصري"
-    }
-  },
-  "dailyVerse": {
-    "title": "آية اليوم",
-    "ayahNumber": "الآية {{number}}",
-    "listen": "استمع",
-    "stop": "إيقاف",
-    "share": "مشاركة",
-    "copy": "نسخ",
-    "memorize": "احفظ",
-    "verses": {
-      "ayatulKursi": "الله - لا إله إلا هو الحي القيوم",
-      "ikhlas1": "قل هو الله أحد",
-      "basmala": "بسم الله الرحمن الرحيم",
-      "sharh5": "فإن مع العسر يسرا",
-      "raad28": "ألا بذكر الله تطمئن القلوب"
-    }
+  "learn": {
+    "completed": "مكتمل",
+    "continue": "أكمل",
+    "inProgress": "جاري",
+    "juzAmma": "جزء عمّ",
+    "listen": "استماع",
+    "memorize": "حفظ",
+    "notStarted": "لم يبدأ",
+    "record": "تسجيل",
+    "review": "مراجعة",
+    "start": "ابدأ",
+    "title": "تعلّم",
+    "verses": "آيات"
   },
   "lessonComplete": {
-    "excellent": "ممتاز!",
-    "wellDone": "أحسنت!",
-    "completedSurah": "أكملت سورة {{surahName}} بالكامل!",
-    "completedBlocks": "أكملت {{completed}} من {{total}} أجزاء في {{surahName}}",
-    "surahProgress": "{{percent}}% من السورة",
-    "gems": "جواهر",
-    "streak": "سلسلة",
-    "milestone": "إنجاز: {{days}} يوم متتالي!",
     "accuracy": "الدقة",
-    "exercises": "التمارين",
     "blocks": "الأجزاء",
-    "share": "مشاركة",
+    "completedBlocks": "أكملت {{completed}} من {{total}} أجزاء في {{surahName}}",
+    "completedSurah": "أكملت سورة {{surahName}} بالكامل!",
     "continueSurah": "متابعة السورة",
-    "newSurah": "سورة جديدة",
+    "excellent": "ممتاز!",
+    "exercises": "التمارين",
+    "gems": "جواهر",
     "lessons": "الدروس",
-    "shareMessage": "🎉 أكملت درس {{surahName}} في Salifz!\n📖 حفظت {{ayahsCount}} آيات\n🔥 سلسلتي: {{streak}} يوم\n\n#Salifz",
+    "memorization": "الحفظ",
+    "milestone": "إنجاز: {{days}} يوم متتالي!",
+    "newSurah": "سورة جديدة",
     "quran": "القرآن",
-    "memorization": "الحفظ"
+    "share": "مشاركة",
+    "shareMessage": "🎉 أكملت درس {{surahName}} في Salifz!\n📖 حفظت {{ayahsCount}} آيات\n🔥 سلسلتي: {{streak}} يوم\n\n#Salifz",
+    "streak": "سلسلة",
+    "surahProgress": "{{percent}}% من السورة",
+    "wellDone": "أحسنت!"
   },
   "lessonDetail": {
-    "loadingLesson": "جاري تحميل الدرس...",
+    "alerts": {
+      "audioError": "تعذّر تشغيل الصوت",
+      "completedAyahs": "الآيات المكتملة",
+      "continue": "متابعة",
+      "error": "خطأ",
+      "finish": "إنهاء",
+      "goToShop": "المتجر",
+      "later": "لاحقاً",
+      "leave": "غادر",
+      "leaveLesson": "مغادرة الدرس؟",
+      "leaveMessage": "سيتم حفظ تقدمك الحالي",
+      "loseProgress": "ستفقد تقدّمك في هذا الدرس.",
+      "noHeartsMessage": "انتظر حتى تتجدد القلوب أو اشترِ من المتجر",
+      "noHeartsTitle": "نفدت القلوب! ❤️",
+      "shop": "المتجر",
+      "stay": "ابقَ",
+      "wait": "انتظر",
+      "wellDone": "أحسنت!"
+    },
+    "audioLoading": "جاري تحميل الصوت...",
+    "ayahFallback": "آية",
+    "ayahFromSurah": "الآية {{ayah}} — سورة {{surah}}",
     "ayahsRange": "الآيات {{start}} - {{end}}",
     "blockProgress": "البلوك {{current}} من {{total}}",
     "check": "تحقق",
-    "listen": "استمع",
-    "stop": "إيقاف",
-    "audioLoading": "جاري تحميل الصوت...",
+    "correctMeaning": "إجابة صحيحة",
     "doneListening": "تم الاستماع ✓",
     "doneReading": "قرأت الآية",
-    "tryReciteFromMemory": "جرب التسميع من الذاكرة",
     "exercises": {
-      "listenRepeat": "استمع وكرر 🎧",
+      "arrangeAyahs": "رتب الآيات بالترتيب الصحيح",
       "chooseCorrectMeaning": "اختر المعنى الصحيح",
       "fillTheBlank": "أكمل الفراغ ✏️",
-      "arrangeAyahs": "رتب الآيات بالترتيب الصحيح",
+      "listenRepeat": "استمع وكرر 🎧",
       "reciteFromMemory": "اقرأ من الذاكرة 🎤",
       "whatIsTheMeaning": "ما معنى هذه الآية؟"
     },
@@ -805,160 +1026,585 @@
       "correct": "أحسنت! +{{xp}} XP",
       "tryAgain": "حاول مرة أخرى"
     },
-    "alerts": {
-      "noHeartsTitle": "نفدت القلوب! ❤️",
-      "noHeartsMessage": "انتظر حتى تتجدد القلوب أو اشترِ من المتجر",
-      "wait": "انتظر",
-      "goToShop": "المتجر",
-      "leaveLesson": "مغادرة الدرس؟",
-      "leaveMessage": "سيتم حفظ تقدمك الحالي",
-      "stay": "ابقَ",
-      "leave": "غادر",
-      "error": "خطأ",
-      "audioError": "تعذّر تشغيل الصوت",
-      "wellDone": "أحسنت!",
-      "completedAyahs": "الآيات المكتملة",
-      "continue": "متابعة",
-      "finish": "إنهاء",
-      "later": "لاحقاً",
-      "loseProgress": "ستفقد تقدّمك في هذا الدرس.",
-      "shop": "المتجر"
-    },
+    "listen": "استمع",
+    "loadingLesson": "جاري تحميل الدرس...",
+    "revealForReview": "إظهار للمراجعة",
+    "stop": "إيقاف",
     "theAyahs": "الآيات",
-    "ayahFallback": "آية",
-    "ayahFromSurah": "الآية {{ayah}} — سورة {{surah}}",
-    "correctMeaning": "إجابة صحيحة",
+    "tryReciteFromMemory": "جرب التسميع من الذاكرة",
     "wrong": "إجابة خاطئة",
     "wrongMeaning1": "ليس هذا معنى الآية",
     "wrongMeaning2": "أعد قراءة الآية بتمعّن",
-    "wrongMeaning3": "هذا المعنى لآية أخرى",
-    "revealForReview": "إظهار للمراجعة"
+    "wrongMeaning3": "هذا المعنى لآية أخرى"
   },
   "lessons": {
+    "alerts": {
+      "lockedMessage": "أكمل السور السابقة أولاً للفتح",
+      "lockedTitle": "السورة مقفلة 🔒",
+      "ok": "حسناً"
+    },
     "juzNumber": "الجزء {{number}}",
     "stats": {
-      "memorized": "محفوظ",
-      "inProgress": "جاري",
-      "toReview": "للمراجعة",
       "ayah": "آية",
-      "surah": "سورة",
+      "hizb": "حزب",
+      "inProgress": "جاري",
       "juz": "جزء",
-      "hizb": "حزب"
+      "memorized": "محفوظ",
+      "surah": "سورة",
+      "toReview": "للمراجعة"
     },
     "tabs": {
       "all": "الكل",
-      "memorized": "المحفوظ",
+      "hizb": "الأحزاب",
       "inProgress": "جاري الحفظ",
-      "toReview": "للمراجعة",
-      "path": "المسار",
       "juz": "الأجزاء",
-      "hizb": "الأحزاب"
-    },
-    "alerts": {
-      "lockedTitle": "السورة مقفلة 🔒",
-      "lockedMessage": "أكمل السور السابقة أولاً للفتح",
-      "ok": "حسناً"
+      "memorized": "المحفوظ",
+      "path": "المسار",
+      "toReview": "للمراجعة"
     }
+  },
+  "mushaf": {
+    "mask": {
+      "firstWord": "أول كلمة من كل سطر",
+      "full": "النص كاملاً",
+      "hidden": "إخفاء الكل",
+      "hint": "يغيّر مستوى الإخفاء",
+      "hints": "تلميحات فقط"
+    },
+    "nextPage": "الصفحة التالية",
+    "openMushaf": "افتح المصحف",
+    "page": "صفحة {{page}}",
+    "previousPage": "الصفحة السابقة",
+    "revealWord": "إظهار الكلمة",
+    "tapToReveal": "المس الكلمة لإظهارها",
+    "title": "المصحف"
+  },
+  "notifications": {
+    "empty": "لا توجد إشعارات",
+    "emptySubtitle": "ستظهر هنا الإشعارات الجديدة",
+    "groups": {
+      "older": "سابقاً",
+      "today": "اليوم",
+      "yesterday": "أمس"
+    },
+    "markAllAsRead": "تحديد الكل كمقروء",
+    "newCount": "{{count}} جديد",
+    "timeAgo": {
+      "days": "منذ {{count}} يوم",
+      "hours": "منذ {{count}} ساعة",
+      "minutes": "منذ {{count}} دقيقة",
+      "now": "الآن"
+    },
+    "title": "الإشعارات"
+  },
+  "onboarding": {
+    "feature1": "تعلّم بالألعاب والتحديات",
+    "feature2": "حافظ على streak يومي",
+    "feature3": "تنافس مع أصدقائك",
+    "feature4": "تحليل التجويد بالذكاء الاصطناعي",
+    "getStarted": "ابدأ الآن مجاناً",
+    "haveAccount": "لدي حساب بالفعل",
+    "slide1": {
+      "description": "نظام تعليمي متكامل يساعدك على الحفظ والمراجعة",
+      "subtitle": "طريقة مبتكرة وممتعة",
+      "title": "احفظ القرآن بسهولة"
+    },
+    "slide2": {
+      "description": "أكمل التحديات اليومية واربح النقاط والجواهر",
+      "subtitle": "ابقَ متحمساً مع التحديات والمكافآت",
+      "title": "تحديات يومية"
+    },
+    "slide3": {
+      "description": "نظام السلسلة يحفزك للتدرب كل يوم",
+      "subtitle": "تدرب يومياً وشاهد تقدمك",
+      "title": "حافظ على سلسلتك"
+    },
+    "slide4": {
+      "description": "تنافس مع الآخرين في الدوريات الأسبوعية",
+      "subtitle": "انضم للدوريات وتسلق الترتيب",
+      "title": "تنافس مع الأصدقاء"
+    },
+    "slide5": {
+      "description": "الذكاء الاصطناعي يحلل أداءك ويقدم لك خطة حفظ مخصصة",
+      "subtitle": "خطط مخصصة لك",
+      "title": "مدعوم بالذكاء الاصطناعي"
+    },
+    "slogan": "احفظ القرآن بطريقة ممتعة",
+    "startNow": "ابدأ الآن",
+    "subtitle": "طريقك لحفظ القرآن الكريم",
+    "welcome": "مرحباً بك في سالفز"
+  },
+  "password": {
+    "medium": "متوسطة",
+    "strong": "قوية",
+    "weak": "ضعيفة"
+  },
+  "permissions": {
+    "cameraMessage": "يحتاج التطبيق إلى إذن الكاميرا",
+    "cameraTitle": "إذن الكاميرا"
+  },
+  "phoneVerification": {
+    "errors": {
+      "invalidCode": "رمز التحقق غير صحيح"
+    },
+    "resend": {
+      "code": "إعادة إرسال الرمز",
+      "newCodeMessage": "رمز التحقق الجديد: {{code}}",
+      "newCodeTitle": "📱 رمز جديد",
+      "timer": "إعادة الإرسال بعد {{seconds}} ثانية"
+    },
+    "simulation": {
+      "badge": "وضع التجربة - الرمز: {{code}}",
+      "message": "رمز التحقق الخاص بك هو: {{code}}",
+      "title": "🔐 رمز التحقق (للتجربة)"
+    },
+    "subtitle": "أدخل رمز التحقق المرسل إلى",
+    "success": {
+      "message": "تم التحقق من رقم الهاتف بنجاح!",
+      "title": "✅ تم التحقق"
+    },
+    "title": "التحقق من رقم الهاتف",
+    "verify": "تحقق"
+  },
+  "prayer": {
+    "adhanAt": "الأذان",
+    "asr": "العصر",
+    "asrAr": "العصر",
+    "dhuhr": "الظهر",
+    "dhuhrAr": "الظهر",
+    "fajr": "الفجر",
+    "fajrAr": "الفجر",
+    "hours": "ساعة",
+    "isha": "العشاء",
+    "ishaAr": "العشاء",
+    "loading": "جاري تحميل أوقات الصلاة...",
+    "locationError": "يرجى السماح بالوصول للموقع",
+    "maghrib": "المغرب",
+    "maghribAr": "المغرب",
+    "method": "طريقة الحساب",
+    "methods": {
+      "egypt": "الهيئة المصرية العامة للمساحة",
+      "isna": "الجمعية الإسلامية لأمريكا الشمالية",
+      "karachi": "جامعة العلوم الإسلامية كراتشي",
+      "makkah": "جامعة أم القرى",
+      "morocco": "وزارة الأوقاف المغربية",
+      "mwl": "رابطة العالم الإسلامي",
+      "tehran": "معهد الجيوفيزياء طهران"
+    },
+    "minutes": "دقيقة",
+    "nextPrayer": "الصلاة القادمة",
+    "notifications": {
+      "atAdhan": "عند الأذان",
+      "beforeAdhan": "قبل الأذان بـ",
+      "enabled": "تفعيل التنبيهات",
+      "minutes": "{{count}} دقيقة"
+    },
+    "refresh": "تحديث",
+    "seconds": "ثانية",
+    "settings": "الإعدادات",
+    "sunrise": "الشروق",
+    "sunriseAr": "الشروق",
+    "title": "مواقيت الصلاة",
+    "today": "أوقات اليوم"
+  },
+  "profile": {
+    "about": "حول التطبيق",
+    "achievements": "الإنجازات",
+    "ayahsMemorized": "آيات محفوظة",
+    "dailyGoal": "الهدف اليومي",
+    "defaultUsername": "مستخدم",
+    "help": "المساعدة",
+    "juz": "أجزاء",
+    "language": "اللغة",
+    "leagues": {
+      "bronze": "البرونزي",
+      "diamond": "الماسي",
+      "gold": "الذهبي",
+      "hafiz": "الحافظ",
+      "silver": "الفضي"
+    },
+    "levelX": "المستوى {{level}}",
+    "logout": "تسجيل الخروج",
+    "logoutButton": "خروج",
+    "logoutConfirm": "هل أنت متأكد من تسجيل الخروج؟",
+    "memorizationStats": "📖 إحصائيات الحفظ",
+    "menu": {
+      "achievements": "الإنجازات",
+      "friends": "الأصدقاء",
+      "help": "المساعدة",
+      "insights": "الإحصائيات",
+      "notifications": "الإشعارات",
+      "settings": "الإعدادات"
+    },
+    "noAchievements": "تظهر إنجازاتك الأولى بعد أيام من الممارسة.",
+    "notifications": "التنبيهات",
+    "premium": "سالفز+ بريميوم",
+    "seeAll": "عرض الكل",
+    "settings": "الإعدادات",
+    "stats": {
+      "coins": "عملات",
+      "gems": "جواهر",
+      "hearts": "قلوب",
+      "league": "الدوري",
+      "streak": "السلسلة",
+      "xp": "XP"
+    },
+    "surahsCompleted": "سور مكتملة",
+    "title": "حسابي",
+    "totalVerses": "آيات محفوظة"
+  },
+  "qibla": {
+    "accuracy": "الدقة",
+    "calibrate": "معايرة البوصلة",
+    "calibrateDesc": "حرك هاتفك بشكل دائري لتحسين الدقة",
+    "compassActive": "البوصلة نشطة",
+    "direction": "الاتجاه",
+    "distance": "المسافة إلى مكة",
+    "distanceKm": "{{distance}} كم",
+    "east": "شرق",
+    "facingQibla": "أنت تواجه القبلة! ✓",
+    "high": "عالية",
+    "kaaba": "الكعبة المشرفة",
+    "loading": "جاري تحديد اتجاه القبلة...",
+    "low": "منخفضة",
+    "mecca": "مكة المكرمة",
+    "medium": "متوسطة",
+    "movePhone": "حرك هاتفك لتحديد الاتجاه",
+    "north": "شمال",
+    "notSupported": "البوصلة غير مدعومة على هذا الجهاز",
+    "permissionRequired": "يرجى السماح بالوصول للموقع",
+    "sensorError": "خطأ في مستشعر البوصلة",
+    "south": "جنوب",
+    "staticMode": "وضع ثابت",
+    "staticModeDesc": "الاتجاه محسوب من موقعك",
+    "title": "اتجاه القبلة",
+    "turnLeft": "استدر لليسار",
+    "turnRight": "استدر لليمين",
+    "west": "غرب"
+  },
+  "quests": {
+    "lesson": "أكمل درساً واحداً",
+    "memorize": "احفظ {{count}} آيات جديدة",
+    "review": "راجع {{count}} آيات",
+    "tajwid": "احصل على 80%+ في التجويد"
+  },
+  "quran": {
+    "ayah": "آية",
+    "ayahs": "آيات",
+    "hizb": "حزب",
+    "juz": "جزء"
+  },
+  "quranData": {
+    "exercises": {
+      "arrangeAyahs": "رتب الآيات",
+      "chooseCorrectMeaning": "اختر المعنى",
+      "completeTheAyah": "أكمل الآية",
+      "fillTheBlank": "أكمل الفراغ",
+      "findTheMistake": "جد الخطأ",
+      "listenRepeat": "استمع وكرر",
+      "matchWords": "طابق الكلمات",
+      "reciteFromMemory": "اقرأ من الذاكرة",
+      "tajwidRules": "قواعد التجويد",
+      "writeFromMemory": "اكتب من الذاكرة"
+    },
+    "instructions": {
+      "arrangeAyahs": "رتب الكلمات بالترتيب الصحيح",
+      "chooseCorrectMeaning": "اختر المعنى الصحيح",
+      "fillTheBlank": "أكمل الكلمة الناقصة",
+      "listenRepeat": "استمع للآية ثم كررها",
+      "reciteFromMemory": "اقرأ الآية من الذاكرة"
+    },
+    "milestones": {
+      "ayah150": {
+        "description": "حزب ونصف",
+        "name": "150 آية"
+      },
+      "ayah25": {
+        "description": "ربع حزب",
+        "name": "25 آية"
+      },
+      "ayah5": {
+        "description": "الخطوة الأولى",
+        "name": "5 آيات"
+      },
+      "ayah75": {
+        "description": "ثلاثة أرباع الحزب",
+        "name": "75 آية"
+      },
+      "hizb1": {
+        "description": "حزب كامل",
+        "name": "حزب"
+      },
+      "hizb2": {
+        "description": "نصف الحزب",
+        "name": "½ حزب"
+      },
+      "hizb4": {
+        "description": "ربع الحزب",
+        "name": "¼ حزب"
+      },
+      "hizb8": {
+        "description": "ثمن الحزب",
+        "name": "⅛ حزب"
+      },
+      "juz1": {
+        "description": "جزء كامل",
+        "name": "جزء"
+      },
+      "juz15": {
+        "description": "نصف القرآن",
+        "name": "15 جزء"
+      },
+      "juz3": {
+        "description": "ثلاثة أجزاء",
+        "name": "3 أجزاء"
+      },
+      "juz30": {
+        "description": "ختم القرآن",
+        "name": "30 جزء"
+      },
+      "surah2": {
+        "description": "سورتان كاملتان",
+        "name": "سورتان"
+      },
+      "surah4": {
+        "description": "أربع سور",
+        "name": "4 سور"
+      }
+    }
+  },
+  "recitation": {
+    "approve": "اعتماد",
+    "attempt": "محاولة",
+    "comment": "تعليق",
+    "feedbackRequired": "الملاحظة مطلوبة",
+    "feedbackRequiredBody": "طلب الإعادة يجب أن يوضّح ما ينبغي مراجعته.",
+    "fromAyah": "من الآية",
+    "grade": "الدرجة / 100",
+    "kindHifz": "حفظ جديد",
+    "kindMuraja": "مراجعة",
+    "listen": "استماع",
+    "micDenied": "تم رفض الميكروفون",
+    "micDeniedBody": "التسجيل يتطلب إذن الميكروفون.",
+    "needsWork": "يحتاج مراجعة",
+    "openReview": "تصحيح التلاوات",
+    "openSubmit": "تلاوة للتصحيح",
+    "passage": "المقطع",
+    "playFailed": "تعذّر التشغيل",
+    "queueEmpty": "لا توجد تلاوات بانتظار التصحيح.",
+    "rangeInvalid": "نطاق آيات غير صالح",
+    "rangeTooLong": "النطاق خارج السورة",
+    "ready": "جاهز للإرسال",
+    "record": "تسجيل",
+    "recordHint": "المس للتلاوة",
+    "recording": "جاري التسجيل…",
+    "reviewTitle": "بانتظار التصحيح",
+    "send": "إرسال إلى المعلم",
+    "stop": "إيقاف",
+    "submitTitle": "التلاوة",
+    "submitted": "تم إرسال التلاوة",
+    "submittedBody": "سيتم إشعار معلمك.",
+    "tajwidNotes": "ملاحظات التجويد",
+    "tajwidPlaceholder": "مد، إدغام، مخارج…",
+    "toAyah": "إلى الآية"
   },
   "review": {
-    "title": "المراجعة",
-    "subtitle": "راجع ما حفظته",
-    "dueForReview": "للمراجعة الآن",
     "ayahCount": "{{count}} آية",
-    "surahAyah": "{{surah}} - {{ayah}}",
-    "startReview": "ابدأ المراجعة",
-    "weakAreas": "نقاط الضعف",
-    "weakAreasCount": "{{count}} نقطة تحتاج تركيز",
-    "strengthen": "تقوية",
-    "quickReview": "مراجعة سريعة",
+    "dueForReview": "للمراجعة الآن",
     "minutes": "{{count}} دقيقة",
+    "quickReview": "مراجعة سريعة",
+    "startReview": "ابدأ المراجعة",
     "stats": {
+      "consecutiveDays": "أيام متتالية",
       "title": "إحصائيات المراجعة",
       "todayReviews": "مراجعات اليوم",
-      "weeklyAccuracy": "دقة الأسبوع",
-      "consecutiveDays": "أيام متتالية",
-      "totalReviews": "إجمالي المراجعات"
-    }
-  },
-  "goalSetup": {
-    "stepOf": "الخطوة {{current}} من {{total}}",
-    "step1": {
-      "title": "حدد هدفك اليومي",
-      "subtitle": "كم من الوقت تريد أن تخصص للحفظ يومياً؟"
+      "totalReviews": "إجمالي المراجعات",
+      "weeklyAccuracy": "دقة الأسبوع"
     },
-    "step2": {
-      "title": "اختر وقت التذكير",
-      "subtitle": "متى تفضل أن نذكرك بالحفظ؟"
-    },
-    "goals": {
-      "beginner": "مبتدئ",
-      "regular": "منتظم",
-      "serious": "جاد",
-      "advanced": "متقدم",
-      "time5min": "5 دقائق",
-      "time10min": "10 دقائق",
-      "time20min": "20 دقيقة",
-      "time30min": "30 دقيقة",
-      "beginnerDesc": "بداية رائعة للحفظ",
-      "regularDesc": "خطوة ثابتة للتقدم",
-      "seriousDesc": "تقدم ملحوظ",
-      "advancedDesc": "للحفاظ المتمرسين",
-      "ayahsDaily": "{{count}} آيات يومياً"
-    },
-    "reminders": {
-      "afterFajr": "بعد الفجر",
-      "morning": "الصباح",
-      "afternoon": "بعد الظهر",
-      "evening": "المساء",
-      "night": "الليل"
-    },
-    "tip": "💡 يمكنك تغيير هذه الإعدادات لاحقاً",
-    "skipReminder": "تخطي التذكير",
-    "startMemorizing": "ابدأ الحفظ"
+    "strengthen": "تقوية",
+    "subtitle": "راجع ما حفظته",
+    "surahAyah": "{{surah}} - {{ayah}}",
+    "title": "المراجعة",
+    "weakAreas": "نقاط الضعف",
+    "weakAreasCount": "{{count}} نقطة تحتاج تركيز"
   },
   "settings": {
-    "title": "الإعدادات",
-    "language": "اللغة",
-    "appearance": "المظهر",
-    "reciter": "القارئ",
-    "theme": {
-      "light": "فاتح",
-      "dark": "داكن",
-      "auto": "تلقائي"
-    },
-    "notifications": {
-      "title": "الإشعارات",
-      "dailyReminder": "تذكير يومي",
-      "streakReminder": "تذكير السلسلة",
-      "leagueUpdates": "تحديثات الدوري",
-      "friendActivity": "نشاط الأصدقاء"
-    },
     "account": {
-      "title": "الحساب",
-      "editProfile": "تعديل الملف الشخصي",
       "changePassword": "تغيير كلمة المرور",
-      "subscription": "الاشتراك",
+      "deleteAccount": "حذف الحساب",
+      "editProfile": "تعديل الملف الشخصي",
       "free": "مجاني",
-      "deleteAccount": "حذف الحساب"
+      "subscription": "الاشتراك",
+      "title": "الحساب"
     },
+    "appearance": "المظهر",
     "footer": {
       "copyright": "© 2026 Salifz - جميع الحقوق محفوظة"
-    }
+    },
+    "language": "اللغة",
+    "notifications": {
+      "dailyReminder": "تذكير يومي",
+      "friendActivity": "نشاط الأصدقاء",
+      "leagueUpdates": "تحديثات الدوري",
+      "streakReminder": "تذكير السلسلة",
+      "title": "الإشعارات"
+    },
+    "reciter": "القارئ",
+    "theme": {
+      "auto": "تلقائي",
+      "dark": "داكن",
+      "light": "فاتح"
+    },
+    "title": "الإعدادات"
+  },
+  "shop": {
+    "buy": "شراء",
+    "claimReward": "استلم المكافأة",
+    "claimed": "✓ تم الاستلام",
+    "collectDaily": "اجمع المكافآت كل يوم!",
+    "confirmPurchase": "تأكيد الشراء",
+    "confirmPurchaseMessage": "تأكيد عملية الشراء؟",
+    "congratulations": "🎉 مبروك!",
+    "dailyReward": "🎁 المكافأة اليومية",
+    "dailyRewardMessage": "حصلت على {{gems}} جوهرة!",
+    "dayX": "يوم {{day}}",
+    "done": "تم!",
+    "items": "🛒 العناصر",
+    "itemsList": {
+      "avatarGold": "إطار ذهبي",
+      "gems100": "100 جوهرة",
+      "gems500": "500 جوهرة",
+      "heartRefill": "إعادة القلوب",
+      "streakFreeze": "تجميد السلسلة",
+      "xpBoost": "مضاعف XP"
+    },
+    "needGemsMessage": "تحتاج {{price}} جوهرة لشراء {{item}}",
+    "notEnoughGems": "جواهر غير كافية!",
+    "purchaseSuccessMessage": "تم شراء {{item}} بنجاح!",
+    "title": "🏪 المتجر"
+  },
+  "socialHub": {
+    "accept": "قبول",
+    "conversation": "محادثة",
+    "empty": {
+      "conversations": "لا توجد محادثات بعد",
+      "halaqat": "لم تنضم لأي حلقة بعد"
+    },
+    "exploreHalaqat": "استكشف الحلقات",
+    "joinOrCreate": "انضم أو أنشئ",
+    "member": "عضو",
+    "newHalaqa": "حلقة جديدة",
+    "noMessages": "لا توجد رسائل",
+    "quickActions": {
+      "conversations": "المحادثات",
+      "friends": "الأصدقاء",
+      "halaqat": "الحلقات",
+      "leaderboard": "الترتيب"
+    },
+    "sections": {
+      "friendRequests": "📬 طلبات الصداقة",
+      "friends": "👥 الأصدقاء",
+      "myHalaqat": "🕌 حلقاتي",
+      "recentConversations": "💬 المحادثات الأخيرة"
+    },
+    "seeAll": "عرض الكل",
+    "seeAllCount": "عرض الكل ({{count}})",
+    "startNewConversation": "ابدأ محادثة جديدة",
+    "subtitle": "تواصل مع أصدقائك وحلقاتك",
+    "time": {
+      "daysAgo": "{{count}} أيام",
+      "yesterday": "أمس"
+    },
+    "title": "التواصل",
+    "user": "مستخدم"
+  },
+  "splash": {
+    "competeWithFriends": "تنافس مع الأصدقاء",
+    "learnWithGames": "تعلم بالألعاب",
+    "trackProgress": "تابع تقدمك"
+  },
+  "streak": {
+    "availableCount": "{{count}} متاح",
+    "benefits": "🎁 فوائد السلسلة",
+    "buyFreezeFromShop": "يمكنك شراء تجميد من المتجر",
+    "buyPrice": "شراء ({{price}} 💎)",
+    "consecutiveDays": "يوم متتالي",
+    "dailyXPBonus": "مكافأة XP يومية: +{{xp}} XP",
+    "exclusiveBadges": "شارات حصرية عند كل مرحلة",
+    "freezeUsedSuccess": "تم استخدام التجميد بنجاح",
+    "gemsMultiplier": "مضاعف الجواهر: x{{multiplier}}",
+    "last30Days": "📅 آخر 30 يوم",
+    "longestStreak": "أطول سلسلة: {{days}} يوم",
+    "milestones": "🏆 المراحل",
+    "need200Gems": "تحتاج 200 جوهرة لشراء تجميد",
+    "nextGoal": "الهدف القادم: {{days}} يوم",
+    "noFreeze": "لا يوجد تجميد!",
+    "notEnoughGems": "جواهر غير كافية!",
+    "progressDays": "{{current}}/{{total}} يوم",
+    "reward": "المكافأة",
+    "shop": "المتجر",
+    "streakFreeze": "تجميد السلسلة",
+    "use": "استخدم",
+    "useFreeze": "استخدام التجميد",
+    "useFreezeConfirm": "هل تريد استخدام تجميد للحفاظ على سلسلتك؟"
   },
   "subscriptions": {
-    "mySubscription": "اشتراكي",
-    "youAreSubscribed": "أنت مشترك في",
+    "alerts": {
+      "cancelConfirm": "هل أنت متأكد من إلغاء اشتراكك؟",
+      "cancelFailed": "فشل إلغاء الاشتراك",
+      "cancelSuccess": "تم إلغاء الاشتراك",
+      "cancelTitle": "إلغاء الاشتراك",
+      "redirectPayment": "سيتم توجيهك لصفحة الدفع",
+      "restoreFailed": "فشل استعادة المشتريات",
+      "restoreSuccess": "تم استعادة المشتريات",
+      "subscribe": "الاشتراك",
+      "subscribeFailed": "فشل الاشتراك",
+      "subscribeSuccess": "تم الاشتراك بنجاح!",
+      "yesCancel": "نعم، إلغاء"
+    },
     "availableFeatures": "المميزات المتاحة",
     "cancelSubscription": "إلغاء الاشتراك",
-    "subscribeNow": "اشترك الآن",
-    "restorePurchases": "استعادة المشتريات",
-    "mostPopular": "الأكثر شعبية",
-    "save": "وفر {{percent}}%",
-    "hero": {
-      "title": "Salifz Plus",
-      "subtitle": "افتح كل المميزات واحفظ القرآن بدون حدود"
+    "comparison": {
+      "advancedAnalytics": "تحليلات متقدمة",
+      "familySharing": "مشاركة عائلية",
+      "feature": "الميزة",
+      "free": "مجاني",
+      "hearts5Daily": "5 قلوب يومياً",
+      "leagues": "الدوريات",
+      "lessonAccess": "الوصول للدروس",
+      "noAds": "بدون إعلانات",
+      "streakFreeze": "تجميد السلسلة",
+      "streakTracking": "تتبع السلسلة",
+      "title": "مقارنة الخطط",
+      "unlimitedHearts": "قلوب غير محدودة"
     },
+    "features": {
+      "allFutureUpdates": "كل التحديثات المستقبلية",
+      "earlyAccess": "وصول مبكر للميزات الجديدة",
+      "everythingMonthly": "كل مميزات الشهري",
+      "everythingYearly": "كل مميزات السنوي",
+      "exclusiveContent": "محتوى حصري",
+      "familySharing": "مشاركة عائلية (حتى 6)",
+      "noAds": "بدون إعلانات",
+      "oneTimePayment": "دفعة واحدة للأبد",
+      "prioritySupport": "دعم أولوية",
+      "progressInsights": "تحليلات متقدمة",
+      "streakFreeze2": "تجميد السلسلة (2 مجاناً/شهر)",
+      "unlimitedHearts": "قلوب غير محدودة",
+      "unlimitedStreakFreeze": "تجميد سلسلة غير محدود",
+      "vipBadge": "شارة VIP"
+    },
+    "hero": {
+      "subtitle": "افتح كل المميزات واحفظ القرآن بدون حدود",
+      "title": "Salifz Plus"
+    },
+    "mostPopular": "الأكثر شعبية",
+    "mySubscription": "اشتراكي",
     "plans": {
+      "lifetime": {
+        "name": "مدى الحياة",
+        "period": "دفعة واحدة"
+      },
       "monthly": {
         "name": "شهري",
         "period": "/شهر"
@@ -966,721 +1612,76 @@
       "yearly": {
         "name": "سنوي",
         "period": "/سنة"
-      },
-      "lifetime": {
-        "name": "مدى الحياة",
-        "period": "دفعة واحدة"
       }
     },
-    "features": {
-      "unlimitedHearts": "قلوب غير محدودة",
-      "noAds": "بدون إعلانات",
-      "streakFreeze2": "تجميد السلسلة (2 مجاناً/شهر)",
-      "progressInsights": "تحليلات متقدمة",
-      "everythingMonthly": "كل مميزات الشهري",
-      "unlimitedStreakFreeze": "تجميد سلسلة غير محدود",
-      "prioritySupport": "دعم أولوية",
-      "earlyAccess": "وصول مبكر للميزات الجديدة",
-      "familySharing": "مشاركة عائلية (حتى 6)",
-      "everythingYearly": "كل مميزات السنوي",
-      "oneTimePayment": "دفعة واحدة للأبد",
-      "allFutureUpdates": "كل التحديثات المستقبلية",
-      "vipBadge": "شارة VIP",
-      "exclusiveContent": "محتوى حصري"
-    },
-    "comparison": {
-      "title": "مقارنة الخطط",
-      "feature": "الميزة",
-      "free": "مجاني",
-      "hearts5Daily": "5 قلوب يومياً",
-      "lessonAccess": "الوصول للدروس",
-      "streakTracking": "تتبع السلسلة",
-      "leagues": "الدوريات",
-      "streakFreeze": "تجميد السلسلة",
-      "advancedAnalytics": "تحليلات متقدمة",
-      "noAds": "بدون إعلانات",
-      "familySharing": "مشاركة عائلية",
-      "unlimitedHearts": "قلوب غير محدودة"
-    },
-    "alerts": {
-      "subscribe": "الاشتراك",
-      "redirectPayment": "سيتم توجيهك لصفحة الدفع",
-      "subscribeSuccess": "تم الاشتراك بنجاح!",
-      "subscribeFailed": "فشل الاشتراك",
-      "restoreSuccess": "تم استعادة المشتريات",
-      "restoreFailed": "فشل استعادة المشتريات",
-      "cancelTitle": "إلغاء الاشتراك",
-      "cancelConfirm": "هل أنت متأكد من إلغاء اشتراكك؟",
-      "yesCancel": "نعم، إلغاء",
-      "cancelSuccess": "تم إلغاء الاشتراك",
-      "cancelFailed": "فشل إلغاء الاشتراك"
-    },
-    "terms": "بالاشتراك، أنت توافق على شروط الخدمة وسياسة الخصوصية."
-  },
-  "friends": {
-    "title": "الأصدقاء",
-    "friendCount": "{{count}} صديق",
-    "level": "المستوى {{level}}",
-    "streakDays": "{{days}} يوم 🔥",
-    "unknownUser": "مستخدم",
-    "tabs": {
-      "friends": "الأصدقاء",
-      "requests": "الطلبات",
-      "search": "بحث"
-    },
-    "actions": {
-      "accept": "قبول",
-      "reject": "رفض",
-      "add": "إضافة",
-      "remove": "إزالة"
-    },
-    "status": {
-      "friend": "صديق",
-      "sent": "تم الإرسال"
-    },
-    "search": {
-      "placeholder": "ابحث باسم المستخدم...",
-      "minChars": "أدخل 3 أحرف على الأقل"
-    },
-    "incomingRequests": "الطلبات الواردة",
-    "searchResults": "نتائج البحث",
-    "empty": {
-      "noFriendsTitle": "لا يوجد أصدقاء بعد",
-      "noFriendsSubtitle": "ابحث عن أصدقاء وأضفهم للتنافس معهم",
-      "searchFriends": "البحث عن أصدقاء",
-      "noRequestsTitle": "لا توجد طلبات",
-      "noRequestsSubtitle": "ستظهر هنا طلبات الصداقة الواردة",
-      "searchTitle": "ابحث عن أصدقاء",
-      "searchSubtitle": "اكتب اسم المستخدم للبحث",
-      "noResultsTitle": "لا توجد نتائج",
-      "noResultsSubtitle": "جرب البحث باسم مستخدم آخر"
-    },
-    "alerts": {
-      "requestSentTo": "تم إرسال طلب صداقة إلى {{name}}",
-      "nowFriendsWith": "أنت الآن صديق مع {{name}}",
-      "acceptError": "فشل قبول الطلب",
-      "removeFriendTitle": "إزالة صديق",
-      "removeFriendConfirm": "هل تريد إزالة {{name}} من قائمة أصدقائك؟"
-    }
-  },
-  "halaqaChat": {
-    "defaultTitle": "حلقة",
-    "member": "عضو",
-    "you": "أنت",
-    "typing": "{{names}} يكتب...",
-    "status": {
-      "connected": "متصل",
-      "disconnected": "غير متصل"
-    },
-    "dates": {
-      "today": "اليوم",
-      "yesterday": "أمس"
-    },
-    "input": {
-      "placeholder": "اكتب رسالتك..."
-    },
-    "empty": {
-      "title": "لا توجد رسائل بعد",
-      "subtitle": "كن أول من يبدأ المحادثة!"
-    },
-    "errors": {
-      "noHalaqaId": "معرف الحلقة غير موجود",
-      "sendFailed": "فشل إرسال الرسالة"
-    }
-  },
-  "halaqaDetail": {
-    "activityTypes": {
-      "memorize": "حفظ جديد",
-      "memorizeDesc": "حفظ آيات جديدة",
-      "review": "مراجعة",
-      "reviewDesc": "مراجعة المحفوظ",
-      "tajwid": "تجويد",
-      "tajwidDesc": "تعلم أحكام التجويد",
-      "tafsir": "تفسير",
-      "tafsirDesc": "دراسة معاني الآيات",
-      "discussion": "نقاش",
-      "discussionDesc": "نقاش جماعي",
-      "competition": "مسابقة",
-      "competitionDesc": "تنافس مع الأعضاء",
-      "recitation": "تلاوة",
-      "recitationDesc": "تلاوة جماعية",
-      "dua": "دعاء",
-      "duaDesc": "أدعية وأذكار",
-      "quiz": "اختبار",
-      "quizDesc": "اختبار المحفوظ",
-      "lecture": "محاضرة",
-      "lectureDesc": "درس أو محاضرة",
-      "challenge": "تحدي",
-      "challengeDesc": "تحدي جماعي",
-      "other": "أخرى",
-      "otherDesc": "نشاط آخر",
-      "tajweed": "تجويد",
-      "tajweedDesc": "تدريب على أحكام التلاوة",
-      "tafseer": "تفسير",
-      "tafseerDesc": "شرح معاني الآيات",
-      "lesson": "درس",
-      "lessonDesc": "درس يقدّمه المعلم",
-      "workshop": "ورشة",
-      "workshopDesc": "جلسة تطبيقية جماعية",
-      "achievement": "إنجاز",
-      "achievementDesc": "هدف نبلغه معاً"
-    },
-    "tabs": {
-      "activities": "الأنشطة",
-      "members": "الأعضاء",
-      "leaderboard": "الترتيب"
-    },
-    "stats": {
-      "member": "عضو",
-      "verse": "آية",
-      "activity": "نشاط",
-      "verses": "آية",
-      "activities": "نشاط"
-    },
-    "time": {
-      "now": "الآن",
-      "minutesAgo": "منذ {{count}} دقيقة",
-      "hoursAgo": "منذ {{count}} ساعة",
-      "daysAgo": "منذ {{count}} يوم"
-    },
-    "empty": {
-      "activities": "لا توجد أنشطة بعد",
-      "activitiesAdmin": "أنشئ نشاطاً جديداً للبدء",
-      "members": "لا يوجد أعضاء",
-      "leaderboard": "لا توجد نقاط بعد"
-    },
-    "inviteCode": {
-      "title": "كود الانضمام",
-      "shareMessage": "انضم إلى حلقة {{name}} في Salifz!\n\nكود: {{code}}\n\n#Salifz",
-      "label": "رمز الدعوة",
-      "copied": "تم نسخ الرمز"
-    },
-    "createActivity": {
-      "title": "إنشاء نشاط جديد",
-      "selectType": "اختر نوع النشاط",
-      "create": "إنشاء النشاط",
-      "button": "إنشاء نشاط",
-      "newButton": "نشاط جديد",
-      "modalTitle": "نشاط جديد",
-      "typeLabel": "نوع النشاط",
-      "detailsLabel": "التفاصيل",
-      "titlePlaceholder": "عنوان النشاط",
-      "descriptionPlaceholder": "الوصف (اختياري)",
-      "success": "تم إنشاء النشاط",
-      "errors": {
-        "fillRequired": "يرجى ملء الحقول المطلوبة"
-      }
-    },
-    "completeActivity": {
-      "title": "إتمام النشاط",
-      "message": "أحسنت! حصلت على {{xp}} XP",
-      "alreadyCompleted": "تم إكمال هذا النشاط"
-    },
-    "alerts": {
-      "loadError": "فشل تحميل بيانات الحلقة",
-      "createError": "فشل إنشاء النشاط",
-      "completeError": "فشل إتمام النشاط",
-      "leaveTitle": "مغادرة الحلقة",
-      "leaveConfirm": "هل تريد مغادرة هذه الحلقة؟",
-      "leaveButton": "مغادرة",
-      "leftSuccess": "تمت المغادرة بنجاح"
-    },
-    "title": "الحلقة",
-    "defaultName": "حلقة",
-    "defaultDescription": "مجموعة دراسة",
-    "admin": "مشرف",
-    "member": "عضو",
-    "activity": "نشاط",
-    "chat": "المحادثة",
-    "leave": "مغادرة",
-    "public": "عامة",
-    "private": "خاصة",
-    "createdBy": "أنشأها",
-    "createdByLabel": "أنشأها",
-    "errors": {
-      "chatDisabled": "المحادثة معطّلة",
-      "creatorCannotLeave": "لا يمكن للمنشئ مغادرة حلقته",
-      "noHalaqaId": "الحلقة غير موجودة"
-    },
-    "leaveHalaqa": {
-      "title": "مغادرة الحلقة؟",
-      "confirm": "ستفقد الوصول إلى أنشطتها.",
-      "leave": "مغادرة",
-      "success": "غادرت الحلقة"
-    },
-    "deleteHalaqa": {
-      "title": "حذف الحلقة؟",
-      "confirm": "لا يمكن التراجع عن هذا.",
-      "success": "تم حذف الحلقة"
-    }
-  },
-  "halaqa": {
-    "title": "الحلقات",
-    "activityTypes": {
-      "memorize": "حفظ جديد",
-      "memorizeDesc": "حفظ آيات جديدة",
-      "review": "مراجعة",
-      "reviewDesc": "مراجعة المحفوظ",
-      "tajwid": "تجويد",
-      "tajwidDesc": "تعلم أحكام التجويد",
-      "tajweed": "تجويد",
-      "tajweedDesc": "تعلم أحكام التجويد",
-      "tafsir": "تفسير",
-      "tafsirDesc": "دراسة معاني الآيات",
-      "tafseer": "تفسير",
-      "tafseerDesc": "دراسة معاني الآيات",
-      "discussion": "نقاش",
-      "discussionDesc": "نقاش جماعي",
-      "competition": "مسابقة",
-      "competitionDesc": "تنافس مع الأعضاء",
-      "recitation": "تلاوة",
-      "recitationDesc": "تلاوة جماعية",
-      "dua": "دعاء",
-      "duaDesc": "أدعية وأذكار",
-      "quiz": "اختبار",
-      "quizDesc": "اختبار المحفوظ",
-      "lecture": "محاضرة",
-      "lectureDesc": "درس أو محاضرة",
-      "lesson": "درس",
-      "lessonDesc": "حصة تعليمية",
-      "challenge": "تحدي",
-      "challengeDesc": "تحدي جماعي",
-      "workshop": "ورشة عمل",
-      "workshopDesc": "ورشة تدريبية",
-      "achievement": "إنجاز",
-      "achievementDesc": "احتفال بالإنجازات",
-      "other": "أخرى",
-      "otherDesc": "نشاط آخر"
-    },
-    "tabs": {
-      "my": "حلقاتي",
-      "public": "الحلقات العامة",
-      "join": "انضم بكود"
-    },
-    "empty": {
-      "myTitle": "لا توجد حلقات",
-      "mySubtitle": "أنشئ حلقة جديدة أو انضم لحلقة",
-      "publicTitle": "لا توجد حلقات عامة",
-      "publicSubtitle": "لا توجد حلقات عامة متاحة حالياً",
-      "joinTitle": "انضم لحلقة",
-      "joinSubtitle": "أدخل كود الانضمام للدخول لحلقة خاصة",
-      "createHalaqa": "إنشاء حلقة",
-      "refreshButton": "تحديث",
-      "createButton": "إنشاء حلقة",
-      "joinButton": "انضم لحلقة",
-      "my": {
-        "title": "لا توجد حلقات",
-        "subtitle": "أنشئ حلقة جديدة أو انضم لحلقة"
-      },
-      "public": {
-        "title": "لا توجد حلقات عامة",
-        "subtitle": "لا توجد حلقات عامة متاحة حالياً"
-      },
-      "join": {
-        "title": "انضم لحلقة",
-        "subtitle": "أدخل كود الانضمام للدخول لحلقة خاصة"
-      }
-    },
-    "join": {
-      "placeholder": "أدخل كود الانضمام",
-      "button": "انضمام",
-      "joining": "جاري الانضمام...",
-      "privateTitle": "انضم لحلقة خاصة",
-      "privateSubtitle": "أدخل كود الدعوة للانضمام",
-      "codePlaceholder": "أدخل الكود هنا",
-      "browsePublic": "تصفح الحلقات العامة",
-      "title": "الانضمام برمز",
-      "success": "تم الانضمام إلى الحلقة",
-      "confirmMessage": "الانضمام إلى هذه الحلقة؟",
-      "errors": {
-        "codeRequired": "الرمز مطلوب",
-        "invalidCode": "رمز غير صالح",
-        "failed": "تعذّر الانضمام"
-      }
-    },
-    "create": {
-      "title": "إنشاء حلقة جديدة",
-      "name": "اسم الحلقة",
-      "namePlaceholder": "مثال: حلقة الفجر",
-      "description": "الوصف",
-      "descriptionPlaceholder": "وصف مختصر للحلقة...",
-      "privacy": "نوع الحلقة",
-      "public": "عامة",
-      "publicDesc": "أي شخص يمكنه الانضمام",
-      "private": "خاصة",
-      "privateDesc": "بكود الانضمام فقط",
-      "activities": "الأنشطة المتاحة",
-      "createButton": "إنشاء الحلقة",
-      "creating": "جاري الإنشاء...",
-      "basicInfo": "المعلومات الأساسية",
-      "settings": "الإعدادات",
-      "publicHalaqa": "حلقة عامة",
-      "publicDescription": "يمكن لأي شخص الانضمام والمشاركة",
-      "allowChat": "تفعيل المحادثة",
-      "allowChatDescription": "السماح للأعضاء بالتواصل",
-      "allowVoice": "تفعيل الصوت",
-      "allowVoiceDescription": "السماح بالمكالمات الصوتية",
-      "dailyGoal": "الهدف اليومي",
-      "maxMembers": "الحد الأقصى للأعضاء",
-      "activityTypesTitle": "أنواع الأنشطة",
-      "activityTypesSubtitle": "اختر الأنشطة المتاحة في الحلقة",
-      "success": "تم إنشاء الحلقة",
-      "viewHalaqa": "عرض الحلقة",
-      "errors": {
-        "failed": "تعذّر الإنشاء",
-        "nameRequired": "الاسم مطلوب",
-        "selectActivity": "اختر نشاطاً واحداً على الأقل"
-      }
-    },
-    "card": {
-      "member": "عضو",
-      "admin": "مشرف",
-      "join": "انضمام"
-    },
-    "alerts": {
-      "joinSuccess": "تم الانضمام للحلقة بنجاح!",
-      "joinError": "فشل الانضمام للحلقة",
-      "invalidCode": "كود الانضمام غير صحيح",
-      "createSuccess": "تم إنشاء الحلقة بنجاح!",
-      "createError": "فشل إنشاء الحلقة",
-      "nameRequired": "اسم الحلقة مطلوب",
-      "selectActivity": "اختر نشاطاً واحداً على الأقل"
-    },
-    "admin": "مشرف",
-    "defaultName": "حلقة",
-    "defaultDescription": "مجموعة دراسة",
-    "stats": {
-      "verse": "آية"
-    }
-  },
-  "socialHub": {
-    "title": "التواصل",
-    "subtitle": "تواصل مع أصدقائك وحلقاتك",
-    "quickActions": {
-      "conversations": "المحادثات",
-      "halaqat": "الحلقات",
-      "friends": "الأصدقاء",
-      "leaderboard": "الترتيب"
-    },
-    "sections": {
-      "friendRequests": "📬 طلبات الصداقة",
-      "recentConversations": "💬 المحادثات الأخيرة",
-      "myHalaqat": "🕌 حلقاتي",
-      "friends": "👥 الأصدقاء"
-    },
-    "seeAll": "عرض الكل",
-    "seeAllCount": "عرض الكل ({{count}})",
-    "accept": "قبول",
-    "user": "مستخدم",
-    "conversation": "محادثة",
-    "noMessages": "لا توجد رسائل",
-    "member": "عضو",
-    "joinOrCreate": "انضم أو أنشئ",
-    "newHalaqa": "حلقة جديدة",
-    "startNewConversation": "ابدأ محادثة جديدة",
-    "exploreHalaqat": "استكشف الحلقات",
-    "time": {
-      "yesterday": "أمس",
-      "daysAgo": "{{count}} أيام"
-    },
-    "empty": {
-      "conversations": "لا توجد محادثات بعد",
-      "halaqat": "لم تنضم لأي حلقة بعد"
-    }
+    "restorePurchases": "استعادة المشتريات",
+    "save": "وفر {{percent}}%",
+    "subscribeNow": "اشترك الآن",
+    "terms": "بالاشتراك، أنت توافق على شروط الخدمة وسياسة الخصوصية.",
+    "youAreSubscribed": "أنت مشترك في"
   },
   "userProfile": {
-    "leagues": {
-      "bronze": "البرونزية",
-      "silver": "الفضية",
-      "gold": "الذهبية",
-      "diamond": "الماسية",
-      "hafiz": "الحافظ"
-    },
-    "stats": {
-      "streak": "السلسلة",
-      "verse": "آية",
-      "versesMemorized": "آية محفوظة",
-      "surahCompleted": "سورة كاملة",
-      "longestStreak": "أطول سلسلة",
-      "achievements": "إنجاز"
-    },
     "actions": {
-      "chat": "محادثة",
-      "remove": "إزالة",
-      "pending": "طلب معلق",
       "acceptRequest": "قبول الطلب",
-      "addFriend": "إضافة صديق"
-    },
-    "sections": {
-      "statistics": "📊 الإحصائيات",
-      "info": "📅 معلومات"
-    },
-    "info": {
-      "joinDate": "تاريخ الانضمام",
-      "country": "البلد"
-    },
-    "friendRequest": {
-      "sent": "تم إرسال طلب الصداقة",
-      "accepted": "أصبحتما أصدقاء الآن"
-    },
-    "removeFriend": {
-      "title": "إزالة صديق",
-      "confirm": "هل تريد إزالة {{name}} من قائمة الأصدقاء؟",
+      "addFriend": "إضافة صديق",
+      "chat": "محادثة",
+      "pending": "طلب معلق",
       "remove": "إزالة"
     },
     "errors": {
       "notFound": "المستخدم غير موجود"
+    },
+    "friendRequest": {
+      "accepted": "أصبحتما أصدقاء الآن",
+      "sent": "تم إرسال طلب الصداقة"
+    },
+    "info": {
+      "country": "البلد",
+      "joinDate": "تاريخ الانضمام"
+    },
+    "leagues": {
+      "bronze": "البرونزية",
+      "diamond": "الماسية",
+      "gold": "الذهبية",
+      "hafiz": "الحافظ",
+      "silver": "الفضية"
+    },
+    "removeFriend": {
+      "confirm": "هل تريد إزالة {{name}} من قائمة الأصدقاء؟",
+      "remove": "إزالة",
+      "title": "إزالة صديق"
+    },
+    "sections": {
+      "info": "📅 معلومات",
+      "statistics": "📊 الإحصائيات"
+    },
+    "stats": {
+      "achievements": "إنجاز",
+      "longestStreak": "أطول سلسلة",
+      "streak": "السلسلة",
+      "surahCompleted": "سورة كاملة",
+      "verse": "آية",
+      "versesMemorized": "آية محفوظة"
     }
   },
-  "biometric": {
-    "names": {
-      "facial": "التعرف على الوجه",
-      "fingerprint": "بصمة الإصبع",
-      "default": "المصادقة البيومترية"
-    },
-    "prompts": {
-      "facial": "استخدم Face ID للمتابعة",
-      "fingerprint": "استخدم بصمة الإصبع للمتابعة",
-      "default": "تحقق من هويتك للمتابعة"
-    },
-    "subtitle": {
-      "setup": "اضغط للتفعيل والإعداد",
-      "verify": "اضغط للتحقق من هويتك"
-    },
-    "usePIN": "استخدام رمز PIN",
-    "usePINInstead": "استخدام رمز PIN بدلاً من ذلك",
-    "authenticating": "جاري التحقق...",
-    "startAuth": "ابدأ المصادقة",
-    "setup": {
-      "success": "✅ تم الإعداد",
-      "successMessage": "تم تفعيل المصادقة البيومترية بنجاح!"
-    },
-    "locked": {
-      "title": "🔒 تم القفل",
-      "message": "تم تجاوز عدد المحاولات المسموحة.",
-      "usePIN": "تم القفل - استخدم رمز PIN"
-    },
-    "failed": {
-      "title": "فشلت المصادقة",
-      "attempt": "المحاولة {{current}} من {{max}}",
-      "retry": "إعادة المحاولة"
-    },
-    "errors": {
-      "notSupported": "غير مدعوم",
-      "deviceNotSupported": "جهازك لا يدعم المصادقة البيومترية",
-      "notSetup": "غير مُعد",
-      "notEnrolled": "لم يتم إعداد المصادقة البيومترية على جهازك."
-    }
-  },
-  "emailVerification": {
-    "title": "التحقق من البريد الإلكتروني",
-    "verify": "تحقق",
-    "subtitle": {
-      "otp": "أدخل رمز التحقق المرسل إلى",
-      "link": "تم إرسال رابط التحقق إلى"
-    },
-    "success": {
-      "title": "تم التحقق بنجاح!",
-      "redirecting": "جاري نقلك إلى الصفحة الرئيسية..."
-    },
-    "resend": {
-      "code": "إعادة إرسال الرمز",
-      "link": "إعادة إرسال الرابط",
-      "timer": "إعادة الإرسال بعد {{seconds}} ثانية",
-      "newCodeTitle": "📧 رمز جديد",
-      "newCodeMessage": "رمز التحقق الجديد: {{code}}",
-      "linkSentTitle": "📧 تم الإرسال",
-      "linkSentMessage": "تم إرسال رابط التحقق إلى بريدك الإلكتروني"
-    },
-    "simulation": {
-      "title": "📧 رمز التحقق (للتجربة)",
-      "message": "رمز التحقق المرسل:\n\n{{code}}",
-      "badge": "وضع التجربة - الرمز: {{code}}"
-    },
-    "errors": {
-      "invalidCode": "رمز التحقق غير صحيح"
-    }
-  },
-  "phoneVerification": {
-    "title": "التحقق من رقم الهاتف",
-    "subtitle": "أدخل رمز التحقق المرسل إلى",
-    "verify": "تحقق",
-    "success": {
-      "title": "✅ تم التحقق",
-      "message": "تم التحقق من رقم الهاتف بنجاح!"
-    },
-    "resend": {
-      "code": "إعادة إرسال الرمز",
-      "timer": "إعادة الإرسال بعد {{seconds}} ثانية",
-      "newCodeTitle": "📱 رمز جديد",
-      "newCodeMessage": "رمز التحقق الجديد: {{code}}"
-    },
-    "simulation": {
-      "title": "🔐 رمز التحقق (للتجربة)",
-      "message": "رمز التحقق الخاص بك هو: {{code}}",
-      "badge": "وضع التجربة - الرمز: {{code}}"
-    },
-    "errors": {
-      "invalidCode": "رمز التحقق غير صحيح"
-    }
-  },
-  "quranData": {
-    "milestones": {
-      "ayah5": {
-        "name": "5 آيات",
-        "description": "الخطوة الأولى"
-      },
-      "ayah25": {
-        "name": "25 آية",
-        "description": "ربع حزب"
-      },
-      "ayah75": {
-        "name": "75 آية",
-        "description": "ثلاثة أرباع الحزب"
-      },
-      "ayah150": {
-        "name": "150 آية",
-        "description": "حزب ونصف"
-      },
-      "surah2": {
-        "name": "سورتان",
-        "description": "سورتان كاملتان"
-      },
-      "surah4": {
-        "name": "4 سور",
-        "description": "أربع سور"
-      },
-      "hizb8": {
-        "name": "⅛ حزب",
-        "description": "ثمن الحزب"
-      },
-      "hizb4": {
-        "name": "¼ حزب",
-        "description": "ربع الحزب"
-      },
-      "hizb2": {
-        "name": "½ حزب",
-        "description": "نصف الحزب"
-      },
-      "hizb1": {
-        "name": "حزب",
-        "description": "حزب كامل"
-      },
-      "juz1": {
-        "name": "جزء",
-        "description": "جزء كامل"
-      },
-      "juz3": {
-        "name": "3 أجزاء",
-        "description": "ثلاثة أجزاء"
-      },
-      "juz15": {
-        "name": "15 جزء",
-        "description": "نصف القرآن"
-      },
-      "juz30": {
-        "name": "30 جزء",
-        "description": "ختم القرآن"
-      }
-    },
-    "exercises": {
-      "listenRepeat": "استمع وكرر",
-      "chooseCorrectMeaning": "اختر المعنى",
-      "fillTheBlank": "أكمل الفراغ",
-      "arrangeAyahs": "رتب الآيات",
-      "reciteFromMemory": "اقرأ من الذاكرة",
-      "matchWords": "طابق الكلمات",
-      "findTheMistake": "جد الخطأ",
-      "completeTheAyah": "أكمل الآية",
-      "writeFromMemory": "اكتب من الذاكرة",
-      "tajwidRules": "قواعد التجويد"
-    },
-    "instructions": {
-      "listenRepeat": "استمع للآية ثم كررها",
-      "fillTheBlank": "أكمل الكلمة الناقصة",
-      "chooseCorrectMeaning": "اختر المعنى الصحيح",
-      "arrangeAyahs": "رتب الكلمات بالترتيب الصحيح",
-      "reciteFromMemory": "اقرأ الآية من الذاكرة"
-    }
-  },
-  "mushaf": {
-    "title": "المصحف",
-    "page": "صفحة {{page}}",
-    "tapToReveal": "المس الكلمة لإظهارها",
-    "revealWord": "إظهار الكلمة",
-    "previousPage": "الصفحة السابقة",
-    "nextPage": "الصفحة التالية",
-    "openMushaf": "افتح المصحف",
-    "mask": {
-      "full": "النص كاملاً",
-      "firstWord": "أول كلمة من كل سطر",
-      "hints": "تلميحات فقط",
-      "hidden": "إخفاء الكل",
-      "hint": "يغيّر مستوى الإخفاء"
-    }
-  },
-  "quran": {
-    "juz": "جزء",
-    "hizb": "حزب",
-    "ayahs": "آيات",
-    "ayah": "آية"
-  },
-  "downloads": {
-    "title": "بدون اتصال",
-    "download": "تحميل",
-    "surahsStored": "سورة على الجهاز",
-    "freeSpace": "متاحة",
-    "unknownSize": "حجم غير معروف",
-    "confirmTitle": "تحميل هذه السورة؟",
-    "removeTitle": "حذف التلاوة؟",
-    "removeAllTitle": "حذف الكل؟",
-    "removeAllBody": "ستُحذف جميع التلاوات المحفوظة.",
-    "manage": "إدارة التلاوات"
-  },
-  "recitation": {
-    "submitTitle": "التلاوة",
-    "reviewTitle": "بانتظار التصحيح",
-    "passage": "المقطع",
-    "fromAyah": "من الآية",
-    "toAyah": "إلى الآية",
-    "kindHifz": "حفظ جديد",
-    "kindMuraja": "مراجعة",
-    "record": "تسجيل",
-    "stop": "إيقاف",
-    "listen": "استماع",
-    "recording": "جاري التسجيل…",
-    "ready": "جاهز للإرسال",
-    "recordHint": "المس للتلاوة",
-    "send": "إرسال إلى المعلم",
-    "submitted": "تم إرسال التلاوة",
-    "submittedBody": "سيتم إشعار معلمك.",
-    "micDenied": "تم رفض الميكروفون",
-    "micDeniedBody": "التسجيل يتطلب إذن الميكروفون.",
-    "rangeInvalid": "نطاق آيات غير صالح",
-    "rangeTooLong": "النطاق خارج السورة",
-    "grade": "الدرجة / 100",
-    "tajwidNotes": "ملاحظات التجويد",
-    "tajwidPlaceholder": "مد، إدغام، مخارج…",
-    "comment": "تعليق",
-    "approve": "اعتماد",
-    "needsWork": "يحتاج مراجعة",
-    "feedbackRequired": "الملاحظة مطلوبة",
-    "feedbackRequiredBody": "طلب الإعادة يجب أن يوضّح ما ينبغي مراجعته.",
-    "queueEmpty": "لا توجد تلاوات بانتظار التصحيح.",
-    "attempt": "محاولة",
-    "playFailed": "تعذّر التشغيل",
-    "openSubmit": "تلاوة للتصحيح",
-    "openReview": "تصحيح التلاوات"
+  "validation": {
+    "emailInvalid": "بريد إلكتروني غير صالح",
+    "emailRequired": "البريد الإلكتروني مطلوب",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "passwordTooShort": "6 أحرف على الأقل",
+    "required": "هذا الحقل مطلوب",
+    "termsRequired": "يجب الموافقة على الشروط والأحكام",
+    "usernameInvalid": "أحرف وأرقام و _ فقط",
+    "usernameRequired": "اسم المستخدم مطلوب",
+    "usernameTooShort": "3 أحرف على الأقل"
   },
   "wordByWord": {
-    "title": "كلمة بكلمة",
     "hint": "المس الكلمة لسماعها",
-    "words": "كلمات",
-    "previousAyah": "الآية السابقة",
     "nextAyah": "الآية التالية",
-    "open": "الترجمة كلمة بكلمة"
-  },
-  "errors": {
-    "generic": "حدث خطأ"
+    "open": "الترجمة كلمة بكلمة",
+    "previousAyah": "الآية السابقة",
+    "title": "كلمة بكلمة",
+    "words": "كلمات"
   }
 }

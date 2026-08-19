@@ -16,6 +16,7 @@ import { useAuthStore, useGamificationStore } from '../../stores';
 import { COLORS } from '../../config';
 import { t } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 import { HizbStar } from '../../components/common/Ornements';
 import {
@@ -37,18 +38,17 @@ interface League {
   id: string;
   nameKey: string;
   nameEn: string;
-  icon: string;
   color: string;
   minXP: number;
 }
 
 const LEAGUES: League[] = [
-  { id: 'bronze', nameKey: 'profile.leagues.bronze', nameEn: 'Bronze', icon: '🥉', color: fixedColors.bronze, minXP: 0 },
-  { id: 'silver', nameKey: 'profile.leagues.silver', nameEn: 'Silver', icon: '🥈', color: fixedColors.silver, minXP: 1000 },
-  { id: 'gold', nameKey: 'profile.leagues.gold', nameEn: 'Gold', icon: '🥇', color: fixedColors.gold, minXP: 5000 },
-  { id: 'platinum', nameKey: 'profile.leagues.platinum', nameEn: 'Platinum', icon: '💎', color: fixedColors.silver, minXP: 15000 },
-  { id: 'diamond', nameKey: 'profile.leagues.diamond', nameEn: 'Diamond', icon: '💠', color: fixedColors.diamond, minXP: 30000 },
-  { id: 'master', nameKey: 'profile.leagues.master', nameEn: 'Master', icon: '👑', color: fixedColors.master, minXP: 50000 },
+  { id: 'bronze', nameKey: 'profile.leagues.bronze', nameEn: 'Bronze', color: fixedColors.bronze, minXP: 0 },
+  { id: 'silver', nameKey: 'profile.leagues.silver', nameEn: 'Silver', color: fixedColors.silver, minXP: 1000 },
+  { id: 'gold', nameKey: 'profile.leagues.gold', nameEn: 'Gold', color: fixedColors.gold, minXP: 5000 },
+  { id: 'platinum', nameKey: 'profile.leagues.platinum', nameEn: 'Platinum', color: fixedColors.silver, minXP: 15000 },
+  { id: 'diamond', nameKey: 'profile.leagues.diamond', nameEn: 'Diamond', color: fixedColors.diamond, minXP: 30000 },
+  { id: 'master', nameKey: 'profile.leagues.master', nameEn: 'Master', color: fixedColors.master, minXP: 50000 },
 ];
 
 export default function ProfileScreen({ navigation }: any) {
@@ -64,6 +64,10 @@ export default function ProfileScreen({ navigation }: any) {
   console.log(`${LOG_PREFIX} 👤 User: ${user?.username}, Level: ${level}, XP: ${totalXP}`);
 
   const currentLeague = LEAGUES.find((l: League) => l.id === league) || LEAGUES[0];
+
+  // Les succes reellement obtenus. Le serveur les expose sur le document
+  // utilisateur ; en leur absence la section le dit plutot que de meubler.
+  const succesObtenus: any[] = (user as any)?.achievements ?? [];
 
   // Get memorization stats from user.quranProgress
   const totalAyahsMemorized = user?.quranProgress?.totalVersesMemorized || 0;
@@ -94,21 +98,21 @@ export default function ProfileScreen({ navigation }: any) {
   };
 
   const menuItems = [
-    { icon: '⚙️', labelKey: 'profile.menu.settings', screen: 'Settings' },
-    { icon: '📊', labelKey: 'profile.menu.insights', screen: 'Insights' },
-    { icon: '👥', labelKey: 'profile.menu.friends', screen: 'Friends' },
-    { icon: '🏆', labelKey: 'profile.menu.achievements', screen: 'Achievements' },
-    { icon: '🔔', labelKey: 'profile.menu.notifications', screen: 'Notifications' },
-    { icon: '❓', labelKey: 'profile.menu.help', screen: 'Help' }
+    { Icone: IconeReglages, labelKey: 'profile.menu.settings', screen: 'Settings' },
+    { Icone: IconeStatistiques, labelKey: 'profile.menu.insights', screen: 'Insights' },
+    { Icone: IconeAmis, labelKey: 'profile.menu.friends', screen: 'Friends' },
+    { Icone: IconeRecompense, labelKey: 'profile.menu.achievements', screen: 'Achievements' },
+    { Icone: IconeNotifications, labelKey: 'profile.menu.notifications', screen: 'Notifications' },
+    { Icone: IconeVersetDuJour, labelKey: 'profile.menu.help', screen: 'Help' }
   ];
 
   const stats = [
-    { icon: '🔥', labelKey: 'profile.stats.streak', value: streak },
-    { icon: '⚡', labelKey: 'profile.stats.xp', value: totalXP },
-    { icon: '💎', labelKey: 'profile.stats.gems', value: gems },
-    { icon: '🪙', labelKey: 'profile.stats.coins', value: coins },
-    { icon: '❤️', labelKey: 'profile.stats.hearts', value: hearts },
-    { icon: currentLeague.icon, labelKey: 'profile.stats.league', value: t(currentLeague.nameKey) }
+    { Icone: IconeSerie, labelKey: 'profile.stats.streak', value: streak },
+    { Icone: HizbStar, labelKey: 'profile.stats.xp', value: totalXP },
+    { Icone: IconeGemmes, labelKey: 'profile.stats.gems', value: gems },
+    { Icone: IconeRecompense, labelKey: 'profile.stats.coins', value: coins },
+    { Icone: IconeCoeurs, labelKey: 'profile.stats.hearts', value: hearts },
+    { Icone: HizbStar, teinte: currentLeague.color, labelKey: 'profile.stats.league', value: t(currentLeague.nameKey) }
   ];
 
   const handleMenuItemPress = (item: any) => {
@@ -124,7 +128,12 @@ export default function ProfileScreen({ navigation }: any) {
       {/* Header */}
       <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
         <View style={styles.avatarContainer}>
-          <Text style={styles.avatarEmoji}>👤</Text>
+          {/* L'initiale identifie sans rien inventer : un emoji humain
+              attribuait a la personne un genre et un age qu'elle n'a pas
+              choisis. Meme correction que sur l'ecran Amis. */}
+          <Text style={styles.avatarEmoji}>
+            {(user?.displayName || user?.username || '?').charAt(0).toUpperCase()}
+          </Text>
         </View>
         <Text style={styles.username}>{user?.username || t('profile.defaultUsername')}</Text>
         <Text style={styles.email}>{user?.email || ''}</Text>
@@ -138,7 +147,9 @@ export default function ProfileScreen({ navigation }: any) {
         <View style={styles.statsGrid}>
           {stats.map((stat, index) => (
             <View key={index} style={styles.statCard}>
-              <Text style={styles.statIcon}>{stat.icon}</Text>
+              <View style={styles.statIcon}>
+                <stat.Icone size={18} color={(stat as any).teinte ?? colors.accent} />
+              </View>
               <Text style={styles.statValue}>{stat.value}</Text>
               <Text style={styles.statLabel}>{t(stat.labelKey)}</Text>
             </View>
@@ -180,11 +191,20 @@ export default function ProfileScreen({ navigation }: any) {
             </TouchableOpacity>
           </View>
           <View style={styles.achievementsList}>
-            {['🔥', '📖', '⭐', '🏆', '💎'].map((emoji, index) => (
-              <View key={index} style={styles.achievementItem}>
-                <Text style={styles.achievementEmoji}>{emoji}</Text>
-              </View>
-            ))}
+            {/* Cinq emojis fixes s'affichaient ici pour tout le monde, sous
+                un titre « Succes » et un lien « Voir tout » qui mene au vrai
+                ecran : chacun lisait donc cinq recompenses qu'il n'avait pas
+                obtenues. On montre les siennes, ou on dit qu'il n'y en a pas
+                encore. */}
+            {succesObtenus.length > 0 ? (
+              succesObtenus.slice(0, 5).map((succes: any, index: number) => (
+                <View key={succes?._id ?? index} style={styles.achievementItem}>
+                  <HizbStar size={26} quarters={4} color={fixedColors.gold} />
+                </View>
+              ))
+            ) : (
+              <Text style={styles.achievementsVide}>{t('profile.noAchievements')}</Text>
+            )}
           </View>
         </View>
 
@@ -196,7 +216,9 @@ export default function ProfileScreen({ navigation }: any) {
               style={styles.menuItem}
               onPress={() => handleMenuItemPress(item)}
             >
-              <Text style={styles.menuIcon}>{item.icon}</Text>
+              <View style={styles.menuIcon}>
+                <item.Icone size={20} color={colors.textSecondary} />
+              </View>
               <Text style={styles.menuLabel}>{t(item.labelKey)}</Text>
               <Text style={styles.menuArrow}>›</Text>
             </TouchableOpacity>
@@ -205,7 +227,7 @@ export default function ProfileScreen({ navigation }: any) {
 
         {/* Logout Button */}
         <TouchableOpacity accessible accessibilityRole="button" style={styles.logoutButton} onPress={handleLogout}>
-          <Text style={styles.logoutIcon}>🚪</Text>
+          <Ionicons name="log-out-outline" size={20} color={colors.error} />
           <Text style={styles.logoutText}>{t('profile.logout')}</Text>
         </TouchableOpacity>
 
@@ -240,7 +262,8 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   achievementsPreview: { backgroundColor: c.surface, borderRadius: 20, padding: 20, marginBottom: 20, elevation: 2 },
   achievementsHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 },
   seeAllText: { color: c.primary, fontWeight: '600' },
-  achievementsList: { flexDirection: 'row', justifyContent: 'space-around' },
+  achievementsList: { flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', minHeight: 40 },
+  achievementsVide: { color: c.textMuted, fontSize: 14, textAlign: 'center' },
   achievementItem: { width: 50, height: 50, borderRadius: 25, backgroundColor: c.background, justifyContent: 'center', alignItems: 'center' },
   achievementEmoji: { fontSize: 24 },
   menuSection: { backgroundColor: c.surface, borderRadius: 20, overflow: 'hidden', marginBottom: 20, elevation: 2 },

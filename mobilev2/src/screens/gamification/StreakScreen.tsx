@@ -20,17 +20,20 @@ import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 import { HizbStar } from '../../components/common/Ornements';
-import { IconeSerie, IconeRecompense } from '../../components/common/Icones';
+import { IconeSerie, IconeRecompense, IconeGemmes } from '../../components/common/Icones';
 
 const LOG_PREFIX = '[StreakScreen.tsx]';
 
 const MILESTONES = [
-  { days: 7, icon: '🔥', reward: '100 XP + 50 💎' },
-  { days: 14, icon: '⚡', reward: '200 XP + 100 💎' },
-  { days: 30, icon: '🌟', reward: '500 XP + 200 💎' },
-  { days: 50, icon: '💪', reward: '1000 XP + 500 💎' },
-  { days: 100, icon: '🏆', reward: '2000 XP + 1000 💎' },
-  { days: 365, icon: '👑', reward: '10000 XP + 5000 💎' }
+  // La recompense etait une chaine deja composee : « 100 XP + 50 💎 ». Les
+  // deux nombres deviennent des champs, ce qui permet de les afficher avec
+  // l'icone du produit et, le jour venu, de les localiser.
+  { days: 7, xp: 100, gems: 50 },
+  { days: 14, xp: 200, gems: 100 },
+  { days: 30, xp: 500, gems: 200 },
+  { days: 50, xp: 1000, gems: 500 },
+  { days: 100, xp: 2000, gems: 1000 },
+  { days: 365, xp: 10000, gems: 5000 }
 ];
 
 export default function StreakScreen({ navigation }: any) {
@@ -169,13 +172,17 @@ export default function StreakScreen({ navigation }: any) {
         {/* Progress Card */}
         <View style={styles.progressCard}>
           <Text style={styles.progressTitle}>
-            {t('streak.nextGoal', { days: nextMilestone.days })} {nextMilestone.icon}
+            {t('streak.nextGoal', { days: nextMilestone.days })}
           </Text>
           <View style={styles.progressBar}>
             <View style={[styles.progressFill, { width: `${Math.min(progress, 100)}%` }]} />
           </View>
           <Text style={styles.progressText}>{t('streak.progressDays', { current, total: nextMilestone.days })}</Text>
-          <Text style={styles.rewardText}>{t('streak.reward')}: {nextMilestone.reward}</Text>
+          <View style={styles.rewardLigne}>
+            <Text style={styles.rewardText}>{t('streak.reward')} : {nextMilestone.xp} XP</Text>
+            <IconeGemmes size={14} color={colors.info} />
+            <Text style={styles.rewardText}>{nextMilestone.gems}</Text>
+          </View>
         </View>
 
         {/* Freeze Card */}
@@ -208,7 +215,16 @@ export default function StreakScreen({ navigation }: any) {
                 current >= milestone.days && styles.milestoneAchieved
               ]}
             >
-              <Text style={styles.milestoneIcon}>{milestone.icon}</Text>
+              {/* L'etoile se remplit quand le palier est atteint : la forme
+                  double la couleur, ce qui la rend lisible sans distinguer le
+                  vert du gris. */}
+              <View style={styles.milestoneIcon}>
+                <HizbStar
+                  size={24}
+                  quarters={current >= milestone.days ? 4 : 0}
+                  color={current >= milestone.days ? fixedColors.gold : colors.border}
+                />
+              </View>
               <Text style={styles.milestoneDays}>{milestone.days}</Text>
               {current >= milestone.days && (
                 <View style={styles.milestoneCheck}>
@@ -346,6 +362,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     elevation: 1
   },
   milestoneAchieved: { backgroundColor: c.primarySoft },
+  rewardLigne: { flexDirection: 'row', alignItems: 'center', gap: 6, justifyContent: 'center' },
   milestoneIcon: { fontSize: 30, marginBottom: 5 },
   milestoneDays: { fontWeight: 'bold', color: c.text },
   milestoneCheck: {
