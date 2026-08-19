@@ -13,12 +13,13 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNotificationsStore } from '../../stores';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { Ionicons } from '@expo/vector-icons';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
+import { MihrabArch } from '../../components/common/Ornements';
+import { IconeNotifications } from '../../components/common/Icones';
 
-// ✅ Constante pour les logs
 const LOG_PREFIX = '[NotificationsScreen.tsx]';
 
 export default function NotificationsScreen({ navigation }: any) {
@@ -26,22 +27,22 @@ export default function NotificationsScreen({ navigation }: any) {
   const styles = useThemedStyles(makeStyles);
 
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
-  
+
   const { notifications, unreadCount, fetchNotifications, markAsRead, markAllAsRead } = useNotificationsStore();
   const [refreshing, setRefreshing] = useState(false);
 
   console.log(`${LOG_PREFIX} 🔔 Notifications: ${notifications.length}, Unread: ${unreadCount}`);
 
-  useEffect(() => { 
+  useEffect(() => {
     console.log(`${LOG_PREFIX} 🔄 useEffect: Fetching notifications...`);
-    fetchNotifications(); 
+    fetchNotifications();
   }, []);
 
-  const onRefresh = async () => { 
+  const onRefresh = async () => {
     console.log(`${LOG_PREFIX} 🔄 Pull to refresh triggered`);
-    setRefreshing(true); 
-    await fetchNotifications(); 
-    setRefreshing(false); 
+    setRefreshing(true);
+    await fetchNotifications();
+    setRefreshing(false);
   };
 
   const handleNotificationPress = async (notification: any) => {
@@ -74,8 +75,6 @@ export default function NotificationsScreen({ navigation }: any) {
     return icons[type] || '📬';
   };
 
-  // ✅ AVANT: Textes hardcodés en arabe
-  // ✅ APRÈS: Utilisation de i18n pour le temps relatif
   const getTimeAgo = (date: string) => {
     const now = new Date();
     const notifDate = new Date(date);
@@ -83,8 +82,7 @@ export default function NotificationsScreen({ navigation }: any) {
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMins / 60);
     const diffDays = Math.floor(diffHours / 24);
-    
-    // ✅ AVANT: 'الآن', 'منذ X دقيقة', 'منذ X ساعة', 'منذ X يوم'
+
     if (diffMins < 1) return t('notifications.timeAgo.now');
     if (diffMins < 60) return t('notifications.timeAgo.minutes', { count: diffMins });
     if (diffHours < 24) return t('notifications.timeAgo.hours', { count: diffHours });
@@ -104,18 +102,17 @@ export default function NotificationsScreen({ navigation }: any) {
       else if (notifDate >= yesterdayStart) yesterday.push(notif);
       else older.push(notif);
     });
-    
+
     console.log(`${LOG_PREFIX} 📊 Grouped: today=${today.length}, yesterday=${yesterday.length}, older=${older.length}`);
     return { today, yesterday, older };
   };
 
   const grouped = groupNotifications();
 
-  // ✅ Helper pour rendre un item de notification (éviter répétition)
   const renderNotificationItem = (notif: any) => (
-    <TouchableOpacity accessible accessibilityRole="button" 
-      key={notif._id} 
-      style={[styles.notificationItem, !notif.isRead && styles.notificationUnread]} 
+    <TouchableOpacity accessible accessibilityRole="button"
+      key={notif._id}
+      style={[styles.notificationItem, !notif.isRead && styles.notificationUnread]}
       onPress={() => handleNotificationPress(notif)}
     >
       <View style={styles.iconContainer}>
@@ -140,12 +137,10 @@ export default function NotificationsScreen({ navigation }: any) {
     <View style={styles.container}>
       {/* Header */}
       <LinearGradient colors={[colors.warning, colors.warningStrong]} style={styles.header}>
-        <Text style={styles.headerIcon}>🔔</Text>
-        {/* ✅ AVANT: 'الإشعارات' */}
+        <IconeNotifications size={40} color={colors.onDeep} />
         <Text style={styles.headerTitle}>{t('notifications.title')}</Text>
         {unreadCount > 0 && (
           <View style={styles.unreadBadge}>
-            {/* ✅ AVANT: 'X جديد' */}
             <Text style={styles.unreadText}>{t('notifications.newCount', { count: unreadCount })}</Text>
           </View>
         )}
@@ -154,21 +149,18 @@ export default function NotificationsScreen({ navigation }: any) {
       {/* Mark All as Read Button */}
       {unreadCount > 0 && (
         <TouchableOpacity accessible accessibilityRole="button" style={styles.markAllButton} onPress={handleMarkAllAsRead}>
-          {/* ✅ AVANT: 'تحديد الكل كمقروء' */}
           <Text style={styles.markAllText}>{t('notifications.markAllAsRead')}</Text>
         </TouchableOpacity>
       )}
 
-      <ScrollView 
-        contentContainerStyle={styles.listContainer} 
+      <ScrollView
+        contentContainerStyle={styles.listContainer}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {notifications.length === 0 ? (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>🔔</Text>
-            {/* ✅ AVANT: 'لا توجد إشعارات' */}
+            <MihrabArch width={70} color={colors.border} />
             <Text style={styles.emptyTitle}>{t('notifications.empty')}</Text>
-            {/* ✅ AVANT: 'ستظهر هنا الإشعارات الجديدة' */}
             <Text style={styles.emptySubtitle}>{t('notifications.emptySubtitle')}</Text>
           </View>
         ) : (
@@ -176,25 +168,22 @@ export default function NotificationsScreen({ navigation }: any) {
             {/* Today */}
             {grouped.today.length > 0 && (
               <View style={styles.group}>
-                {/* ✅ AVANT: 'اليوم' */}
                 <Text style={styles.groupTitle}>{t('notifications.groups.today')}</Text>
                 {grouped.today.map(renderNotificationItem)}
               </View>
             )}
-            
+
             {/* Yesterday */}
             {grouped.yesterday.length > 0 && (
               <View style={styles.group}>
-                {/* ✅ AVANT: 'أمس' */}
                 <Text style={styles.groupTitle}>{t('notifications.groups.yesterday')}</Text>
                 {grouped.yesterday.map(renderNotificationItem)}
               </View>
             )}
-            
+
             {/* Older */}
             {grouped.older.length > 0 && (
               <View style={styles.group}>
-                {/* ✅ AVANT: 'سابقاً' */}
                 <Text style={styles.groupTitle}>{t('notifications.groups.older')}</Text>
                 {grouped.older.map(renderNotificationItem)}
               </View>
@@ -210,7 +199,7 @@ export default function NotificationsScreen({ navigation }: any) {
 const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: c.background },
   header: { paddingTop: 50, paddingBottom: 30, alignItems: 'center' },
-  headerIcon: { fontSize: 50 },
+  headerIcon: {},
   headerTitle: { color: c.onDeep, fontSize: 24, fontWeight: 'bold', marginTop: 10 },
   unreadBadge: { backgroundColor: 'rgba(255,255,255,0.3)', paddingHorizontal: 15, paddingVertical: 5, borderRadius: 15, marginTop: 10 },
   unreadText: { color: c.onDeep, fontWeight: '600' },
@@ -218,7 +207,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   markAllText: { color: c.primary, fontWeight: '600' },
   listContainer: { padding: 15 },
   emptyState: { alignItems: 'center', paddingVertical: 50 },
-  emptyIcon: { fontSize: 60, marginBottom: 15 },
+  emptyIcon: { marginBottom: 15 },
   emptyTitle: { fontSize: 18, fontWeight: 'bold', color: c.text },
   emptySubtitle: { color: c.textMuted, marginTop: 5 },
   group: { marginBottom: 20 },

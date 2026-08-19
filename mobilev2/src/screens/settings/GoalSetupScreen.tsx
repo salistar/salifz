@@ -13,17 +13,18 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useAuthStore } from '../../stores';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { Ionicons } from '@expo/vector-icons';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
+import { HizbStar } from '../../components/common/Ornements';
+import { IconeDefis, IconeVersetDuJour } from '../../components/common/Icones';
 
 const LOG_PREFIX = '[GoalSetupScreen.tsx]';
 const { width } = Dimensions.get('window');
 
 console.log(`${LOG_PREFIX} 📁 File loaded`);
 
-// ✅ Structure avec clés i18n
 interface DailyGoal {
   id: number;
   ayahs: number;
@@ -60,7 +61,7 @@ export default function GoalSetupScreen({ navigation }: any) {
   const styles = useThemedStyles(makeStyles);
 
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
-  
+
   const { updateUser } = useAuthStore();
   const [step, setStep] = useState(1);
   const [selectedGoal, setSelectedGoal] = useState<number | null>(null);
@@ -81,7 +82,7 @@ export default function GoalSetupScreen({ navigation }: any) {
   const handleContinue = () => {
     console.log(`${LOG_PREFIX} ▶️ handleContinue() - step: ${step}`);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    
+
     if (step === 1 && selectedGoal) {
       console.log(`${LOG_PREFIX} 📊 Moving to step 2`);
       setStep(2);
@@ -112,7 +113,6 @@ export default function GoalSetupScreen({ navigation }: any) {
         <View style={styles.progressBar}>
           <View style={[styles.progressFill, { width: step === 1 ? '50%' : '100%' }]} />
         </View>
-        {/* ✅ AVANT: 'الخطوة {step} من 2' */}
         <Text style={styles.progressText}>
           {t('goalSetup.stepOf', { current: step, total: 2 })}
         </Text>
@@ -121,10 +121,8 @@ export default function GoalSetupScreen({ navigation }: any) {
       {step === 1 ? (
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.header}>
-            <Text style={styles.headerEmoji}>🎯</Text>
-            {/* ✅ AVANT: 'اختر هدفك اليومي' */}
+            <IconeDefis size={44} color={colors.onDeep} />
             <Text style={styles.headerTitle}>{t('goalSetup.step1.title')}</Text>
-            {/* ✅ AVANT: 'كم آية تريد أن تحفظ كل يوم؟' */}
             <Text style={styles.headerSubtitle}>{t('goalSetup.step1.subtitle')}</Text>
           </View>
           <View style={styles.optionsContainer}>
@@ -138,30 +136,25 @@ export default function GoalSetupScreen({ navigation }: any) {
                   <Text style={styles.goalEmojiText}>{goal.emoji}</Text>
                 </View>
                 <View style={styles.goalInfo}>
-                  {/* ✅ AVANT: goal.label */}
                   <Text style={styles.goalLabel}>{t(goal.labelKey)}</Text>
-                  {/* ✅ AVANT: '{X} آيات يومياً' */}
                   <Text style={styles.goalAyahs}>
                     {t('goalSetup.goals.ayahsDaily', { count: goal.ayahs })}
                   </Text>
-                  {/* ✅ AVANT: goal.time */}
                   <Text style={styles.goalTime}>{t(goal.timeKey)}</Text>
                 </View>
                 <View style={styles.goalDescription}>
-                  {/* ✅ AVANT: goal.description */}
                   <Text style={styles.goalDescText}>{t(goal.descriptionKey)}</Text>
                 </View>
                 {selectedGoal === goal.id && (
                   <View style={styles.selectedBadge}>
-                    <Text style={styles.selectedCheck}>✓</Text>
+                    <Ionicons name="checkmark-circle" size={20} color={colors.primary} />
                   </View>
                 )}
               </TouchableOpacity>
             ))}
           </View>
           <View style={styles.tipCard}>
-            <Text style={styles.tipEmoji}>💡</Text>
-            {/* ✅ AVANT: 'يمكنك تغيير هدفك في أي وقت من الإعدادات' */}
+            <IconeVersetDuJour size={20} color={colors.accent} />
             <Text style={styles.tipText}>{t('goalSetup.tip')}</Text>
           </View>
         </ScrollView>
@@ -169,9 +162,7 @@ export default function GoalSetupScreen({ navigation }: any) {
         <ScrollView contentContainerStyle={styles.content}>
           <View style={styles.header}>
             <Text style={styles.headerEmoji}>⏰</Text>
-            {/* ✅ AVANT: 'وقت التذكير' */}
             <Text style={styles.headerTitle}>{t('goalSetup.step2.title')}</Text>
-            {/* ✅ AVANT: 'متى تريد أن نذكرك بالحفظ؟' */}
             <Text style={styles.headerSubtitle}>{t('goalSetup.step2.subtitle')}</Text>
           </View>
           <View style={styles.reminderContainer}>
@@ -182,12 +173,11 @@ export default function GoalSetupScreen({ navigation }: any) {
                 onPress={() => handleReminderSelect(reminder.id)}
               >
                 <Text style={styles.reminderEmoji}>{reminder.emoji}</Text>
-                {/* ✅ AVANT: reminder.label */}
                 <Text style={styles.reminderLabel}>{t(reminder.labelKey)}</Text>
                 <Text style={styles.reminderTime}>{reminder.time}</Text>
                 {selectedReminder === reminder.id && (
                   <View style={styles.reminderCheck}>
-                    <Text style={styles.checkText}>✓</Text>
+                    <Ionicons name="checkmark" size={14} color={colors.onPrimary} />
                   </View>
                 )}
               </TouchableOpacity>
@@ -201,7 +191,6 @@ export default function GoalSetupScreen({ navigation }: any) {
               handleContinue();
             }}
           >
-            {/* ✅ AVANT: 'تخطي - سأتذكر بنفسي' */}
             <Text style={styles.skipReminderText}>{t('goalSetup.skipReminder')}</Text>
           </TouchableOpacity>
         </ScrollView>
@@ -213,7 +202,6 @@ export default function GoalSetupScreen({ navigation }: any) {
             console.log(`${LOG_PREFIX} ◀️ Back button pressed`);
             setStep(1);
           }}>
-            {/* ✅ AVANT: '← رجوع' */}
             <Text style={styles.backButtonText}>← {t('common.back')}</Text>
           </TouchableOpacity>
         )}
@@ -227,7 +215,6 @@ export default function GoalSetupScreen({ navigation }: any) {
             style={styles.continueButtonGradient}
           >
             <Text style={styles.continueButtonText}>
-              {/* ✅ AVANT: 'التالي' / 'ابدأ الحفظ 🚀' */}
               {step === 1 ? t('common.next') : t('goalSetup.startMemorizing')}
             </Text>
           </LinearGradient>
@@ -245,7 +232,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   progressText: { color: '#aaa', textAlign: 'center', marginTop: 10, fontSize: 13 },
   content: { paddingHorizontal: 25, paddingBottom: 120 },
   header: { alignItems: 'center', marginBottom: 30 },
-  headerEmoji: { fontSize: 60, marginBottom: 15 },
+  headerEmoji: { marginBottom: 15 },
   headerTitle: { fontSize: 26, fontWeight: 'bold', color: c.onDeep, marginBottom: 10 },
   headerSubtitle: { color: '#aaa', fontSize: 16 },
   optionsContainer: { marginBottom: 20 },
@@ -260,9 +247,9 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   goalDescription: { position: 'absolute', right: 15, bottom: 15 },
   goalDescText: { color: '#888', fontSize: 11 },
   selectedBadge: { position: 'absolute', top: 15, right: 15, width: 25, height: 25, borderRadius: 12.5, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center' },
-  selectedCheck: { color: c.onDeep, fontWeight: 'bold' },
+  selectedCheck: {},
   tipCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,193,7,0.1)', padding: 15, borderRadius: 12 },
-  tipEmoji: { fontSize: 20, marginRight: 10 },
+  tipEmoji: { marginRight: 10 },
   tipText: { color: '#FFD54F', flex: 1 },
   reminderContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
   reminderCard: { width: (width - 60) / 2, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 15, padding: 20, alignItems: 'center', marginBottom: 15, borderWidth: 2, borderColor: 'transparent' },
@@ -271,7 +258,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   reminderLabel: { color: c.onDeep, fontSize: 16, fontWeight: '600' },
   reminderTime: { color: '#aaa', marginTop: 5 },
   reminderCheck: { position: 'absolute', top: 10, right: 10, width: 22, height: 22, borderRadius: 11, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center' },
-  checkText: { color: c.onDeep, fontWeight: 'bold', fontSize: 12 },
+  checkText: {},
   skipReminder: { alignItems: 'center', padding: 15 },
   skipReminderText: { color: '#aaa' },
   bottomContainer: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', paddingHorizontal: 25, paddingBottom: 40, paddingTop: 15, backgroundColor: c.canvasDeep },

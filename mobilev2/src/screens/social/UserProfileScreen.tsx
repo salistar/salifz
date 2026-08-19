@@ -23,10 +23,11 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { socialAPI, chatAPI } from '../../services/api';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t, getLocale } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
+import { HizbStar } from '../../components/common/Ornements';
+import { IconeSerie, IconeMushaf, IconeRecompense } from '../../components/common/Icones';
 
 const LOG_PREFIX = '[UserProfileScreen.tsx]';
 
@@ -52,47 +53,39 @@ interface UserProfile {
   requestReceived: boolean;
 }
 
-// ✅ FIXED: Type for gradient to fix LinearGradient TypeScript error
 type GradientColors = readonly [string, string, ...string[]];
 
 interface LeagueConfig {
   name: string;
-  emoji: string;
   color: string;
   gradient: GradientColors;
 }
 
-// ✅ Helper pour obtenir les leagues avec i18n
 const getLeagueConfig = (): Record<string, LeagueConfig> => ({
-  bronze: { 
-    name: t('userProfile.leagues.bronze'), 
-    emoji: '🥉', 
-    color: fixedColors.bronze, 
-    gradient: [fixedColors.bronze, '#8B4513'] as const 
+  bronze: {
+    name: t('userProfile.leagues.bronze'),
+    color: fixedColors.bronze,
+    gradient: [fixedColors.bronze, '#8B4513'] as const
   },
-  silver: { 
-    name: t('userProfile.leagues.silver'), 
-    emoji: '🥈', 
-    color: fixedColors.silver, 
-    gradient: [fixedColors.silver, '#808080'] as const 
+  silver: {
+    name: t('userProfile.leagues.silver'),
+    color: fixedColors.silver,
+    gradient: [fixedColors.silver, '#808080'] as const
   },
-  gold: { 
-    name: t('userProfile.leagues.gold'), 
-    emoji: '🥇', 
-    color: fixedColors.gold, 
-    gradient: [fixedColors.gold, '#FFA500'] as const 
+  gold: {
+    name: t('userProfile.leagues.gold'),
+    color: fixedColors.gold,
+    gradient: [fixedColors.gold, '#FFA500'] as const
   },
-  diamond: { 
-    name: t('userProfile.leagues.diamond'), 
-    emoji: '💎', 
-    color: fixedColors.diamond, 
-    gradient: ['#00BCD4', '#0097A7'] as const 
+  diamond: {
+    name: t('userProfile.leagues.diamond'),
+    color: fixedColors.diamond,
+    gradient: ['#00BCD4', '#0097A7'] as const
   },
-  hafiz: { 
-    name: t('userProfile.leagues.hafiz'), 
-    emoji: '👑', 
-    color: fixedColors.gold, 
-    gradient: [fixedColors.diamond, fixedColors.silver] as const 
+  hafiz: {
+    name: t('userProfile.leagues.hafiz'),
+    color: fixedColors.gold,
+    gradient: [fixedColors.diamond, fixedColors.silver] as const
   }
 });
 
@@ -107,13 +100,12 @@ export default function UserProfileScreen({ route, navigation }: any) {
   const styles = useThemedStyles(makeStyles);
 
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
-  
+
   const { userId } = route.params;
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
 
-  // ✅ Récupérer les leagues avec i18n
   const leagueConfig = getLeagueConfig();
 
   useEffect(() => {
@@ -123,7 +115,7 @@ export default function UserProfileScreen({ route, navigation }: any) {
 
   const loadProfile = async () => {
     console.log(`${LOG_PREFIX} 📥 loadProfile()`);
-    
+
     try {
       const response = await socialAPI.getUserProfile(userId);
       const data = response?.data || response;
@@ -131,7 +123,6 @@ export default function UserProfileScreen({ route, navigation }: any) {
       setProfile(data);
     } catch (error) {
       console.error(`${LOG_PREFIX} ❌ Load profile error:`, error);
-      // ✅ AVANT: Alert.alert('خطأ', 'لم يتم العثور على المستخدم')
       Alert.alert(t('common.error'), t('userProfile.errors.notFound'));
       navigation.goBack();
     } finally {
@@ -141,19 +132,17 @@ export default function UserProfileScreen({ route, navigation }: any) {
 
   const handleAddFriend = async () => {
     if (!profile) return;
-    
+
     setActionLoading(true);
     console.log(`${LOG_PREFIX} ➕ Adding friend: ${profile._id}`);
-    
+
     try {
       await socialAPI.sendRequest(profile._id);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setProfile({ ...profile, requestSent: true });
-      // ✅ AVANT: Alert.alert('✓ تم!', 'تم إرسال طلب الصداقة')
       Alert.alert(t('common.done'), t('userProfile.friendRequest.sent'));
       console.log(`${LOG_PREFIX} ✅ Friend request sent`);
     } catch (error: any) {
-      // ✅ AVANT: Alert.alert('خطأ', error?.error || 'حدث خطأ')
       Alert.alert(t('common.error'), error?.error || t('common.errorOccurred'));
     } finally {
       setActionLoading(false);
@@ -162,15 +151,14 @@ export default function UserProfileScreen({ route, navigation }: any) {
 
   const handleAcceptRequest = async () => {
     if (!profile) return;
-    
+
     setActionLoading(true);
     console.log(`${LOG_PREFIX} ✅ Accepting friend request from: ${profile._id}`);
-    
+
     try {
       await socialAPI.acceptRequest(profile._id);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setProfile({ ...profile, isFriend: true, requestReceived: false });
-      // ✅ AVANT: Alert.alert('✓ تم!', 'أصبحتما أصدقاء الآن')
       Alert.alert(t('common.done'), t('userProfile.friendRequest.accepted'));
       console.log(`${LOG_PREFIX} ✅ Friend request accepted`);
     } catch (error) {
@@ -182,21 +170,19 @@ export default function UserProfileScreen({ route, navigation }: any) {
 
   const handleRemoveFriend = () => {
     if (!profile) return;
-    
-    // ✅ AVANT: Alert.alert('إزالة صديق', `هل تريد إزالة ${...} من قائمة الأصدقاء؟`, [...])
+
     Alert.alert(
       t('userProfile.removeFriend.title'),
       t('userProfile.removeFriend.confirm', { name: profile.displayName || profile.username }),
       [
         { text: t('common.cancel'), style: 'cancel' },
         {
-          // ✅ AVANT: 'إزالة'
           text: t('userProfile.removeFriend.remove'),
           style: 'destructive',
           onPress: async () => {
             setActionLoading(true);
             console.log(`${LOG_PREFIX} 🗑️ Removing friend: ${profile._id}`);
-            
+
             try {
               await socialAPI.removeFriend(profile._id);
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -215,9 +201,9 @@ export default function UserProfileScreen({ route, navigation }: any) {
 
   const handleStartChat = async () => {
     if (!profile) return;
-    
+
     console.log(`${LOG_PREFIX} 💬 Starting chat with: ${profile._id}`);
-    
+
     try {
       const response = await chatAPI.createConversation(profile._id);
       const conversationId = response?.data?._id || response?._id;
@@ -229,7 +215,6 @@ export default function UserProfileScreen({ route, navigation }: any) {
     }
   };
 
-  // ✅ Helper pour formater la date selon la locale
   const formatDate = (dateString: string): string => {
     const locale = getLocale();
     const localeMap: Record<string, string> = {
@@ -237,7 +222,7 @@ export default function UserProfileScreen({ route, navigation }: any) {
       fr: 'fr-FR',
       en: 'en-US',
     };
-    
+
     return new Date(dateString).toLocaleDateString(localeMap[locale] || 'ar-SA', {
       year: 'numeric',
       month: 'long',
@@ -256,7 +241,6 @@ export default function UserProfileScreen({ route, navigation }: any) {
   if (!profile) {
     return (
       <View style={styles.loadingContainer}>
-        {/* ✅ AVANT: 'المستخدم غير موجود' */}
         <Text>{t('userProfile.errors.notFound')}</Text>
       </View>
     );
@@ -269,7 +253,7 @@ export default function UserProfileScreen({ route, navigation }: any) {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header - ✅ FIXED: Cast gradient to proper type */}
         <LinearGradient colors={league.gradient} style={styles.header}>
-          <TouchableOpacity accessible accessibilityRole="button" 
+          <TouchableOpacity accessible accessibilityRole="button"
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
@@ -279,7 +263,7 @@ export default function UserProfileScreen({ route, navigation }: any) {
           {/* Avatar */}
           <View style={styles.avatarContainer}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>👤</Text>
+              <Text style={styles.avatarText}>{(profile?.displayName || profile?.username || '?').charAt(0).toUpperCase()}</Text>
             </View>
             <View style={styles.levelBadge}>
               <Text style={styles.levelText}>{profile.level}</Text>
@@ -292,26 +276,24 @@ export default function UserProfileScreen({ route, navigation }: any) {
 
           {/* League Badge */}
           <View style={styles.leagueBadge}>
-            <Text style={styles.leagueEmoji}>{league.emoji}</Text>
+            <HizbStar size={22} quarters={4} color={league.color} />
             <Text style={styles.leagueName}>{league.name}</Text>
           </View>
 
           {/* Stats Row */}
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>🔥 {profile.currentStreak || 0}</Text>
-              {/* ✅ AVANT: 'السلسلة' */}
+              <Text style={styles.statValue}>{profile.currentStreak || 0}</Text>
               <Text style={styles.statLabel}>{t('userProfile.stats.streak')}</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>⚡ {formatNumber(profile.totalXP)}</Text>
+              <Text style={styles.statValue}>{formatNumber(profile.totalXP)}</Text>
               <Text style={styles.statLabel}>XP</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>📖 {profile.totalVersesMemorized || 0}</Text>
-              {/* ✅ AVANT: 'آية' */}
+              <Text style={styles.statValue}>{profile.totalVersesMemorized || 0}</Text>
               <Text style={styles.statLabel}>{t('userProfile.stats.verse')}</Text>
             </View>
           </View>
@@ -321,32 +303,29 @@ export default function UserProfileScreen({ route, navigation }: any) {
         <View style={styles.actionsContainer}>
           {profile.isFriend ? (
             <>
-              <TouchableOpacity accessible accessibilityRole="button" 
+              <TouchableOpacity accessible accessibilityRole="button"
                 style={styles.chatButton}
                 onPress={handleStartChat}
               >
                 <Ionicons name="chatbubble" size={20} color={colors.onDeep} />
-                {/* ✅ AVANT: 'محادثة' */}
                 <Text style={styles.chatButtonText}>{t('userProfile.actions.chat')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity accessible accessibilityRole="button" 
+              <TouchableOpacity accessible accessibilityRole="button"
                 style={styles.removeButton}
                 onPress={handleRemoveFriend}
                 disabled={actionLoading}
               >
                 <Ionicons name="person-remove" size={20} color={colors.error} />
-                {/* ✅ AVANT: 'إزالة' */}
                 <Text style={styles.removeButtonText}>{t('userProfile.actions.remove')}</Text>
               </TouchableOpacity>
             </>
           ) : profile.requestSent ? (
             <View style={styles.pendingButton}>
               <Ionicons name="time" size={20} color={colors.textSecondary} />
-              {/* ✅ AVANT: 'طلب معلق' */}
               <Text style={styles.pendingButtonText}>{t('userProfile.actions.pending')}</Text>
             </View>
           ) : profile.requestReceived ? (
-            <TouchableOpacity accessible accessibilityRole="button" 
+            <TouchableOpacity accessible accessibilityRole="button"
               style={styles.acceptButton}
               onPress={handleAcceptRequest}
               disabled={actionLoading}
@@ -356,13 +335,12 @@ export default function UserProfileScreen({ route, navigation }: any) {
               ) : (
                 <>
                   <Ionicons name="checkmark" size={20} color={colors.onDeep} />
-                  {/* ✅ AVANT: 'قبول الطلب' */}
                   <Text style={styles.acceptButtonText}>{t('userProfile.actions.acceptRequest')}</Text>
                 </>
               )}
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity accessible accessibilityRole="button" 
+            <TouchableOpacity accessible accessibilityRole="button"
               style={styles.addButton}
               onPress={handleAddFriend}
               disabled={actionLoading}
@@ -372,7 +350,6 @@ export default function UserProfileScreen({ route, navigation }: any) {
               ) : (
                 <>
                   <Ionicons name="person-add" size={20} color={colors.onDeep} />
-                  {/* ✅ AVANT: 'إضافة صديق' */}
                   <Text style={styles.addButtonText}>{t('userProfile.actions.addFriend')}</Text>
                 </>
               )}
@@ -382,32 +359,27 @@ export default function UserProfileScreen({ route, navigation }: any) {
 
         {/* Detailed Stats */}
         <View style={styles.section}>
-          {/* ✅ AVANT: '📊 الإحصائيات' */}
           <Text style={styles.sectionTitle}>{t('userProfile.sections.statistics')}</Text>
-          
+
           <View style={styles.statsGrid}>
             <View style={styles.statCard}>
-              <Text style={styles.statCardIcon}>📖</Text>
+              <IconeMushaf size={22} color={colors.primary} />
               <Text style={styles.statCardValue}>{profile.totalVersesMemorized || 0}</Text>
-              {/* ✅ AVANT: 'آية محفوظة' */}
               <Text style={styles.statCardLabel}>{t('userProfile.stats.versesMemorized')}</Text>
             </View>
             <View style={styles.statCard}>
-              <Text style={styles.statCardIcon}>📚</Text>
+              <IconeMushaf size={22} color={colors.primary} />
               <Text style={styles.statCardValue}>{profile.totalSurahCompleted || 0}</Text>
-              {/* ✅ AVANT: 'سورة كاملة' */}
               <Text style={styles.statCardLabel}>{t('userProfile.stats.surahCompleted')}</Text>
             </View>
             <View style={styles.statCard}>
-              <Text style={styles.statCardIcon}>🔥</Text>
+              <IconeSerie size={22} color={colors.warning} />
               <Text style={styles.statCardValue}>{profile.longestStreak || 0}</Text>
-              {/* ✅ AVANT: 'أطول سلسلة' */}
               <Text style={styles.statCardLabel}>{t('userProfile.stats.longestStreak')}</Text>
             </View>
             <View style={styles.statCard}>
-              <Text style={styles.statCardIcon}>🏅</Text>
+              <IconeRecompense size={22} color={colors.accent} />
               <Text style={styles.statCardValue}>{profile.achievementsCount || 0}</Text>
-              {/* ✅ AVANT: 'إنجاز' */}
               <Text style={styles.statCardLabel}>{t('userProfile.stats.achievements')}</Text>
             </View>
           </View>
@@ -415,10 +387,8 @@ export default function UserProfileScreen({ route, navigation }: any) {
 
         {/* Join Date */}
         <View style={styles.section}>
-          {/* ✅ AVANT: '📅 معلومات' */}
           <Text style={styles.sectionTitle}>{t('userProfile.sections.info')}</Text>
           <View style={styles.infoRow}>
-            {/* ✅ AVANT: 'تاريخ الانضمام' */}
             <Text style={styles.infoLabel}>{t('userProfile.info.joinDate')}</Text>
             <Text style={styles.infoValue}>
               {formatDate(profile.joinedAt)}
@@ -426,7 +396,6 @@ export default function UserProfileScreen({ route, navigation }: any) {
           </View>
           {profile.country && (
             <View style={styles.infoRow}>
-              {/* ✅ AVANT: 'البلد' */}
               <Text style={styles.infoLabel}>{t('userProfile.info.country')}</Text>
               <Text style={styles.infoValue}>{profile.country}</Text>
             </View>
@@ -479,7 +448,6 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     borderColor: c.surface,
   },
   avatarText: {
-    fontSize: 50,
   },
   levelBadge: {
     position: 'absolute',
@@ -519,7 +487,6 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     marginTop: 12,
   },
   leagueEmoji: {
-    fontSize: 20,
     marginRight: 8,
   },
   leagueName: {
@@ -665,8 +632,6 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     padding: 5,
   },
   statCardIcon: {
-    fontSize: 30,
-    textAlign: 'center',
   },
   statCardValue: {
     fontSize: 24,
