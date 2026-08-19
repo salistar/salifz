@@ -15,39 +15,38 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { rewardsAPI } from '../../services/api';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { Ionicons } from '@expo/vector-icons';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
+import { HizbStar } from '../../components/common/Ornements';
+import { IconeMushaf, IconeSerie, IconeAmis, IconeRecompense } from '../../components/common/Icones';
 
 const { width } = Dimensions.get('window');
 
-// ✅ Constante pour les logs
 const LOG_PREFIX = '[AchievementsScreen.tsx]';
 
-// ✅ CATEGORIES avec clés i18n au lieu de texte hardcodé
 const CATEGORIES = [
-  { id: 'all', nameKey: 'achievements.categories.all', icon: '🏆' },
-  { id: 'memorization', nameKey: 'achievements.categories.memorization', icon: '📖' },
-  { id: 'streak', nameKey: 'achievements.categories.streak', icon: '🔥' },
-  { id: 'social', nameKey: 'achievements.categories.social', icon: '👥' },
-  { id: 'special', nameKey: 'achievements.categories.special', icon: '⭐' }
+  { id: 'all', nameKey: 'achievements.categories.all', Icone: IconeRecompense },
+  { id: 'memorization', nameKey: 'achievements.categories.memorization', Icone: IconeMushaf },
+  { id: 'streak', nameKey: 'achievements.categories.streak', Icone: IconeSerie },
+  { id: 'social', nameKey: 'achievements.categories.social', Icone: IconeAmis },
+  { id: 'special', nameKey: 'achievements.categories.special', Icone: HizbStar }
 ];
 
-// ✅ ACHIEVEMENTS avec clés i18n au lieu de texte hardcodé
 const ACHIEVEMENTS_DATA = [
-  { id: 'first_ayah', category: 'memorization', nameKey: 'achievements.items.firstAyah', icon: '📖', xp: 50, rarity: 'common' },
-  { id: 'surah_fatiha', category: 'memorization', nameKey: 'achievements.items.surahFatiha', icon: '🌟', xp: 100, rarity: 'common' },
-  { id: 'first_juz', category: 'memorization', nameKey: 'achievements.items.firstJuz', icon: '📚', xp: 500, rarity: 'rare' },
-  { id: 'hafiz_100', category: 'memorization', nameKey: 'achievements.items.hafiz100', icon: '💯', xp: 200, rarity: 'uncommon' },
-  { id: 'streak_7', category: 'streak', nameKey: 'achievements.items.streak7', icon: '🔥', xp: 100, rarity: 'common' },
-  { id: 'streak_30', category: 'streak', nameKey: 'achievements.items.streak30', icon: '💪', xp: 500, rarity: 'rare' },
-  { id: 'streak_100', category: 'streak', nameKey: 'achievements.items.streak100', icon: '🏆', xp: 2000, rarity: 'epic' },
-  { id: 'first_friend', category: 'social', nameKey: 'achievements.items.firstFriend', icon: '🤝', xp: 50, rarity: 'common' },
-  { id: 'league_gold', category: 'social', nameKey: 'achievements.items.leagueGold', icon: '🥇', xp: 500, rarity: 'rare' },
-  { id: 'early_bird', category: 'special', nameKey: 'achievements.items.earlyBird', icon: '🌅', xp: 100, rarity: 'uncommon' },
-  { id: 'night_owl', category: 'special', nameKey: 'achievements.items.nightOwl', icon: '🦉', xp: 100, rarity: 'uncommon' },
-  { id: 'perfect_week', category: 'special', nameKey: 'achievements.items.perfectWeek', icon: '✨', xp: 300, rarity: 'rare' }
+  { id: 'first_ayah', category: 'memorization', nameKey: 'achievements.items.firstAyah', xp: 50, rarity: 'common' },
+  { id: 'surah_fatiha', category: 'memorization', nameKey: 'achievements.items.surahFatiha', xp: 100, rarity: 'common' },
+  { id: 'first_juz', category: 'memorization', nameKey: 'achievements.items.firstJuz', xp: 500, rarity: 'rare' },
+  { id: 'hafiz_100', category: 'memorization', nameKey: 'achievements.items.hafiz100', xp: 200, rarity: 'uncommon' },
+  { id: 'streak_7', category: 'streak', nameKey: 'achievements.items.streak7', xp: 100, rarity: 'common' },
+  { id: 'streak_30', category: 'streak', nameKey: 'achievements.items.streak30', xp: 500, rarity: 'rare' },
+  { id: 'streak_100', category: 'streak', nameKey: 'achievements.items.streak100', xp: 2000, rarity: 'epic' },
+  { id: 'first_friend', category: 'social', nameKey: 'achievements.items.firstFriend', xp: 50, rarity: 'common' },
+  { id: 'league_gold', category: 'social', nameKey: 'achievements.items.leagueGold', xp: 500, rarity: 'rare' },
+  { id: 'early_bird', category: 'special', nameKey: 'achievements.items.earlyBird', xp: 100, rarity: 'uncommon' },
+  { id: 'night_owl', category: 'special', nameKey: 'achievements.items.nightOwl', xp: 100, rarity: 'uncommon' },
+  { id: 'perfect_week', category: 'special', nameKey: 'achievements.items.perfectWeek', xp: 300, rarity: 'rare' }
 ];
 
 export default function AchievementsScreen() {
@@ -55,7 +54,7 @@ export default function AchievementsScreen() {
   const styles = useThemedStyles(makeStyles);
 
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
-  
+
   const [achievements] = useState<any[]>(ACHIEVEMENTS_DATA);
   const [userAchievements, setUserAchievements] = useState<string[]>(['first_ayah', 'streak_7']);
   const [activeCategory, setActiveCategory] = useState('all');
@@ -70,23 +69,23 @@ export default function AchievementsScreen() {
       const unlockedIds = response.achievements?.filter((a: any) => a.isUnlocked).map((a: any) => a._id) || [];
       setUserAchievements(unlockedIds);
       console.log(`${LOG_PREFIX} ✅ Loaded ${unlockedIds.length} unlocked achievements`);
-    } catch (error) { 
-      console.error(`${LOG_PREFIX} ❌ Load achievements error:`, error); 
+    } catch (error) {
+      console.error(`${LOG_PREFIX} ❌ Load achievements error:`, error);
     }
     console.log(`${LOG_PREFIX} 📥 ========== LOAD ACHIEVEMENTS END ==========`);
   };
 
-  const onRefresh = async () => { 
+  const onRefresh = async () => {
     console.log(`${LOG_PREFIX} 🔄 Pull to refresh triggered`);
-    setRefreshing(true); 
-    await loadAchievements(); 
-    setRefreshing(false); 
+    setRefreshing(true);
+    await loadAchievements();
+    setRefreshing(false);
   };
 
-  const filteredAchievements = activeCategory === 'all' 
-    ? achievements 
+  const filteredAchievements = activeCategory === 'all'
+    ? achievements
     : achievements.filter(a => a.category === activeCategory);
-  
+
   const unlockedCount = achievements.filter(a => userAchievements.includes(a.id)).length;
   const totalXp = achievements.filter(a => userAchievements.includes(a.id)).reduce((sum, a) => sum + a.xp, 0);
 
@@ -103,8 +102,6 @@ export default function AchievementsScreen() {
     }
   };
 
-  // ✅ AVANT: hardcoded Arabic rarity names
-  // ✅ APRÈS: i18n keys
   const getRarityName = (rarity: string) => {
     switch (rarity) {
       case 'common': return t('achievements.rarity.common');
@@ -138,19 +135,16 @@ export default function AchievementsScreen() {
     <View style={styles.container}>
       {/* Header */}
       <LinearGradient colors={[fixedColors.gold, colors.warningStrong]} style={styles.header}>
-        <Text style={styles.headerIcon}>🏆</Text>
-        {/* ✅ AVANT: 'الإنجازات' */}
+        <IconeRecompense size={44} color={colors.onDeep} />
         <Text style={styles.headerTitle}>{t('achievements.title')}</Text>
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{unlockedCount}/{achievements.length}</Text>
-            {/* ✅ AVANT: 'مفتوح' */}
             <Text style={styles.statLabel}>{t('achievements.unlocked')}</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{totalXp}</Text>
-            {/* ✅ AVANT: 'XP مكتسب' */}
             <Text style={styles.statLabel}>{t('achievements.xpEarned')}</Text>
           </View>
         </View>
@@ -159,13 +153,14 @@ export default function AchievementsScreen() {
       {/* Categories */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesContainer}>
         {CATEGORIES.map((cat) => (
-          <TouchableOpacity accessible accessibilityRole="button" 
-            key={cat.id} 
-            style={[styles.categoryButton, activeCategory === cat.id && styles.categoryButtonActive]} 
+          <TouchableOpacity accessible accessibilityRole="button"
+            key={cat.id}
+            style={[styles.categoryButton, activeCategory === cat.id && styles.categoryButtonActive]}
             onPress={() => handleCategoryChange(cat.id)}
           >
-            <Text style={styles.categoryIcon}>{cat.icon}</Text>
-            {/* ✅ AVANT: {cat.name} hardcodé */}
+            <View style={styles.categoryIcon}>
+              <cat.Icone size={16} color={activeCategory === cat.id ? colors.primary : colors.textMuted} />
+            </View>
             <Text style={[styles.categoryText, activeCategory === cat.id && styles.categoryTextActive]}>
               {t(cat.nameKey)}
             </Text>
@@ -174,8 +169,8 @@ export default function AchievementsScreen() {
       </ScrollView>
 
       {/* Achievements Grid */}
-      <ScrollView 
-        contentContainerStyle={styles.gridContainer} 
+      <ScrollView
+        contentContainerStyle={styles.gridContainer}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <View style={styles.grid}>
@@ -189,10 +184,13 @@ export default function AchievementsScreen() {
               >
                 <View style={[styles.achievementIconBg, { backgroundColor: isUnlocked ? getRarityColor(achievement.rarity) + '30' : colors.backgroundAlt }]}>
                   <Text style={[styles.achievementIcon, !isUnlocked && styles.achievementIconLocked]}>
-                    {isUnlocked ? achievement.icon : '🔒'}
+                    <HizbStar
+                  size={26}
+                  quarters={isUnlocked ? 4 : 0}
+                  color={isUnlocked ? colors.accent : colors.border}
+                />
                   </Text>
                 </View>
-                {/* ✅ AVANT: {achievement.name} hardcodé */}
                 <Text style={[styles.achievementName, !isUnlocked && styles.achievementNameLocked]} numberOfLines={1}>
                   {t(achievement.nameKey)}
                 </Text>
@@ -214,29 +212,24 @@ export default function AchievementsScreen() {
               <View style={[styles.modalIconBg, { backgroundColor: getRarityColor(selectedAchievement.rarity) + '30' }]}>
                 <Text style={styles.modalIcon}>{selectedAchievement.icon}</Text>
               </View>
-              {/* ✅ AVANT: {selectedAchievement.name} hardcodé */}
               <Text style={styles.modalTitle}>{t(selectedAchievement.nameKey)}</Text>
               <View style={[styles.modalRarityBadge, { backgroundColor: getRarityColor(selectedAchievement.rarity) }]}>
                 <Text style={styles.modalRarityText}>{getRarityName(selectedAchievement.rarity)}</Text>
               </View>
               <View style={styles.modalReward}>
-                {/* ✅ AVANT: 'المكافأة:' */}
                 <Text style={styles.modalRewardLabel}>{t('achievements.reward')}:</Text>
                 <Text style={styles.modalRewardValue}>+{selectedAchievement.xp} XP</Text>
               </View>
               {userAchievements.includes(selectedAchievement.id) ? (
                 <View style={styles.unlockedBadge}>
-                  {/* ✅ AVANT: '✓ مفتوح' */}
-                  <Text style={styles.unlockedText}>✓ {t('achievements.unlockedStatus')}</Text>
+                  <Text style={styles.unlockedText}>{t('achievements.unlockedStatus')}</Text>
                 </View>
               ) : (
                 <View style={styles.lockedBadge}>
-                  {/* ✅ AVANT: '🔒 مقفل' */}
-                  <Text style={styles.lockedText}>🔒 {t('achievements.lockedStatus')}</Text>
+                  <Text style={styles.lockedText}>{t('achievements.lockedStatus')}</Text>
                 </View>
               )}
               <TouchableOpacity accessible accessibilityRole="button" style={styles.closeButton} onPress={handleModalClose}>
-                {/* ✅ AVANT: 'إغلاق' */}
                 <Text style={styles.closeButtonText}>{t('common.close')}</Text>
               </TouchableOpacity>
             </View>
@@ -250,7 +243,7 @@ export default function AchievementsScreen() {
 const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: c.background },
   header: { paddingTop: 50, paddingBottom: 30, alignItems: 'center' },
-  headerIcon: { fontSize: 50 },
+  headerIcon: {},
   headerTitle: { color: c.onDeep, fontSize: 24, fontWeight: 'bold', marginTop: 10 },
   statsRow: { flexDirection: 'row', marginTop: 20, backgroundColor: 'rgba(0,0,0,0.1)', borderRadius: 15, padding: 15 },
   statItem: { alignItems: 'center', paddingHorizontal: 25 },
@@ -260,7 +253,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   categoriesContainer: { paddingHorizontal: 10, paddingVertical: 15 },
   categoryButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.surface, paddingHorizontal: 15, paddingVertical: 10, borderRadius: 20, marginHorizontal: 5, elevation: 1 },
   categoryButtonActive: { backgroundColor: c.primary },
-  categoryIcon: { fontSize: 18, marginRight: 6 },
+  categoryIcon: { marginRight: 6 },
   categoryText: { color: c.textSecondary, fontWeight: '600' },
   categoryTextActive: { color: c.onDeep },
   gridContainer: { padding: 10 },

@@ -14,33 +14,39 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { leaderboardAPI } from '../../services/api';
 import { useAuthStore } from '../../stores';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
+import { Ionicons } from '@expo/vector-icons';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
+import { HizbStar, MihrabArch } from '../../components/common/Ornements';
+import { IconeClassement, IconeHalaqat, IconeAmis, IconeSerie, IconeProfil } from '../../components/common/Icones';
 
-// ✅ Constante pour les logs
 const LOG_PREFIX = '[LeaderboardScreen.tsx]';
 
 // Define LEAGUES locally with i18n keys
+/**
+ * L'initiale du nom en guise d'avatar. Un emoji humain attribue a la personne
+ * un genre et un age qu'elle n'a pas choisis ; l'initiale identifie sans rien
+ * inventer. Cinquieme ecran ou cette correction s'applique.
+ */
+const initiale = (personne: any): string =>
+  String(personne?.displayName || personne?.username || '?').charAt(0).toUpperCase();
+
 interface League {
   id: string;
-  nameKey: string; // ✅ CHANGÉ: clé i18n au lieu de texte
+  nameKey: string;
   nameEn: string;
-  icon: string;
   color: string;
   minXP: number;
 }
 
-// ✅ AVANT: name: 'البرونزي' hardcodé
-// ✅ APRÈS: nameKey pour i18n
 const LEAGUES: League[] = [
-  { id: 'bronze', nameKey: 'leaderboard.leagues.bronze', nameEn: 'Bronze', icon: '🥉', color: fixedColors.bronze, minXP: 0 },
-  { id: 'silver', nameKey: 'leaderboard.leagues.silver', nameEn: 'Silver', icon: '🥈', color: fixedColors.silver, minXP: 1000 },
-  { id: 'gold', nameKey: 'leaderboard.leagues.gold', nameEn: 'Gold', icon: '🥇', color: fixedColors.gold, minXP: 5000 },
-  { id: 'platinum', nameKey: 'leaderboard.leagues.platinum', nameEn: 'Platinum', icon: '💎', color: fixedColors.silver, minXP: 15000 },
-  { id: 'diamond', nameKey: 'leaderboard.leagues.diamond', nameEn: 'Diamond', icon: '💠', color: fixedColors.diamond, minXP: 30000 },
-  { id: 'master', nameKey: 'leaderboard.leagues.master', nameEn: 'Master', icon: '👑', color: fixedColors.master, minXP: 50000 },
+  { id: 'bronze', nameKey: 'leaderboard.leagues.bronze', nameEn: 'Bronze', color: fixedColors.bronze, minXP: 0 },
+  { id: 'silver', nameKey: 'leaderboard.leagues.silver', nameEn: 'Silver', color: fixedColors.silver, minXP: 1000 },
+  { id: 'gold', nameKey: 'leaderboard.leagues.gold', nameEn: 'Gold', color: fixedColors.gold, minXP: 5000 },
+  { id: 'platinum', nameKey: 'leaderboard.leagues.platinum', nameEn: 'Platinum', color: fixedColors.silver, minXP: 15000 },
+  { id: 'diamond', nameKey: 'leaderboard.leagues.diamond', nameEn: 'Diamond', color: fixedColors.diamond, minXP: 30000 },
+  { id: 'master', nameKey: 'leaderboard.leagues.master', nameEn: 'Master', color: fixedColors.master, minXP: 50000 },
 ];
 
 export default function LeaderboardScreen({ navigation }: any) {
@@ -48,7 +54,7 @@ export default function LeaderboardScreen({ navigation }: any) {
   const styles = useThemedStyles(makeStyles);
 
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
-  
+
   const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState('league');
   const [rankings, setRankings] = useState<any[]>([]);
@@ -78,12 +84,12 @@ export default function LeaderboardScreen({ navigation }: any) {
         console.log(`${LOG_PREFIX} 📤 Calling leaderboardAPI.getFriends()...`);
         response = await leaderboardAPI.getFriends();
       }
-      
+
       const loadedRankings = response.data?.rankings || response.rankings || [];
       setRankings(loadedRankings);
       setUserRank(response.data?.userRank || response.userRank);
       console.log(`${LOG_PREFIX} ✅ Loaded ${loadedRankings.length} rankings`);
-      
+
       if (response.data?.league || response.league) {
         const leagueId = response.data?.league || response.league;
         const league = LEAGUES.find((l: League) => l.id === leagueId) || LEAGUES[0];
@@ -118,11 +124,10 @@ export default function LeaderboardScreen({ navigation }: any) {
     setRefreshing(false);
   };
 
-  // ✅ TABS avec clés i18n
   const tabs = [
-    { id: 'league', labelKey: 'leaderboard.tabs.league', icon: '🏆' },
-    { id: 'global', labelKey: 'leaderboard.tabs.global', icon: '🌍' },
-    { id: 'friends', labelKey: 'leaderboard.tabs.friends', icon: '👥' }
+    { id: 'league', labelKey: 'leaderboard.tabs.league', Icone: IconeClassement },
+    { id: 'global', labelKey: 'leaderboard.tabs.global', Icone: IconeHalaqat },
+    { id: 'friends', labelKey: 'leaderboard.tabs.friends', Icone: IconeAmis }
   ];
 
   const handleTabChange = (tabId: string) => {
@@ -135,21 +140,17 @@ export default function LeaderboardScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient 
-        colors={[currentLeague.color, currentLeague.color + 'CC']} 
+      <LinearGradient
+        colors={[currentLeague.color, currentLeague.color + 'CC']}
         style={styles.header}
       >
-        <Text style={styles.leagueIcon}>{currentLeague.icon}</Text>
-        {/* ✅ AVANT: {currentLeague.name} hardcodé */}
+        <HizbStar size={40} quarters={4} color={currentLeague.color} />
         <Text style={styles.leagueName}>{t(currentLeague.nameKey)}</Text>
-        {/* ✅ AVANT: 'X League' hardcodé */}
         <Text style={styles.leagueNameEn}>{currentLeague.nameEn} {t('leaderboard.league')}</Text>
-        {/* ✅ AVANT: 'الـ 5 الأوائل يصعدون • الـ 5 الأخيرين يهبطون' */}
         <Text style={styles.leagueSubtitle}>{t('leaderboard.promotionInfo')}</Text>
-        
+
         <View style={styles.timerContainer}>
-          <Text style={styles.timerIcon}>⏱️</Text>
-          {/* ✅ AVANT: 'ينتهي خلال: 3 أيام' */}
+          <IconeSerie size={14} color={colors.textSecondary} />
           <Text style={styles.timerText}>{t('leaderboard.endsIn', { days: 3 })}</Text>
         </View>
       </LinearGradient>
@@ -157,13 +158,14 @@ export default function LeaderboardScreen({ navigation }: any) {
       {/* Tabs */}
       <View style={styles.tabsContainer}>
         {tabs.map((tab) => (
-          <TouchableOpacity accessible accessibilityRole="button" 
-            key={tab.id} 
-            style={[styles.tab, activeTab === tab.id && styles.tabActive]} 
+          <TouchableOpacity accessible accessibilityRole="button"
+            key={tab.id}
+            style={[styles.tab, activeTab === tab.id && styles.tabActive]}
             onPress={() => handleTabChange(tab.id)}
           >
-            <Text style={styles.tabIcon}>{tab.icon}</Text>
-            {/* ✅ AVANT: {tab.label} hardcodé */}
+            <View style={styles.tabIcon}>
+              <tab.Icone size={17} color={activeTab === tab.id ? colors.primary : colors.textMuted} />
+            </View>
             <Text style={[styles.tabLabel, activeTab === tab.id && styles.tabLabelActive]}>
               {t(tab.labelKey)}
             </Text>
@@ -171,8 +173,8 @@ export default function LeaderboardScreen({ navigation }: any) {
         ))}
       </View>
 
-      <ScrollView 
-        contentContainerStyle={styles.content} 
+      <ScrollView
+        contentContainerStyle={styles.content}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {/* Podium */}
@@ -181,35 +183,35 @@ export default function LeaderboardScreen({ navigation }: any) {
             {/* 2nd Place */}
             <View style={styles.podiumItem}>
               <View style={[styles.podiumAvatar, styles.podiumSecond]}>
-                <Text style={styles.avatarEmoji}>👤</Text>
+                <Text style={styles.avatarEmoji}>{initiale(rankings[1]?.user)}</Text>
               </View>
               <Text style={styles.podiumName} numberOfLines={1}>{rankings[1]?.user?.username}</Text>
               <Text style={styles.podiumXp}>{rankings[1]?.xp} XP</Text>
               <View style={styles.podiumBase}><Text style={styles.podiumRank}>2</Text></View>
-              <Text style={styles.podiumMedal}>🥈</Text>
+              <HizbStar size={20} quarters={4} color={fixedColors.silver} />
             </View>
 
             {/* 1st Place */}
             <View style={[styles.podiumItem, styles.podiumFirst]}>
-              <View style={styles.crownContainer}><Text style={styles.crownEmoji}>👑</Text></View>
+              <View style={styles.crownContainer}><HizbStar size={18} quarters={4} color={fixedColors.gold} /></View>
               <View style={[styles.podiumAvatar, styles.podiumFirstAvatar]}>
-                <Text style={styles.avatarEmoji}>👤</Text>
+                <Text style={styles.avatarEmoji}>{initiale(rankings[0]?.user)}</Text>
               </View>
               <Text style={styles.podiumName} numberOfLines={1}>{rankings[0]?.user?.username}</Text>
               <Text style={styles.podiumXp}>{rankings[0]?.xp} XP</Text>
               <View style={[styles.podiumBase, styles.podiumBaseFirst]}><Text style={styles.podiumRank}>1</Text></View>
-              <Text style={styles.podiumMedal}>🥇</Text>
+              <HizbStar size={24} quarters={4} color={fixedColors.gold} />
             </View>
 
             {/* 3rd Place */}
             <View style={styles.podiumItem}>
               <View style={[styles.podiumAvatar, styles.podiumThird]}>
-                <Text style={styles.avatarEmoji}>👤</Text>
+                <Text style={styles.avatarEmoji}>{initiale(rankings[2]?.user)}</Text>
               </View>
               <Text style={styles.podiumName} numberOfLines={1}>{rankings[2]?.user?.username}</Text>
               <Text style={styles.podiumXp}>{rankings[2]?.xp} XP</Text>
               <View style={styles.podiumBase}><Text style={styles.podiumRank}>3</Text></View>
-              <Text style={styles.podiumMedal}>🥉</Text>
+              <HizbStar size={20} quarters={4} color={fixedColors.bronze} />
             </View>
           </View>
         )}
@@ -218,12 +220,10 @@ export default function LeaderboardScreen({ navigation }: any) {
         <View style={styles.zoneIndicators}>
           <View style={styles.zoneIndicator}>
             <View style={[styles.zoneDot, { backgroundColor: colors.primary }]} />
-            {/* ✅ AVANT: 'منطقة الصعود' */}
             <Text style={styles.zoneText}>{t('leaderboard.promotionZone')}</Text>
           </View>
           <View style={styles.zoneIndicator}>
             <View style={[styles.zoneDot, { backgroundColor: colors.error }]} />
-            {/* ✅ AVANT: 'منطقة الهبوط' */}
             <Text style={styles.zoneText}>{t('leaderboard.relegationZone')}</Text>
           </View>
         </View>
@@ -233,12 +233,12 @@ export default function LeaderboardScreen({ navigation }: any) {
           const actualRank = index + 4;
           const isPromoted = actualRank <= 5;
           const isRelegated = actualRank > rankings.length - 5;
-          
+
           return (
-            <View 
-              key={index} 
+            <View
+              key={index}
               style={[
-                styles.rankItem, 
+                styles.rankItem,
                 item.isCurrentUser && styles.rankItemCurrent,
                 isPromoted && styles.rankItemPromoted,
                 isRelegated && styles.rankItemRelegated
@@ -257,21 +257,22 @@ export default function LeaderboardScreen({ navigation }: any) {
               </View>
 
               <View style={styles.rankAvatar}>
-                <Text style={styles.avatarEmoji}>👤</Text>
+                <Text style={styles.avatarEmoji}>{initiale(item?.user ?? item)}</Text>
               </View>
 
               <View style={styles.rankInfo}>
                 <Text style={[styles.rankName, item.isCurrentUser && styles.rankNameCurrent]}>
-                  {/* ✅ AVANT: '(أنت)' hardcodé */}
                   {item.user?.username} {item.isCurrentUser && `(${t('leaderboard.you')})`}
                 </Text>
-                {/* ✅ AVANT: 'المستوى X' */}
                 <Text style={styles.rankLevel}>{t('leaderboard.levelX', { level: item.user?.level })}</Text>
               </View>
 
               <View style={styles.rankStats}>
                 <Text style={styles.rankXp}>{item.xp} XP</Text>
-                <Text style={styles.rankStreak}>🔥 {item.streak}</Text>
+                <View style={styles.rankStreakLigne}>
+                <IconeSerie size={12} color={colors.warning} />
+                <Text style={styles.rankStreak}>{item.streak}</Text>
+              </View>
               </View>
             </View>
           );
@@ -280,10 +281,8 @@ export default function LeaderboardScreen({ navigation }: any) {
         {/* Empty State */}
         {rankings.length === 0 && !loading && (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>🏆</Text>
-            {/* ✅ AVANT: 'لا توجد بيانات' */}
+            <MihrabArch width={70} color={colors.border} />
             <Text style={styles.emptyTitle}>{t('leaderboard.noData')}</Text>
-            {/* ✅ AVANT: 'ابدأ التعلم للظهور في الترتيب!' */}
             <Text style={styles.emptySubtitle}>{t('leaderboard.startLearning')}</Text>
           </View>
         )}
@@ -296,9 +295,8 @@ export default function LeaderboardScreen({ navigation }: any) {
         <View style={styles.userRankBar}>
           <Text style={styles.userRankNumber}>#{userRank.rank}</Text>
           <View style={styles.userRankAvatar}>
-            <Text style={styles.userRankAvatarEmoji}>👤</Text>
+            <Text style={styles.userRankAvatarEmoji}>{initiale(userRank?.user ?? userRank)}</Text>
           </View>
-          {/* ✅ AVANT: 'أنت' */}
           <Text style={styles.userRankName}>{t('leaderboard.you')}</Text>
           <View style={styles.userRankStats}>
             <Text style={styles.userRankXp}>{userRank.xp} XP</Text>
@@ -312,17 +310,17 @@ export default function LeaderboardScreen({ navigation }: any) {
 const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: c.background },
   header: { paddingTop: 50, paddingBottom: 30, alignItems: 'center' },
-  leagueIcon: { fontSize: 60 },
+  leagueIcon: {},
   leagueName: { color: c.onDeep, fontSize: 28, fontWeight: 'bold', marginTop: 10 },
   leagueNameEn: { color: 'rgba(255,255,255,0.8)', fontSize: 14, marginTop: 2 },
   leagueSubtitle: { color: 'rgba(255,255,255,0.7)', marginTop: 10, fontSize: 12 },
   timerContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.2)', paddingHorizontal: 15, paddingVertical: 8, borderRadius: 20, marginTop: 15 },
-  timerIcon: { fontSize: 14, marginRight: 5 },
+  timerIcon: { marginRight: 5 },
   timerText: { color: c.onDeep, fontSize: 12 },
   tabsContainer: { flexDirection: 'row', backgroundColor: c.surface, marginHorizontal: 20, marginTop: -15, borderRadius: 15, padding: 5, elevation: 3 },
   tab: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, borderRadius: 12 },
   tabActive: { backgroundColor: c.primary },
-  tabIcon: { fontSize: 16, marginRight: 5 },
+  tabIcon: { marginRight: 5 },
   tabLabel: { color: c.textSecondary, fontWeight: '600' },
   tabLabelActive: { color: c.onDeep },
   content: { padding: 20 },
@@ -330,18 +328,18 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   podiumItem: { alignItems: 'center', marginHorizontal: 8, width: 90 },
   podiumFirst: { marginBottom: 20 },
   crownContainer: { position: 'absolute', top: -35, zIndex: 10 },
-  crownEmoji: { fontSize: 30 },
+  crownEmoji: {},
   podiumAvatar: { width: 60, height: 60, borderRadius: 30, backgroundColor: c.border, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
   podiumFirstAvatar: { width: 75, height: 75, borderRadius: 37.5, borderWidth: 3, borderColor: fixedColors.gold },
   podiumSecond: { borderWidth: 3, borderColor: fixedColors.silver },
   podiumThird: { borderWidth: 3, borderColor: fixedColors.bronze },
-  avatarEmoji: { fontSize: 28 },
+  avatarEmoji: {},
   podiumName: { fontWeight: 'bold', color: c.text, fontSize: 13, textAlign: 'center' },
   podiumXp: { color: c.textSecondary, fontSize: 11, marginTop: 2 },
   podiumBase: { backgroundColor: c.border, paddingHorizontal: 20, paddingVertical: 5, borderRadius: 10, marginTop: 8 },
   podiumBaseFirst: { backgroundColor: fixedColors.gold },
   podiumRank: { fontWeight: 'bold', color: c.text },
-  podiumMedal: { fontSize: 28, marginTop: 8 },
+  podiumMedal: { marginTop: 8 },
   zoneIndicators: { flexDirection: 'row', justifyContent: 'center', marginBottom: 15 },
   zoneIndicator: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 15 },
   zoneDot: { width: 10, height: 10, borderRadius: 5, marginRight: 5 },
@@ -363,15 +361,16 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   rankLevel: { color: c.textSecondary, fontSize: 12, marginTop: 2 },
   rankStats: { alignItems: 'flex-end' },
   rankXp: { fontWeight: 'bold', color: c.primary, fontSize: 14 },
+  rankStreakLigne: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   rankStreak: { color: fixedColors.streak, fontSize: 12, marginTop: 4 },
   emptyState: { alignItems: 'center', paddingVertical: 50 },
-  emptyIcon: { fontSize: 60, marginBottom: 15 },
+  emptyIcon: { marginBottom: 15 },
   emptyTitle: { fontSize: 18, fontWeight: 'bold', color: c.text },
   emptySubtitle: { color: c.textSecondary, marginTop: 5 },
   userRankBar: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', alignItems: 'center', backgroundColor: c.primary, padding: 15, paddingBottom: 30, elevation: 10 },
   userRankNumber: { color: c.onDeep, fontSize: 20, fontWeight: 'bold', width: 50 },
   userRankAvatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center', marginRight: 10 },
-  userRankAvatarEmoji: { fontSize: 20 },
+  userRankAvatarEmoji: {},
   userRankName: { color: c.onDeep, fontWeight: '600', flex: 1 },
   userRankStats: { alignItems: 'flex-end' },
   userRankXp: { color: c.onDeep, fontWeight: 'bold', fontSize: 16 }
