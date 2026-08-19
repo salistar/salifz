@@ -17,6 +17,8 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import resourcesToBackend from 'i18next-resources-to-backend';
 
+import { MOIS_HEGIRIENS, ERE_HEGIRIENNE } from './hegire';
+
 export const LOCALES = ['fr', 'ar', 'en'] as const;
 export type Locale = (typeof LOCALES)[number];
 
@@ -118,17 +120,42 @@ export function jourAbrege(date: Date | string, locale: string): string {
  * imprimés dans les mushafs.
  */
 export function dateHegirienne(date: Date | string, locale: string): string {
-  const base = locale === 'ar' ? 'ar-SA' : `${locale}-u-ca-islamic-umalqura`;
   try {
-    return new Intl.DateTimeFormat(base, {
+    // L'arabe est bien servi par `Intl` : ses propres mois y sont nommes et
+    // l'annee s'ecrit en chiffres arabes. On ne touche a rien.
+    if (locale === 'ar') {
+      return new Intl.DateTimeFormat('ar-SA', {
+        calendar: 'islamic-umalqura',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }).format(new Date(date));
+    }
+
+    // Pour le francais et l'anglais, `Intl` ne sait convertir que les nombres :
+    // il rendait « 6 rabia al awal 1448 AH » au milieu d'une interface
+    // francaise. On lui demande donc les composantes, et on nomme le mois
+    // nous-memes.
+    const parties = new Intl.DateTimeFormat(`${locale}-u-ca-islamic-umalqura`, {
       calendar: 'islamic-umalqura',
       day: 'numeric',
-      month: 'long',
+      month: 'numeric',
       year: 'numeric',
-    }).format(new Date(date));
+    }).formatToParts(new Date(date));
+
+    const valeur = (type: string) => parties.find((p) => p.type === type)?.value ?? '';
+    const jour = valeur('day');
+    const annee = valeur('year');
+    const rang = Number(valeur('month'));
+
+    const mois = MOIS_HEGIRIENS[locale]?.[rang - 1];
+    const ere = ERE_HEGIRIENNE[locale];
+    if (!mois || !jour || !annee) return '';
+
+    return `${jour} ${mois} ${annee} ${ere}`;
   } catch {
-    // Un environnement sans données de calendrier islamique ne doit pas faire
-    // tomber l'écran : on renvoie une chaîne vide, l'appelant l'omet.
+    // Un environnement sans donnees de calendrier islamique ne doit pas faire
+    // tomber l'ecran : on renvoie une chaine vide, l'appelant l'omet.
     return '';
   }
 }
