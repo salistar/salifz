@@ -814,6 +814,11 @@
       "verifySuccess": "تم توثيق الحزب"
     },
     "amountPerDay": "الكمية اليومية",
+    "annuler": "إلغاء",
+    "aucun": "لا توجد ختمات بعد",
+    "aucunPublic": "لا توجد ختمات عامة",
+    "champTitre": "العنوان",
+    "commencer": "ابدأ ختمة جديدة",
     "create": {
       "createButton": "إنشاء الختمة",
       "creating": "جاري الإنشاء...",
@@ -830,6 +835,8 @@
       "title": "إنشاء ختمة جديدة"
     },
     "createKhatam": "إنشاء ختمة",
+    "creer": "إنشاء",
+    "decouvrir": "اكتشف",
     "dedication": {
       "deceased": "لمتوفى",
       "general": "عام",
@@ -839,6 +846,8 @@
       "sick": "لمريض",
       "title": "إهداء الختمة"
     },
+    "description": "الوصف",
+    "descriptionOptionnelle": "وصف اختياري…",
     "detail": {
       "active": "نشطة",
       "completed": "مكتملة",
@@ -848,36 +857,58 @@
       "paused": "متوقفة",
       "status": "الحالة"
     },
+    "direct": "مباشر",
     "discover": "اكتشف",
+    "disponible": "متاح",
     "empty": {
       "discover": "لا توجد ختمات عامة",
       "discoverSubtitle": "لا توجد ختمات عامة متاحة حالياً",
       "myKhatams": "لا توجد ختمات بعد",
       "myKhatamsSubtitle": "أنشئ ختمة جديدة أو انضم لختمة"
     },
+    "enCours": "جاري",
+    "erreurCreation": "فشل إنشاء الختمة",
+    "erreurTitre": "أدخل عنواناً",
+    "exempleTitre": "مثال: ختمة رمضان",
+    "fermer": "إغلاق",
+    "grilleHizb": "جدول الأحزاب",
+    "groupe": "جماعي",
+    "hizb": "حزب",
     "hizbGrid": "جدول الأحزاب",
     "hizbNumber": "حزب {{number}}",
+    "horsLigne": "ذاتي",
     "infiniteRepeat": "تكرار لا نهائي",
     "infiniteRepeatDesc": "الختمة تتكرر تلقائياً عند الإتمام",
     "joinKhatam": "انضم لختمة",
+    "juz": "الجزء:",
     "juzNumber": "جزء {{number}}",
     "leaderboard": {
       "completedHizbs": "أحزاب مكتملة",
       "rank": "المرتبة",
       "title": "ترتيب المشاركين"
     },
+    "marquerTermine": "إتمام القراءة",
+    "mesKhatams": "ختماتي",
     "mode": {
       "offline": "ذاتي",
       "offlineDesc": "اقرأ بوقتك وسجل تقدمك",
       "realtime": "مباشر",
       "realtimeDesc": "جلسات قراءة مباشرة مع الآخرين"
     },
+    "modeLecture": "طريقة القراءة",
     "myKhatams": "ختماتي",
     "newKhatam": "ختمة جديدة",
+    "nouveau": "ختمة جديدة",
     "participantCount": "{{count}} مشارك",
     "participants": "المشاركون",
     "perDay": "يومياً",
+    "prendreHizb": "احجز هذا الحزب",
     "progress": "التقدم",
+    "progression": "التقدم",
+    "quantiteParJour": "الكمية اليومية",
+    "repetitionInfinie": "تكرار لا نهائي (ختمات متعددة)",
+    "reserve": "محجوز",
+    "reservePour": "محجوز لـ:",
     "session": {
       "active": "جلسة نشطة",
       "currentHizb": "الحزب الحالي: {{number}}",
@@ -889,6 +920,8 @@
       "start": "بدء جلسة",
       "title": "جلسة مباشرة"
     },
+    "sessionDirecte": "بدء جلسة مباشرة",
+    "solo": "فردي",
     "startNow": "ابدأ الآن",
     "status": {
       "assigned": "محجوز",
@@ -896,13 +929,11 @@
       "completed": "مكتمل",
       "verified": "موثق"
     },
+    "statut": "الحالة:",
+    "termine": "مكتمل",
     "title": "ختم القرآن",
-    "type": {
-      "group": "جماعي",
-      "groupDesc": "شارك مع الآخرين في إتمام الختمة",
-      "solo": "فردي",
-      "soloDesc": "ختمة فردية بإيقاعك الخاص"
-    },
+    "titre": "ختم القرآن",
+    "type": "النوع",
     "unit": {
       "eighth": "⅛ حزب",
       "eighthDesc": "ثُمن الحزب",
@@ -915,7 +946,9 @@
       "quarter": "¼ حزب",
       "quarterDesc": "ربع الحزب",
       "title": "وحدة القراءة"
-    }
+    },
+    "uniteLecture": "وحدة القراءة",
+    "verifie": "موثق"
   },
   "leaderboard": {
     "bronze": "البرونزي",
@@ -1207,6 +1240,16 @@
     "title": "مواقيت الصلاة",
     "today": "أوقات اليوم"
   },
+  "prayerTimes": {
+    "adhan": "الأذان",
+    "aujourdhui": "صلوات اليوم",
+    "chargement": "جاري تحميل أوقات الصلاة…",
+    "heures": "ساعة",
+    "minutes": "دقيقة",
+    "prochaine": "الصلاة القادمة",
+    "secondes": "ثانية",
+    "titre": "مواقيت الصلاة"
+  },
   "profile": {
     "about": "حول التطبيق",
     "achievements": "الإنجازات",
@@ -1255,29 +1298,38 @@
   },
   "qibla": {
     "accuracy": "الدقة",
+    "boussoleAbsente": "البوصلة غير متاحة. الاتجاه تقريبي.",
     "calibrate": "معايرة البوصلة",
     "calibrateDesc": "حرك هاتفك بشكل دائري لتحسين الدقة",
+    "chargement": "جاري تحديد اتجاه القبلة…",
     "compassActive": "البوصلة نشطة",
-    "direction": "الاتجاه",
+    "direction": "اتجاه القبلة",
     "distance": "المسافة إلى مكة",
     "distanceKm": "{{distance}} كم",
     "east": "شرق",
+    "est": "ق",
+    "faceALaQibla": "أنت تواجه القبلة!",
     "facingQibla": "أنت تواجه القبلة! ✓",
     "high": "عالية",
     "kaaba": "الكعبة المشرفة",
     "loading": "جاري تحديد اتجاه القبلة...",
     "low": "منخفضة",
     "mecca": "مكة المكرمة",
+    "mecque": "مكة المكرمة",
     "medium": "متوسطة",
     "movePhone": "حرك هاتفك لتحديد الاتجاه",
+    "nord": "ش",
     "north": "شمال",
     "notSupported": "البوصلة غير مدعومة على هذا الجهاز",
+    "ouest": "غ",
     "permissionRequired": "يرجى السماح بالوصول للموقع",
     "sensorError": "خطأ في مستشعر البوصلة",
     "south": "جنوب",
     "staticMode": "وضع ثابت",
     "staticModeDesc": "الاتجاه محسوب من موقعك",
+    "sud": "ج",
     "title": "اتجاه القبلة",
+    "titre": "اتجاه القبلة",
     "turnLeft": "استدر لليسار",
     "turnRight": "استدر لليمين",
     "west": "غرب"
@@ -1444,9 +1496,12 @@
     "startReview": "ابدأ المراجعة",
     "stats": {
       "consecutiveDays": "أيام متتالية",
+      "dueToday": "للمراجعة اليوم",
+      "estimatedXp": "XP متوقع",
       "title": "إحصائيات المراجعة",
       "todayReviews": "مراجعات اليوم",
       "totalReviews": "إجمالي المراجعات",
+      "weakAreas": "نقاط ضعف",
       "weeklyAccuracy": "دقة الأسبوع"
     },
     "strengthen": "تقوية",

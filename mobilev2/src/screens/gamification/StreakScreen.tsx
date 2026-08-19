@@ -48,7 +48,11 @@ export default function StreakScreen({ navigation }: any) {
   const current = streakStore.current || 0;
   const longest = streakStore.longest || 0;
   const freezesAvailable = streakStore.freezesAvailable || 0;
-  const fetchStreak = streakStore.fetchStreak;
+  // Le store expose `loadStreak`. L'ancien nom `fetchStreak` n'existait pas,
+  // et le garde `typeof === 'function'` transformait l'erreur en silence :
+  // l'ecran affichait les valeurs par defaut du store (0 jour, 2 gels) en
+  // paraissant fonctionner. Une serie de 6 jours s'affichait a 0.
+  const fetchStreak = streakStore.loadStreak;
   const useFreeze = streakStore.useFreeze;
   const gems = gamificationStore.gems || 0;
 
@@ -62,8 +66,13 @@ export default function StreakScreen({ navigation }: any) {
     if (typeof fetchStreak === 'function') {
       fetchStreak();
     }
-    generateCalendar();
   }, []);
+
+  // Regenere le calendrier quand la serie arrive du serveur : au montage,
+  // `current` vaut encore 0 et les 30 jours sortiraient tous vides.
+  useEffect(() => {
+    generateCalendar();
+  }, [current]);
 
   const generateCalendar = () => {
     console.log(`${LOG_PREFIX} 📅 Generating calendar for last 30 days...`);

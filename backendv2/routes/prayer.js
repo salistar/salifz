@@ -96,8 +96,9 @@ router.get('/times', async (req, res) => {
               weekday: dateInfo.gregorian.weekday.en
             }
           },
-          // Next prayer calculation
-          nextPrayer: calculateNextPrayer(timings),
+          // Next prayer calculation — dans le fuseau du lieu demandé, pas
+          // celui du serveur : srv3 vit en UTC, le récitant non.
+          nextPrayer: calculateNextPrayer(timings, aladhanData.meta?.timezone),
           // Meta info
           meta: {
             latitude: parseFloat(latitude),
@@ -300,9 +301,35 @@ router.get('/methods', async (req, res) => {
 // HELPER FUNCTIONS
 // ============================================
 
-function calculateNextPrayer(timings) {
-  const now = new Date();
-  const currentTime = now.getHours() * 60 + now.getMinutes();
+/**
+ * Minutes écoulées depuis minuit, dans le fuseau demandé.
+ *
+ * Les horaires d'Aladhan sont exprimés dans le fuseau du lieu. Les comparer à
+ * l'heure du serveur — UTC sur srv3 — décalait tout d'une heure au Maroc : à
+ * 22 h 10 locales, le serveur croyait 21 h 10, jugeait l'Isha de 21 h 39
+ * encore à venir, et l'application affichait un compte à rebours de 23 heures
+ * vers une prière déjà passée au lieu d'annoncer le Fajr.
+ */
+function minutesActuellesDans(timezone) {
+  try {
+    const morceaux = new Intl.DateTimeFormat('en-GB', {
+      timeZone: timezone,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).formatToParts(new Date());
+    const h = Number(morceaux.find((p) => p.type === 'hour').value);
+    const m = Number(morceaux.find((p) => p.type === 'minute').value);
+    return h * 60 + m;
+  } catch (e) {
+    // Fuseau absent ou invalide : l'heure du serveur reste le moins mauvais repli.
+    const now = new Date();
+    return now.getHours() * 60 + now.getMinutes();
+  }
+}
+
+function calculateNextPrayer(timings, timezone) {
+  const currentTime = minutesActuellesDans(timezone);
   
   const prayers = [
     { name: 'fajr', nameAr: 'الفجر', time: timings.Fajr },

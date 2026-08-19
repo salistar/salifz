@@ -814,6 +814,11 @@
       "verifySuccess": "Hizb vérifié"
     },
     "amountPerDay": "Quantité quotidienne",
+    "annuler": "Annuler",
+    "aucun": "Aucun khatam pour l'instant",
+    "aucunPublic": "Aucun khatam public",
+    "champTitre": "Titre",
+    "commencer": "Commencer un khatam",
     "create": {
       "createButton": "Créer le Khatam",
       "creating": "Création en cours...",
@@ -830,6 +835,8 @@
       "title": "Créer un nouveau Khatam"
     },
     "createKhatam": "Créer un Khatam",
+    "creer": "Créer",
+    "decouvrir": "Découvrir",
     "dedication": {
       "deceased": "Pour un défunt",
       "general": "Général",
@@ -839,6 +846,8 @@
       "sick": "Pour un malade",
       "title": "Dédier le Khatam"
     },
+    "description": "Description",
+    "descriptionOptionnelle": "Description facultative…",
     "detail": {
       "active": "Actif",
       "completed": "Terminé",
@@ -848,36 +857,58 @@
       "paused": "En pause",
       "status": "Statut"
     },
+    "direct": "En direct",
     "discover": "Découvrir",
+    "disponible": "Disponible",
     "empty": {
       "discover": "Pas de khatams publics",
       "discoverSubtitle": "Aucun khatam public disponible pour le moment",
       "myKhatams": "Pas de khatams",
       "myKhatamsSubtitle": "Créez un nouveau khatam ou rejoignez-en un"
     },
+    "enCours": "En cours",
+    "erreurCreation": "La création du khatam a échoué",
+    "erreurTitre": "Saisis un titre",
+    "exempleTitre": "ex. : Khatam du Ramadan",
+    "fermer": "Fermer",
+    "grilleHizb": "Grille des ahzab",
+    "groupe": "En groupe",
+    "hizb": "hizb",
     "hizbGrid": "Grille des Hizbs",
     "hizbNumber": "Hizb {{number}}",
+    "horsLigne": "Autonome",
     "infiniteRepeat": "Répétition infinie",
     "infiniteRepeatDesc": "Le khatam redémarre automatiquement à la fin",
     "joinKhatam": "Rejoindre un Khatam",
+    "juz": "Juz :",
     "juzNumber": "Juz {{number}}",
     "leaderboard": {
       "completedHizbs": "Hizbs complétés",
       "rank": "Rang",
       "title": "Classement des participants"
     },
+    "marquerTermine": "Marquer terminé",
+    "mesKhatams": "Mes khatams",
     "mode": {
       "offline": "Autonome",
       "offlineDesc": "Lisez à votre rythme et suivez vos progrès",
       "realtime": "En direct",
       "realtimeDesc": "Sessions de lecture en direct avec d'autres"
     },
+    "modeLecture": "Mode de lecture",
     "myKhatams": "Mes Khatams",
     "newKhatam": "Nouveau Khatam",
+    "nouveau": "Nouveau khatam",
     "participantCount": "{{count}} participants",
     "participants": "Participants",
     "perDay": "par jour",
+    "prendreHizb": "Prendre ce hizb",
     "progress": "Progression",
+    "progression": "Progression",
+    "quantiteParJour": "Quantité par jour",
+    "repetitionInfinie": "Répétition sans fin (khatams multiples)",
+    "reserve": "Réservé",
+    "reservePour": "Réservé pour :",
     "session": {
       "active": "Session active",
       "currentHizb": "Hizb actuel : {{number}}",
@@ -889,6 +920,8 @@
       "start": "Démarrer une session",
       "title": "Session en direct"
     },
+    "sessionDirecte": "Démarrer une session en direct",
+    "solo": "Individuel",
     "startNow": "Commencer",
     "status": {
       "assigned": "Réservé",
@@ -896,13 +929,11 @@
       "completed": "Complété",
       "verified": "Vérifié"
     },
+    "statut": "Statut :",
+    "termine": "Terminé",
     "title": "Khatam Coran",
-    "type": {
-      "group": "Groupe",
-      "groupDesc": "Partagez avec d'autres pour compléter le khatam",
-      "solo": "Solo",
-      "soloDesc": "Khatam individuel à votre rythme"
-    },
+    "titre": "Khatam du Coran",
+    "type": "Type",
     "unit": {
       "eighth": "⅛ Hizb",
       "eighthDesc": "Un huitième de Hizb",
@@ -915,7 +946,9 @@
       "quarter": "¼ Hizb",
       "quarterDesc": "Quart de Hizb",
       "title": "Unité de lecture"
-    }
+    },
+    "uniteLecture": "Unité de lecture",
+    "verifie": "Vérifié"
   },
   "leaderboard": {
     "bronze": "Bronze",
@@ -1207,6 +1240,16 @@
     "title": "Horaires de prière",
     "today": "Horaires du jour"
   },
+  "prayerTimes": {
+    "adhan": "Adhan à",
+    "aujourdhui": "Prières du jour",
+    "chargement": "Chargement des horaires…",
+    "heures": "h",
+    "minutes": "min",
+    "prochaine": "Prochaine prière",
+    "secondes": "s",
+    "titre": "Horaires de prière"
+  },
   "profile": {
     "about": "À propos",
     "achievements": "Succès",
@@ -1255,29 +1298,38 @@
   },
   "qibla": {
     "accuracy": "Précision",
+    "boussoleAbsente": "Boussole indisponible. Direction approximative.",
     "calibrate": "Calibrer la boussole",
     "calibrateDesc": "Faites un mouvement en 8 avec votre téléphone pour améliorer la précision",
+    "chargement": "Recherche de la direction…",
     "compassActive": "Boussole active",
-    "direction": "Direction",
-    "distance": "Distance jusqu'à La Mecque",
+    "direction": "Direction de la Qibla",
+    "distance": "Distance à La Mecque",
     "distanceKm": "{{distance}} km",
     "east": "Est",
+    "est": "E",
+    "faceALaQibla": "Tu fais face à la Qibla !",
     "facingQibla": "Vous faites face à la Qibla ! ✓",
     "high": "Haute",
     "kaaba": "Sainte Kaaba",
     "loading": "Détermination de la direction...",
     "low": "Basse",
     "mecca": "La Mecque",
+    "mecque": "La Mecque",
     "medium": "Moyenne",
     "movePhone": "Déplacez votre téléphone pour déterminer la direction",
+    "nord": "N",
     "north": "Nord",
     "notSupported": "Boussole non supportée sur cet appareil",
+    "ouest": "O",
     "permissionRequired": "Veuillez autoriser l'accès à la localisation",
     "sensorError": "Erreur du capteur de boussole",
     "south": "Sud",
     "staticMode": "Mode statique",
     "staticModeDesc": "Direction calculée depuis votre position",
+    "sud": "S",
     "title": "Direction de la Qibla",
+    "titre": "Direction de la Qibla",
     "turnLeft": "Tournez à gauche",
     "turnRight": "Tournez à droite",
     "west": "Ouest"
@@ -1444,9 +1496,12 @@
     "startReview": "Commencer la révision",
     "stats": {
       "consecutiveDays": "Jours consécutifs",
+      "dueToday": "à réviser aujourd'hui",
+      "estimatedXp": "XP estimé",
       "title": "Stats de révision",
       "todayReviews": "Révisions du jour",
       "totalReviews": "Total des révisions",
+      "weakAreas": "points faibles",
       "weeklyAccuracy": "Précision de la semaine"
     },
     "strengthen": "Renforcer",

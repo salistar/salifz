@@ -8,6 +8,7 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { I18nManager } from 'react-native';
+import * as Localization from 'expo-localization';
 
 // Import des fichiers de traduction
 import ar from '../locales/ar.json';
@@ -49,6 +50,15 @@ export const initI18n = async (): Promise<void> => {
     const savedLocale = await AsyncStorage.getItem('app_locale');
     if (savedLocale && ['ar', 'en', 'fr'].includes(savedLocale)) {
       currentLocale = savedLocale as SupportedLocale;
+    } else {
+      // Premier lancement : la langue du téléphone, pas un « ar » figé.
+      // Un appareil en français ouvrait l'application en arabe — et rien ne
+      // signalait qu'un sélecteur existait au fond des réglages. Le repli des
+      // langues non couvertes est l'anglais.
+      const langueAppareil = Localization.getLocales()[0]?.languageCode ?? '';
+      currentLocale = (['ar', 'en', 'fr'].includes(langueAppareil)
+        ? langueAppareil
+        : 'en') as SupportedLocale;
     }
     
     // Configurer RTL pour l'arabe

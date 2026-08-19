@@ -26,6 +26,10 @@ import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
+// Ces écrans utilisaient `isRTL ? arabe : anglais` : un interrupteur binaire
+// qui ignorait le français et le système de traduction. `t()` suit désormais
+// la langue choisie ; les ternaires restants ne portent que la mise en page.
+import { t } from '../../services/i18n';
 
 const { width } = Dimensions.get('window');
 
@@ -109,7 +113,7 @@ const KhatamScreen: React.FC = () => {
 
   const handleCreateKhatam = async () => {
     if (!formData.title.trim()) {
-      Alert.alert('Error', 'Please enter a title');
+      Alert.alert(t('common.error'), t('khatam.erreurTitre'));
       return;
     }
     
@@ -148,7 +152,7 @@ const KhatamScreen: React.FC = () => {
       navigation.navigate('KhatamDetail', { khatamId: response.data.data._id });
     } catch (error: any) {
       console.error('[KhatamScreen] ❌ Create error:', error);
-      Alert.alert('Error', error.response?.data?.error || 'Failed to create khatam');
+      Alert.alert(t('common.error'), error.response?.data?.error || t('khatam.erreurCreation'));
     }
   };
 
@@ -257,7 +261,7 @@ const KhatamScreen: React.FC = () => {
           <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color={colors.onDeep} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>
-          {isRTL ? 'ختم القرآن' : 'Khatam Quran'}
+          {t('khatam.titre')}
         </Text>
         <TouchableOpacity accessible accessibilityRole="button" onPress={() => setShowCreateModal(true)} style={styles.addButton}>
           <Ionicons name="add-circle" size={28} color={colors.onDeep} />
@@ -271,7 +275,7 @@ const KhatamScreen: React.FC = () => {
           onPress={() => setActiveTab('my')}
         >
           <Text style={[styles.tabText, activeTab === 'my' && styles.tabTextActive]}>
-            {isRTL ? 'ختماتي' : 'My Khatams'}
+            {t('khatam.mesKhatams')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity accessible accessibilityRole="button"
@@ -279,7 +283,7 @@ const KhatamScreen: React.FC = () => {
           onPress={() => setActiveTab('discover')}
         >
           <Text style={[styles.tabText, activeTab === 'discover' && styles.tabTextActive]}>
-            {isRTL ? 'اكتشف' : 'Discover'}
+            {t('khatam.decouvrir')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -298,8 +302,8 @@ const KhatamScreen: React.FC = () => {
             <Ionicons name="book-outline" size={64} color={colors.textMuted} />
             <Text style={styles.emptyText}>
               {activeTab === 'my' 
-                ? (isRTL ? 'لا توجد ختمات بعد' : 'No khatams yet')
-                : (isRTL ? 'لا توجد ختمات عامة' : 'No public khatams')
+                ? (t('khatam.aucun'))
+                : (t('khatam.aucunPublic'))
               }
             </Text>
             {activeTab === 'my' && (
@@ -308,7 +312,7 @@ const KhatamScreen: React.FC = () => {
                 onPress={() => setShowCreateModal(true)}
               >
                 <Text style={styles.createButtonText}>
-                  {isRTL ? 'ابدأ ختمة جديدة' : 'Start New Khatam'}
+                  {t('khatam.commencer')}
                 </Text>
               </TouchableOpacity>
             )}
@@ -327,24 +331,24 @@ const KhatamScreen: React.FC = () => {
           <View style={styles.modalContent}>
             <ScrollView showsVerticalScrollIndicator={false}>
               <Text style={styles.modalTitle}>
-                {isRTL ? 'ختمة جديدة' : 'New Khatam'}
+                {t('khatam.nouveau')}
               </Text>
               
               {/* Title */}
-              <Text style={styles.inputLabel}>{isRTL ? 'العنوان' : 'Title'}</Text>
+              <Text style={styles.inputLabel}>{t('khatam.champTitre')}</Text>
               <TextInput
                 style={[styles.input, isRTL && styles.rtlInput]}
-                placeholder={isRTL ? 'مثال: ختمة رمضان' : 'e.g., Ramadan Khatam'}
+                placeholder={t('khatam.exempleTitre')}
                 value={formData.title}
                 onChangeText={(text) => setFormData({ ...formData, title: text })}
                 textAlign={isRTL ? 'right' : 'left'}
               />
               
               {/* Description */}
-              <Text style={styles.inputLabel}>{isRTL ? 'الوصف' : 'Description'}</Text>
+              <Text style={styles.inputLabel}>{t('khatam.description')}</Text>
               <TextInput
                 style={[styles.input, styles.textArea, isRTL && styles.rtlInput]}
-                placeholder={isRTL ? 'وصف اختياري...' : 'Optional description...'}
+                placeholder={t('khatam.descriptionOptionnelle')}
                 value={formData.description}
                 onChangeText={(text) => setFormData({ ...formData, description: text })}
                 multiline
@@ -353,7 +357,7 @@ const KhatamScreen: React.FC = () => {
               />
               
               {/* Type */}
-              <Text style={styles.inputLabel}>{isRTL ? 'النوع' : 'Type'}</Text>
+              <Text style={styles.inputLabel}>{t('khatam.type')}</Text>
               <View style={styles.typeContainer}>
                 <TouchableOpacity accessible accessibilityRole="button"
                   style={[styles.typeButton, formData.type === 'solo' && styles.typeButtonActive]}
@@ -361,7 +365,7 @@ const KhatamScreen: React.FC = () => {
                 >
                   <Ionicons name="person" size={24} color={formData.type === 'solo' ? colors.surface : colors.accent} />
                   <Text style={[styles.typeButtonText, formData.type === 'solo' && styles.typeButtonTextActive]}>
-                    {isRTL ? 'فردي' : 'Solo'}
+                    {t('khatam.solo')}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity accessible accessibilityRole="button"
@@ -370,13 +374,13 @@ const KhatamScreen: React.FC = () => {
                 >
                   <Ionicons name="people" size={24} color={formData.type === 'group' ? colors.surface : colors.accent} />
                   <Text style={[styles.typeButtonText, formData.type === 'group' && styles.typeButtonTextActive]}>
-                    {isRTL ? 'جماعي' : 'Group'}
+                    {t('khatam.groupe')}
                   </Text>
                 </TouchableOpacity>
               </View>
               
               {/* Reading Mode */}
-              <Text style={styles.inputLabel}>{isRTL ? 'طريقة القراءة' : 'Reading Mode'}</Text>
+              <Text style={styles.inputLabel}>{t('khatam.modeLecture')}</Text>
               <View style={styles.typeContainer}>
                 <TouchableOpacity accessible accessibilityRole="button"
                   style={[styles.typeButton, formData.readingMode === 'offline' && styles.typeButtonActive]}
@@ -384,7 +388,7 @@ const KhatamScreen: React.FC = () => {
                 >
                   <Ionicons name="book" size={24} color={formData.readingMode === 'offline' ? colors.surface : colors.accent} />
                   <Text style={[styles.typeButtonText, formData.readingMode === 'offline' && styles.typeButtonTextActive]}>
-                    {isRTL ? 'ذاتي' : 'Offline'}
+                    {t('khatam.horsLigne')}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity accessible accessibilityRole="button"
@@ -393,13 +397,13 @@ const KhatamScreen: React.FC = () => {
                 >
                   <Ionicons name="videocam" size={24} color={formData.readingMode === 'realtime' ? colors.surface : colors.accent} />
                   <Text style={[styles.typeButtonText, formData.readingMode === 'realtime' && styles.typeButtonTextActive]}>
-                    {isRTL ? 'مباشر' : 'Live'}
+                    {t('khatam.direct')}
                   </Text>
                 </TouchableOpacity>
               </View>
               
               {/* Unit */}
-              <Text style={styles.inputLabel}>{isRTL ? 'وحدة القراءة' : 'Reading Unit'}</Text>
+              <Text style={styles.inputLabel}>{t('khatam.uniteLecture')}</Text>
               <View style={styles.unitContainer}>
                 {renderUnitOption('eighth', '1/8 Hizb', '⅛ حزب')}
                 {renderUnitOption('quarter', '1/4 Hizb', '¼ حزب')}
@@ -409,7 +413,7 @@ const KhatamScreen: React.FC = () => {
               </View>
               
               {/* Amount per day */}
-              <Text style={styles.inputLabel}>{isRTL ? 'الكمية اليومية' : 'Amount per Day'}</Text>
+              <Text style={styles.inputLabel}>{t('khatam.quantiteParJour')}</Text>
               <View style={styles.amountContainer}>
                 <TouchableOpacity accessible accessibilityRole="button"
                   style={styles.amountButton}
@@ -435,7 +439,7 @@ const KhatamScreen: React.FC = () => {
                   {formData.isInfinite && <Ionicons name="checkmark" size={16} color={colors.onDeep} />}
                 </View>
                 <Text style={styles.infiniteText}>
-                  {isRTL ? 'تكرار لا نهائي (ختمات متعددة)' : 'Infinite repeat (multiple khatams)'}
+                  {t('khatam.repetitionInfinie')}
                 </Text>
               </TouchableOpacity>
               
@@ -445,7 +449,7 @@ const KhatamScreen: React.FC = () => {
                   style={styles.cancelButton}
                   onPress={() => setShowCreateModal(false)}
                 >
-                  <Text style={styles.cancelButtonText}>{isRTL ? 'إلغاء' : 'Cancel'}</Text>
+                  <Text style={styles.cancelButtonText}>{t('khatam.annuler')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity accessible accessibilityRole="button"
                   style={styles.submitButton}
@@ -455,7 +459,7 @@ const KhatamScreen: React.FC = () => {
                     colors={[colors.accent, colors.accentDeep]}
                     style={styles.submitGradient}
                   >
-                    <Text style={styles.submitButtonText}>{isRTL ? 'إنشاء' : 'Create'}</Text>
+                    <Text style={styles.submitButtonText}>{t('khatam.creer')}</Text>
                   </LinearGradient>
                 </TouchableOpacity>
               </View>

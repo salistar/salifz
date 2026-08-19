@@ -26,6 +26,10 @@ import * as Location from 'expo-location';
 import api from '../../services/api';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
+// Ces écrans utilisaient `isRTL ? arabe : anglais` : un interrupteur binaire
+// qui ignorait le français et le système de traduction. `t()` suit désormais
+// la langue choisie ; les ternaires restants ne portent que la mise en page.
+import { t } from '../../services/i18n';
 
 const LOG_PREFIX = '[PrayerTimes]';
 
@@ -418,6 +422,17 @@ const PrayerTimesScreen: React.FC = () => {
     target.setHours(hours, minutes, 0, 0);
     
     if (target <= now) {
+      // L'heure affichée est passée : ce n'est plus la prochaine prière.
+      // L'ancien code enroulait le compte à rebours sur +24 h — l'écran
+      // annonçait « Isha dans 23 h 28 » à 22 h 10 au lieu de passer au Fajr.
+      // On recalcule localement à partir des horaires du jour.
+      if (prayerTimes) {
+        const recalcule = calculateNextPrayer(prayerTimes);
+        if (recalcule.name !== nextPrayer.name || recalcule.time !== nextPrayer.time) {
+          setNextPrayer(recalcule);
+          return;
+        }
+      }
       target.setDate(target.getDate() + 1);
     }
     
@@ -508,7 +523,7 @@ const PrayerTimesScreen: React.FC = () => {
           </Text>
           {isNext && (
             <Text style={styles.nextLabel}>
-              {isRTL ? 'القادمة' : 'Next'}
+              {t('prayerTimes.prochaine')}
             </Text>
           )}
         </View>
@@ -527,7 +542,7 @@ const PrayerTimesScreen: React.FC = () => {
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.accent} />
         <Text style={styles.loadingText}>
-          {isRTL ? 'جاري تحميل أوقات الصلاة...' : 'Loading prayer times...'}
+          {t('prayerTimes.chargement')}
         </Text>
       </View>
     );
@@ -540,7 +555,7 @@ const PrayerTimesScreen: React.FC = () => {
           <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color={colors.onDeep} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>
-          {isRTL ? 'مواقيت الصلاة' : 'Prayer Times'}
+          {t('prayerTimes.titre')}
         </Text>
         <TouchableOpacity accessible accessibilityRole="button" style={styles.qiblaButton} onPress={() => navigation.navigate('Qibla')}>
           <Ionicons name="compass" size={24} color={colors.onDeep} />
@@ -562,7 +577,7 @@ const PrayerTimesScreen: React.FC = () => {
         {nextPrayer && (
           <LinearGradient colors={[colors.accent, colors.accentDeep]} style={styles.countdownCard} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
             <View style={styles.countdownHeader}>
-              <Text style={styles.countdownLabel}>{isRTL ? 'الصلاة القادمة' : 'Next Prayer'}</Text>
+              <Text style={styles.countdownLabel}>{t('prayerTimes.prochaine')}</Text>
               <Text style={styles.countdownPrayer}>
                 {isRTL ? nextPrayer.nameAr : nextPrayer.name.charAt(0).toUpperCase() + nextPrayer.name.slice(1)}
               </Text>
@@ -571,27 +586,27 @@ const PrayerTimesScreen: React.FC = () => {
             <View style={styles.countdownTimer}>
               <View style={styles.timerUnit}>
                 <Text style={styles.timerValue}>{countdown.hours.toString().padStart(2, '0')}</Text>
-                <Text style={styles.timerLabel}>{isRTL ? 'ساعة' : 'Hours'}</Text>
+                <Text style={styles.timerLabel}>{t('prayerTimes.heures')}</Text>
               </View>
               <Text style={styles.timerSeparator}>:</Text>
               <View style={styles.timerUnit}>
                 <Text style={styles.timerValue}>{countdown.minutes.toString().padStart(2, '0')}</Text>
-                <Text style={styles.timerLabel}>{isRTL ? 'دقيقة' : 'Min'}</Text>
+                <Text style={styles.timerLabel}>{t('prayerTimes.minutes')}</Text>
               </View>
               <Text style={styles.timerSeparator}>:</Text>
               <View style={styles.timerUnit}>
                 <Text style={styles.timerValue}>{countdown.seconds.toString().padStart(2, '0')}</Text>
-                <Text style={styles.timerLabel}>{isRTL ? 'ثانية' : 'Sec'}</Text>
+                <Text style={styles.timerLabel}>{t('prayerTimes.secondes')}</Text>
               </View>
             </View>
             
-            <Text style={styles.countdownTime}>{isRTL ? 'الأذان' : 'Adhan at'} {nextPrayer.time}</Text>
+            <Text style={styles.countdownTime}>{t('prayerTimes.adhan')} {nextPrayer.time}</Text>
           </LinearGradient>
         )}
 
         {/* Prayer Times List */}
         <View style={styles.prayersContainer}>
-          <Text style={styles.sectionTitle}>{isRTL ? 'أوقات الصلاة اليوم' : "Today's Prayer Times"}</Text>
+          <Text style={styles.sectionTitle}>{t('prayerTimes.aujourdhui')}</Text>
           
           {prayerTimes && (
             <>

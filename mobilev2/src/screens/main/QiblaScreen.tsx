@@ -27,6 +27,10 @@ import api from '../../services/api';
 import { TouchableOpacity } from 'react-native';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
+// Ces écrans utilisaient `isRTL ? arabe : anglais` : un interrupteur binaire
+// qui ignorait le français et le système de traduction. `t()` suit désormais
+// la langue choisie ; les ternaires restants ne portent que la mise en page.
+import { t } from '../../services/i18n';
 
 const { width } = Dimensions.get('window');
 const COMPASS_SIZE = width * 0.8;
@@ -264,7 +268,7 @@ const QiblaScreen: React.FC = () => {
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.accent} />
         <Text style={styles.loadingText}>
-          {isRTL ? 'جاري تحديد اتجاه القبلة...' : 'Finding Qibla direction...'}
+          {t('qibla.chargement')}
         </Text>
       </View>
     );
@@ -278,14 +282,14 @@ const QiblaScreen: React.FC = () => {
           <TouchableOpacity accessible accessibilityRole="button" onPress={() => navigation.goBack()} style={styles.backButton}>
             <Ionicons name={isRTL ? 'arrow-forward' : 'arrow-back'} size={24} color={colors.onDeep} />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>{isRTL ? 'اتجاه القبلة' : 'Qibla Direction'}</Text>
+          <Text style={styles.headerTitle}>{t('qibla.titre')}</Text>
           <View style={{ width: 40 }} />
         </View>
 
         {/* Kaaba Icon */}
         <View style={styles.kaabaContainer}>
           <Text style={styles.kaabaEmoji}>🕋</Text>
-          <Text style={styles.meccaText}>{isRTL ? 'مكة المكرمة' : 'Mecca'}</Text>
+          <Text style={styles.meccaText}>{t('qibla.mecque')}</Text>
         </View>
 
         {/* Compass */}
@@ -298,10 +302,10 @@ const QiblaScreen: React.FC = () => {
               return (
                 <View key={dir} style={[styles.directionMarker, { transform: [{ rotate: `${rotation}deg` }] }]}>
                   <Text style={[styles.directionText, isMain && styles.directionTextMain, dir === 'N' && styles.directionTextNorth]}>
-                    {dir === 'N' ? (isRTL ? 'ش' : 'N') :
-                     dir === 'E' ? (isRTL ? 'ق' : 'E') :
-                     dir === 'S' ? (isRTL ? 'ج' : 'S') :
-                     dir === 'W' ? (isRTL ? 'غ' : 'W') : ''}
+                    {dir === 'N' ? (t('qibla.nord')) :
+                     dir === 'E' ? (t('qibla.est')) :
+                     dir === 'S' ? (t('qibla.sud')) :
+                     dir === 'W' ? (t('qibla.ouest')) : ''}
                   </Text>
                 </View>
               );
@@ -332,7 +336,7 @@ const QiblaScreen: React.FC = () => {
         {isFacingQibla && (
           <View style={styles.facingQibla}>
             <Ionicons name="checkmark-circle" size={24} color={colors.primaryLight} />
-            <Text style={styles.facingText}>{isRTL ? 'أنت تواجه القبلة!' : "You're facing Qibla!"}</Text>
+            <Text style={styles.facingText}>{t('qibla.faceALaQibla')}</Text>
           </View>
         )}
 
@@ -340,12 +344,12 @@ const QiblaScreen: React.FC = () => {
         <View style={styles.infoCard}>
           <View style={styles.infoRow}>
             <View style={styles.infoItem}>
-              <Text style={styles.infoLabel}>{isRTL ? 'اتجاه القبلة' : 'Qibla Direction'}</Text>
+              <Text style={styles.infoLabel}>{t('qibla.titre')}</Text>
               <Text style={styles.infoValue}>{Math.round(qiblaDirection)}° {compassInfo?.name}</Text>
             </View>
             <View style={styles.infoDivider} />
             <View style={styles.infoItem}>
-              <Text style={styles.infoLabel}>{isRTL ? 'المسافة إلى مكة' : 'Distance to Mecca'}</Text>
+              <Text style={styles.infoLabel}>{t('qibla.distance')}</Text>
               <Text style={styles.infoValue}>{distanceToMecca.toLocaleString()} km</Text>
             </View>
           </View>
@@ -356,7 +360,7 @@ const QiblaScreen: React.FC = () => {
           <View style={styles.notice}>
             <Ionicons name="warning" size={20} color={fixedColors.gold} />
             <Text style={styles.noticeText}>
-              {isRTL ? 'البوصلة غير متاحة. الاتجاه تقريبي.' : 'Compass not available. Direction is approximate.'}
+              {t('qibla.boussoleAbsente')}
             </Text>
           </View>
         )}

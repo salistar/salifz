@@ -193,7 +193,7 @@ export default function LessonsScreen({ navigation }: any) {
 
   console.log(`${LOG_PREFIX} 🚀 Render`);
 
-  const { hearts, maxHearts, streak } = useGamificationStore();
+  const { hearts, maxHearts, streak, gems } = useGamificationStore();
   const [mode, setMode] = useState<'path' | 'juz' | 'hizb'>('path');
   const [progress, setProgress] = useState<any>({});
   const [refreshing, setRefreshing] = useState(false);
@@ -460,7 +460,10 @@ export default function LessonsScreen({ navigation }: any) {
 
           <TouchableOpacity accessible accessibilityRole="button" style={styles.gemsBadge}>
             <IconeGemmes size={16} color={colors.info} />
-            <Text style={styles.gemsText}>{stats.ayahs * 10}</Text>
+            {/* Les vraies gemmes du compte — pas `ayahs * 10`, qui affichait 0
+                gemme a un compte qui en a 240 et aurait affiche un nombre invente
+                a tout autre. Un badge en forme de gemme doit dire les gemmes. */}
+            <Text style={styles.gemsText}>{gems}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity accessible accessibilityRole="button" style={styles.heartsBadge}>

@@ -814,6 +814,11 @@
       "verifySuccess": "Hizb verified"
     },
     "amountPerDay": "Daily Amount",
+    "annuler": "Cancel",
+    "aucun": "No khatams yet",
+    "aucunPublic": "No public khatams",
+    "champTitre": "Title",
+    "commencer": "Start New Khatam",
     "create": {
       "createButton": "Create Khatam",
       "creating": "Creating...",
@@ -830,6 +835,8 @@
       "title": "Create New Khatam"
     },
     "createKhatam": "Create Khatam",
+    "creer": "Create",
+    "decouvrir": "Discover",
     "dedication": {
       "deceased": "For Deceased",
       "general": "General",
@@ -839,6 +846,8 @@
       "sick": "For the Sick",
       "title": "Dedicate Khatam"
     },
+    "description": "Description",
+    "descriptionOptionnelle": "Optional description…",
     "detail": {
       "active": "Active",
       "completed": "Completed",
@@ -848,36 +857,58 @@
       "paused": "Paused",
       "status": "Status"
     },
+    "direct": "Live",
     "discover": "Discover",
+    "disponible": "Available",
     "empty": {
       "discover": "No public khatams",
       "discoverSubtitle": "No public khatams available at the moment",
       "myKhatams": "No khatams yet",
       "myKhatamsSubtitle": "Create a new khatam or join one"
     },
+    "enCours": "In Progress",
+    "erreurCreation": "Failed to create khatam",
+    "erreurTitre": "Please enter a title",
+    "exempleTitre": "e.g., Ramadan Khatam",
+    "fermer": "Close",
+    "grilleHizb": "Hizb Grid",
+    "groupe": "Group",
+    "hizb": "Hizb",
     "hizbGrid": "Hizb Grid",
     "hizbNumber": "Hizb {{number}}",
+    "horsLigne": "Offline",
     "infiniteRepeat": "Infinite Repeat",
     "infiniteRepeatDesc": "Khatam automatically restarts upon completion",
     "joinKhatam": "Join Khatam",
+    "juz": "Juz:",
     "juzNumber": "Juz {{number}}",
     "leaderboard": {
       "completedHizbs": "Completed Hizbs",
       "rank": "Rank",
       "title": "Participant Rankings"
     },
+    "marquerTermine": "Mark Complete",
+    "mesKhatams": "My Khatams",
     "mode": {
       "offline": "Self-paced",
       "offlineDesc": "Read at your own time and track progress",
       "realtime": "Live",
       "realtimeDesc": "Live reading sessions with others"
     },
+    "modeLecture": "Reading Mode",
     "myKhatams": "My Khatams",
     "newKhatam": "New Khatam",
+    "nouveau": "New Khatam",
     "participantCount": "{{count}} participants",
     "participants": "Participants",
     "perDay": "per day",
+    "prendreHizb": "Take this Hizb",
     "progress": "Progress",
+    "progression": "Progress",
+    "quantiteParJour": "Amount per Day",
+    "repetitionInfinie": "Infinite repeat (multiple khatams)",
+    "reserve": "Assigned",
+    "reservePour": "Assigned to:",
     "session": {
       "active": "Active Session",
       "currentHizb": "Current Hizb: {{number}}",
@@ -889,6 +920,8 @@
       "start": "Start Session",
       "title": "Live Session"
     },
+    "sessionDirecte": "Start Live Session",
+    "solo": "Solo",
     "startNow": "Start Now",
     "status": {
       "assigned": "Reserved",
@@ -896,13 +929,11 @@
       "completed": "Completed",
       "verified": "Verified"
     },
+    "statut": "Status:",
+    "termine": "Completed",
     "title": "Khatam Quran",
-    "type": {
-      "group": "Group",
-      "groupDesc": "Share with others to complete the khatam",
-      "solo": "Solo",
-      "soloDesc": "Individual khatam at your own pace"
-    },
+    "titre": "Khatam Quran",
+    "type": "Type",
     "unit": {
       "eighth": "⅛ Hizb",
       "eighthDesc": "One-eighth of a Hizb",
@@ -915,7 +946,9 @@
       "quarter": "¼ Hizb",
       "quarterDesc": "Quarter Hizb",
       "title": "Reading Unit"
-    }
+    },
+    "uniteLecture": "Reading Unit",
+    "verifie": "Verified"
   },
   "leaderboard": {
     "bronze": "Bronze",
@@ -1207,6 +1240,16 @@
     "title": "Prayer Times",
     "today": "Today's Times"
   },
+  "prayerTimes": {
+    "adhan": "Adhan at",
+    "aujourdhui": "Today's Prayer Times",
+    "chargement": "Loading prayer times…",
+    "heures": "Hours",
+    "minutes": "Min",
+    "prochaine": "Next Prayer",
+    "secondes": "Sec",
+    "titre": "Prayer Times"
+  },
   "profile": {
     "about": "About",
     "achievements": "Achievements",
@@ -1255,29 +1298,38 @@
   },
   "qibla": {
     "accuracy": "Accuracy",
+    "boussoleAbsente": "Compass not available. Direction is approximate.",
     "calibrate": "Calibrate Compass",
     "calibrateDesc": "Move your phone in a figure-8 pattern to improve accuracy",
+    "chargement": "Finding Qibla direction…",
     "compassActive": "Compass Active",
-    "direction": "Direction",
+    "direction": "Qibla Direction",
     "distance": "Distance to Mecca",
     "distanceKm": "{{distance}} km",
     "east": "East",
+    "est": "E",
+    "faceALaQibla": "You're facing Qibla!",
     "facingQibla": "You're facing the Qibla! ✓",
     "high": "High",
     "kaaba": "Holy Kaaba",
     "loading": "Determining Qibla direction...",
     "low": "Low",
     "mecca": "Mecca",
+    "mecque": "Mecca",
     "medium": "Medium",
     "movePhone": "Move your phone to determine direction",
+    "nord": "N",
     "north": "North",
     "notSupported": "Compass not supported on this device",
+    "ouest": "W",
     "permissionRequired": "Please allow location access",
     "sensorError": "Compass sensor error",
     "south": "South",
     "staticMode": "Static Mode",
     "staticModeDesc": "Direction calculated from your location",
+    "sud": "S",
     "title": "Qibla Direction",
+    "titre": "Qibla Direction",
     "turnLeft": "Turn left",
     "turnRight": "Turn right",
     "west": "West"
@@ -1444,9 +1496,12 @@
     "startReview": "Start Review",
     "stats": {
       "consecutiveDays": "Consecutive Days",
+      "dueToday": "due today",
+      "estimatedXp": "estimated XP",
       "title": "Review Stats",
       "todayReviews": "Today's Reviews",
       "totalReviews": "Total Reviews",
+      "weakAreas": "weak areas",
       "weeklyAccuracy": "Weekly Accuracy"
     },
     "strengthen": "Strengthen",

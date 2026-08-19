@@ -25,6 +25,7 @@ import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
+import { t } from '../../services/i18n';
 
 const { width } = Dimensions.get('window');
 const GRID_ITEM_SIZE = (width - 48) / 10; // 10 items per row
@@ -262,7 +263,7 @@ const KhatamDetailScreen: React.FC = () => {
         <View style={styles.overviewCard}>
           <View style={styles.overviewHeader}>
             <Text style={styles.overviewTitle}>
-              {isRTL ? 'التقدم' : 'Progress'}
+              {t('khatam.progression')}
             </Text>
             <Text style={styles.khatamCount}>
               Khatam #{khatam?.progress?.currentKhatamNumber || 1}
@@ -273,26 +274,26 @@ const KhatamDetailScreen: React.FC = () => {
           <View style={styles.progressCircle}>
             <Text style={styles.progressPercent}>{progress?.percentage || 0}%</Text>
             <Text style={styles.progressLabel}>
-              {progress?.completed || 0}/60 {isRTL ? 'حزب' : 'Hizb'}
+              {progress?.completed || 0}/60 {t('khatam.hizb')}
             </Text>
           </View>
           
           <View style={styles.statsRow}>
             <View style={styles.statBox}>
               <Text style={styles.statValue}>{progress?.verified || 0}</Text>
-              <Text style={styles.statLabel}>{isRTL ? 'موثق' : 'Verified'}</Text>
+              <Text style={styles.statLabel}>{t('khatam.verifie')}</Text>
             </View>
             <View style={styles.statBox}>
               <Text style={styles.statValue}>{progress?.inProgress || 0}</Text>
-              <Text style={styles.statLabel}>{isRTL ? 'جاري' : 'In Progress'}</Text>
+              <Text style={styles.statLabel}>{t('khatam.enCours')}</Text>
             </View>
             <View style={styles.statBox}>
               <Text style={styles.statValue}>{progress?.available || 0}</Text>
-              <Text style={styles.statLabel}>{isRTL ? 'متاح' : 'Available'}</Text>
+              <Text style={styles.statLabel}>{t('khatam.disponible')}</Text>
             </View>
             <View style={styles.statBox}>
               <Text style={styles.statValue}>{participants.length}</Text>
-              <Text style={styles.statLabel}>{isRTL ? 'مشارك' : 'Participants'}</Text>
+              <Text style={styles.statLabel}>{t('khatam.participants')}</Text>
             </View>
           </View>
         </View>
@@ -301,19 +302,19 @@ const KhatamDetailScreen: React.FC = () => {
         <View style={styles.legend}>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: colors.border }]} />
-            <Text style={styles.legendText}>{isRTL ? 'متاح' : 'Available'}</Text>
+            <Text style={styles.legendText}>{t('khatam.disponible')}</Text>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: fixedColors.gold }]} />
-            <Text style={styles.legendText}>{isRTL ? 'محجوز' : 'Assigned'}</Text>
+            <Text style={styles.legendText}>{t('khatam.reserve')}</Text>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: colors.info }]} />
-            <Text style={styles.legendText}>{isRTL ? 'مكتمل' : 'Completed'}</Text>
+            <Text style={styles.legendText}>{t('khatam.termine')}</Text>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: colors.primaryLight }]} />
-            <Text style={styles.legendText}>{isRTL ? 'موثق' : 'Verified'}</Text>
+            <Text style={styles.legendText}>{t('khatam.verifie')}</Text>
           </View>
         </View>
 
@@ -329,7 +330,7 @@ const KhatamDetailScreen: React.FC = () => {
               color={activeTab === 'grid' ? colors.accent : colors.textMuted} 
             />
             <Text style={[styles.tabText, activeTab === 'grid' && styles.tabTextActive]}>
-              {isRTL ? 'جدول الأحزاب' : 'Hizb Grid'}
+              {t('khatam.grilleHizb')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity accessible accessibilityRole="button"
@@ -342,7 +343,7 @@ const KhatamDetailScreen: React.FC = () => {
               color={activeTab === 'participants' ? colors.accent : colors.textMuted} 
             />
             <Text style={[styles.tabText, activeTab === 'participants' && styles.tabTextActive]}>
-              {isRTL ? 'المشاركون' : 'Participants'}
+              {t('khatam.participants')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -414,7 +415,7 @@ const KhatamDetailScreen: React.FC = () => {
           >
             <Ionicons name="videocam" size={24} color={colors.onDeep} />
             <Text style={styles.liveButtonText}>
-              {isRTL ? 'بدء جلسة مباشرة' : 'Start Live Session'}
+              {t('khatam.sessionDirecte')}
             </Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -435,18 +436,18 @@ const KhatamDetailScreen: React.FC = () => {
             
             <View style={styles.hizbInfo}>
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>{isRTL ? 'الجزء:' : 'Juz:'}</Text>
+                <Text style={styles.infoLabel}>{t('khatam.juz')}</Text>
                 <Text style={styles.infoValue}>{selectedHizb?.juz}</Text>
               </View>
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>{isRTL ? 'الحالة:' : 'Status:'}</Text>
+                <Text style={styles.infoLabel}>{t('khatam.statut')}</Text>
                 <View style={[styles.statusBadge, { backgroundColor: getStatusColor(selectedHizb?.status || 'available') }]}>
                   <Text style={styles.statusText}>{selectedHizb?.status}</Text>
                 </View>
               </View>
               {selectedHizb?.assignedTo && (
                 <View style={styles.infoRow}>
-                  <Text style={styles.infoLabel}>{isRTL ? 'محجوز لـ:' : 'Assigned to:'}</Text>
+                  <Text style={styles.infoLabel}>{t('khatam.reservePour')}</Text>
                   <Text style={styles.infoValue}>
                     {selectedHizb.assignedTo.displayName || selectedHizb.assignedTo.username}
                   </Text>
@@ -462,7 +463,7 @@ const KhatamDetailScreen: React.FC = () => {
                 >
                   <Ionicons name="hand-left" size={20} color={colors.onDeep} />
                   <Text style={styles.modalButtonText}>
-                    {isRTL ? 'احجز هذا الحزب' : 'Take this Hizb'}
+                    {t('khatam.prendreHizb')}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -474,7 +475,7 @@ const KhatamDetailScreen: React.FC = () => {
                 >
                   <Ionicons name="checkmark-circle" size={20} color={colors.onDeep} />
                   <Text style={styles.modalButtonText}>
-                    {isRTL ? 'إتمام القراءة' : 'Mark Complete'}
+                    {t('khatam.marquerTermine')}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -484,7 +485,7 @@ const KhatamDetailScreen: React.FC = () => {
                 onPress={() => setShowHizbModal(false)}
               >
                 <Text style={styles.cancelButtonText}>
-                  {isRTL ? 'إغلاق' : 'Close'}
+                  {t('khatam.fermer')}
                 </Text>
               </TouchableOpacity>
             </View>

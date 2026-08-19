@@ -23,6 +23,8 @@ import { IconeRevision, IconeSerie, IconeStatistiques, IconeMushaf, IconeDefis }
 
 const LOG_PREFIX = '[ReviewScreen.tsx]';
 
+import { useGamificationStore } from '../../stores';
+
 console.log(`${LOG_PREFIX} 📁 File loaded`);
 
 export default function ReviewScreen({ navigation }: any) {
@@ -31,6 +33,7 @@ export default function ReviewScreen({ navigation }: any) {
 
   console.log(`${LOG_PREFIX} 🚀 Component rendering...`);
 
+  const { streak } = useGamificationStore();
   const [reviewData, setReviewData] = useState<any>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -259,25 +262,29 @@ export default function ReviewScreen({ navigation }: any) {
           ))}
         </View>
 
-        {/* Stats Card */}
+        {/* Carte de stats — uniquement des valeurs mesurées.
+            L'ancienne carte affichait 12 révisions, 85 % de précision et
+            156 révisions au total, codés en dur : un compte neuf à zéro verset
+            voyait la progression d'un utilisateur imaginaire. C'est exactement
+            la faute que l'audit avait bannie du projet. */}
         <View style={styles.statsCard}>
           <Text style={styles.statsTitle}>{t('review.stats.title')}</Text>
           <View style={styles.statsGrid}>
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>12</Text>
-              <Text style={styles.statLabel}>{t('review.stats.todayReviews')}</Text>
+              <Text style={styles.statValue}>{reviewData?.dueForReview?.length ?? 0}</Text>
+              <Text style={styles.statLabel}>{t('review.stats.dueToday')}</Text>
             </View>
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>85%</Text>
-              <Text style={styles.statLabel}>{t('review.stats.weeklyAccuracy')}</Text>
+              <Text style={styles.statValue}>{reviewData?.weakAreas?.length ?? 0}</Text>
+              <Text style={styles.statLabel}>{t('review.stats.weakAreas')}</Text>
             </View>
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>7</Text>
+              <Text style={styles.statValue}>{streak}</Text>
               <Text style={styles.statLabel}>{t('review.stats.consecutiveDays')}</Text>
             </View>
             <View style={styles.statItem}>
-              <Text style={styles.statValue}>156</Text>
-              <Text style={styles.statLabel}>{t('review.stats.totalReviews')}</Text>
+              <Text style={styles.statValue}>{reviewData?.estimatedXp ?? 0}</Text>
+              <Text style={styles.statLabel}>{t('review.stats.estimatedXp')}</Text>
             </View>
           </View>
         </View>

@@ -10,6 +10,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useGamificationStore } from '../stores';
 import { COLORS } from '../config';
@@ -89,6 +90,7 @@ const Tab = createBottomTabNavigator();
 function MainTabs() {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
+  const insets = useSafeAreaInsets();
 
   const { streak } = useGamificationStore();
   const [unreadMessages, setUnreadMessages] = useState(0);
@@ -141,8 +143,12 @@ function MainTabs() {
           backgroundColor: colors.surface,
           borderTopWidth: 1,
           borderTopColor: colors.backgroundAlt,
-          height: 65,
-          paddingBottom: 10,
+          // La hauteur fixe passait SOUS la barre de navigation Android en
+          // mode 3 boutons : les onglets وحسابي والسلسلة partageaient leurs
+          // pixels avec Retour et Accueil systeme — taper l'onglet declenchait
+          // le bouton. Constate sur SM-A075F. Les insets reservent la place.
+          height: 65 + insets.bottom,
+          paddingBottom: 10 + insets.bottom,
           paddingTop: 10,
         },
         tabBarActiveTintColor: colors.primary,
