@@ -20,7 +20,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
+// react-i18next n'a JAMAIS été initialisé dans ce projet : son t()
+// renvoyait la clé brute et son i18n.language restait indéfini — d'où
+// les ternaires anglais/arabe qui ont valu à ces écrans d'ignorer le
+// français. Le t() du projet (services/i18n) est importé plus bas.
 import * as Location from 'expo-location';
 import { Magnetometer } from 'expo-sensors';
 import api from '../../services/api';
@@ -30,7 +33,7 @@ import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext'
 // Ces écrans utilisaient `isRTL ? arabe : anglais` : un interrupteur binaire
 // qui ignorait le français et le système de traduction. `t()` suit désormais
 // la langue choisie ; les ternaires restants ne portent que la mise en page.
-import { t } from '../../services/i18n';
+import { getLocale, t } from '../../services/i18n';
 
 const { width } = Dimensions.get('window');
 const COMPASS_SIZE = width * 0.8;
@@ -40,9 +43,8 @@ const QiblaScreen: React.FC = () => {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
 
-  const { t, i18n } = useTranslation();
   const navigation = useNavigation<any>();
-  const isRTL = i18n.language === 'ar';
+  const isRTL = getLocale() === 'ar';
   
   const [loading, setLoading] = useState(true);
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);

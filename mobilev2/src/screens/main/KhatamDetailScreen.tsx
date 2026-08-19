@@ -21,11 +21,14 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
+// react-i18next n'a JAMAIS été initialisé dans ce projet : son t()
+// renvoyait la clé brute et son i18n.language restait indéfini — d'où
+// les ternaires anglais/arabe qui ont valu à ces écrans d'ignorer le
+// français. Le t() du projet (services/i18n) est importé plus bas.
 import api from '../../services/api';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
-import { t } from '../../services/i18n';
+import { getLocale, t } from '../../services/i18n';
 
 const { width } = Dimensions.get('window');
 const GRID_ITEM_SIZE = (width - 48) / 10; // 10 items per row
@@ -50,10 +53,9 @@ const KhatamDetailScreen: React.FC = () => {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
 
-  const { t, i18n } = useTranslation();
   const navigation = useNavigation<any>();
   const route = useRoute<any>();
-  const isRTL = i18n.language === 'ar';
+  const isRTL = getLocale() === 'ar';
   
   const { khatamId } = route.params;
   

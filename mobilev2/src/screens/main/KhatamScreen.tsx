@@ -22,14 +22,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
+// react-i18next n'a JAMAIS été initialisé dans ce projet : son t()
+// renvoyait la clé brute et son i18n.language restait indéfini — d'où
+// les ternaires anglais/arabe qui ont valu à ces écrans d'ignorer le
+// français. Le t() du projet (services/i18n) est importé plus bas.
 import api from '../../services/api';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 // Ces écrans utilisaient `isRTL ? arabe : anglais` : un interrupteur binaire
 // qui ignorait le français et le système de traduction. `t()` suit désormais
 // la langue choisie ; les ternaires restants ne portent que la mise en page.
-import { t } from '../../services/i18n';
+import { getLocale, t } from '../../services/i18n';
 
 const { width } = Dimensions.get('window');
 
@@ -60,9 +63,8 @@ const KhatamScreen: React.FC = () => {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
 
-  const { t, i18n } = useTranslation();
   const navigation = useNavigation<any>();
-  const isRTL = i18n.language === 'ar';
+  const isRTL = getLocale() === 'ar';
   
   const [khatams, setKhatams] = useState<Khatam[]>([]);
   const [publicKhatams, setPublicKhatams] = useState<Khatam[]>([]);
