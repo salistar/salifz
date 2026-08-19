@@ -27,6 +27,18 @@ import { COLORS } from '../../config';
 import { t } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
+import { HizbStar } from '../../components/common/Ornements';
+import {
+  IconeSerie,
+  IconeGemmes,
+  IconeCoeurs,
+  IconeQibla,
+  IconeKhatam,
+  IconeHalaqat,
+  IconeMushaf,
+  IconeRevision,
+  IconeDefis,
+} from '../../components/common/Icones';
 
 const LOG_PREFIX = '[HomeScreen.tsx]';
 const { width } = Dimensions.get('window');
@@ -59,7 +71,7 @@ export default function HomeScreen({ navigation }: any) {
   const styles = useThemedStyles(makeStyles);
 
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
-  
+
   const { user } = useAuthStore();
   const { totalXP, level, gems, hearts, maxHearts, streak, league } = useGamificationStore();
   const [refreshing, setRefreshing] = useState(false);
@@ -72,17 +84,15 @@ export default function HomeScreen({ navigation }: any) {
   const [dailyGoals, setDailyGoals] = useState<any>({
     ayahsCompleted: 0, ayahsTarget: 5, xpEarned: 0, xpTarget: 100
   });
-  
+
   const [conversations, setConversations] = useState<any[]>([]);
   const [halaqat, setHalaqat] = useState<any[]>([]);
   const [unreadMessages, setUnreadMessages] = useState(0);
 
-  // ✅ NEW: Prayer Times state
   const [nextPrayer, setNextPrayer] = useState<NextPrayer | null>(null);
   const [prayerCountdown, setPrayerCountdown] = useState({ hours: 0, minutes: 0 });
   const [hijriDate, setHijriDate] = useState<string>('');
 
-  // ✅ NEW: Khatam state
   const [myKhatams, setMyKhatams] = useState<Khatam[]>([]);
   const [activeKhatam, setActiveKhatam] = useState<Khatam | null>(null);
 
@@ -96,12 +106,12 @@ export default function HomeScreen({ navigation }: any) {
       const initData = async () => {
         console.log(`${LOG_PREFIX} ⏳ Waiting for token...`);
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         if (!isMounted) {
           console.log(`${LOG_PREFIX} ⚠️ Component unmounted, aborting`);
           return;
         }
-        
+
         if (!isAuthenticated()) {
           console.log(`${LOG_PREFIX} 🔒 Not authenticated, skipping data load`);
           setIsLoading(false);
@@ -111,7 +121,7 @@ export default function HomeScreen({ navigation }: any) {
         console.log(`${LOG_PREFIX} ✅ Authenticated, loading data...`);
         await loadData();
         await fetchPrayerTimes();
-        
+
         if (isMounted) setIsLoading(false);
       };
 
@@ -120,7 +130,6 @@ export default function HomeScreen({ navigation }: any) {
     }, [])
   );
 
-  // ✅ NEW: Update prayer countdown every minute
   useEffect(() => {
     const interval = setInterval(() => {
       if (nextPrayer) updatePrayerCountdown(nextPrayer);
@@ -128,7 +137,6 @@ export default function HomeScreen({ navigation }: any) {
     return () => clearInterval(interval);
   }, [nextPrayer]);
 
-  // ✅ NEW: Fetch Prayer Times
   const fetchPrayerTimes = async () => {
     console.log(`${LOG_PREFIX} 🕌 Fetching prayer times...`);
     try {
@@ -137,12 +145,12 @@ export default function HomeScreen({ navigation }: any) {
         console.log(`${LOG_PREFIX} ⚠️ Location permission denied`);
         return;
       }
-      
+
       const location = await Location.getCurrentPositionAsync({});
       const response = await api.get('/prayer/times', {
         params: { latitude: location.coords.latitude, longitude: location.coords.longitude }
       });
-      
+
       if (response.data?.data) {
         const data = response.data.data;
         setNextPrayer(data.nextPrayer);
@@ -162,7 +170,6 @@ export default function HomeScreen({ navigation }: any) {
     setPrayerCountdown({ hours: prayer.remaining?.hours || 0, minutes: prayer.remaining?.minutes || 0 });
   };
 
-  // ✅ NEW: Fetch Khatams
   const fetchKhatams = async () => {
     console.log(`${LOG_PREFIX} 📖 Fetching khatams...`);
     try {
@@ -189,7 +196,7 @@ export default function HomeScreen({ navigation }: any) {
           console.log(`${LOG_PREFIX} ✅ Goals loaded`);
         }
       } catch (e) { console.log(`${LOG_PREFIX} ⚠️ Could not load goals`); }
-      
+
       try {
         const conversationsRes = await chatAPI.getConversations();
         const convos = conversationsRes?.data || conversationsRes || [];
@@ -198,7 +205,7 @@ export default function HomeScreen({ navigation }: any) {
         setUnreadMessages(unread);
         console.log(`${LOG_PREFIX} ✅ Conversations loaded: ${convos.length}, unread: ${unread}`);
       } catch (e) { console.log(`${LOG_PREFIX} ⚠️ Could not load conversations`); }
-      
+
       try {
         const halaqatRes = await halaqaAPI.getMyHalaqat();
         const halaqaList = halaqatRes?.data || halaqatRes || [];
@@ -212,12 +219,12 @@ export default function HomeScreen({ navigation }: any) {
     console.log(`${LOG_PREFIX} 📥 ========== LOAD DATA END ==========`);
   };
 
-  const onRefresh = async () => { 
+  const onRefresh = async () => {
     console.log(`${LOG_PREFIX} 🔄 Pull to refresh triggered`);
-    setRefreshing(true); 
-    await loadData(); 
+    setRefreshing(true);
+    await loadData();
     await fetchPrayerTimes();
-    setRefreshing(false); 
+    setRefreshing(false);
   };
 
   const currentLeague = LEAGUES.find(l => l.id === league) || LEAGUES[0];
@@ -258,9 +265,8 @@ export default function HomeScreen({ navigation }: any) {
       </LinearGradient>
 
       <ScrollView contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-        <Text style={styles.greeting}>{t('home.greeting', { name: userName })} 👋</Text>
+        <Text style={styles.greeting}>{t('home.greeting', { name: userName })}</Text>
 
-        {/* ✅ NEW: Prayer Time Card */}
         {nextPrayer && (
           <TouchableOpacity accessible accessibilityRole="button" onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('PrayerTimes'); }} activeOpacity={0.9}>
             <LinearGradient colors={[colors.accent, colors.accentDeep]} style={styles.prayerCard} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
@@ -312,7 +318,6 @@ export default function HomeScreen({ navigation }: any) {
             <View style={[styles.actionIcon, { backgroundColor: colors.warningSoft }]}><Text style={styles.actionEmoji}>🔄</Text></View>
             <Text style={styles.actionText}>{t('home.actions.review')}</Text>
           </TouchableOpacity>
-          {/* ✅ NEW: Khatam */}
           <TouchableOpacity accessible accessibilityRole="button" style={styles.actionButton} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('Khatam'); }}>
             <View style={[styles.actionIcon, { backgroundColor: colors.primarySoft }]}><Text style={styles.actionEmoji}>📚</Text></View>
             <Text style={styles.actionText}>{t('khatam.title') || 'ختم'}</Text>
@@ -328,7 +333,6 @@ export default function HomeScreen({ navigation }: any) {
           </TouchableOpacity>
         </View>
 
-        {/* ✅ NEW: Active Khatam Progress */}
         {activeKhatam && (
           <TouchableOpacity accessible accessibilityRole="button" style={styles.khatamCard} onPress={() => navigation.navigate('KhatamDetail', { khatamId: activeKhatam._id })} activeOpacity={0.8}>
             <LinearGradient colors={['#11998e', '#38ef7d']} style={styles.khatamGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
@@ -349,9 +353,8 @@ export default function HomeScreen({ navigation }: any) {
           </TouchableOpacity>
         )}
 
-        {/* ✅ NEW: Islamic Features Row */}
         <View style={styles.islamicSection}>
-          <Text style={styles.sectionTitle}>🕌 {t('home.islamicFeatures') || 'الميزات الإسلامية'}</Text>
+          <Text style={styles.sectionTitle}>{t('home.islamicFeatures') || 'الميزات الإسلامية'}</Text>
           <View style={styles.islamicRow}>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.islamicCard} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('PrayerTimes'); }}>
               <LinearGradient colors={[colors.accent, colors.accentDeep]} style={styles.islamicGradient}>
@@ -376,7 +379,7 @@ export default function HomeScreen({ navigation }: any) {
 
         {/* Social Section */}
         <View style={styles.socialSection}>
-          <Text style={styles.sectionTitle}>👥 {t('home.social.title')}</Text>
+          <Text style={styles.sectionTitle}>{t('home.social.title')}</Text>
           <View style={styles.socialButtons}>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.socialButton} onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate('ConversationsList'); }}>
               <View style={[styles.socialIconContainer, { backgroundColor: colors.infoSoft }]}>
@@ -403,7 +406,7 @@ export default function HomeScreen({ navigation }: any) {
         {conversations.length > 0 && (
           <View style={styles.conversationsSection}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>💬 {t('home.recentConversations')}</Text>
+              <Text style={styles.sectionTitle}>{t('home.recentConversations')}</Text>
               <TouchableOpacity accessible accessibilityRole="button" onPress={() => navigation.navigate('ConversationsList')}><Text style={styles.seeAll}>{t('home.seeAll')}</Text></TouchableOpacity>
             </View>
             {conversations.map((conv, index) => (
@@ -423,7 +426,7 @@ export default function HomeScreen({ navigation }: any) {
         {halaqat.length > 0 && (
           <View style={styles.halaqatSection}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>🕌 {t('home.myHalaqat')}</Text>
+              <Text style={styles.sectionTitle}>{t('home.myHalaqat')}</Text>
               <TouchableOpacity accessible accessibilityRole="button" onPress={() => navigation.navigate('Halaqa')}><Text style={styles.seeAll}>{t('home.seeAll')}</Text></TouchableOpacity>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -445,7 +448,7 @@ export default function HomeScreen({ navigation }: any) {
 
         {/* Daily Goals */}
         <View style={styles.goalsCard}>
-          <Text style={styles.sectionTitle}>📊 {t('home.dailyGoals')}</Text>
+          <Text style={styles.sectionTitle}>{t('home.dailyGoals')}</Text>
           <View style={styles.goalItem}>
             <Text style={styles.goalLabel}>{t('home.ayahsProgress', { current: dailyGoals?.ayahsCompleted || 0, target: dailyGoals?.ayahsTarget || 5 })}</Text>
             <View style={styles.goalBar}><View style={[styles.goalFill, { width: `${Math.min(((dailyGoals?.ayahsCompleted || 0) / (dailyGoals?.ayahsTarget || 5)) * 100, 100)}%` }]} /></View>
@@ -459,7 +462,7 @@ export default function HomeScreen({ navigation }: any) {
         {/* Daily Challenges */}
         <View style={styles.challengesSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>🎯 {t('home.todaysChallenges')}</Text>
+            <Text style={styles.sectionTitle}>{t('home.todaysChallenges')}</Text>
             <TouchableOpacity accessible accessibilityRole="button" onPress={() => navigation.navigate('Challenges')}><Text style={styles.seeAll}>{t('home.seeAll')}</Text></TouchableOpacity>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -506,7 +509,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   xpText: { color: 'rgba(255,255,255,0.8)', fontSize: 12, marginTop: 5 },
   content: { padding: 20 },
   greeting: { fontSize: 22, fontWeight: 'bold', color: c.text, marginBottom: 20 },
-  
+
   // Prayer Card
   prayerCard: { borderRadius: 20, padding: 20, marginBottom: 20 },
   prayerHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 },
@@ -556,7 +559,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   actionIcon: { width: 55, height: 55, borderRadius: 15, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
   actionEmoji: { fontSize: 26 },
   actionText: { fontSize: 12, color: c.textSecondary },
-  
+
   // Social Section
   socialSection: { backgroundColor: c.surface, borderRadius: 15, padding: 15, marginBottom: 20, elevation: 2 },
   socialButtons: { flexDirection: 'row', justifyContent: 'space-around' },
@@ -567,7 +570,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   socialSubLabel: { fontSize: 11, color: c.textMuted, marginTop: 2 },
   badge: { position: 'absolute', top: -5, right: -5, backgroundColor: c.error, borderRadius: 10, minWidth: 20, height: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 5 },
   badgeText: { color: c.onDeep, fontSize: 10, fontWeight: 'bold' },
-  
+
   // Conversations Section
   conversationsSection: { backgroundColor: c.surface, borderRadius: 15, padding: 15, marginBottom: 20, elevation: 2 },
   conversationItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: c.backgroundAlt },
@@ -578,7 +581,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   conversationLastMessage: { fontSize: 12, color: c.textMuted, marginTop: 2 },
   unreadBadge: { backgroundColor: c.primary, borderRadius: 10, minWidth: 20, height: 20, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 6 },
   unreadBadgeText: { color: c.onDeep, fontSize: 11, fontWeight: 'bold' },
-  
+
   // Halaqat Section
   halaqatSection: { marginBottom: 20 },
   halaqaCard: { backgroundColor: c.surface, borderRadius: 15, padding: 15, marginRight: 12, width: 120, alignItems: 'center', elevation: 2 },
@@ -587,7 +590,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   halaqaIcon: { fontSize: 24 },
   halaqaName: { fontSize: 13, fontWeight: '600', color: c.text, textAlign: 'center' },
   halaqaMembers: { fontSize: 11, color: c.textMuted, marginTop: 4 },
-  
+
   // Goals & Challenges
   goalsCard: { backgroundColor: c.surface, borderRadius: 15, padding: 20, marginBottom: 20, elevation: 2 },
   sectionTitle: { fontSize: 16, fontWeight: 'bold', color: c.text, marginBottom: 15 },

@@ -15,12 +15,13 @@ import * as Haptics from 'expo-haptics';
 import { useStreakStore, useGamificationStore } from '../../stores';
 import { streaksAPI } from '../../services/api';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
-import { ThemeColors, fixedColors } from '../../contexts/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
+import { HizbStar } from '../../components/common/Ornements';
+import { IconeSerie, IconeRecompense } from '../../components/common/Icones';
 
-// ✅ Constante pour les logs
 const LOG_PREFIX = '[StreakScreen.tsx]';
 
 const MILESTONES = [
@@ -33,14 +34,14 @@ const MILESTONES = [
 ];
 
 export default function StreakScreen({ navigation }: any) {
+  const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
 
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
-  
-  // ✅ FIXED: Cast to any to avoid TypeScript errors
+
   const streakStore = useStreakStore() as any;
   const gamificationStore = useGamificationStore() as any;
-  
+
   const current = streakStore.current || 0;
   const longest = streakStore.longest || 0;
   const freezesAvailable = streakStore.freezesAvailable || 0;
@@ -88,7 +89,6 @@ export default function StreakScreen({ navigation }: any) {
     console.log(`${LOG_PREFIX} ❄️ Use freeze button pressed`);
     if (freezesAvailable <= 0) {
       console.log(`${LOG_PREFIX} ⚠️ No freezes available`);
-      // ✅ AVANT: Alert.alert('لا يوجد تجميد!', 'يمكنك شراء تجميد من المتجر', ...)
       Alert.alert(
         t('streak.noFreeze'),
         t('streak.buyFreezeFromShop'),
@@ -99,14 +99,13 @@ export default function StreakScreen({ navigation }: any) {
       );
       return;
     }
-    // ✅ AVANT: Alert.alert('استخدام التجميد', 'هل تريد استخدام تجميد للحفاظ على سلسلتك؟', ...)
     Alert.alert(
       t('streak.useFreeze'),
       t('streak.useFreezeConfirm'),
       [
         { text: t('common.cancel'), style: 'cancel' },
-        { 
-          text: t('streak.use'), 
+        {
+          text: t('streak.use'),
           onPress: async () => {
             console.log(`${LOG_PREFIX} ❄️ Freeze use confirmed`);
             if (typeof useFreeze === 'function') {
@@ -115,8 +114,7 @@ export default function StreakScreen({ navigation }: any) {
               if (success) {
                 console.log(`${LOG_PREFIX} ✅ Freeze used successfully`);
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                // ✅ AVANT: Alert.alert('✓ تم!', 'تم استخدام التجميد بنجاح');
-                Alert.alert(`✓ ${t('common.done')}`, t('streak.freezeUsedSuccess'));
+                Alert.alert(t('common.done'), t('streak.freezeUsedSuccess'));
               } else {
                 console.log(`${LOG_PREFIX} ❌ Freeze use failed`);
               }
@@ -131,7 +129,6 @@ export default function StreakScreen({ navigation }: any) {
     console.log(`${LOG_PREFIX} 💎 Buy freeze button pressed`);
     if (gems < 200) {
       console.log(`${LOG_PREFIX} ❌ Not enough gems: have ${gems}, need 200`);
-      // ✅ AVANT: Alert.alert('جواهر غير كافية!', 'تحتاج 200 جوهرة لشراء تجميد');
       Alert.alert(t('streak.notEnoughGems'), t('streak.need200Gems'));
       return;
     }
@@ -157,67 +154,57 @@ export default function StreakScreen({ navigation }: any) {
     <View style={styles.container}>
       {/* Header */}
       <LinearGradient colors={[fixedColors.streak, '#F7931E']} style={styles.header}>
-        <Text style={styles.headerEmoji}>🔥</Text>
+        <IconeSerie size={54} color={colors.onDeep} />
         <Text style={styles.streakCount}>{current}</Text>
-        {/* ✅ AVANT: 'يوم متتالي' */}
         <Text style={styles.streakLabel}>{t('streak.consecutiveDays')}</Text>
         <View style={styles.longestBadge}>
-          {/* ✅ AVANT: 'أطول سلسلة: X يوم' */}
           <Text style={styles.longestText}>{t('streak.longestStreak', { days: longest })}</Text>
         </View>
       </LinearGradient>
 
-      <ScrollView 
-        contentContainerStyle={styles.content} 
+      <ScrollView
+        contentContainerStyle={styles.content}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {/* Progress Card */}
         <View style={styles.progressCard}>
-          {/* ✅ AVANT: 'الهدف القادم: X يوم' */}
           <Text style={styles.progressTitle}>
             {t('streak.nextGoal', { days: nextMilestone.days })} {nextMilestone.icon}
           </Text>
           <View style={styles.progressBar}>
             <View style={[styles.progressFill, { width: `${Math.min(progress, 100)}%` }]} />
           </View>
-          {/* ✅ AVANT: 'X/Y يوم' */}
           <Text style={styles.progressText}>{t('streak.progressDays', { current, total: nextMilestone.days })}</Text>
-          {/* ✅ AVANT: 'المكافأة: X' */}
           <Text style={styles.rewardText}>{t('streak.reward')}: {nextMilestone.reward}</Text>
         </View>
 
         {/* Freeze Card */}
         <View style={styles.freezeCard}>
           <View style={styles.freezeHeader}>
-            <Text style={styles.freezeIcon}>❄️</Text>
+            <IconeRecompense size={22} color={colors.info} />
             <View>
-              {/* ✅ AVANT: 'تجميد السلسلة' */}
               <Text style={styles.freezeTitle}>{t('streak.streakFreeze')}</Text>
-              {/* ✅ AVANT: 'X متاح' */}
               <Text style={styles.freezeCount}>{t('streak.availableCount', { count: freezesAvailable })}</Text>
             </View>
           </View>
           <View style={styles.freezeActions}>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.freezeButton} onPress={handleUseFreeze}>
-              {/* ✅ AVANT: 'استخدم' */}
               <Text style={styles.freezeButtonText}>{t('streak.use')}</Text>
             </TouchableOpacity>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.buyFreezeButton} onPress={handleBuyFreeze}>
-              {/* ✅ AVANT: 'شراء (200 💎)' */}
               <Text style={styles.buyFreezeText}>{t('streak.buyPrice', { price: 200 })}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Milestones */}
-        {/* ✅ AVANT: '🏆 المراحل' */}
-        <Text style={styles.sectionTitle}>🏆 {t('streak.milestones')}</Text>
+        <Text style={styles.sectionTitle}>{t('streak.milestones')}</Text>
         <View style={styles.milestonesGrid}>
           {MILESTONES.map((milestone, index) => (
-            <View 
-              key={index} 
+            <View
+              key={index}
               style={[
-                styles.milestoneItem, 
+                styles.milestoneItem,
                 current >= milestone.days && styles.milestoneAchieved
               ]}
             >
@@ -225,7 +212,7 @@ export default function StreakScreen({ navigation }: any) {
               <Text style={styles.milestoneDays}>{milestone.days}</Text>
               {current >= milestone.days && (
                 <View style={styles.milestoneCheck}>
-                  <Text style={styles.checkIcon}>✓</Text>
+                  <Ionicons name="checkmark-circle" size={20} color={colors.primary} />
                 </View>
               )}
             </View>
@@ -233,21 +220,20 @@ export default function StreakScreen({ navigation }: any) {
         </View>
 
         {/* Calendar */}
-        {/* ✅ AVANT: '📅 آخر 30 يوم' */}
-        <Text style={styles.sectionTitle}>📅 {t('streak.last30Days')}</Text>
+        <Text style={styles.sectionTitle}>{t('streak.last30Days')}</Text>
         <View style={styles.calendarCard}>
           <View style={styles.calendarGrid}>
             {calendarDays.map((day, index) => (
-              <View 
-                key={index} 
+              <View
+                key={index}
                 style={[
-                  styles.calendarDay, 
-                  day.completed && styles.calendarDayCompleted, 
+                  styles.calendarDay,
+                  day.completed && styles.calendarDayCompleted,
                   day.isToday && styles.calendarDayToday
                 ]}
               >
                 {day.completed ? (
-                  <Text style={styles.calendarCheck}>✓</Text>
+                  <Ionicons name="checkmark" size={11} color={colors.onPrimary} />
                 ) : (
                   <Text style={styles.calendarDayNumber}>{day.date.getDate()}</Text>
                 )}
@@ -258,23 +244,19 @@ export default function StreakScreen({ navigation }: any) {
 
         {/* Benefits Card */}
         <View style={styles.benefitsCard}>
-          {/* ✅ AVANT: '🎁 فوائد السلسلة' */}
-          <Text style={styles.benefitsTitle}>🎁 {t('streak.benefits')}</Text>
+          <Text style={styles.benefitsTitle}>{t('streak.benefits')}</Text>
           <View style={styles.benefitItem}>
-            <Text style={styles.benefitIcon}>⚡</Text>
-            {/* ✅ AVANT: 'مكافأة XP يومية: +X XP' */}
+            <HizbStar size={16} quarters={4} color={colors.accent} />
             <Text style={styles.benefitText}>{t('streak.dailyXPBonus', { xp: Math.min(current, 50) })}</Text>
           </View>
           <View style={styles.benefitItem}>
-            <Text style={styles.benefitIcon}>💎</Text>
-            {/* ✅ AVANT: 'مضاعف الجواهر: xX.XX' */}
+            <HizbStar size={16} quarters={4} color={colors.accent} />
             <Text style={styles.benefitText}>
               {t('streak.gemsMultiplier', { multiplier: Math.min(1 + current * 0.01, 1.5).toFixed(2) })}
             </Text>
           </View>
           <View style={styles.benefitItem}>
-            <Text style={styles.benefitIcon}>🏅</Text>
-            {/* ✅ AVANT: 'شارات حصرية عند كل مرحلة' */}
+            <HizbStar size={16} quarters={4} color={colors.accent} />
             <Text style={styles.benefitText}>{t('streak.exclusiveBadges')}</Text>
           </View>
         </View>
@@ -288,118 +270,118 @@ export default function StreakScreen({ navigation }: any) {
 const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: c.background },
   header: { paddingTop: 50, paddingBottom: 40, alignItems: 'center' },
-  headerEmoji: { fontSize: 60 },
+  headerEmoji: {},
   streakCount: { fontSize: 72, fontWeight: 'bold', color: c.onDeep },
   streakLabel: { color: 'rgba(255,255,255,0.9)', fontSize: 18 },
-  longestBadge: { 
-    backgroundColor: 'rgba(255,255,255,0.2)', 
-    paddingHorizontal: 20, 
-    paddingVertical: 8, 
-    borderRadius: 20, 
-    marginTop: 15 
+  longestBadge: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginTop: 15
   },
   longestText: { color: c.onDeep },
   content: { padding: 20 },
-  progressCard: { 
-    backgroundColor: c.surface, 
-    borderRadius: 20, 
-    padding: 20, 
-    marginBottom: 20, 
-    elevation: 2 
+  progressCard: {
+    backgroundColor: c.surface,
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 20,
+    elevation: 2
   },
   progressTitle: { fontSize: 16, fontWeight: 'bold', color: c.text, marginBottom: 15 },
-  progressBar: { 
-    height: 12, 
-    backgroundColor: c.border, 
-    borderRadius: 6, 
-    overflow: 'hidden', 
-    marginBottom: 10 
+  progressBar: {
+    height: 12,
+    backgroundColor: c.border,
+    borderRadius: 6,
+    overflow: 'hidden',
+    marginBottom: 10
   },
   progressFill: { height: '100%', backgroundColor: fixedColors.streak, borderRadius: 6 },
   progressText: { color: c.textSecondary, textAlign: 'center' },
   rewardText: { color: c.primary, textAlign: 'center', marginTop: 10, fontWeight: '600' },
-  freezeCard: { 
-    backgroundColor: c.surface, 
-    borderRadius: 20, 
-    padding: 20, 
-    marginBottom: 20, 
-    elevation: 2 
+  freezeCard: {
+    backgroundColor: c.surface,
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 20,
+    elevation: 2
   },
   freezeHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
-  freezeIcon: { fontSize: 40, marginRight: 15 },
+  freezeIcon: { marginRight: 15 },
   freezeTitle: { fontSize: 18, fontWeight: 'bold', color: c.text },
   freezeCount: { color: c.textSecondary },
   freezeActions: { flexDirection: 'row' },
-  freezeButton: { 
-    flex: 1, 
-    backgroundColor: c.infoSoft, 
-    paddingVertical: 12, 
-    borderRadius: 12, 
-    alignItems: 'center', 
-    marginRight: 10 
+  freezeButton: {
+    flex: 1,
+    backgroundColor: c.infoSoft,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginRight: 10
   },
   freezeButtonText: { color: c.infoStrong, fontWeight: 'bold' },
-  buyFreezeButton: { 
-    flex: 1, 
-    backgroundColor: c.warningSoft, 
-    paddingVertical: 12, 
-    borderRadius: 12, 
-    alignItems: 'center' 
+  buyFreezeButton: {
+    flex: 1,
+    backgroundColor: c.warningSoft,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center'
   },
   buyFreezeText: { color: c.warning, fontWeight: 'bold' },
   sectionTitle: { fontSize: 18, fontWeight: 'bold', color: c.text, marginBottom: 15 },
-  milestonesGrid: { 
-    flexDirection: 'row', 
-    flexWrap: 'wrap', 
-    justifyContent: 'space-between', 
-    marginBottom: 20 
+  milestonesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 20
   },
-  milestoneItem: { 
-    width: '30%', 
-    backgroundColor: c.surface, 
-    borderRadius: 15, 
-    padding: 15, 
-    alignItems: 'center', 
-    marginBottom: 10, 
-    elevation: 1 
+  milestoneItem: {
+    width: '30%',
+    backgroundColor: c.surface,
+    borderRadius: 15,
+    padding: 15,
+    alignItems: 'center',
+    marginBottom: 10,
+    elevation: 1
   },
   milestoneAchieved: { backgroundColor: c.primarySoft },
   milestoneIcon: { fontSize: 30, marginBottom: 5 },
   milestoneDays: { fontWeight: 'bold', color: c.text },
-  milestoneCheck: { 
-    position: 'absolute', 
-    top: 5, 
-    right: 5, 
-    width: 20, 
-    height: 20, 
-    borderRadius: 10, 
-    backgroundColor: c.primary, 
-    justifyContent: 'center', 
-    alignItems: 'center' 
+  milestoneCheck: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: c.primary,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
-  checkIcon: { color: c.onDeep, fontSize: 12, fontWeight: 'bold' },
-  calendarCard: { 
-    backgroundColor: c.surface, 
-    borderRadius: 20, 
-    padding: 15, 
-    marginBottom: 20, 
-    elevation: 2 
+  checkIcon: {},
+  calendarCard: {
+    backgroundColor: c.surface,
+    borderRadius: 20,
+    padding: 15,
+    marginBottom: 20,
+    elevation: 2
   },
   calendarGrid: { flexDirection: 'row', flexWrap: 'wrap' },
-  calendarDay: { 
-    width: '14.28%', 
-    aspectRatio: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    borderRadius: 8 
+  calendarDay: {
+    width: '14.28%',
+    aspectRatio: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8
   },
   calendarDayCompleted: { backgroundColor: c.primarySoft },
   calendarDayToday: { borderWidth: 2, borderColor: c.primary },
-  calendarCheck: { color: c.primary, fontWeight: 'bold' },
+  calendarCheck: {},
   calendarDayNumber: { color: c.textMuted, fontSize: 12 },
   benefitsCard: { backgroundColor: c.surface, borderRadius: 20, padding: 20, elevation: 2 },
   benefitsTitle: { fontSize: 16, fontWeight: 'bold', color: c.text, marginBottom: 15 },
   benefitItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  benefitIcon: { fontSize: 20, marginRight: 12 },
+  benefitIcon: { marginRight: 12 },
   benefitText: { color: c.text, flex: 1 }
 });

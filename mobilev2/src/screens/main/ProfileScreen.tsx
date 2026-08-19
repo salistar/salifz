@@ -14,12 +14,22 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useAuthStore, useGamificationStore } from '../../stores';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
+import { HizbStar } from '../../components/common/Ornements';
+import {
+  IconeReglages,
+  IconeStatistiques,
+  IconeAmis,
+  IconeRecompense,
+  IconeNotifications,
+  IconeVersetDuJour,
+  IconeSerie,
+  IconeGemmes,
+  IconeCoeurs,
+} from '../../components/common/Icones';
 
-// ✅ Constante pour les logs
 const LOG_PREFIX = '[ProfileScreen.tsx]';
 
 // Define LEAGUES with i18n keys
@@ -46,7 +56,7 @@ export default function ProfileScreen({ navigation }: any) {
   const styles = useThemedStyles(makeStyles);
 
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
-  
+
   const { user, logout } = useAuthStore();
   const { totalXP, level, gems, coins, hearts, streak, league } = useGamificationStore();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -64,15 +74,14 @@ export default function ProfileScreen({ navigation }: any) {
 
   const handleLogout = () => {
     console.log(`${LOG_PREFIX} 🚪 Logout button pressed`);
-    // ✅ AVANT: Alert.alert('تسجيل الخروج', 'هل أنت متأكد من تسجيل الخروج؟', ...)
     Alert.alert(
       t('profile.logout'),
       t('profile.logoutConfirm'),
       [
         { text: t('common.cancel'), style: 'cancel' },
-        { 
-          text: t('profile.logoutButton'), 
-          style: 'destructive', 
+        {
+          text: t('profile.logoutButton'),
+          style: 'destructive',
           onPress: async () => {
             console.log(`${LOG_PREFIX} ✅ Logout confirmed, logging out...`);
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -84,7 +93,6 @@ export default function ProfileScreen({ navigation }: any) {
     );
   };
 
-  // ✅ Menu items avec clés i18n
   const menuItems = [
     { icon: '⚙️', labelKey: 'profile.menu.settings', screen: 'Settings' },
     { icon: '📊', labelKey: 'profile.menu.insights', screen: 'Insights' },
@@ -94,7 +102,6 @@ export default function ProfileScreen({ navigation }: any) {
     { icon: '❓', labelKey: 'profile.menu.help', screen: 'Help' }
   ];
 
-  // ✅ Stats avec clés i18n
   const stats = [
     { icon: '🔥', labelKey: 'profile.stats.streak', value: streak },
     { icon: '⚡', labelKey: 'profile.stats.xp', value: totalXP },
@@ -119,11 +126,9 @@ export default function ProfileScreen({ navigation }: any) {
         <View style={styles.avatarContainer}>
           <Text style={styles.avatarEmoji}>👤</Text>
         </View>
-        {/* ✅ AVANT: 'مستخدم' */}
         <Text style={styles.username}>{user?.username || t('profile.defaultUsername')}</Text>
         <Text style={styles.email}>{user?.email || ''}</Text>
         <View style={styles.levelBadge}>
-          {/* ✅ AVANT: 'المستوى X' */}
           <Text style={styles.levelText}>{t('profile.levelX', { level })}</Text>
         </View>
       </LinearGradient>
@@ -135,7 +140,6 @@ export default function ProfileScreen({ navigation }: any) {
             <View key={index} style={styles.statCard}>
               <Text style={styles.statIcon}>{stat.icon}</Text>
               <Text style={styles.statValue}>{stat.value}</Text>
-              {/* ✅ AVANT: {stat.label} hardcodé */}
               <Text style={styles.statLabel}>{t(stat.labelKey)}</Text>
             </View>
           ))}
@@ -143,24 +147,20 @@ export default function ProfileScreen({ navigation }: any) {
 
         {/* Memorization Card */}
         <View style={styles.memorizationCard}>
-          {/* ✅ AVANT: '📖 إحصائيات الحفظ' */}
-          <Text style={styles.cardTitle}>📖 {t('profile.memorizationStats')}</Text>
+          <Text style={styles.cardTitle}>{t('profile.memorizationStats')}</Text>
           <View style={styles.memorizationStats}>
             <View style={styles.memStatItem}>
               <Text style={styles.memStatValue}>{totalAyahsMemorized}</Text>
-              {/* ✅ AVANT: 'آيات محفوظة' */}
               <Text style={styles.memStatLabel}>{t('profile.ayahsMemorized')}</Text>
             </View>
             <View style={styles.memStatDivider} />
             <View style={styles.memStatItem}>
               <Text style={styles.memStatValue}>{totalSurahsCompleted}</Text>
-              {/* ✅ AVANT: 'سور مكتملة' */}
               <Text style={styles.memStatLabel}>{t('profile.surahsCompleted')}</Text>
             </View>
             <View style={styles.memStatDivider} />
             <View style={styles.memStatItem}>
               <Text style={styles.memStatValue}>{totalJuzCompleted}</Text>
-              {/* ✅ AVANT: 'أجزاء' */}
               <Text style={styles.memStatLabel}>{t('profile.juz')}</Text>
             </View>
           </View>
@@ -169,15 +169,13 @@ export default function ProfileScreen({ navigation }: any) {
         {/* Achievements Preview */}
         <View style={styles.achievementsPreview}>
           <View style={styles.achievementsHeader}>
-            {/* ✅ AVANT: '🏅 الإنجازات' */}
-            <Text style={styles.cardTitle}>🏅 {t('profile.achievements')}</Text>
-            <TouchableOpacity accessible accessibilityRole="button" 
+            <Text style={styles.cardTitle}>{t('profile.achievements')}</Text>
+            <TouchableOpacity accessible accessibilityRole="button"
               onPress={() => {
                 console.log(`${LOG_PREFIX} 🏆 See all achievements pressed`);
                 navigation.navigate('Achievements');
               }}
             >
-              {/* ✅ AVANT: 'عرض الكل' */}
               <Text style={styles.seeAllText}>{t('profile.seeAll')}</Text>
             </TouchableOpacity>
           </View>
@@ -193,13 +191,12 @@ export default function ProfileScreen({ navigation }: any) {
         {/* Menu Section */}
         <View style={styles.menuSection}>
           {menuItems.map((item, index) => (
-            <TouchableOpacity accessible accessibilityRole="button" 
-              key={index} 
+            <TouchableOpacity accessible accessibilityRole="button"
+              key={index}
               style={styles.menuItem}
               onPress={() => handleMenuItemPress(item)}
             >
               <Text style={styles.menuIcon}>{item.icon}</Text>
-              {/* ✅ AVANT: {item.label} hardcodé */}
               <Text style={styles.menuLabel}>{t(item.labelKey)}</Text>
               <Text style={styles.menuArrow}>›</Text>
             </TouchableOpacity>
@@ -209,7 +206,6 @@ export default function ProfileScreen({ navigation }: any) {
         {/* Logout Button */}
         <TouchableOpacity accessible accessibilityRole="button" style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.logoutIcon}>🚪</Text>
-          {/* ✅ AVANT: 'تسجيل الخروج' */}
           <Text style={styles.logoutText}>{t('profile.logout')}</Text>
         </TouchableOpacity>
 

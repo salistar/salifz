@@ -14,23 +14,40 @@ import * as Haptics from 'expo-haptics';
 import { useAuthStore } from '../../stores';
 import settingsStore from '../../stores/settingsStore';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t, changeLanguage } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
+import {
+  IconeSoleil,
+  IconeLune,
+  IconeReglages,
+  IconeProfil,
+  IconeAbonnement,
+} from '../../components/common/Icones';
 
 const LOG_PREFIX = '[SettingsScreen.tsx]';
 
 console.log(`${LOG_PREFIX} 📁 File loaded`);
 
-// ✅ Les noms de langues restent dans leur langue native (convention UX standard)
+/**
+ * Les langues, sans drapeau.
+ *
+ * Chacune en portait un : l'Arabie saoudite pour l'arabe, le Royaume-Uni pour
+ * l'anglais, la France pour le francais. Une langue n'est pas un pays —
+ * l'arabe est officiel dans une vingtaine d'Etats, l'anglais dans plus de
+ * cinquante — et le drapeau saoudien devant une application de Coran suggere
+ * en plus une appartenance que le produit n'a pas.
+ *
+ * Le nom dans sa propre ecriture est ce qu'un lecteur reconnait a coup sur :
+ * il suffit, et il est deja la.
+ */
 const LANGUAGES = [
-  { code: 'ar', name: 'العربية', flag: '🇸🇦', rtl: true },
-  { code: 'en', name: 'English', flag: '🇬🇧', rtl: false },
-  { code: 'fr', name: 'Français', flag: '🇫🇷', rtl: false },
+  { code: 'ar', name: 'العربية', rtl: true },
+  { code: 'en', name: 'English', rtl: false },
+  { code: 'fr', name: 'Français', rtl: false },
 ];
 
-// ✅ Les noms de récitateurs restent en arabe/anglais (noms propres)
 const RECITERS = [
   { id: 'mishary', name: 'Mishary Alafasy', nameAr: 'مشاري العفاسي' },
   { id: 'sudais', name: 'Abdul Rahman Al-Sudais', nameAr: 'عبدالرحمن السديس' },
@@ -40,14 +57,13 @@ const RECITERS = [
 interface LanguageOption {
   code: string;
   name: string;
-  flag: string;
   rtl: boolean;
 }
 
 interface ThemeOption {
   id: string;
-  labelKey: string; // ✅ Clé i18n
-  icon: string;
+  labelKey: string;
+  Icone: React.ComponentType<{ size?: number; color?: string }>;
 }
 
 interface ReciterOption {
@@ -56,11 +72,10 @@ interface ReciterOption {
   nameAr: string;
 }
 
-// ✅ Options de thème avec clés i18n
 const THEME_OPTIONS: ThemeOption[] = [
-  { id: 'light', labelKey: 'settings.theme.light', icon: '☀️' },
-  { id: 'dark', labelKey: 'settings.theme.dark', icon: '🌙' },
-  { id: 'auto', labelKey: 'settings.theme.auto', icon: '🔄' }
+  { id: 'light', labelKey: 'settings.theme.light', Icone: IconeSoleil },
+  { id: 'dark', labelKey: 'settings.theme.dark', Icone: IconeLune },
+  { id: 'auto', labelKey: 'settings.theme.auto', Icone: IconeReglages }
 ];
 
 export default function SettingsScreen({ navigation }: any) {
@@ -68,7 +83,7 @@ export default function SettingsScreen({ navigation }: any) {
   const styles = useThemedStyles(makeStyles);
 
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
-  
+
   const { theme, language, reciter, setTheme, setLanguage, setReciter } = settingsStore();
   const { user, updateUser } = useAuthStore();
 
@@ -97,7 +112,6 @@ export default function SettingsScreen({ navigation }: any) {
     console.log(`${LOG_PREFIX} 🌐 Language changing to: ${langCode}`);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setLanguage(langCode as 'ar' | 'en' | 'fr');
-    // ✅ Changer aussi la langue i18n
     await changeLanguage(langCode);
     console.log(`${LOG_PREFIX} ✅ Language changed to: ${langCode}`);
   };
@@ -135,16 +149,14 @@ export default function SettingsScreen({ navigation }: any) {
         }}>
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
-        {/* ✅ AVANT: '⚙️ الإعدادات' */}
-        <Text style={styles.headerTitle}>⚙️ {t('settings.title')}</Text>
+        <Text style={styles.headerTitle}>{t('settings.title')}</Text>
         <View style={{ width: 40 }} />
       </LinearGradient>
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* Language Section */}
         <View style={styles.section}>
-          {/* ✅ AVANT: '🌐 اللغة' */}
-          <Text style={styles.sectionTitle}>🌐 {t('settings.language')}</Text>
+          <Text style={styles.sectionTitle}>{t('settings.language')}</Text>
           <View style={styles.optionsRow}>
             {LANGUAGES.map((lang: LanguageOption) => (
               <TouchableOpacity accessible accessibilityRole="button"
@@ -155,7 +167,6 @@ export default function SettingsScreen({ navigation }: any) {
                 ]}
                 onPress={() => handleLanguageChange(lang.code)}
               >
-                <Text style={styles.optionFlag}>{lang.flag}</Text>
                 {/* Les noms de langues restent dans leur langue native */}
                 <Text style={[
                   styles.optionText,
@@ -170,8 +181,7 @@ export default function SettingsScreen({ navigation }: any) {
 
         {/* Theme Section */}
         <View style={styles.section}>
-          {/* ✅ AVANT: '🎨 المظهر' */}
-          <Text style={styles.sectionTitle}>🎨 {t('settings.appearance')}</Text>
+          <Text style={styles.sectionTitle}>{t('settings.appearance')}</Text>
           <View style={styles.optionsRow}>
             {THEME_OPTIONS.map((themeOption: ThemeOption) => (
               <TouchableOpacity accessible accessibilityRole="button"
@@ -182,8 +192,12 @@ export default function SettingsScreen({ navigation }: any) {
                 ]}
                 onPress={() => handleThemeChange(themeOption.id)}
               >
-                <Text style={styles.optionIcon}>{themeOption.icon}</Text>
-                {/* ✅ AVANT: themeOption.label hardcodé */}
+                <View style={styles.optionIcon}>
+                  <themeOption.Icone
+                    size={20}
+                    color={theme === themeOption.id ? colors.primary : colors.textSecondary}
+                  />
+                </View>
                 <Text style={[
                   styles.optionText,
                   theme === themeOption.id && styles.optionTextActive
@@ -197,8 +211,7 @@ export default function SettingsScreen({ navigation }: any) {
 
         {/* Reciter Section */}
         <View style={styles.section}>
-          {/* ✅ AVANT: '🎧 القارئ' */}
-          <Text style={styles.sectionTitle}>🎧 {t('settings.reciter')}</Text>
+          <Text style={styles.sectionTitle}>{t('settings.reciter')}</Text>
           {RECITERS.map((reciterOption: ReciterOption) => (
             <TouchableOpacity accessible accessibilityRole="button"
               key={reciterOption.id}
@@ -213,14 +226,16 @@ export default function SettingsScreen({ navigation }: any) {
                 <Text style={styles.reciterName}>{reciterOption.nameAr}</Text>
                 <Text style={styles.reciterNameEn}>{reciterOption.name}</Text>
               </View>
-              {currentReciterId === reciterOption.id && <Text style={styles.checkmark}>✓</Text>}
+              {currentReciterId === reciterOption.id && (
+                <Ionicons name="checkmark" size={18} color={colors.primary} />
+              )}
             </TouchableOpacity>
           ))}
         </View>
 
         {/* Récitations conservées sur l'appareil */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>📥 {t('downloads.title')}</Text>
+          <Text style={styles.sectionTitle}>{t('downloads.title')}</Text>
           <View style={styles.settingsList}>
             <TouchableOpacity
               accessible
@@ -237,11 +252,9 @@ export default function SettingsScreen({ navigation }: any) {
 
         {/* Notifications Section */}
         <View style={styles.section}>
-          {/* ✅ AVANT: '🔔 الإشعارات' */}
-          <Text style={styles.sectionTitle}>🔔 {t('settings.notifications.title')}</Text>
+          <Text style={styles.sectionTitle}>{t('settings.notifications.title')}</Text>
           <View style={styles.settingsList}>
             <View style={styles.settingItem}>
-              {/* ✅ AVANT: 'تذكير يومي' */}
               <Text style={styles.settingLabel}>{t('settings.notifications.dailyReminder')}</Text>
               <Switch
                 value={notifications.dailyReminder}
@@ -251,7 +264,6 @@ export default function SettingsScreen({ navigation }: any) {
               />
             </View>
             <View style={styles.settingItem}>
-              {/* ✅ AVANT: 'تذكير السلسلة' */}
               <Text style={styles.settingLabel}>{t('settings.notifications.streakReminder')}</Text>
               <Switch
                 value={notifications.streakReminder}
@@ -261,7 +273,6 @@ export default function SettingsScreen({ navigation }: any) {
               />
             </View>
             <View style={styles.settingItem}>
-              {/* ✅ AVANT: 'تحديثات الدوري' */}
               <Text style={styles.settingLabel}>{t('settings.notifications.leagueUpdates')}</Text>
               <Switch
                 value={notifications.leagueUpdates}
@@ -271,7 +282,6 @@ export default function SettingsScreen({ navigation }: any) {
               />
             </View>
             <View style={styles.settingItem}>
-              {/* ✅ AVANT: 'نشاط الأصدقاء' */}
               <Text style={styles.settingLabel}>{t('settings.notifications.friendActivity')}</Text>
               <Switch
                 value={notifications.friendActivity}
@@ -285,31 +295,26 @@ export default function SettingsScreen({ navigation }: any) {
 
         {/* Account Section */}
         <View style={styles.section}>
-          {/* ✅ AVANT: '👤 الحساب' */}
-          <Text style={styles.sectionTitle}>👤 {t('settings.account.title')}</Text>
+          <Text style={styles.sectionTitle}>{t('settings.account.title')}</Text>
           <TouchableOpacity accessible accessibilityRole="button" style={styles.accountItem} onPress={() => {
             console.log(`${LOG_PREFIX} 👆 Edit profile pressed`);
           }}>
-            <Text style={styles.accountIcon}>✏️</Text>
-            {/* ✅ AVANT: 'تعديل الملف الشخصي' */}
+            <IconeProfil size={19} color={colors.textSecondary} />
             <Text style={styles.accountLabel}>{t('settings.account.editProfile')}</Text>
             <Text style={styles.accountArrow}>›</Text>
           </TouchableOpacity>
           <TouchableOpacity accessible accessibilityRole="button" style={styles.accountItem} onPress={() => {
             console.log(`${LOG_PREFIX} 👆 Change password pressed`);
           }}>
-            <Text style={styles.accountIcon}>🔒</Text>
-            {/* ✅ AVANT: 'تغيير كلمة المرور' */}
+            <IconeReglages size={19} color={colors.textSecondary} />
             <Text style={styles.accountLabel}>{t('settings.account.changePassword')}</Text>
             <Text style={styles.accountArrow}>›</Text>
           </TouchableOpacity>
           <TouchableOpacity accessible accessibilityRole="button" style={styles.accountItem} onPress={() => {
             console.log(`${LOG_PREFIX} 👆 Subscription pressed`);
           }}>
-            <Text style={styles.accountIcon}>⭐</Text>
-            {/* ✅ AVANT: 'الاشتراك' */}
+            <IconeAbonnement size={19} color={colors.textSecondary} />
             <Text style={styles.accountLabel}>{t('settings.account.subscription')}</Text>
-            {/* ✅ AVANT: 'مجاني' */}
             <Text style={styles.subscriptionBadge}>
               {user?.subscription?.plan || t('settings.account.free')}
             </Text>
@@ -317,8 +322,7 @@ export default function SettingsScreen({ navigation }: any) {
           <TouchableOpacity accessible accessibilityRole="button" style={[styles.accountItem, styles.dangerItem]} onPress={() => {
             console.log(`${LOG_PREFIX} 👆 Delete account pressed`);
           }}>
-            <Text style={styles.accountIcon}>🗑️</Text>
-            {/* ✅ AVANT: 'حذف الحساب' */}
+            <Ionicons name="trash-outline" size={19} color={colors.error} />
             <Text style={styles.dangerLabel}>{t('settings.account.deleteAccount')}</Text>
             <Text style={styles.accountArrow}>›</Text>
           </TouchableOpacity>
@@ -327,7 +331,6 @@ export default function SettingsScreen({ navigation }: any) {
         {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>Salifz v3.0.0</Text>
-          {/* ✅ AVANT: '© 2024 Salifz. جميع الحقوق محفوظة' */}
           <Text style={styles.footerCopyright}>{t('settings.footer.copyright')}</Text>
         </View>
 
@@ -350,20 +353,20 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   optionsRow: { flexDirection: 'row', justifyContent: 'space-between' },
   optionButton: { flex: 1, alignItems: 'center', padding: 15, borderRadius: 12, backgroundColor: c.background, marginHorizontal: 5 },
   optionButtonActive: { backgroundColor: c.primary + '20', borderWidth: 2, borderColor: c.primary },
-  optionFlag: { fontSize: 24, marginBottom: 5 },
-  optionIcon: { fontSize: 24, marginBottom: 5 },
+  optionFlag: { marginBottom: 5 },
+  optionIcon: { marginBottom: 5 },
   optionText: { color: c.textSecondary, fontSize: 12 },
   optionTextActive: { color: c.primary, fontWeight: 'bold' },
   reciterItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 15, borderRadius: 12, backgroundColor: c.background, marginBottom: 10 },
   reciterItemActive: { backgroundColor: c.primary + '20', borderWidth: 2, borderColor: c.primary },
   reciterName: { fontSize: 16, fontWeight: '600', color: c.text },
   reciterNameEn: { color: c.textSecondary, fontSize: 12, marginTop: 2 },
-  checkmark: { color: c.primary, fontSize: 20, fontWeight: 'bold' },
+  checkmark: {},
   settingsList: {},
   settingItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: c.backgroundAlt },
   settingLabel: { fontSize: 16, color: c.text },
   accountItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 15, borderBottomWidth: 1, borderBottomColor: c.backgroundAlt },
-  accountIcon: { fontSize: 20, marginRight: 15 },
+  accountIcon: { marginRight: 15 },
   accountLabel: { flex: 1, fontSize: 16, color: c.text },
   accountArrow: { fontSize: 20, color: c.textMuted },
   subscriptionBadge: { backgroundColor: c.primarySoft, color: c.primary, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 10, fontSize: 12, fontWeight: 'bold', overflow: 'hidden' },

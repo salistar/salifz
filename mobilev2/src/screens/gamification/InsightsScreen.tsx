@@ -15,14 +15,22 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthStore, useGamificationStore } from '../../stores';
 import { aiAPI } from '../../services/api';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
+import { HizbStar } from '../../components/common/Ornements';
+import {
+  IconeStatistiques,
+  IconeSerie,
+  IconeGemmes,
+  IconeMushaf,
+  IconeRevision,
+  IconeVersetDuJour,
+} from '../../components/common/Icones';
 
 const { width } = Dimensions.get('window');
 
-// ✅ Constante pour les logs
 const LOG_PREFIX = '[InsightsScreen.tsx]';
 
 export default function InsightsScreen({ navigation }: any) {
@@ -30,7 +38,7 @@ export default function InsightsScreen({ navigation }: any) {
   const styles = useThemedStyles(makeStyles);
 
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
-  
+
   const { user } = useAuthStore();
   const { totalXP, level, streak, gems } = useGamificationStore();
   const [refreshing, setRefreshing] = useState(false);
@@ -44,9 +52,9 @@ export default function InsightsScreen({ navigation }: any) {
     worstDay: 'monday' // ✅ CHANGÉ: clé au lieu de texte
   });
 
-  useEffect(() => { 
+  useEffect(() => {
     console.log(`${LOG_PREFIX} 🔄 useEffect: Loading insights...`);
-    loadInsights(); 
+    loadInsights();
   }, []);
 
   const loadInsights = async () => {
@@ -69,8 +77,6 @@ export default function InsightsScreen({ navigation }: any) {
     setRefreshing(false);
   };
 
-  // ✅ AVANT: jours en arabe hardcodés
-  // ✅ APRÈS: clés i18n pour les jours abrégés
   const progressData = [
     { dayKey: 'insights.days.sat', value: 30 },
     { dayKey: 'insights.days.sun', value: 45 },
@@ -88,7 +94,6 @@ export default function InsightsScreen({ navigation }: any) {
   const totalSurahsCompleted = user?.quranProgress?.totalSurahCompleted || 5;
   const totalJuzCompleted = user?.quranProgress?.totalJuzCompleted || 0;
 
-  // ✅ Helper pour obtenir le nom du jour traduit
   const getDayName = (dayKey: string) => {
     return t(`insights.fullDays.${dayKey}`);
   };
@@ -99,8 +104,8 @@ export default function InsightsScreen({ navigation }: any) {
     <View style={styles.container}>
       {/* Header */}
       <LinearGradient colors={[colors.accent, colors.accentDeep]} style={styles.header}>
-        <TouchableOpacity accessible accessibilityRole="button" 
-          style={styles.backButton} 
+        <TouchableOpacity accessible accessibilityRole="button"
+          style={styles.backButton}
           onPress={() => {
             console.log(`${LOG_PREFIX} 🔙 Back button pressed`);
             navigation.goBack();
@@ -108,41 +113,36 @@ export default function InsightsScreen({ navigation }: any) {
         >
           <Text style={styles.backIcon}>→</Text>
         </TouchableOpacity>
-        {/* ✅ AVANT: '📊 تحليلات الأداء' */}
-        <Text style={styles.headerTitle}>📊 {t('insights.title')}</Text>
+        <Text style={styles.headerTitle}>{t('insights.title')}</Text>
         <View style={{ width: 40 }} />
       </LinearGradient>
 
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {/* Overview Cards */}
         <View style={styles.overviewRow}>
           <View style={[styles.overviewCard, { backgroundColor: colors.primarySoft }]}>
-            <Text style={styles.overviewIcon}>📖</Text>
+            <IconeMushaf size={22} color={colors.primary} />
             <Text style={styles.overviewValue}>{weeklyStats.ayahsMemorized}</Text>
-            {/* ✅ AVANT: 'آية محفوظة' */}
             <Text style={styles.overviewLabel}>{t('insights.ayahsMemorized')}</Text>
           </View>
           <View style={[styles.overviewCard, { backgroundColor: colors.infoSoft }]}>
-            <Text style={styles.overviewIcon}>🔄</Text>
+            <IconeRevision size={22} color={colors.primary} />
             <Text style={styles.overviewValue}>{weeklyStats.reviewsDone}</Text>
-            {/* ✅ AVANT: 'مراجعة' */}
             <Text style={styles.overviewLabel}>{t('insights.reviews')}</Text>
           </View>
           <View style={[styles.overviewCard, { backgroundColor: colors.warningSoft }]}>
-            <Text style={styles.overviewIcon}>⏱️</Text>
+            <IconeSerie size={22} color={colors.primary} />
             <Text style={styles.overviewValue}>{weeklyStats.timeSpent}</Text>
-            {/* ✅ AVANT: 'دقيقة' */}
             <Text style={styles.overviewLabel}>{t('insights.minutes')}</Text>
           </View>
         </View>
 
         {/* Weekly Chart */}
         <View style={styles.card}>
-          {/* ✅ AVANT: '📈 نشاط الأسبوع' */}
-          <Text style={styles.cardTitle}>📈 {t('insights.weeklyActivity')}</Text>
+          <Text style={styles.cardTitle}>{t('insights.weeklyActivity')}</Text>
           <View style={styles.chartContainer}>
             {progressData.map((item, index) => (
               <View key={index} style={styles.barContainer}>
@@ -152,7 +152,6 @@ export default function InsightsScreen({ navigation }: any) {
                     style={[styles.bar, { height: `${(item.value / maxValue) * 100}%` }]}
                   />
                 </View>
-                {/* ✅ AVANT: {item.day} hardcodé */}
                 <Text style={styles.barLabel}>{t(item.dayKey)}</Text>
               </View>
             ))}
@@ -161,25 +160,21 @@ export default function InsightsScreen({ navigation }: any) {
 
         {/* Accuracy Card */}
         <View style={styles.card}>
-          {/* ✅ AVANT: '🎯 دقة الحفظ' */}
-          <Text style={styles.cardTitle}>🎯 {t('insights.memorizationAccuracy')}</Text>
+          <Text style={styles.cardTitle}>{t('insights.memorizationAccuracy')}</Text>
           <View style={styles.accuracyContainer}>
             <View style={styles.accuracyCircle}>
               <Text style={styles.accuracyValue}>{weeklyStats.accuracy}%</Text>
-              {/* ✅ AVANT: 'متوسط الدقة' */}
               <Text style={styles.accuracyLabel}>{t('insights.averageAccuracy')}</Text>
             </View>
             <View style={styles.accuracyDetails}>
               <View style={styles.accuracyItem}>
-                <Text style={styles.accuracyItemIcon}>✅</Text>
-                {/* ✅ AVANT: 'إجابات صحيحة: X' */}
+                <Ionicons name="checkmark-circle" size={20} color={colors.success} />
                 <Text style={styles.accuracyItemText}>
                   {t('insights.correctAnswers')}: {Math.round(weeklyStats.reviewsDone * weeklyStats.accuracy / 100)}
                 </Text>
               </View>
               <View style={styles.accuracyItem}>
-                <Text style={styles.accuracyItemIcon}>❌</Text>
-                {/* ✅ AVANT: 'إجابات خاطئة: X' */}
+                <Ionicons name="close-circle" size={20} color={colors.error} />
                 <Text style={styles.accuracyItemText}>
                   {t('insights.wrongAnswers')}: {Math.round(weeklyStats.reviewsDone * (100 - weeklyStats.accuracy) / 100)}
                 </Text>
@@ -191,42 +186,34 @@ export default function InsightsScreen({ navigation }: any) {
         {/* Best/Worst Days */}
         <View style={styles.daysRow}>
           <View style={[styles.dayCard, { backgroundColor: colors.primarySoft }]}>
-            <Text style={styles.dayIcon}>🌟</Text>
-            {/* ✅ AVANT: 'أفضل يوم' */}
+            <HizbStar size={20} quarters={4} color={colors.accent} />
             <Text style={styles.dayTitle}>{t('insights.bestDay')}</Text>
-            {/* ✅ AVANT: {weeklyStats.bestDay} hardcodé en arabe */}
             <Text style={styles.dayValue}>{getDayName(weeklyStats.bestDay)}</Text>
           </View>
           <View style={[styles.dayCard, { backgroundColor: colors.errorSoft }]}>
-            <Text style={styles.dayIcon}>📉</Text>
-            {/* ✅ AVANT: 'يحتاج تحسين' */}
+            <HizbStar size={20} quarters={1} color={colors.textMuted} />
             <Text style={styles.dayTitle}>{t('insights.needsImprovement')}</Text>
-            {/* ✅ AVANT: {weeklyStats.worstDay} hardcodé en arabe */}
             <Text style={styles.dayValue}>{getDayName(weeklyStats.worstDay)}</Text>
           </View>
         </View>
 
         {/* AI Recommendations */}
         <View style={styles.card}>
-          {/* ✅ AVANT: '🤖 توصيات الذكاء الاصطناعي' */}
-          <Text style={styles.cardTitle}>🤖 {t('insights.aiRecommendations')}</Text>
+          <Text style={styles.cardTitle}>{t('insights.aiRecommendations')}</Text>
           <View style={styles.recommendation}>
-            <Text style={styles.recommendationIcon}>💡</Text>
-            {/* ✅ AVANT: 'أداؤك ممتاز في أيام الجمعة!...' */}
+            <IconeVersetDuJour size={18} color={colors.accent} />
             <Text style={styles.recommendationText}>
               {t('insights.recommendation1')}
             </Text>
           </View>
           <View style={styles.recommendation}>
-            <Text style={styles.recommendationIcon}>🎯</Text>
-            {/* ✅ AVANT: 'دقة حفظك عالية...' */}
+            <IconeVersetDuJour size={18} color={colors.accent} />
             <Text style={styles.recommendationText}>
               {t('insights.recommendation2')}
             </Text>
           </View>
           <View style={styles.recommendation}>
-            <Text style={styles.recommendationIcon}>🔥</Text>
-            {/* ✅ AVANT: 'سلسلتك الحالية X يوم!...' */}
+            <IconeSerie size={18} color={colors.accent} />
             <Text style={styles.recommendationText}>
               {t('insights.recommendation3', { streak })}
             </Text>
@@ -235,55 +222,44 @@ export default function InsightsScreen({ navigation }: any) {
 
         {/* Progress Summary */}
         <View style={styles.card}>
-          {/* ✅ AVANT: '📋 ملخص التقدم' */}
-          <Text style={styles.cardTitle}>📋 {t('insights.progressSummary')}</Text>
+          <Text style={styles.cardTitle}>{t('insights.progressSummary')}</Text>
           <View style={styles.summaryItem}>
-            {/* ✅ AVANT: 'المستوى الحالي' */}
             <Text style={styles.summaryLabel}>{t('insights.currentLevel')}</Text>
-            {/* ✅ AVANT: 'المستوى X' */}
             <Text style={styles.summaryValue}>{t('insights.levelX', { level })}</Text>
           </View>
           <View style={styles.progressBar}>
             <View style={[styles.progressFill, { width: `${(totalXP % 100)}%` }]} />
           </View>
           <View style={styles.summaryItem}>
-            {/* ✅ AVANT: 'إجمالي النقاط' */}
             <Text style={styles.summaryLabel}>{t('insights.totalPoints')}</Text>
             <Text style={styles.summaryValue}>{totalXP} XP</Text>
           </View>
           <View style={styles.summaryItem}>
-            {/* ✅ AVANT: 'الجواهر المكتسبة' */}
             <Text style={styles.summaryLabel}>{t('insights.gemsEarned')}</Text>
-            <Text style={styles.summaryValue}>{gems} 💎</Text>
+            <Text style={styles.summaryValue}>{gems}</Text>
           </View>
           <View style={styles.summaryItem}>
-            {/* ✅ AVANT: 'أطول سلسلة' */}
             <Text style={styles.summaryLabel}>{t('insights.longestStreak')}</Text>
-            {/* ✅ AVANT: 'X يوم 🔥' */}
-            <Text style={styles.summaryValue}>{t('insights.daysStreak', { days: streak })} 🔥</Text>
+            <Text style={styles.summaryValue}>{t('insights.daysStreak', { days: streak })}</Text>
           </View>
         </View>
 
         {/* Memorization Stats */}
         <View style={styles.card}>
-          {/* ✅ AVANT: '📖 إحصائيات الحفظ' */}
-          <Text style={styles.cardTitle}>📖 {t('insights.memorizationStats')}</Text>
+          <Text style={styles.cardTitle}>{t('insights.memorizationStats')}</Text>
           <View style={styles.memStatsRow}>
             <View style={styles.memStatItem}>
               <Text style={styles.memStatValue}>{totalAyahsMemorized}</Text>
-              {/* ✅ AVANT: 'آية' */}
               <Text style={styles.memStatLabel}>{t('insights.ayah')}</Text>
             </View>
             <View style={styles.memStatDivider} />
             <View style={styles.memStatItem}>
               <Text style={styles.memStatValue}>{totalSurahsCompleted}</Text>
-              {/* ✅ AVANT: 'سورة' */}
               <Text style={styles.memStatLabel}>{t('insights.surah')}</Text>
             </View>
             <View style={styles.memStatDivider} />
             <View style={styles.memStatItem}>
               <Text style={styles.memStatValue}>{totalJuzCompleted}</Text>
-              {/* ✅ AVANT: 'جزء' */}
               <Text style={styles.memStatLabel}>{t('insights.juz')}</Text>
             </View>
           </View>
@@ -304,7 +280,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   content: { padding: 20 },
   overviewRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
   overviewCard: { width: (width - 60) / 3, borderRadius: 15, padding: 15, alignItems: 'center' },
-  overviewIcon: { fontSize: 24, marginBottom: 5 },
+  overviewIcon: { marginBottom: 5 },
   overviewValue: { fontSize: 24, fontWeight: 'bold', color: c.text },
   overviewLabel: { fontSize: 11, color: c.textSecondary, marginTop: 2 },
   card: { backgroundColor: c.surface, borderRadius: 20, padding: 20, marginBottom: 20, elevation: 2 },
@@ -320,15 +296,15 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   accuracyLabel: { fontSize: 10, color: c.textSecondary },
   accuracyDetails: { flex: 1 },
   accuracyItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
-  accuracyItemIcon: { fontSize: 16, marginRight: 10 },
+  accuracyItemIcon: { marginRight: 10 },
   accuracyItemText: { fontSize: 14, color: c.textSecondary },
   daysRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
   dayCard: { width: (width - 50) / 2, borderRadius: 15, padding: 20, alignItems: 'center' },
-  dayIcon: { fontSize: 30, marginBottom: 10 },
+  dayIcon: { marginBottom: 10 },
   dayTitle: { fontSize: 12, color: c.textSecondary },
   dayValue: { fontSize: 18, fontWeight: 'bold', color: c.text, marginTop: 5 },
   recommendation: { flexDirection: 'row', backgroundColor: c.background, borderRadius: 12, padding: 15, marginBottom: 10 },
-  recommendationIcon: { fontSize: 20, marginRight: 10 },
+  recommendationIcon: { marginRight: 10 },
   recommendationText: { flex: 1, fontSize: 14, color: c.text, lineHeight: 22 },
   summaryItem: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: c.backgroundAlt },
   summaryLabel: { fontSize: 14, color: c.textSecondary },

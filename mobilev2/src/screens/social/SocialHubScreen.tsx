@@ -22,10 +22,11 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { chatAPI, halaqaAPI, socialAPI } from '../../services/api';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t, getLocale } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
+import { MihrabArch } from '../../components/common/Ornements';
+import { IconeHalaqat, IconeAmis } from '../../components/common/Icones';
 
 const LOG_PREFIX = '[SocialHubScreen.tsx]';
 
@@ -36,7 +37,7 @@ export default function SocialHubScreen({ navigation }: any) {
   const styles = useThemedStyles(makeStyles);
 
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
-  
+
   const [refreshing, setRefreshing] = useState(false);
   const [conversations, setConversations] = useState<any[]>([]);
   const [halaqat, setHalaqat] = useState<any[]>([]);
@@ -51,7 +52,7 @@ export default function SocialHubScreen({ navigation }: any) {
 
   const loadData = async () => {
     console.log(`${LOG_PREFIX} 📥 loadData()`);
-    
+
     try {
       const [convosRes, halaqatRes, friendsRes, requestsRes] = await Promise.all([
         chatAPI.getConversations().catch(() => ({ data: [] })),
@@ -76,7 +77,7 @@ export default function SocialHubScreen({ navigation }: any) {
 
       const rList = requestsRes.data?.requests || requestsRes.requests || requestsRes.data || [];
       setFriendRequests(Array.isArray(rList) ? rList : []);
-      
+
       console.log(`${LOG_PREFIX} ✅ Data loaded - convos: ${convos.length}, halaqat: ${hList.length}, friends: ${fList.length}`);
     } catch (error) {
       console.error(`${LOG_PREFIX} ❌ Load social data error:`, error);
@@ -91,7 +92,6 @@ export default function SocialHubScreen({ navigation }: any) {
     loadData();
   };
 
-  // ✅ Format time avec i18n
   const formatTime = (dateString?: string): string => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -109,10 +109,8 @@ export default function SocialHubScreen({ navigation }: any) {
     if (days === 0) {
       return date.toLocaleTimeString(localeMap[locale] || 'ar-SA', { hour: '2-digit', minute: '2-digit' });
     } else if (days === 1) {
-      // ✅ AVANT: 'أمس'
       return t('socialHub.time.yesterday');
     } else if (days < 7) {
-      // ✅ AVANT: `${days} أيام`
       return t('socialHub.time.daysAgo', { count: days });
     } else {
       return date.toLocaleDateString(localeMap[locale] || 'ar-SA', { month: 'short', day: 'numeric' });
@@ -123,9 +121,7 @@ export default function SocialHubScreen({ navigation }: any) {
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
       <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
-        {/* ✅ AVANT: 'التواصل' */}
         <Text style={styles.headerTitle}>{t('socialHub.title')}</Text>
-        {/* ✅ AVANT: 'تواصل مع أصدقائك وحلقاتك' */}
         <Text style={styles.headerSubtitle}>{t('socialHub.subtitle')}</Text>
       </LinearGradient>
 
@@ -145,7 +141,7 @@ export default function SocialHubScreen({ navigation }: any) {
             }}
           >
             <View style={[styles.quickActionIcon, { backgroundColor: colors.infoSoft }]}>
-              <Text style={styles.quickActionEmoji}>💬</Text>
+              <IconeHalaqat size={26} color={colors.primary} />
               {unreadMessages > 0 && (
                 <View style={styles.quickActionBadge}>
                   <Text style={styles.quickActionBadgeText}>
@@ -154,7 +150,6 @@ export default function SocialHubScreen({ navigation }: any) {
                 </View>
               )}
             </View>
-            {/* ✅ AVANT: 'المحادثات' */}
             <Text style={styles.quickActionLabel}>{t('socialHub.quickActions.conversations')}</Text>
           </TouchableOpacity>
 
@@ -166,9 +161,8 @@ export default function SocialHubScreen({ navigation }: any) {
             }}
           >
             <View style={[styles.quickActionIcon, { backgroundColor: colors.primarySoft }]}>
-              <Text style={styles.quickActionEmoji}>🕌</Text>
+              <IconeHalaqat size={26} color={colors.primary} />
             </View>
-            {/* ✅ AVANT: 'الحلقات' */}
             <Text style={styles.quickActionLabel}>{t('socialHub.quickActions.halaqat')}</Text>
           </TouchableOpacity>
 
@@ -180,14 +174,13 @@ export default function SocialHubScreen({ navigation }: any) {
             }}
           >
             <View style={[styles.quickActionIcon, { backgroundColor: colors.warningSoft }]}>
-              <Text style={styles.quickActionEmoji}>👥</Text>
+              <IconeAmis size={26} color={colors.primary} />
               {friendRequests.length > 0 && (
                 <View style={styles.quickActionBadge}>
                   <Text style={styles.quickActionBadgeText}>{friendRequests.length}</Text>
                 </View>
               )}
             </View>
-            {/* ✅ AVANT: 'الأصدقاء' */}
             <Text style={styles.quickActionLabel}>{t('socialHub.quickActions.friends')}</Text>
           </TouchableOpacity>
 
@@ -199,9 +192,8 @@ export default function SocialHubScreen({ navigation }: any) {
             }}
           >
             <View style={[styles.quickActionIcon, { backgroundColor: colors.accentSoft }]}>
-              <Text style={styles.quickActionEmoji}>🏆</Text>
+              <IconeAmis size={26} color={colors.primary} />
             </View>
-            {/* ✅ AVANT: 'الترتيب' */}
             <Text style={styles.quickActionLabel}>{t('socialHub.quickActions.leaderboard')}</Text>
           </TouchableOpacity>
         </View>
@@ -210,7 +202,6 @@ export default function SocialHubScreen({ navigation }: any) {
         {friendRequests.length > 0 && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              {/* ✅ AVANT: '📬 طلبات الصداقة' */}
               <Text style={styles.sectionTitle}>{t('socialHub.sections.friendRequests')}</Text>
               <View style={styles.requestsBadge}>
                 <Text style={styles.requestsBadgeText}>{friendRequests.length}</Text>
@@ -220,10 +211,13 @@ export default function SocialHubScreen({ navigation }: any) {
               {friendRequests.map((request, index) => (
                 <View key={request._id || index} style={styles.requestCard}>
                   <View style={styles.requestAvatar}>
-                    <Text style={styles.requestAvatarText}>👤</Text>
+                    <Text style={styles.requestAvatarText}>
+                  {(request.from?.displayName || request.from?.username || '?')
+                    .charAt(0)
+                    .toUpperCase()}
+                </Text>
                   </View>
                   <Text style={styles.requestName} numberOfLines={1}>
-                    {/* ✅ AVANT: 'مستخدم' */}
                     {request.from?.displayName || request.from?.username || t('socialHub.user')}
                   </Text>
                   <View style={styles.requestActions}>
@@ -234,7 +228,6 @@ export default function SocialHubScreen({ navigation }: any) {
                         setFriendRequests((prev) => prev.filter((r) => r._id !== request._id));
                       }}
                     >
-                      {/* ✅ AVANT: 'قبول' */}
                       <Text style={styles.acceptButtonText}>{t('socialHub.accept')}</Text>
                     </TouchableOpacity>
                   </View>
@@ -247,10 +240,8 @@ export default function SocialHubScreen({ navigation }: any) {
         {/* Recent Conversations */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            {/* ✅ AVANT: '💬 المحادثات الأخيرة' */}
             <Text style={styles.sectionTitle}>{t('socialHub.sections.recentConversations')}</Text>
             <TouchableOpacity accessible accessibilityRole="button" onPress={() => navigation.navigate('ConversationsList')}>
-              {/* ✅ AVANT: 'عرض الكل' */}
               <Text style={styles.seeAll}>{t('socialHub.seeAll')}</Text>
             </TouchableOpacity>
           </View>
@@ -278,11 +269,9 @@ export default function SocialHubScreen({ navigation }: any) {
                       ? conv.name
                       : conv.participants?.[0]?.displayName ||
                         conv.participants?.[0]?.username ||
-                        // ✅ AVANT: 'محادثة'
                         t('socialHub.conversation')}
                   </Text>
                   <Text style={styles.conversationLastMessage} numberOfLines={1}>
-                    {/* ✅ AVANT: 'لا توجد رسائل' */}
                     {conv.lastMessageText || t('socialHub.noMessages')}
                   </Text>
                 </View>
@@ -300,14 +289,12 @@ export default function SocialHubScreen({ navigation }: any) {
             ))
           ) : (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyIcon}>💬</Text>
-              {/* ✅ AVANT: 'لا توجد محادثات بعد' */}
+              <MihrabArch width={70} color={colors.border} />
               <Text style={styles.emptyText}>{t('socialHub.empty.conversations')}</Text>
               <TouchableOpacity accessible accessibilityRole="button"
                 style={styles.emptyButton}
                 onPress={() => navigation.navigate('Friends')}
               >
-                {/* ✅ AVANT: 'ابدأ محادثة جديدة' */}
                 <Text style={styles.emptyButtonText}>{t('socialHub.startNewConversation')}</Text>
               </TouchableOpacity>
             </View>
@@ -317,7 +304,6 @@ export default function SocialHubScreen({ navigation }: any) {
         {/* My Halaqat */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            {/* ✅ AVANT: '🕌 حلقاتي' */}
             <Text style={styles.sectionTitle}>{t('socialHub.sections.myHalaqat')}</Text>
             <TouchableOpacity accessible accessibilityRole="button" onPress={() => navigation.navigate('Halaqa')}>
               <Text style={styles.seeAll}>{t('socialHub.seeAll')}</Text>
@@ -333,12 +319,11 @@ export default function SocialHubScreen({ navigation }: any) {
                   onPress={() => navigation.navigate('HalaqaDetail', { halaqaId: halaqa._id })}
                 >
                   <View style={styles.halaqaIconContainer}>
-                    <Text style={styles.halaqaIcon}>🕌</Text>
+                    <IconeHalaqat size={20} color={colors.primary} />
                   </View>
                   <Text style={styles.halaqaName} numberOfLines={1}>
                     {halaqa.name}
                   </Text>
-                  {/* ✅ AVANT: 'عضو' */}
                   <Text style={styles.halaqaMembers}>
                     {halaqa.membersCount || halaqa.participants?.length || 0} {t('socialHub.member')}
                   </Text>
@@ -351,22 +336,18 @@ export default function SocialHubScreen({ navigation }: any) {
                 <View style={[styles.halaqaIconContainer, { backgroundColor: colors.border }]}>
                   <Ionicons name="add" size={28} color={colors.textSecondary} />
                 </View>
-                {/* ✅ AVANT: 'انضم أو أنشئ' */}
                 <Text style={styles.halaqaName}>{t('socialHub.joinOrCreate')}</Text>
-                {/* ✅ AVANT: 'حلقة جديدة' */}
                 <Text style={styles.halaqaMembers}>{t('socialHub.newHalaqa')}</Text>
               </TouchableOpacity>
             </ScrollView>
           ) : (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyIcon}>🕌</Text>
-              {/* ✅ AVANT: 'لم تنضم لأي حلقة بعد' */}
+              <MihrabArch width={70} color={colors.border} />
               <Text style={styles.emptyText}>{t('socialHub.empty.halaqat')}</Text>
               <TouchableOpacity accessible accessibilityRole="button"
                 style={styles.emptyButton}
                 onPress={() => navigation.navigate('Halaqa')}
               >
-                {/* ✅ AVANT: 'استكشف الحلقات' */}
                 <Text style={styles.emptyButtonText}>{t('socialHub.exploreHalaqat')}</Text>
               </TouchableOpacity>
             </View>
@@ -377,10 +358,8 @@ export default function SocialHubScreen({ navigation }: any) {
         {friends.length > 0 && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              {/* ✅ AVANT: '👥 الأصدقاء' */}
               <Text style={styles.sectionTitle}>{t('socialHub.sections.friends')}</Text>
               <TouchableOpacity accessible accessibilityRole="button" onPress={() => navigation.navigate('Friends')}>
-                {/* ✅ AVANT: 'عرض الكل (X)' */}
                 <Text style={styles.seeAll}>
                   {t('socialHub.seeAllCount', { count: friends.length })}
                 </Text>
@@ -395,7 +374,9 @@ export default function SocialHubScreen({ navigation }: any) {
                   onPress={() => navigation.navigate('UserProfile', { userId: friend._id })}
                 >
                   <View style={styles.friendAvatar}>
-                    <Text style={styles.friendAvatarText}>👤</Text>
+                    <Text style={styles.friendAvatarText}>
+                  {(friend.displayName || friend.username || '?').charAt(0).toUpperCase()}
+                </Text>
                     {friend.isOnline && <View style={styles.onlineIndicator} />}
                   </View>
                   <Text style={styles.friendName} numberOfLines={1}>
@@ -458,7 +439,6 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     position: 'relative',
   },
   quickActionEmoji: {
-    fontSize: 28,
   },
   quickActionBadge: {
     position: 'absolute',
@@ -637,7 +617,6 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     marginBottom: 10,
   },
   halaqaIcon: {
-    fontSize: 24,
   },
   halaqaName: {
     fontSize: 13,
@@ -689,7 +668,6 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     paddingVertical: 30,
   },
   emptyIcon: {
-    fontSize: 50,
     marginBottom: 15,
   },
   emptyText: {
