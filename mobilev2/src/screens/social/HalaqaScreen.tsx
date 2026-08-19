@@ -36,10 +36,23 @@ import { useFocusEffect } from '@react-navigation/native';
 import { halaqaAPI, isAuthenticated } from '../../services/api';
 import { useAuthStore } from '../../stores';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
-import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
+import { HizbStar, MihrabArch } from '../../components/common/Ornements';
+import {
+  IconeMushaf,
+  IconeRevision,
+  IconeDefis,
+  IconeLecons,
+  IconeRecitations,
+  IconeClassement,
+  IconeVersetDuJour,
+  IconeHalaqat,
+  IconeRecompense,
+  IconeAmis,
+  IconeProps,
+} from '../../components/common/Icones';
 
 const LOG_PREFIX = '[HalaqaScreen.tsx]';
 
@@ -47,23 +60,44 @@ console.log(`${LOG_PREFIX} 📁 File loaded`);
 
 const { width } = Dimensions.get('window');
 
-// ✅ 12 Activity Types available for Halaqat - Fonction dynamique pour i18n
+/**
+ * Les douze types d'activite.
+ *
+ * Chacun portait un emoji. Douze styles de dessin cote a cote donnent
+ * l'impression d'un assemblage plutot que d'un produit, et le rendu change
+ * d'un appareil a l'autre. La table ci-dessous est la meme que celle de
+ * l'ecran de detail : une notion, une icone, partout.
+ */
+export const ICONES_ACTIVITE: Record<string, React.ComponentType<IconeProps>> = {
+  memorize: IconeMushaf,
+  review: IconeRevision,
+  tajweed: IconeDefis,
+  tafseer: IconeLecons,
+  recitation: IconeRecitations,
+  competition: IconeClassement,
+  lesson: IconeLecons,
+  quiz: IconeVersetDuJour,
+  discussion: IconeHalaqat,
+  challenge: IconeDefis,
+  workshop: IconeAmis,
+  achievement: IconeRecompense,
+};
+
 export const getActivityTypes = () => [
-  { id: 'memorize', name: t('halaqa.activityTypes.memorize'), icon: '📖', description: t('halaqa.activityTypes.memorizeDesc'), xpReward: 50 },
-  { id: 'review', name: t('halaqa.activityTypes.review'), icon: '🔄', description: t('halaqa.activityTypes.reviewDesc'), xpReward: 30 },
-  { id: 'tajweed', name: t('halaqa.activityTypes.tajweed'), icon: '🎯', description: t('halaqa.activityTypes.tajweedDesc'), xpReward: 40 },
-  { id: 'tafseer', name: t('halaqa.activityTypes.tafseer'), icon: '📚', description: t('halaqa.activityTypes.tafseerDesc'), xpReward: 35 },
-  { id: 'recitation', name: t('halaqa.activityTypes.recitation'), icon: '🎙️', description: t('halaqa.activityTypes.recitationDesc'), xpReward: 25 },
-  { id: 'competition', name: t('halaqa.activityTypes.competition'), icon: '🏆', description: t('halaqa.activityTypes.competitionDesc'), xpReward: 100 },
-  { id: 'lesson', name: t('halaqa.activityTypes.lesson'), icon: '📝', description: t('halaqa.activityTypes.lessonDesc'), xpReward: 45 },
-  { id: 'quiz', name: t('halaqa.activityTypes.quiz'), icon: '❓', description: t('halaqa.activityTypes.quizDesc'), xpReward: 60 },
-  { id: 'discussion', name: t('halaqa.activityTypes.discussion'), icon: '💬', description: t('halaqa.activityTypes.discussionDesc'), xpReward: 20 },
-  { id: 'challenge', name: t('halaqa.activityTypes.challenge'), icon: '⚡', description: t('halaqa.activityTypes.challengeDesc'), xpReward: 80 },
-  { id: 'workshop', name: t('halaqa.activityTypes.workshop'), icon: '🛠️', description: t('halaqa.activityTypes.workshopDesc'), xpReward: 55 },
-  { id: 'achievement', name: t('halaqa.activityTypes.achievement'), icon: '🏅', description: t('halaqa.activityTypes.achievementDesc'), xpReward: 70 },
+  { id: 'memorize', name: t('halaqa.activityTypes.memorize'), description: t('halaqa.activityTypes.memorizeDesc'), xpReward: 50 },
+  { id: 'review', name: t('halaqa.activityTypes.review'), description: t('halaqa.activityTypes.reviewDesc'), xpReward: 30 },
+  { id: 'tajweed', name: t('halaqa.activityTypes.tajweed'), description: t('halaqa.activityTypes.tajweedDesc'), xpReward: 40 },
+  { id: 'tafseer', name: t('halaqa.activityTypes.tafseer'), description: t('halaqa.activityTypes.tafseerDesc'), xpReward: 35 },
+  { id: 'recitation', name: t('halaqa.activityTypes.recitation'), description: t('halaqa.activityTypes.recitationDesc'), xpReward: 25 },
+  { id: 'competition', name: t('halaqa.activityTypes.competition'), description: t('halaqa.activityTypes.competitionDesc'), xpReward: 100 },
+  { id: 'lesson', name: t('halaqa.activityTypes.lesson'), description: t('halaqa.activityTypes.lessonDesc'), xpReward: 45 },
+  { id: 'quiz', name: t('halaqa.activityTypes.quiz'), description: t('halaqa.activityTypes.quizDesc'), xpReward: 60 },
+  { id: 'discussion', name: t('halaqa.activityTypes.discussion'), description: t('halaqa.activityTypes.discussionDesc'), xpReward: 20 },
+  { id: 'challenge', name: t('halaqa.activityTypes.challenge'), description: t('halaqa.activityTypes.challengeDesc'), xpReward: 80 },
+  { id: 'workshop', name: t('halaqa.activityTypes.workshop'), description: t('halaqa.activityTypes.workshopDesc'), xpReward: 55 },
+  { id: 'achievement', name: t('halaqa.activityTypes.achievement'), description: t('halaqa.activityTypes.achievementDesc'), xpReward: 70 },
 ];
 
-// ✅ Export pour compatibilité (appelé dynamiquement)
 export const ACTIVITY_TYPES = getActivityTypes();
 
 interface Halaqa {
@@ -104,7 +138,7 @@ export default function HalaqaScreen({ navigation }: any) {
   const styles = useThemedStyles(makeStyles);
 
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
-  
+
   const { user } = useAuthStore();
   const [activeTab, setActiveTab] = useState<TabType>('my');
   const [myHalaqat, setMyHalaqat] = useState<Halaqa[]>([]);
@@ -114,7 +148,7 @@ export default function HalaqaScreen({ navigation }: any) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
-  
+
   // Create form
   const [newHalaqaName, setNewHalaqaName] = useState('');
   const [newHalaqaDescription, setNewHalaqaDescription] = useState('');
@@ -126,11 +160,10 @@ export default function HalaqaScreen({ navigation }: any) {
   const [selectedActivityTypes, setSelectedActivityTypes] = useState<string[]>([
     'memorize', 'review', 'tajweed', 'recitation', 'quiz'
   ]);
-  
+
   // Join form
   const [inviteCode, setInviteCode] = useState('');
 
-  // ✅ Récupérer les types d'activités avec i18n
   const ACTIVITY_TYPES_LIST = getActivityTypes();
 
   useFocusEffect(
@@ -142,19 +175,19 @@ export default function HalaqaScreen({ navigation }: any) {
 
   const loadHalaqat = async () => {
     console.log(`${LOG_PREFIX} 📥 loadHalaqat()`);
-    
+
     try {
       setIsLoading(true);
-      
+
       await new Promise(resolve => setTimeout(resolve, 300));
-      
+
       if (!isAuthenticated()) {
         console.log(`${LOG_PREFIX} ⚠️ Not authenticated`);
         setMyHalaqat([]);
         setPublicHalaqat([]);
         return;
       }
-      
+
       // Load my halaqat
       try {
         const myResponse = await halaqaAPI.getHalaqat();
@@ -166,20 +199,20 @@ export default function HalaqaScreen({ navigation }: any) {
         } else if (Array.isArray(myResponse)) {
           myData = myResponse;
         }
-        
+
         myData = myData.map(h => ({
           ...h,
           isAdmin: h.creator?._id === user?._id,
           isMember: true
         }));
-        
+
         setMyHalaqat(myData);
         console.log(`${LOG_PREFIX} ✅ My halaqat loaded: ${myData.length}`);
       } catch (e) {
         console.log(`${LOG_PREFIX} ❌ Error loading my halaqat:`, e);
         setMyHalaqat([]);
       }
-      
+
       // Load public halaqat
       try {
         const publicResponse = await halaqaAPI.discoverHalaqat();
@@ -191,17 +224,17 @@ export default function HalaqaScreen({ navigation }: any) {
         } else if (Array.isArray(publicResponse)) {
           publicData = publicResponse;
         }
-        
+
         const myIds = myHalaqat.map(h => h._id);
         publicData = publicData.filter(h => !myIds.includes(h._id));
-        
+
         setPublicHalaqat(publicData);
         console.log(`${LOG_PREFIX} ✅ Public halaqat loaded: ${publicData.length}`);
       } catch (e) {
         console.log(`${LOG_PREFIX} ❌ Error loading public halaqat:`, e);
         setPublicHalaqat([]);
       }
-      
+
     } catch (error) {
       console.error(`${LOG_PREFIX} ❌ Load error:`, error);
     } finally {
@@ -228,13 +261,11 @@ export default function HalaqaScreen({ navigation }: any) {
 
   const handleCreateHalaqa = async () => {
     if (!newHalaqaName.trim()) {
-      // ✅ AVANT: Alert.alert('خطأ', 'اسم الحلقة مطلوب')
       Alert.alert(t('common.error'), t('halaqa.create.errors.nameRequired'));
       return;
     }
-    
+
     if (selectedActivityTypes.length === 0) {
-      // ✅ AVANT: Alert.alert('خطأ', 'اختر نوع نشاط واحد على الأقل')
       Alert.alert(t('common.error'), t('halaqa.create.errors.selectActivity'));
       return;
     }
@@ -243,7 +274,7 @@ export default function HalaqaScreen({ navigation }: any) {
       setIsCreating(true);
       console.log(`${LOG_PREFIX} ➕ Creating halaqa: ${newHalaqaName}`);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      
+
       const halaqaData = {
         name: newHalaqaName.trim(),
         description: newHalaqaDescription.trim(),
@@ -256,23 +287,21 @@ export default function HalaqaScreen({ navigation }: any) {
         },
         maxMembers: parseInt(maxMembers) || 50,
       };
-      
+
       const response = await halaqaAPI.createHalaqa(halaqaData);
-      
+
       setShowCreateModal(false);
       resetCreateForm();
       await loadHalaqat();
-      
+
       const newHalaqa = response?.data || response?.halaqa || response;
       if (newHalaqa?._id) {
-        // ✅ AVANT: Alert.alert('تم ✅', 'تم إنشاء الحلقة بنجاح', [...])
         Alert.alert(t('common.done'), t('halaqa.create.success'), [
           {
-            // ✅ AVANT: 'عرض الحلقة'
             text: t('halaqa.create.viewHalaqa'),
-            onPress: () => navigation.navigate('HalaqaDetail', { 
+            onPress: () => navigation.navigate('HalaqaDetail', {
               halaqaId: newHalaqa._id,
-              halaqaData: newHalaqa 
+              halaqaData: newHalaqa
             })
           },
           { text: t('common.ok') }
@@ -283,7 +312,6 @@ export default function HalaqaScreen({ navigation }: any) {
       console.log(`${LOG_PREFIX} ✅ Halaqa created`);
     } catch (error: any) {
       console.error(`${LOG_PREFIX} ❌ Create error:`, error);
-      // ✅ AVANT: Alert.alert('خطأ', error?.error || error?.message || 'فشل في إنشاء الحلقة')
       Alert.alert(t('common.error'), error?.error || error?.message || t('halaqa.create.errors.failed'));
     } finally {
       setIsCreating(false);
@@ -303,7 +331,6 @@ export default function HalaqaScreen({ navigation }: any) {
 
   const handleJoinByCode = async () => {
     if (!inviteCode.trim()) {
-      // ✅ AVANT: Alert.alert('خطأ', 'رمز الدعوة مطلوب')
       Alert.alert(t('common.error'), t('halaqa.join.errors.codeRequired'));
       return;
     }
@@ -312,23 +339,22 @@ export default function HalaqaScreen({ navigation }: any) {
       setIsJoining(true);
       console.log(`${LOG_PREFIX} 🔗 Joining by code: ${inviteCode}`);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      
+
       const response = await halaqaAPI.joinHalaqa(inviteCode.trim().toUpperCase());
-      
+
       setInviteCode('');
       await loadHalaqat();
-      
+
       const joinedHalaqa = response?.data || response?.halaqa || response;
       if (joinedHalaqa?._id) {
-        // ✅ AVANT: Alert.alert('تم ✅', 'تم الانضمام للحلقة بنجاح', [...])
         Alert.alert(t('common.done'), t('halaqa.join.success'), [
           {
             text: t('halaqa.create.viewHalaqa'),
             onPress: () => {
               setActiveTab('my');
-              navigation.navigate('HalaqaDetail', { 
+              navigation.navigate('HalaqaDetail', {
                 halaqaId: joinedHalaqa._id,
-                halaqaData: joinedHalaqa 
+                halaqaData: joinedHalaqa
               });
             }
           },
@@ -341,7 +367,6 @@ export default function HalaqaScreen({ navigation }: any) {
       console.log(`${LOG_PREFIX} ✅ Joined halaqa`);
     } catch (error: any) {
       console.error(`${LOG_PREFIX} ❌ Join error:`, error);
-      // ✅ AVANT: Alert.alert('خطأ', error?.error || error?.message || 'رمز الدعوة غير صحيح')
       Alert.alert(t('common.error'), error?.error || error?.message || t('halaqa.join.errors.invalidCode'));
     } finally {
       setIsJoining(false);
@@ -349,14 +374,12 @@ export default function HalaqaScreen({ navigation }: any) {
   };
 
   const handleJoinPublicHalaqa = async (halaqa: Halaqa) => {
-    // ✅ AVANT: Alert.alert('انضمام للحلقة', `هل تريد الانضمام إلى "${halaqa.name}"؟`, [...])
     Alert.alert(
       t('halaqa.join.title'),
       t('halaqa.join.confirmMessage', { name: halaqa.name }),
       [
         { text: t('common.cancel'), style: 'cancel' },
         {
-          // ✅ AVANT: 'انضمام'
           text: t('halaqa.join.button'),
           onPress: async () => {
             try {
@@ -364,15 +387,15 @@ export default function HalaqaScreen({ navigation }: any) {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
               await halaqaAPI.joinById(halaqa._id);
               await loadHalaqat();
-              
+
               Alert.alert(t('common.done'), t('halaqa.join.success'), [
                 {
                   text: t('halaqa.create.viewHalaqa'),
                   onPress: () => {
                     setActiveTab('my');
-                    navigation.navigate('HalaqaDetail', { 
+                    navigation.navigate('HalaqaDetail', {
                       halaqaId: halaqa._id,
-                      halaqaData: halaqa 
+                      halaqaData: halaqa
                     });
                   }
                 },
@@ -380,7 +403,6 @@ export default function HalaqaScreen({ navigation }: any) {
               ]);
               console.log(`${LOG_PREFIX} ✅ Joined public halaqa`);
             } catch (error: any) {
-              // ✅ AVANT: Alert.alert('خطأ', error?.error || 'فشل في الانضمام')
               Alert.alert(t('common.error'), error?.error || t('halaqa.join.errors.failed'));
             }
           }
@@ -399,9 +421,7 @@ export default function HalaqaScreen({ navigation }: any) {
   };
 
   // Safe getters
-  // ✅ AVANT: 'حلقة'
   const getName = (h: Halaqa): string => h?.name || t('halaqa.defaultName');
-  // ✅ AVANT: 'حلقة لحفظ القرآن'
   const getDescription = (h: Halaqa): string => h?.description || t('halaqa.defaultDescription');
   const getMemberCount = (h: Halaqa): number => h?.membersCount || h?.memberCount || h?.members?.length || 1;
   const getMaxMembers = (h: Halaqa): number => h?.maxMembers || 50;
@@ -432,54 +452,63 @@ export default function HalaqaScreen({ navigation }: any) {
           </Text>
           {isAdmin && (
             <View style={styles.adminBadgeSmall}>
-              <Text style={styles.adminBadgeSmallText}>{'👑'}</Text>
+              <HizbStar size={12} quarters={4} color={fixedColors.gold} />
             </View>
           )}
         </View>
-        
+
         <View style={styles.halaqaInfo}>
           <View style={styles.halaqaNameRow}>
             <Text style={styles.halaqaName} numberOfLines={1}>{name}</Text>
-            {/* ✅ AVANT: 'مدير' */}
             {isAdmin && <Text style={styles.adminLabel}>{t('halaqa.admin')}</Text>}
           </View>
           <Text style={styles.halaqaDescription} numberOfLines={1}>
             {description}
           </Text>
-          
+
           <View style={styles.activityTypesPreview}>
             {activityTypes.slice(0, 4).map((typeId, index) => {
-              const actType = ACTIVITY_TYPES_LIST.find(t => t.id === typeId);
-              return actType ? (
-                <Text key={index} style={styles.activityTypeIcon}>{actType.icon}</Text>
+              const Icone = ICONES_ACTIVITE[typeId];
+              return Icone ? (
+                <View key={index} style={styles.activityTypeIcon}>
+                  <Icone size={14} color={colors.textMuted} />
+                </View>
               ) : null;
             })}
             {activityTypes.length > 4 && (
               <Text style={styles.moreActivities}>{'+' + (activityTypes.length - 4)}</Text>
             )}
           </View>
-          
+
           <View style={styles.halaqaStats}>
-            <Text style={styles.halaqaStat}>
-              {'👥 '}{String(memberCount)}{'/'}{String(maxMembersCount)}
-            </Text>
-            {/* ✅ AVANT: 'آية' */}
-            <Text style={styles.halaqaStat}>
-              {'📖 '}{String(totalVerses)} {t('halaqa.stats.verse')}
-            </Text>
+            <View style={styles.statLigne}>
+              <IconeAmis size={13} color={colors.textSecondary} />
+              <Text style={styles.halaqaStat}>
+                {String(memberCount)}/{String(maxMembersCount)}
+              </Text>
+            </View>
+            <View style={styles.statLigne}>
+              <IconeMushaf size={13} color={colors.textSecondary} />
+              <Text style={styles.halaqaStat}>
+                {String(totalVerses)} {t('halaqa.stats.verse')}
+              </Text>
+            </View>
           </View>
         </View>
-        
+
         <View style={styles.halaqaRight}>
-          <Text style={styles.halaqaBadgeText}>
-            {isPublicHalaqa ? '🌍' : '🔒'}
-          </Text>
+          {/* Publique ou privee : le cadenas dit la fermeture, son absence
+              dit l'ouverture. Le globe ne disait rien de plus. */}
+          <Ionicons
+            name={isPublicHalaqa ? 'earth-outline' : 'lock-closed-outline'}
+            size={16}
+            color={colors.textMuted}
+          />
           {isPublicList ? (
-            <TouchableOpacity accessible accessibilityRole="button" 
+            <TouchableOpacity accessible accessibilityRole="button"
               style={styles.joinButtonSmall}
               onPress={() => handleJoinPublicHalaqa(item)}
             >
-              {/* ✅ AVANT: 'انضمام' */}
               <Text style={styles.joinButtonSmallText}>{t('halaqa.join.button')}</Text>
             </TouchableOpacity>
           ) : (
@@ -491,40 +520,34 @@ export default function HalaqaScreen({ navigation }: any) {
   };
 
   const renderEmptyState = (type: TabType) => {
-    // ✅ AVANT: Messages hardcodés
     const messages = {
-      my: { 
-        icon: '🕌', 
-        title: t('halaqa.empty.my.title'), 
-        subtitle: t('halaqa.empty.my.subtitle') 
+      my: {
+        title: t('halaqa.empty.my.title'),
+        subtitle: t('halaqa.empty.my.subtitle')
       },
-      public: { 
-        icon: '🌍', 
-        title: t('halaqa.empty.public.title'), 
-        subtitle: t('halaqa.empty.public.subtitle') 
+      public: {
+        title: t('halaqa.empty.public.title'),
+        subtitle: t('halaqa.empty.public.subtitle')
       },
-      join: { 
-        icon: '🔗', 
-        title: t('halaqa.empty.join.title'), 
-        subtitle: t('halaqa.empty.join.subtitle') 
+      join: {
+        title: t('halaqa.empty.join.title'),
+        subtitle: t('halaqa.empty.join.subtitle')
       }
     };
     const msg = messages[type];
 
     return (
       <View style={styles.emptyState}>
-        <Text style={styles.emptyIcon}>{msg.icon}</Text>
+        <MihrabArch width={74} color={colors.border} />
         <Text style={styles.emptyTitle}>{msg.title}</Text>
         <Text style={styles.emptyText}>{msg.subtitle}</Text>
-        
+
         {type === 'my' && (
           <View style={styles.emptyActions}>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.emptyButton} onPress={() => setShowCreateModal(true)}>
-              {/* ✅ AVANT: '➕ إنشاء حلقة' */}
               <Text style={styles.emptyButtonText}>{t('halaqa.empty.createButton')}</Text>
             </TouchableOpacity>
             <TouchableOpacity accessible accessibilityRole="button" style={[styles.emptyButton, styles.emptyButtonSecondary]} onPress={() => setActiveTab('join')}>
-              {/* ✅ AVANT: '🔗 انضمام' */}
               <Text style={styles.emptyButtonTextSecondary}>{t('halaqa.empty.joinButton')}</Text>
             </TouchableOpacity>
           </View>
@@ -540,7 +563,7 @@ export default function HalaqaScreen({ navigation }: any) {
 
     if (sortedHalaqat.length === 0) {
       return (
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.emptyContainer}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
         >
@@ -564,7 +587,7 @@ export default function HalaqaScreen({ navigation }: any) {
   const renderPublicHalaqatTab = () => {
     if (publicHalaqat.length === 0) {
       return (
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.emptyContainer}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
         >
@@ -586,22 +609,23 @@ export default function HalaqaScreen({ navigation }: any) {
   };
 
   const renderJoinTab = () => (
-    <ScrollView 
+    <ScrollView
       style={styles.joinScrollView}
       contentContainerStyle={styles.joinContainer}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.joinCard}>
-        <Text style={styles.joinIcon}>{'🔗'}</Text>
-        {/* ✅ AVANT: 'انضم لحلقة خاصة' */}
+        {/* L'arche encadre l'entree dans un cercle : c'est la meme forme
+            que sur le web au meme moment. */}
+        <View style={styles.joinIcon}>
+          <MihrabArch width={64} color={colors.primary} />
+        </View>
         <Text style={styles.joinTitle}>{t('halaqa.join.privateTitle')}</Text>
-        {/* ✅ AVANT: 'أدخل رمز الدعوة الذي حصلت عليه من مدير الحلقة' */}
         <Text style={styles.joinSubtitle}>{t('halaqa.join.privateSubtitle')}</Text>
-        
+
         <TextInput
           style={styles.inviteCodeInput}
-          // ✅ AVANT: 'مثال: ABC123'
           placeholder={t('halaqa.join.codePlaceholder')}
           placeholderTextColor={colors.textMuted}
           value={inviteCode}
@@ -609,7 +633,7 @@ export default function HalaqaScreen({ navigation }: any) {
           autoCapitalize="characters"
           maxLength={10}
         />
-        
+
         <TouchableOpacity accessible accessibilityRole="button"
           style={[styles.joinButton, isJoining && styles.buttonDisabled]}
           onPress={handleJoinByCode}
@@ -620,23 +644,20 @@ export default function HalaqaScreen({ navigation }: any) {
           ) : (
             <>
               <Ionicons name="enter-outline" size={20} color={colors.onDeep} />
-              {/* ✅ AVANT: 'انضمام' */}
               <Text style={styles.joinButtonText}>{t('halaqa.join.button')}</Text>
             </>
           )}
         </TouchableOpacity>
       </View>
-      
+
       <View style={styles.orDivider}>
         <View style={styles.orLine} />
-        {/* ✅ AVANT: 'أو' */}
         <Text style={styles.orText}>{t('common.or')}</Text>
         <View style={styles.orLine} />
       </View>
-      
+
       <TouchableOpacity accessible accessibilityRole="button" style={styles.browsePublicButton} onPress={() => setActiveTab('public')}>
-        <Text style={styles.browsePublicIcon}>{'🌍'}</Text>
-        {/* ✅ AVANT: 'تصفح الحلقات العامة' */}
+        <IconeHalaqat size={20} color={colors.primary} />
         <Text style={styles.browsePublicText}>{t('halaqa.join.browsePublic')}</Text>
         <Ionicons name="arrow-forward" size={20} color={colors.primary} />
       </TouchableOpacity>
@@ -658,87 +679,72 @@ export default function HalaqaScreen({ navigation }: any) {
         <View style={styles.createModalContent}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.createModalHeader}>
-              {/* ✅ AVANT: 'إنشاء حلقة جديدة' */}
               <Text style={styles.createModalTitle}>{t('halaqa.create.title')}</Text>
               <TouchableOpacity accessible accessibilityRole="button" onPress={() => setShowCreateModal(false)}>
                 <Ionicons name="close" size={24} color={colors.textSecondary} />
               </TouchableOpacity>
             </View>
-            
-            {/* ✅ AVANT: 'المعلومات الأساسية' */}
+
             <Text style={styles.sectionTitle}>{t('halaqa.create.basicInfo')}</Text>
-            
-            <TextInput 
-              style={styles.input} 
-              // ✅ AVANT: 'اسم الحلقة *'
-              placeholder={t('halaqa.create.namePlaceholder')} 
-              placeholderTextColor={colors.textMuted} 
-              value={newHalaqaName} 
-              onChangeText={setNewHalaqaName} 
-              maxLength={50} 
+
+            <TextInput
+              style={styles.input}
+              placeholder={t('halaqa.create.namePlaceholder')}
+              placeholderTextColor={colors.textMuted}
+              value={newHalaqaName}
+              onChangeText={setNewHalaqaName}
+              maxLength={50}
             />
-            <TextInput 
-              style={[styles.input, styles.textArea]} 
-              // ✅ AVANT: 'وصف الحلقة (اختياري)'
-              placeholder={t('halaqa.create.descriptionPlaceholder')} 
-              placeholderTextColor={colors.textMuted} 
-              value={newHalaqaDescription} 
-              onChangeText={setNewHalaqaDescription} 
-              multiline 
-              maxLength={200} 
+            <TextInput
+              style={[styles.input, styles.textArea]}
+              placeholder={t('halaqa.create.descriptionPlaceholder')}
+              placeholderTextColor={colors.textMuted}
+              value={newHalaqaDescription}
+              onChangeText={setNewHalaqaDescription}
+              multiline
+              maxLength={200}
             />
-            
-            {/* ✅ AVANT: 'الإعدادات' */}
+
             <Text style={styles.sectionTitle}>{t('halaqa.create.settings')}</Text>
-            
+
             <View style={styles.settingRow}>
               <View style={styles.settingInfo}>
-                {/* ✅ AVANT: 'حلقة عامة' */}
                 <Text style={styles.settingLabel}>{t('halaqa.create.publicHalaqa')}</Text>
-                {/* ✅ AVANT: 'يمكن لأي شخص العثور عليها والانضمام' */}
                 <Text style={styles.settingDescription}>{t('halaqa.create.publicDescription')}</Text>
               </View>
               <Switch value={isPublic} onValueChange={setIsPublic} trackColor={{ false: '#ddd', true: colors.primary + '50' }} thumbColor={isPublic ? colors.primary : colors.textMuted} />
             </View>
-            
+
             <View style={styles.settingRow}>
               <View style={styles.settingInfo}>
-                {/* ✅ AVANT: 'السماح بالمحادثة' */}
                 <Text style={styles.settingLabel}>{t('halaqa.create.allowChat')}</Text>
-                {/* ✅ AVANT: 'تفعيل الدردشة بين الأعضاء' */}
                 <Text style={styles.settingDescription}>{t('halaqa.create.allowChatDescription')}</Text>
               </View>
               <Switch value={allowChat} onValueChange={setAllowChat} trackColor={{ false: '#ddd', true: colors.primary + '50' }} thumbColor={allowChat ? colors.primary : colors.textMuted} />
             </View>
-            
+
             <View style={styles.settingRow}>
               <View style={styles.settingInfo}>
-                {/* ✅ AVANT: 'المكالمات الصوتية' */}
                 <Text style={styles.settingLabel}>{t('halaqa.create.allowVoice')}</Text>
-                {/* ✅ AVANT: 'السماح بالمكالمات الصوتية' */}
                 <Text style={styles.settingDescription}>{t('halaqa.create.allowVoiceDescription')}</Text>
               </View>
               <Switch value={allowVoice} onValueChange={setAllowVoice} trackColor={{ false: '#ddd', true: colors.primary + '50' }} thumbColor={allowVoice ? colors.primary : colors.textMuted} />
             </View>
-            
+
             <View style={styles.numberInputsRow}>
               <View style={styles.numberInputContainer}>
-                {/* ✅ AVANT: 'الهدف اليومي (آيات)' */}
                 <Text style={styles.numberInputLabel}>{t('halaqa.create.dailyGoal')}</Text>
                 <TextInput style={styles.numberInput} value={dailyGoal} onChangeText={setDailyGoal} keyboardType="number-pad" maxLength={3} />
               </View>
               <View style={styles.numberInputContainer}>
-                {/* ✅ AVANT: 'الحد الأقصى للأعضاء' */}
                 <Text style={styles.numberInputLabel}>{t('halaqa.create.maxMembers')}</Text>
                 <TextInput style={styles.numberInput} value={maxMembers} onChangeText={setMaxMembers} keyboardType="number-pad" maxLength={3} />
               </View>
             </View>
-            
-            {/* ✅ AVANT: 'أنواع الأنشطة' */}
+
             <Text style={styles.sectionTitle}>{t('halaqa.create.activityTypesTitle')}</Text>
-            {/* ✅ AVANT: 'اختر الأنشطة المتاحة في حلقتك (اختر واحداً على الأقل)' */}
             <Text style={styles.sectionSubtitle}>{t('halaqa.create.activityTypesSubtitle')}</Text>
-            
+
             <View style={styles.activityTypesGrid}>
               {ACTIVITY_TYPES_LIST.map((type) => (
                 <TouchableOpacity accessible accessibilityRole="button"
@@ -746,7 +752,17 @@ export default function HalaqaScreen({ navigation }: any) {
                   style={[styles.activityTypeItem, selectedActivityTypes.includes(type.id) && styles.activityTypeItemSelected]}
                   onPress={() => toggleActivityType(type.id)}
                 >
-                  <Text style={styles.activityTypeItemIcon}>{type.icon}</Text>
+                  <View style={styles.activityTypeItemIcon}>
+                    {(() => {
+                      const Icone = ICONES_ACTIVITE[type.id];
+                      return Icone ? (
+                        <Icone
+                          size={20}
+                          color={selectedActivityTypes.includes(type.id) ? colors.primary : colors.textSecondary}
+                        />
+                      ) : null;
+                    })()}
+                  </View>
                   <Text style={[styles.activityTypeItemName, selectedActivityTypes.includes(type.id) && styles.activityTypeItemNameSelected]}>{type.name}</Text>
                   <Text style={styles.activityTypeItemXP}>{'+' + type.xpReward + ' XP'}</Text>
                   {selectedActivityTypes.includes(type.id) && (
@@ -757,20 +773,18 @@ export default function HalaqaScreen({ navigation }: any) {
                 </TouchableOpacity>
               ))}
             </View>
-            
+
             <View style={styles.createModalButtons}>
               <TouchableOpacity accessible accessibilityRole="button" style={styles.cancelButton} onPress={() => setShowCreateModal(false)} disabled={isCreating}>
-                {/* ✅ AVANT: 'إلغاء' */}
                 <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
               </TouchableOpacity>
-              
+
               <TouchableOpacity accessible accessibilityRole="button" style={[styles.createButton, isCreating && styles.buttonDisabled]} onPress={handleCreateHalaqa} disabled={isCreating}>
                 {isCreating ? (
                   <ActivityIndicator size="small" color={colors.onDeep} />
                 ) : (
                   <>
                     <Ionicons name="add" size={20} color={colors.onDeep} />
-                    {/* ✅ AVANT: 'إنشاء' */}
                     <Text style={styles.createButtonText}>{t('common.create')}</Text>
                   </>
                 )}
@@ -788,7 +802,6 @@ export default function HalaqaScreen({ navigation }: any) {
         <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={colors.onDeep} />
         </TouchableOpacity>
-        {/* ✅ AVANT: 'الحلقات' */}
         <Text style={styles.headerTitle}>{t('halaqa.title')}</Text>
         <TouchableOpacity accessible accessibilityRole="button" style={styles.addButton} onPress={() => setShowCreateModal(true)}>
           <Ionicons name="add" size={24} color={colors.onDeep} />
@@ -798,7 +811,6 @@ export default function HalaqaScreen({ navigation }: any) {
       <View style={styles.tabsContainer}>
         <TouchableOpacity accessible accessibilityRole="button" style={[styles.tab, activeTab === 'my' && styles.activeTab]} onPress={() => setActiveTab('my')}>
           <Ionicons name="people" size={18} color={activeTab === 'my' ? colors.primary : colors.textMuted} />
-          {/* ✅ AVANT: 'حلقاتي' */}
           <Text style={[styles.tabText, activeTab === 'my' && styles.activeTabText]}>{t('halaqa.tabs.my')}</Text>
           {myHalaqat.length > 0 && (
             <View style={styles.tabBadge}><Text style={styles.tabBadgeText}>{String(myHalaqat.length)}</Text></View>
@@ -807,13 +819,11 @@ export default function HalaqaScreen({ navigation }: any) {
 
         <TouchableOpacity accessible accessibilityRole="button" style={[styles.tab, activeTab === 'public' && styles.activeTab]} onPress={() => setActiveTab('public')}>
           <Ionicons name="globe" size={18} color={activeTab === 'public' ? colors.primary : colors.textMuted} />
-          {/* ✅ AVANT: 'عامة' */}
           <Text style={[styles.tabText, activeTab === 'public' && styles.activeTabText]}>{t('halaqa.tabs.public')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity accessible accessibilityRole="button" style={[styles.tab, activeTab === 'join' && styles.activeTab]} onPress={() => setActiveTab('join')}>
           <Ionicons name="enter" size={18} color={activeTab === 'join' ? colors.primary : colors.textMuted} />
-          {/* ✅ AVANT: 'انضمام' */}
           <Text style={[styles.tabText, activeTab === 'join' && styles.activeTabText]}>{t('halaqa.tabs.join')}</Text>
         </TouchableOpacity>
       </View>
@@ -821,7 +831,6 @@ export default function HalaqaScreen({ navigation }: any) {
       {isLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          {/* ✅ AVANT: 'جاري التحميل...' */}
           <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
       ) : (
@@ -864,17 +873,18 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   adminLabel: { fontSize: 10, color: c.warning, backgroundColor: c.warningSoft, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8, fontWeight: '600' },
   halaqaDescription: { fontSize: 13, color: c.textSecondary, marginTop: 2, textAlign: 'right' },
   activityTypesPreview: { flexDirection: 'row', marginTop: 5, gap: 3 },
-  activityTypeIcon: { fontSize: 14 },
+  activityTypeIcon: { marginRight: 4 },
   moreActivities: { fontSize: 10, color: c.textMuted, marginLeft: 3 },
   halaqaStats: { flexDirection: 'row', justifyContent: 'flex-end', gap: 15, marginTop: 5 },
+  statLigne: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   halaqaStat: { fontSize: 12, color: c.textMuted },
   halaqaRight: { alignItems: 'center', marginLeft: 10 },
   halaqaBadgeText: { fontSize: 20, marginBottom: 5 },
   joinButtonSmall: { backgroundColor: c.primary, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 15, marginTop: 5 },
   joinButtonSmallText: { color: c.onDeep, fontSize: 11, fontWeight: '600' },
   emptyState: { alignItems: 'center', paddingVertical: 60, paddingHorizontal: 30 },
-  emptyIcon: { fontSize: 60, marginBottom: 15 },
-  emptyTitle: { fontSize: 18, fontWeight: 'bold', color: c.text, marginBottom: 8 },
+  emptyTitle: {
+    marginTop: 14, fontSize: 18, fontWeight: 'bold', color: c.text, marginBottom: 8 },
   emptyText: { fontSize: 14, color: c.textSecondary, textAlign: 'center', marginBottom: 20 },
   emptyActions: { flexDirection: 'row', gap: 10 },
   emptyButton: { backgroundColor: c.primary, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 25 },
@@ -916,7 +926,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   activityTypesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 20 },
   activityTypeItem: { width: (width - 70) / 3, backgroundColor: c.background, borderRadius: 12, padding: 12, alignItems: 'center', position: 'relative' },
   activityTypeItemSelected: { backgroundColor: c.primarySoft, borderWidth: 2, borderColor: c.primary },
-  activityTypeItemIcon: { fontSize: 24, marginBottom: 5 },
+  activityTypeItemIcon: { marginBottom: 5 },
   activityTypeItemName: { fontSize: 11, fontWeight: '600', color: c.textSecondary, textAlign: 'center' },
   activityTypeItemNameSelected: { color: c.primary },
   activityTypeItemXP: { fontSize: 9, color: c.textMuted, marginTop: 2 },

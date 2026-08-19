@@ -17,15 +17,26 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { subscriptionsAPI } from '../../services/api';
 import { useAuthStore } from '../../stores';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
-import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
+import { HizbStar } from '../../components/common/Ornements';
+import {
+  IconeCoeurs,
+  IconeMushaf,
+  IconeSerie,
+  IconeClassement,
+  IconeRecompense,
+  IconeStatistiques,
+  IconeVersetDuJour,
+  IconeAmis,
+} from '../../components/common/Icones';
 
 const LOG_PREFIX = '[SubscriptionsScreen.tsx]';
 const { width } = Dimensions.get('window');
@@ -34,22 +45,25 @@ console.log(`${LOG_PREFIX} 📁 File loaded`);
 
 interface Plan {
   id: string;
-  nameKey: string;        // ✅ Clé i18n
+  nameKey: string;
   price: number;
   currency: string;
-  periodKey: string;      // ✅ Clé i18n
-  featuresKeys: string[]; // ✅ Clés i18n
+  periodKey: string;
+  featuresKeys: string[];
   isPopular?: boolean;
   savings?: string;
 }
 
 interface Feature {
-  icon: string;
-  textKey: string;        // ✅ Clé i18n
+  // L'icone est un composant, plus une chaine : un emoji se rend differemment
+  // sur chaque appareil et n'est lisible par un lecteur d'ecran que par son
+  // nom Unicode — « bonhomme de neige » n'aide personne a comprendre qu'il
+  // s'agit du gel de serie.
+  Icone: React.ComponentType<{ size?: number; color?: string }>;
+  textKey: string;
   available: boolean;
 }
 
-// ✅ Plans avec clés i18n
 const PLANS: Plan[] = [
   {
     id: 'monthly',
@@ -96,27 +110,26 @@ const PLANS: Plan[] = [
   },
 ];
 
-// ✅ Features avec clés i18n
 const FEATURES_FREE: Feature[] = [
-  { icon: '❤️', textKey: 'subscriptions.comparison.hearts5Daily', available: true },
-  { icon: '📚', textKey: 'subscriptions.comparison.lessonAccess', available: true },
-  { icon: '🔥', textKey: 'subscriptions.comparison.streakTracking', available: true },
-  { icon: '🏆', textKey: 'subscriptions.comparison.leagues', available: true },
-  { icon: '❄️', textKey: 'subscriptions.comparison.streakFreeze', available: false },
-  { icon: '📊', textKey: 'subscriptions.comparison.advancedAnalytics', available: false },
-  { icon: '🚫', textKey: 'subscriptions.comparison.noAds', available: false },
-  { icon: '👨‍👩‍👧‍👦', textKey: 'subscriptions.comparison.familySharing', available: false },
+  { Icone: IconeCoeurs, textKey: 'subscriptions.comparison.hearts5Daily', available: true },
+  { Icone: IconeMushaf, textKey: 'subscriptions.comparison.lessonAccess', available: true },
+  { Icone: IconeSerie, textKey: 'subscriptions.comparison.streakTracking', available: true },
+  { Icone: IconeClassement, textKey: 'subscriptions.comparison.leagues', available: true },
+  { Icone: IconeRecompense, textKey: 'subscriptions.comparison.streakFreeze', available: false },
+  { Icone: IconeStatistiques, textKey: 'subscriptions.comparison.advancedAnalytics', available: false },
+  { Icone: IconeVersetDuJour, textKey: 'subscriptions.comparison.noAds', available: false },
+  { Icone: IconeAmis, textKey: 'subscriptions.comparison.familySharing', available: false },
 ];
 
 const FEATURES_PREMIUM: Feature[] = [
-  { icon: '💎', textKey: 'subscriptions.comparison.unlimitedHearts', available: true },
-  { icon: '📚', textKey: 'subscriptions.comparison.lessonAccess', available: true },
-  { icon: '🔥', textKey: 'subscriptions.comparison.streakTracking', available: true },
-  { icon: '🏆', textKey: 'subscriptions.comparison.leagues', available: true },
-  { icon: '❄️', textKey: 'subscriptions.comparison.streakFreeze', available: true },
-  { icon: '📊', textKey: 'subscriptions.comparison.advancedAnalytics', available: true },
-  { icon: '🚫', textKey: 'subscriptions.comparison.noAds', available: true },
-  { icon: '👨‍👩‍👧‍👦', textKey: 'subscriptions.comparison.familySharing', available: true },
+  { Icone: IconeCoeurs, textKey: 'subscriptions.comparison.unlimitedHearts', available: true },
+  { Icone: IconeMushaf, textKey: 'subscriptions.comparison.lessonAccess', available: true },
+  { Icone: IconeSerie, textKey: 'subscriptions.comparison.streakTracking', available: true },
+  { Icone: IconeClassement, textKey: 'subscriptions.comparison.leagues', available: true },
+  { Icone: IconeRecompense, textKey: 'subscriptions.comparison.streakFreeze', available: true },
+  { Icone: IconeStatistiques, textKey: 'subscriptions.comparison.advancedAnalytics', available: true },
+  { Icone: IconeVersetDuJour, textKey: 'subscriptions.comparison.noAds', available: true },
+  { Icone: IconeAmis, textKey: 'subscriptions.comparison.familySharing', available: true },
 ];
 
 export default function SubscriptionsScreen({ navigation }: any) {
@@ -124,7 +137,7 @@ export default function SubscriptionsScreen({ navigation }: any) {
   const styles = useThemedStyles(makeStyles);
 
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
-  
+
   const { user } = useAuthStore();
   const [selectedPlan, setSelectedPlan] = useState<string>('yearly');
   const [isLoading, setIsLoading] = useState(false);
@@ -226,7 +239,6 @@ export default function SubscriptionsScreen({ navigation }: any) {
     );
   };
 
-  // ✅ Helper pour obtenir le nom du plan traduit
   const getPlanDisplayName = (planId: string): string => {
     switch (planId) {
       case 'lifetime': return t('subscriptions.plans.lifetime.name');
@@ -255,34 +267,31 @@ export default function SubscriptionsScreen({ navigation }: any) {
       >
         {plan.isPopular && (
           <View style={styles.popularBadge}>
-            {/* ✅ AVANT: 'الأكثر شعبية' */}
             <Text style={styles.popularText}>{t('subscriptions.mostPopular')}</Text>
           </View>
         )}
 
         {plan.savings && (
           <View style={styles.savingsBadge}>
-            {/* ✅ AVANT: 'وفر {X}%' */}
             <Text style={styles.savingsText}>
               {t('subscriptions.save', { percent: plan.savings })}
             </Text>
           </View>
         )}
 
-        {/* ✅ AVANT: plan.nameAr */}
         <Text style={styles.planName}>{t(plan.nameKey)}</Text>
-        
+
         <View style={styles.priceContainer}>
           <Text style={styles.price}>${plan.price}</Text>
-          {/* ✅ AVANT: /{plan.periodAr} */}
           <Text style={styles.period}>/{t(plan.periodKey)}</Text>
         </View>
 
         <View style={styles.featuresContainer}>
           {plan.featuresKeys.map((featureKey, index) => (
             <View key={index} style={styles.featureRow}>
-              <Text style={styles.featureCheck}>✓</Text>
-              {/* ✅ AVANT: feature hardcodé */}
+              <View style={styles.featureCheck}>
+                <Ionicons name="checkmark" size={15} color={colors.primary} />
+              </View>
               <Text style={styles.featureText}>{t(featureKey)}</Text>
             </View>
           ))}
@@ -295,7 +304,6 @@ export default function SubscriptionsScreen({ navigation }: any) {
     );
   };
 
-  // ✅ Vue Premium (utilisateur déjà abonné)
   if (isPremium) {
     console.log(`${LOG_PREFIX} 🎨 Rendering Premium view`);
     return (
@@ -304,15 +312,15 @@ export default function SubscriptionsScreen({ navigation }: any) {
           <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => navigation.goBack()}>
             <Text style={styles.backIcon}>←</Text>
           </TouchableOpacity>
-          {/* ✅ AVANT: 'اشتراكي' */}
           <Text style={styles.headerTitle}>{t('subscriptions.mySubscription')}</Text>
           <View style={{ width: 40 }} />
         </LinearGradient>
 
         <ScrollView contentContainerStyle={styles.premiumContent}>
           <View style={styles.premiumBadge}>
-            <Text style={styles.premiumIcon}>👑</Text>
-            {/* ✅ AVANT: 'أنت مشترك!' */}
+            <View style={styles.premiumIcon}>
+              <HizbStar size={34} quarters={4} color={fixedColors.gold} />
+            </View>
             <Text style={styles.premiumTitle}>{t('subscriptions.youAreSubscribed')}</Text>
             <Text style={styles.premiumPlan}>
               {getPlanDisplayName(currentSubscription?.plan)}
@@ -320,23 +328,22 @@ export default function SubscriptionsScreen({ navigation }: any) {
           </View>
 
           <View style={styles.featuresSection}>
-            {/* ✅ AVANT: 'المميزات المتاحة' */}
             <Text style={styles.featuresSectionTitle}>
               {t('subscriptions.availableFeatures')}
             </Text>
             {FEATURES_PREMIUM.map((feature, index) => (
               <View key={index} style={styles.featureItem}>
-                <Text style={styles.featureIcon}>{feature.icon}</Text>
-                {/* ✅ AVANT: feature.text */}
+                <View style={styles.featureIcon}>
+                  <feature.Icone size={18} color={colors.primary} />
+                </View>
                 <Text style={styles.featureLabel}>{t(feature.textKey)}</Text>
-                <Text style={styles.featureStatus}>✓</Text>
+                <Ionicons name="checkmark" size={15} color={colors.primary} />
               </View>
             ))}
           </View>
 
           {currentSubscription?.plan !== 'lifetime' && (
             <TouchableOpacity accessible accessibilityRole="button" style={styles.cancelButton} onPress={handleCancel}>
-              {/* ✅ AVANT: 'إلغاء الاشتراك' */}
               <Text style={styles.cancelButtonText}>
                 {t('subscriptions.cancelSubscription')}
               </Text>
@@ -347,7 +354,6 @@ export default function SubscriptionsScreen({ navigation }: any) {
     );
   }
 
-  // ✅ Vue normale (non abonné)
   console.log(`${LOG_PREFIX} 🎨 Rendering Free view`);
   return (
     <View style={styles.container}>
@@ -363,10 +369,10 @@ export default function SubscriptionsScreen({ navigation }: any) {
       <ScrollView contentContainerStyle={styles.content}>
         {/* Hero Section */}
         <View style={styles.heroSection}>
-          <Text style={styles.heroIcon}>👑</Text>
-          {/* ✅ AVANT: 'احفظ القرآن بدون حدود' */}
+          <View style={styles.heroIcon}>
+            <HizbStar size={40} quarters={4} color={fixedColors.gold} />
+          </View>
           <Text style={styles.heroTitle}>{t('subscriptions.hero.title')}</Text>
-          {/* ✅ AVANT: 'اشترك في Salifz Plus واحصل على كل المميزات' */}
           <Text style={styles.heroSubtitle}>{t('subscriptions.hero.subtitle')}</Text>
         </View>
 
@@ -377,11 +383,9 @@ export default function SubscriptionsScreen({ navigation }: any) {
 
         {/* Features Comparison */}
         <View style={styles.comparisonSection}>
-          {/* ✅ AVANT: 'مقارنة المميزات' */}
           <Text style={styles.comparisonTitle}>{t('subscriptions.comparison.title')}</Text>
-          
+
           <View style={styles.comparisonHeader}>
-            {/* ✅ AVANT: 'الميزة' / 'مجاني' / 'Plus' */}
             <Text style={styles.comparisonHeaderText}>{t('subscriptions.comparison.feature')}</Text>
             <Text style={styles.comparisonHeaderText}>{t('subscriptions.comparison.free')}</Text>
             <Text style={styles.comparisonHeaderText}>Plus</Text>
@@ -390,16 +394,24 @@ export default function SubscriptionsScreen({ navigation }: any) {
           {FEATURES_FREE.map((feature, index) => (
             <View key={index} style={styles.comparisonRow}>
               <View style={styles.comparisonFeature}>
-                <Text style={styles.comparisonIcon}>{feature.icon}</Text>
-                {/* ✅ AVANT: feature.text */}
+                <View style={styles.comparisonIcon}>
+                  <feature.Icone
+                    size={18}
+                    color={feature.available ? colors.primary : colors.textMuted}
+                  />
+                </View>
                 <Text style={styles.comparisonText}>{t(feature.textKey)}</Text>
               </View>
-              <Text style={styles.comparisonCheck}>
-                {feature.available ? '✓' : '✗'}
-              </Text>
-              <Text style={[styles.comparisonCheck, styles.comparisonCheckPremium]}>
-                ✓
-              </Text>
+              <View style={styles.comparisonCheck}>
+                <Ionicons
+                  name={feature.available ? 'checkmark' : 'close'}
+                  size={16}
+                  color={feature.available ? colors.primary : colors.textMuted}
+                />
+              </View>
+              <View style={[styles.comparisonCheck, styles.comparisonCheckPremium]}>
+                <Ionicons name="checkmark" size={16} color={colors.primary} />
+              </View>
             </View>
           ))}
         </View>
@@ -417,7 +429,6 @@ export default function SubscriptionsScreen({ navigation }: any) {
             {isLoading ? (
               <ActivityIndicator color={colors.onDeep} />
             ) : (
-              // ✅ AVANT: 'اشترك الآن'
               <Text style={styles.subscribeButtonText}>
                 {t('subscriptions.subscribeNow')}
               </Text>
@@ -427,14 +438,12 @@ export default function SubscriptionsScreen({ navigation }: any) {
 
         {/* Restore */}
         <TouchableOpacity accessible accessibilityRole="button" style={styles.restoreButton} onPress={handleRestore}>
-          {/* ✅ AVANT: 'استعادة المشتريات' */}
           <Text style={styles.restoreButtonText}>
             {t('subscriptions.restorePurchases')}
           </Text>
         </TouchableOpacity>
 
         {/* Terms */}
-        {/* ✅ AVANT: Texte hardcodé */}
         <Text style={styles.termsText}>{t('subscriptions.terms')}</Text>
 
         <View style={{ height: 50 }} />
@@ -479,7 +488,6 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     marginBottom: 30,
   },
   heroIcon: {
-    fontSize: 60,
     marginBottom: 15,
   },
   heroTitle: {
@@ -570,8 +578,6 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     marginBottom: 8,
   },
   featureCheck: {
-    color: c.primary,
-    fontSize: 14,
     marginRight: 8,
   },
   featureText: {
@@ -639,7 +645,6 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     alignItems: 'center',
   },
   comparisonIcon: {
-    fontSize: 16,
     marginRight: 8,
   },
   comparisonText: {
@@ -648,13 +653,9 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   },
   comparisonCheck: {
     flex: 1,
-    textAlign: 'center',
-    fontSize: 14,
-    color: c.textMuted,
+    alignItems: 'center',
   },
-  comparisonCheckPremium: {
-    color: c.primary,
-  },
+  comparisonCheckPremium: {},
   subscribeButton: {
     borderRadius: 16,
     overflow: 'hidden',
@@ -696,7 +697,6 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     marginBottom: 20,
   },
   premiumIcon: {
-    fontSize: 60,
     marginBottom: 15,
   },
   premiumTitle: {
@@ -729,17 +729,12 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     borderBottomColor: c.background,
   },
   featureIcon: {
-    fontSize: 20,
     marginRight: 12,
   },
   featureLabel: {
     flex: 1,
     fontSize: 14,
     color: c.text,
-  },
-  featureStatus: {
-    fontSize: 16,
-    color: c.primary,
   },
   cancelButton: {
     backgroundColor: c.errorSoft,

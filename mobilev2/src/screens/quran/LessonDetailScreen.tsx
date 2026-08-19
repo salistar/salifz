@@ -21,10 +21,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { useGamificationStore } from '../../stores';
 import { progressAPI } from '../../services/api';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
+import { IconeCoeurs } from '../../components/common/Icones';
 
 const LOG_PREFIX = '[LessonDetailScreen.tsx]';
 const { width } = Dimensions.get('window');
@@ -77,15 +77,15 @@ export default function LessonDetailScreen({ route, navigation }: any) {
 
   console.log(`${LOG_PREFIX} 🚀 Component rendering...`);
   console.log(`${LOG_PREFIX} 📥 Route params:`, JSON.stringify(route?.params || {}));
-  
+
   const { surah, block, blocks } = route.params || {} as { surah: Surah; block: Block; blocks: Block[] };
   console.log(`${LOG_PREFIX} 📖 Surah: ${surah?.name}, Block: ${block?.id}`);
   console.log(`${LOG_PREFIX} 📦 Block details: ayahs ${block?.start}-${block?.end} (${block?.count} ayahs)`);
   console.log(`${LOG_PREFIX} 📚 Total blocks in surah: ${blocks?.length}`);
-  
+
   const { hearts, useHeart, addXp } = useGamificationStore();
   console.log(`${LOG_PREFIX} ❤️ Hearts from store: ${hearts}`);
-  
+
   // State
   const [currentBlockIndex, setCurrentBlockIndex] = useState<number>(() => {
     const idx = blocks?.findIndex((b: Block) => b.id === block?.id) || 0;
@@ -96,7 +96,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [ayahsData, setAyahsData] = useState<AyahData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  
+
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [arrangedWords, setArrangedWords] = useState<string[]>([]);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -104,7 +104,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [audioLoading, setAudioLoading] = useState<boolean>(false);
-  
+
   const shakeAnim = useRef(new Animated.Value(0)).current;
   const progressAnim = useRef(new Animated.Value(0)).current;
 
@@ -114,7 +114,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
   useEffect(() => {
     console.log(`${LOG_PREFIX} ⚡ useEffect - Loading ayahs for block`);
     loadAyahsData();
-    
+
     return () => {
       console.log(`${LOG_PREFIX} 🧹 Cleanup - Unloading sound`);
       if (sound) {
@@ -143,7 +143,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
       106: 6193, 107: 6197, 108: 6204, 109: 6207, 110: 6213, 111: 6216, 112: 6221,
       113: 6225, 114: 6230,
     };
-    
+
     const base = ayahsBeforeSurah[surahId] || 0;
     return base + ayahInSurah;
   };
@@ -161,12 +161,12 @@ export default function LessonDetailScreen({ route, navigation }: any) {
   const loadAyahsData = async (): Promise<void> => {
     console.log(`${LOG_PREFIX} 📥 loadAyahsData() called`);
     console.log(`${LOG_PREFIX} 📖 Loading ayahs ${currentBlock.start}-${currentBlock.end} for surah ${surah.id}`);
-    
+
     setLoading(true);
-    
+
     try {
       console.log(`${LOG_PREFIX} 🌐 Fetching ayahs from Quran API`);
-      
+
       const ayahs: AyahData[] = [];
       for (let i = currentBlock.start; i <= currentBlock.end; i++) {
         const ayahData: AyahData = {
@@ -179,19 +179,19 @@ export default function LessonDetailScreen({ route, navigation }: any) {
         ayahs.push(ayahData);
         console.log(`${LOG_PREFIX} ✅ Loaded ayah ${i}: ${ayahData.text.substring(0, 30)}...`);
       }
-      
+
       console.log(`${LOG_PREFIX} ✅ Loaded ${ayahs.length} ayahs`);
       setAyahsData(ayahs);
-      
+
       // Generate exercises for this block
       generateExercises(ayahs);
-      
+
     } catch (error: any) {
       console.error(`${LOG_PREFIX} ❌ ERROR loading ayahs:`, error);
       // Fallback to mock data
       generateMockExercises();
     }
-    
+
     setLoading(false);
   };
 
@@ -199,7 +199,6 @@ export default function LessonDetailScreen({ route, navigation }: any) {
     try {
       const response = await fetch(`https://api.alquran.cloud/v1/ayah/${surahId}:${ayahNum}`);
       const data = await response.json();
-      // ✅ AVANT: `آية ${ayahNum}`
       return data.data?.text || t('lessonDetail.ayahFallback', { number: ayahNum });
     } catch {
       // Fallback texts for Al-Fatiha (texte coranique reste en arabe)
@@ -212,7 +211,6 @@ export default function LessonDetailScreen({ route, navigation }: any) {
         6: 'اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ',
         7: 'صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ',
       };
-      // ✅ AVANT: `آية ${ayahNum} من سورة ${surahId}`
       return fatihaTexts[ayahNum] || t('lessonDetail.ayahFromSurah', { ayahNum, surahId });
     }
   };
@@ -229,41 +227,37 @@ export default function LessonDetailScreen({ route, navigation }: any) {
 
   const generateExercises = (ayahs: AyahData[]): void => {
     console.log(`${LOG_PREFIX} 🎯 generateExercises() for ${ayahs.length} ayahs`);
-    
+
     const allExercises: Exercise[] = [];
-    
+
     ayahs.forEach((ayah: AyahData, idx: number) => {
       // Exercise 1: Listen & Repeat
       allExercises.push({
         type: 'listen_repeat',
         ayah,
         ayahIndex: idx,
-        // ✅ AVANT: 'استمع وكرر 🎧'
         instruction: t('lessonDetail.exercises.listenRepeat'),
         xp: 10,
       });
-      
+
       // Exercise 2: Multiple Choice (meaning)
       allExercises.push({
         type: 'multiple_choice',
         ayah,
         ayahIndex: idx,
-        // ✅ AVANT: 'اختر المعنى الصحيح'
         instruction: t('lessonDetail.exercises.chooseCorrectMeaning'),
-        // ✅ AVANT: 'ما معنى هذه الآية؟'
         question: t('lessonDetail.exercises.whatIsTheMeaning'),
         options: generateMeaningOptions(ayah),
         correct: 0,
         xp: 15,
       });
-      
+
       // Exercise 3: Fill the Blank
       const fillBlankData = generateFillBlank(ayah.text);
       allExercises.push({
         type: 'fill_blank',
         ayah,
         ayahIndex: idx,
-        // ✅ AVANT: 'أكمل الفراغ ✏️'
         instruction: t('lessonDetail.exercises.fillTheBlank'),
         blankText: fillBlankData.blankText,
         answer: fillBlankData.answer,
@@ -271,32 +265,30 @@ export default function LessonDetailScreen({ route, navigation }: any) {
         xp: 20,
       });
     });
-    
+
     // Block-level exercise: Arrange all ayahs in order
     allExercises.push({
       type: 'arrange_ayahs',
       ayahs,
-      // ✅ AVANT: 'رتب الآيات بالترتيب الصحيح 🔤'
       instruction: t('lessonDetail.exercises.arrangeAyahs'),
       xp: 30,
     });
-    
+
     // Final exercise: Recite without looking
     allExercises.push({
       type: 'recite_check',
       ayahs,
-      // ✅ AVANT: 'اقرأ الآيات من الذاكرة 🎤'
       instruction: t('lessonDetail.exercises.reciteFromMemory'),
       xp: 40,
     });
-    
+
     console.log(`${LOG_PREFIX} ✅ Generated ${allExercises.length} exercises`);
     setExercises(allExercises);
   };
 
   const generateMockExercises = (): void => {
     console.log(`${LOG_PREFIX} ⚠️ Using mock exercises (fallback)`);
-    
+
     const mockAyahs: AyahData[] = [
       { number: 1, numberInSurah: 1, text: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ', translation: 'Au nom d\'Allah', audioUrl: getAudioUrl(1, 1) },
       { number: 2, numberInSurah: 2, text: 'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ', translation: 'Louange à Allah', audioUrl: getAudioUrl(1, 2) },
@@ -304,16 +296,14 @@ export default function LessonDetailScreen({ route, navigation }: any) {
       { number: 4, numberInSurah: 4, text: 'مَالِكِ يَوْمِ الدِّينِ', translation: 'Maître du Jour', audioUrl: getAudioUrl(1, 4) },
       { number: 5, numberInSurah: 5, text: 'إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ', translation: 'C\'est Toi que nous adorons', audioUrl: getAudioUrl(1, 5) },
     ];
-    
+
     setAyahsData(mockAyahs);
     generateExercises(mockAyahs.slice(0, currentBlock?.count || 5));
   };
 
   const generateMeaningOptions = (ayah: AyahData): string[] => {
-    // ✅ AVANT: 'المعنى الصحيح'
     const correct = ayah.translation || t('lessonDetail.correctMeaning');
     const wrongs = [
-      // ✅ AVANT: Messages hardcodés
       t('lessonDetail.wrongMeaning1'),
       t('lessonDetail.wrongMeaning2'),
       t('lessonDetail.wrongMeaning3'),
@@ -324,27 +314,26 @@ export default function LessonDetailScreen({ route, navigation }: any) {
   const generateFillBlank = (text: string): { blankText: string; answer: string; options: string[] } => {
     const words = text.split(' ');
     if (words.length < 2) {
-      // ✅ AVANT: 'خطأ'
       return { blankText: '___', answer: text, options: [text, t('lessonDetail.wrong'), t('lessonDetail.wrong')] };
     }
-    
+
     const blankIndex = Math.floor(words.length / 2);
     const answer = words[blankIndex];
     const blankText = words.map((w: string, i: number) => i === blankIndex ? '___' : w).join(' ');
-    
+
     const wrongOptions = words.filter((_: string, i: number) => i !== blankIndex).slice(0, 2);
     const options = [answer, ...wrongOptions].sort(() => Math.random() - 0.5);
-    
+
     return { blankText, answer, options };
   };
 
   // Update progress animation
   useEffect(() => {
     if (exercises.length === 0) return;
-    
+
     const progress = ((currentExerciseIndex + 1) / exercises.length) * 100;
     console.log(`${LOG_PREFIX} 📊 Progress: ${progress.toFixed(1)}%`);
-    
+
     Animated.timing(progressAnim, {
       toValue: progress,
       duration: 300,
@@ -358,12 +347,12 @@ export default function LessonDetailScreen({ route, navigation }: any) {
       console.error(`${LOG_PREFIX} ❌ No ayah to play`);
       return;
     }
-    
+
     console.log(`${LOG_PREFIX} 🎵 playAudio() - Ayah ${targetAyah.numberInSurah} (global: ${targetAyah.number})`);
     console.log(`${LOG_PREFIX} 🔊 URL: ${targetAyah.audioUrl}`);
-    
+
     setAudioLoading(true);
-    
+
     try {
       // Unload previous sound
       if (sound) {
@@ -371,7 +360,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
         await sound.unloadAsync();
         setSound(null);
       }
-      
+
       // Setup audio mode
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
@@ -379,9 +368,9 @@ export default function LessonDetailScreen({ route, navigation }: any) {
         staysActiveInBackground: false,
         shouldDuckAndroid: true,
       });
-      
+
       console.log(`${LOG_PREFIX} 🌐 Loading audio from: ${targetAyah.audioUrl}`);
-      
+
       const { sound: newSound } = await Audio.Sound.createAsync(
         { uri: targetAyah.audioUrl },
         { shouldPlay: true },
@@ -398,18 +387,17 @@ export default function LessonDetailScreen({ route, navigation }: any) {
           }
         }
       );
-      
+
       setSound(newSound);
       setIsPlaying(true);
       setAudioLoading(false);
       console.log(`${LOG_PREFIX} ✅ Audio started`);
-      
+
     } catch (error: any) {
       console.error(`${LOG_PREFIX} ❌ Audio error:`, error);
       console.error(`${LOG_PREFIX} ❌ Error message:`, error.message);
       setIsPlaying(false);
       setAudioLoading(false);
-      // ✅ AVANT: 'خطأ', 'تعذر تشغيل الصوت...'
       Alert.alert(
         t('lessonDetail.alerts.error'),
         t('lessonDetail.alerts.audioError')
@@ -427,23 +415,23 @@ export default function LessonDetailScreen({ route, navigation }: any) {
 
   const checkAnswer = (): void => {
     console.log(`${LOG_PREFIX} ✅ checkAnswer() called`);
-    
+
     const exercise = exercises[currentExerciseIndex];
     console.log(`${LOG_PREFIX} 📊 Exercise type: ${exercise.type}`);
-    
+
     let correct = false;
-    
+
     switch (exercise.type) {
       case 'listen_repeat':
       case 'recite_check':
         correct = true; // Auto-pass for audio exercises
         break;
-        
+
       case 'multiple_choice':
         console.log(`${LOG_PREFIX} 🔍 Selected: ${selectedAnswer}, Correct: ${exercise.correct}`);
         correct = selectedAnswer === exercise.correct;
         break;
-        
+
       case 'fill_blank':
         if (exercise.options && exercise.answer) {
           const correctIdx = exercise.options.indexOf(exercise.answer);
@@ -451,7 +439,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
           correct = selectedAnswer === correctIdx;
         }
         break;
-        
+
       case 'arrange_words':
       case 'arrange_ayahs':
         const userAnswer = arrangedWords.join(' ');
@@ -461,25 +449,24 @@ export default function LessonDetailScreen({ route, navigation }: any) {
         correct = userAnswer === correctAnswer;
         break;
     }
-    
+
     console.log(`${LOG_PREFIX} ${correct ? '✅' : '❌'} Answer is ${correct ? 'CORRECT' : 'WRONG'}`);
     setIsCorrect(correct);
-    
+
     if (correct) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      
+
       const earned = exercise.xp || 10;
       console.log(`${LOG_PREFIX} ⚡ Adding ${earned} XP`);
       setXpEarned((prev: number) => prev + earned);
       addXp(earned);
-      
+
       setTimeout(() => nextExercise(), 1500);
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      
+
       if (!useHeart()) {
         console.log(`${LOG_PREFIX} ❌ No hearts left!`);
-        // ✅ AVANT: 'نفدت القلوب! ❤️', 'يمكنك شراء قلوب من المتجر'
         Alert.alert(
           t('lessonDetail.alerts.noHeartsTitle'),
           t('lessonDetail.alerts.noHeartsMessage'),
@@ -490,7 +477,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
         );
         return;
       }
-      
+
       // Shake animation
       Animated.sequence([
         Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
@@ -498,7 +485,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
         Animated.timing(shakeAnim, { toValue: 10, duration: 50, useNativeDriver: true }),
         Animated.timing(shakeAnim, { toValue: 0, duration: 50, useNativeDriver: true }),
       ]).start();
-      
+
       setTimeout(() => {
         setIsCorrect(null);
         setSelectedAnswer(null);
@@ -509,7 +496,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
 
   const nextExercise = async (): Promise<void> => {
     console.log(`${LOG_PREFIX} ⏭️ nextExercise() - Current: ${currentExerciseIndex}/${exercises.length}`);
-    
+
     if (currentExerciseIndex < exercises.length - 1) {
       setCurrentExerciseIndex((prev: number) => prev + 1);
       setSelectedAnswer(null);
@@ -518,22 +505,20 @@ export default function LessonDetailScreen({ route, navigation }: any) {
     } else {
       // Block completed!
       console.log(`${LOG_PREFIX} 🏁 Block ${currentBlock.id} completed!`);
-      
+
       // Save progress to backend
       await saveProgress();
-      
+
       // Check if there are more blocks
       if (currentBlockIndex < blocks.length - 1) {
         console.log(`${LOG_PREFIX} ➡️ More blocks available`);
-        
-        // ✅ AVANT: '🎉 أحسنت!', 'أكملت الآيات X-Y\nهل تريد المتابعة للآيات التالية؟'
+
         Alert.alert(
           t('lessonDetail.alerts.wellDone'),
           t('lessonDetail.alerts.completedAyahs', { start: currentBlock.start, end: currentBlock.end }),
           [
-            { 
-              // ✅ AVANT: 'متابعة'
-              text: t('lessonDetail.alerts.continue'), 
+            {
+              text: t('lessonDetail.alerts.continue'),
               onPress: () => {
                 setCurrentBlockIndex((prev: number) => prev + 1);
                 setCurrentExerciseIndex(0);
@@ -543,9 +528,8 @@ export default function LessonDetailScreen({ route, navigation }: any) {
                 setIsCorrect(null);
               }
             },
-            { 
-              // ✅ AVANT: 'إنهاء'
-              text: t('lessonDetail.alerts.finish'), 
+            {
+              text: t('lessonDetail.alerts.finish'),
               onPress: () => navigateToComplete(),
               style: 'cancel'
             }
@@ -560,10 +544,10 @@ export default function LessonDetailScreen({ route, navigation }: any) {
 
   const saveProgress = async (): Promise<void> => {
     console.log(`${LOG_PREFIX} 💾 saveProgress() - Saving block ${currentBlock.id}`);
-    
+
     try {
       console.log(`${LOG_PREFIX} 🌐 BACKEND API CALL - progressAPI.saveBlockProgress()`);
-      
+
       await progressAPI.saveBlockProgress(
         surah.id,
         currentBlock.id,
@@ -571,9 +555,9 @@ export default function LessonDetailScreen({ route, navigation }: any) {
         currentBlock.end,
         xpEarned
       );
-      
+
       console.log(`${LOG_PREFIX} ✅ All progress saved for block ${currentBlock.id}`);
-      
+
     } catch (error: any) {
       console.error(`${LOG_PREFIX} ❌ ERROR saving progress:`, error);
       // Continue anyway - don't block user
@@ -593,7 +577,6 @@ export default function LessonDetailScreen({ route, navigation }: any) {
 
   const handleGoBack = (): void => {
     console.log(`${LOG_PREFIX} ⬅️ Back pressed`);
-    // ✅ AVANT: 'مغادرة الدرس؟', 'ستفقد تقدمك في هذا الدرس'
     Alert.alert(
       t('lessonDetail.alerts.leaveLesson'),
       t('lessonDetail.alerts.loseProgress'),
@@ -610,15 +593,14 @@ export default function LessonDetailScreen({ route, navigation }: any) {
       return (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          {/* ✅ AVANT: 'جاري تحميل الدرس...' */}
           <Text style={styles.loadingText}>{t('lessonDetail.loadingLesson')}</Text>
         </View>
       );
     }
-    
+
     const exercise = exercises[currentExerciseIndex];
     console.log(`${LOG_PREFIX} 🎨 Rendering: ${exercise.type}`);
-    
+
     switch (exercise.type) {
       case 'listen_repeat':
         return (
@@ -626,9 +608,9 @@ export default function LessonDetailScreen({ route, navigation }: any) {
             <Text style={styles.instruction}>{exercise.instruction}</Text>
             <Text style={styles.ayahText}>{exercise.ayah?.text}</Text>
             <Text style={styles.translationText}>{exercise.ayah?.translation}</Text>
-            
-            <TouchableOpacity accessible accessibilityRole="button" 
-              style={[styles.playButton, isPlaying && styles.playButtonActive]} 
+
+            <TouchableOpacity accessible accessibilityRole="button"
+              style={[styles.playButton, isPlaying && styles.playButtonActive]}
               onPress={() => isPlaying ? stopAudio() : playAudio(exercise.ayah)}
               disabled={audioLoading}
             >
@@ -638,29 +620,27 @@ export default function LessonDetailScreen({ route, navigation }: any) {
                 <Ionicons name={isPlaying ? 'pause' : 'play'} size={32} color={colors.infoStrong} />
               )}
               <Text style={styles.playText}>
-                {/* ✅ AVANT: 'جاري التحميل...' / 'إيقاف' / 'استمع' */}
-                {audioLoading 
-                  ? t('lessonDetail.audioLoading') 
-                  : isPlaying 
-                    ? t('lessonDetail.stop') 
+                {audioLoading
+                  ? t('lessonDetail.audioLoading')
+                  : isPlaying
+                    ? t('lessonDetail.stop')
                     : t('lessonDetail.listen')
                 }
               </Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity accessible accessibilityRole="button" style={styles.doneButton} onPress={checkAnswer}>
-              {/* ✅ AVANT: 'تم الاستماع والتكرار ✓' */}
               <Text style={styles.doneText}>{t('lessonDetail.doneListening')}</Text>
             </TouchableOpacity>
           </View>
         );
-        
+
       case 'multiple_choice':
         return (
           <View style={styles.exerciseContainer}>
             <Text style={styles.instruction}>{exercise.instruction}</Text>
             <Text style={styles.ayahText}>{exercise.ayah?.text}</Text>
-            
+
             <View style={styles.optionsContainer}>
               {exercise.options?.map((option: string, index: number) => (
                 <TouchableOpacity accessible accessibilityRole="button"
@@ -680,13 +660,13 @@ export default function LessonDetailScreen({ route, navigation }: any) {
             </View>
           </View>
         );
-        
+
       case 'fill_blank':
         return (
           <View style={styles.exerciseContainer}>
             <Text style={styles.instruction}>{exercise.instruction}</Text>
             <Text style={styles.ayahText}>{exercise.blankText}</Text>
-            
+
             <View style={styles.optionsContainer}>
               {exercise.options?.map((option: string, index: number) => (
                 <TouchableOpacity accessible accessibilityRole="button"
@@ -700,16 +680,16 @@ export default function LessonDetailScreen({ route, navigation }: any) {
             </View>
           </View>
         );
-        
+
       case 'arrange_words':
       case 'arrange_ayahs':
         const words: string[] = exercise.ayah?.text.split(' ') || exercise.ayahs?.map((a: AyahData) => a.text) || [];
         const shuffled: string[] = [...words].sort(() => Math.random() - 0.5);
-        
+
         return (
           <View style={styles.exerciseContainer}>
             <Text style={styles.instruction}>{exercise.instruction}</Text>
-            
+
             <View style={styles.arrangeTarget}>
               {arrangedWords.map((word: string, index: number) => (
                 <TouchableOpacity accessible accessibilityRole="button"
@@ -721,7 +701,7 @@ export default function LessonDetailScreen({ route, navigation }: any) {
                 </TouchableOpacity>
               ))}
             </View>
-            
+
             <View style={styles.wordsContainer}>
               {shuffled.filter((w: string) => !arrangedWords.includes(w)).map((word: string, index: number) => (
                 <TouchableOpacity accessible accessibilityRole="button"
@@ -735,14 +715,13 @@ export default function LessonDetailScreen({ route, navigation }: any) {
             </View>
           </View>
         );
-        
+
       case 'recite_check':
         return (
           <View style={styles.exerciseContainer}>
             <Text style={styles.instruction}>{exercise.instruction}</Text>
-            {/* ✅ AVANT: 'حاول قراءة الآيات من الذاكرة' */}
             <Text style={styles.subtitle}>{t('lessonDetail.tryReciteFromMemory')}</Text>
-            
+
             <View style={styles.reciteContainer}>
               {exercise.ayahs?.map((ayah: AyahData, index: number) => (
                 <View key={index} style={styles.reciteAyah}>
@@ -754,23 +733,20 @@ export default function LessonDetailScreen({ route, navigation }: any) {
                 </View>
               ))}
             </View>
-            
+
             <TouchableOpacity accessible accessibilityRole="button" style={styles.revealButton} onPress={() => {
               const ayahsText = exercise.ayahs?.map((a: AyahData) => `${a.numberInSurah}. ${a.text}`).join('\n\n') || '';
-              // ✅ AVANT: 'الآيات'
               Alert.alert(t('lessonDetail.theAyahs'), ayahsText);
             }}>
-              {/* ✅ AVANT: '👁️ إظهار للمراجعة' */}
               <Text style={styles.revealText}>{t('lessonDetail.revealForReview')}</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity accessible accessibilityRole="button" style={styles.doneButton} onPress={checkAnswer}>
-              {/* ✅ AVANT: 'تمت القراءة ✓' */}
               <Text style={styles.doneText}>{t('lessonDetail.doneReading')}</Text>
             </TouchableOpacity>
           </View>
         );
-        
+
       default:
         return null;
     }
@@ -783,30 +759,28 @@ export default function LessonDetailScreen({ route, navigation }: any) {
         <TouchableOpacity accessible accessibilityRole="button" onPress={handleGoBack}>
           <Ionicons name="close" size={28} color={colors.textSecondary} />
         </TouchableOpacity>
-        
+
         <View style={styles.progressBar}>
-          <Animated.View 
+          <Animated.View
             style={[
-              styles.progressFill, 
+              styles.progressFill,
               { width: progressAnim.interpolate({ inputRange: [0, 100], outputRange: ['0%', '100%'] }) }
-            ]} 
+            ]}
           />
         </View>
-        
+
         <View style={styles.heartsDisplay}>
-          <Text style={styles.heartIcon}>❤️</Text>
+          <IconeCoeurs size={16} color={colors.error} />
           <Text style={styles.heartCount}>{hearts}</Text>
         </View>
       </View>
-      
+
       {/* Block Info */}
       <View style={styles.blockInfo}>
         <Text style={styles.surahName}>{surah?.name}</Text>
-        {/* ✅ AVANT: 'الآيات X - Y' */}
         <Text style={styles.blockRange}>
           {t('lessonDetail.ayahsRange', { start: currentBlock?.start, end: currentBlock?.end })}
         </Text>
-        {/* ✅ AVANT: 'البلوك X من Y' */}
         <Text style={styles.blockProgress}>
           {t('lessonDetail.blockProgress', { current: currentBlockIndex + 1, total: blocks?.length })}
         </Text>
@@ -820,19 +794,18 @@ export default function LessonDetailScreen({ route, navigation }: any) {
       </Animated.View>
 
       {/* Check Button */}
-      {exercises[currentExerciseIndex]?.type !== 'listen_repeat' && 
+      {exercises[currentExerciseIndex]?.type !== 'listen_repeat' &&
        exercises[currentExerciseIndex]?.type !== 'recite_check' && (
         <View style={styles.footer}>
           <TouchableOpacity accessible accessibilityRole="button"
             style={[
-              styles.checkButton, 
+              styles.checkButton,
               (selectedAnswer === null && arrangedWords.length === 0) && styles.checkButtonDisabled
             ]}
             onPress={checkAnswer}
             disabled={selectedAnswer === null && arrangedWords.length === 0}
           >
             <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.checkGradient}>
-              {/* ✅ AVANT: 'تحقق' */}
               <Text style={styles.checkText}>{t('lessonDetail.check')}</Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -842,10 +815,15 @@ export default function LessonDetailScreen({ route, navigation }: any) {
       {/* Feedback */}
       {isCorrect !== null && (
         <View style={[styles.feedback, isCorrect ? styles.feedbackCorrect : styles.feedbackWrong]}>
-          <Text style={styles.feedbackIcon}>{isCorrect ? '✓' : '✗'}</Text>
+          {/* Juste ou faux : la forme porte l'information, pas seulement
+              la couleur — un daltonien ne distingue pas le vert du rouge. */}
+          <Ionicons
+            name={isCorrect ? 'checkmark-circle' : 'close-circle'}
+            size={44}
+            color={isCorrect ? colors.success : colors.error}
+          />
           <Text style={styles.feedbackText}>
-            {/* ✅ AVANT: 'أحسنت! +X XP' / 'حاول مرة أخرى' */}
-            {isCorrect 
+            {isCorrect
               ? t('lessonDetail.feedback.correct', { xp: exercises[currentExerciseIndex]?.xp || 10 })
               : t('lessonDetail.feedback.tryAgain')
             }
@@ -862,47 +840,47 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   progressBar: { flex: 1, height: 10, backgroundColor: c.border, borderRadius: 5, marginHorizontal: 15, overflow: 'hidden' },
   progressFill: { height: '100%', backgroundColor: c.primary, borderRadius: 5 },
   heartsDisplay: { flexDirection: 'row', alignItems: 'center' },
-  heartIcon: { fontSize: 18 },
+  heartIcon: {},
   heartCount: { color: c.error, fontWeight: 'bold', marginLeft: 5 },
-  
+
   blockInfo: { alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: c.backgroundAlt },
   surahName: { fontSize: 20, fontWeight: 'bold', color: c.text },
   blockRange: { fontSize: 14, color: c.primary, marginTop: 4 },
   blockProgress: { fontSize: 12, color: c.textMuted, marginTop: 2 },
-  
+
   content: { flex: 1 },
   scrollContent: { flexGrow: 1, padding: 20 },
-  
+
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingText: { fontSize: 16, color: c.textSecondary, marginTop: 15 },
-  
+
   exerciseContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   instruction: { fontSize: 18, color: c.textSecondary, marginBottom: 20, textAlign: 'center' },
   subtitle: { fontSize: 14, color: c.textMuted, marginBottom: 20 },
   ayahText: { fontSize: 26, color: c.text, textAlign: 'center', lineHeight: 50, marginBottom: 15, fontFamily: 'System' },
   translationText: { fontSize: 14, color: c.textSecondary, textAlign: 'center', marginBottom: 30, fontStyle: 'italic' },
-  
+
   playButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.infoSoft, paddingHorizontal: 30, paddingVertical: 15, borderRadius: 25, marginBottom: 20, minWidth: 180, justifyContent: 'center' },
   playButtonActive: { backgroundColor: '#BBDEFB' },
   playText: { fontSize: 16, color: c.infoStrong, fontWeight: '600', marginLeft: 10 },
-  
+
   doneButton: { backgroundColor: c.primary, paddingHorizontal: 50, paddingVertical: 15, borderRadius: 25 },
   doneText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
-  
+
   optionsContainer: { width: '100%' },
   optionButton: { backgroundColor: c.background, padding: 18, borderRadius: 15, marginBottom: 12, borderWidth: 2, borderColor: 'transparent' },
   optionSelected: { borderColor: c.primary, backgroundColor: c.primarySoft },
   optionCorrect: { borderColor: c.primary, backgroundColor: c.primarySoft },
   optionWrong: { borderColor: c.error, backgroundColor: c.errorSoft },
   optionText: { fontSize: 16, textAlign: 'center', color: c.text },
-  
+
   arrangeTarget: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', minHeight: 60, backgroundColor: c.background, borderRadius: 15, padding: 10, marginBottom: 20, width: '100%' },
   arrangedWord: { backgroundColor: c.primary, paddingHorizontal: 15, paddingVertical: 10, borderRadius: 10, margin: 5 },
   arrangedWordText: { color: c.onDeep, fontSize: 16 },
   wordsContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center' },
   wordButton: { backgroundColor: c.border, paddingHorizontal: 15, paddingVertical: 10, borderRadius: 10, margin: 5 },
   wordText: { fontSize: 16, color: c.text },
-  
+
   reciteContainer: { width: '100%', marginBottom: 20 },
   reciteAyah: { flexDirection: 'row', alignItems: 'center', padding: 15, backgroundColor: c.background, borderRadius: 10, marginBottom: 10 },
   reciteNumber: { fontSize: 18, fontWeight: 'bold', color: c.primary, marginRight: 15, width: 30 },
@@ -910,16 +888,16 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   recitePlay: { padding: 5 },
   revealButton: { padding: 15 },
   revealText: { color: c.textSecondary, fontSize: 14 },
-  
+
   footer: { padding: 20 },
   checkButton: { borderRadius: 15, overflow: 'hidden' },
   checkButtonDisabled: { opacity: 0.5 },
   checkGradient: { paddingVertical: 18, alignItems: 'center' },
   checkText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
-  
+
   feedback: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 20 },
   feedbackCorrect: { backgroundColor: c.primarySoft },
   feedbackWrong: { backgroundColor: c.errorSoft },
-  feedbackIcon: { fontSize: 24, marginRight: 10 },
+  feedbackIcon: { marginRight: 10 },
   feedbackText: { fontSize: 16, fontWeight: 'bold' },
 });

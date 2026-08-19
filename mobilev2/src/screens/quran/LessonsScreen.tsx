@@ -11,9 +11,9 @@
  */
 
 import React, { useState, useCallback, useRef } from 'react';
-import { 
-  View, Text, TouchableOpacity, StyleSheet, RefreshControl, 
-  Dimensions, FlatList, Modal, Alert, Animated, ScrollView 
+import {
+  View, Text, TouchableOpacity, StyleSheet, RefreshControl,
+  Dimensions, FlatList, Modal, Alert, Animated, ScrollView
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,10 +22,18 @@ import { useFocusEffect } from '@react-navigation/native';
 import { progressAPI } from '../../services/api';
 import { useGamificationStore } from '../../stores';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
-import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
+import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
+import { HizbStar } from '../../components/common/Ornements';
+import {
+  IconeMushaf,
+  IconeLecons,
+  IconeKhatam,
+  IconeSerie,
+  IconeGemmes,
+  IconeCoeurs,
+} from '../../components/common/Icones';
 
 const LOG_PREFIX = '[LessonsScreen.tsx]';
 const { width, height } = Dimensions.get('window');
@@ -184,7 +192,7 @@ export default function LessonsScreen({ navigation }: any) {
   const styles = useThemedStyles(makeStyles);
 
   console.log(`${LOG_PREFIX} 🚀 Render`);
-  
+
   const { hearts, maxHearts, streak } = useGamificationStore();
   const [mode, setMode] = useState<'path' | 'juz' | 'hizb'>('path');
   const [progress, setProgress] = useState<any>({});
@@ -201,11 +209,10 @@ export default function LessonsScreen({ navigation }: any) {
       console.log(`${LOG_PREFIX} 🌐 BACKEND API: progressAPI.getProgress()`);
       const res: any = await progressAPI.getProgress();
       console.log(`${LOG_PREFIX} ✅ Response received`);
-      
+
       const map: any = {};
       let totalAyahs = 0, completedSurahs = 0, currentSurah = 1;
-      
-      // ✅ FIXED: Handle different response formats
+
       let progressData: any[] = [];
       if (res?.progress && Array.isArray(res.progress)) {
         progressData = res.progress;
@@ -218,9 +225,9 @@ export default function LessonsScreen({ navigation }: any) {
       } else {
         console.log(`${LOG_PREFIX} ⚠️ No progress data, using empty array`);
       }
-      
+
       console.log(`${LOG_PREFIX} 📊 Progress entries: ${progressData.length}`);
-      
+
       progressData.forEach((p: any) => {
         const sid = p.surahId || p.surah_id || p.surah;
         if (!sid) return;
@@ -231,21 +238,21 @@ export default function LessonsScreen({ navigation }: any) {
         }
         totalAyahs++;
       });
-      
+
       SURAHS.forEach(s => {
         if (map[s.id]?.done >= s.ayahs) completedSurahs++;
         else if (map[s.id]?.done > 0 && currentSurah === 1) currentSurah = s.id;
       });
-      
+
       // Calculate juz/hizb progress
       const juzProgress = Math.floor((totalAyahs / 6236) * 30);
       const hizbProgress = Math.floor((totalAyahs / 6236) * 60);
-      
+
       setProgress(map);
       setStats({ ayahs: totalAyahs, surahs: completedSurahs, current: currentSurah, juz: juzProgress, hizb: hizbProgress });
       console.log(`${LOG_PREFIX} ✅ Stats: ${totalAyahs} ayahs, ${completedSurahs} surahs, juz ${juzProgress}/30`);
       console.log(`${LOG_PREFIX} 📦 Progress map:`, JSON.stringify(map));
-      
+
     } catch (e: any) {
       console.error(`${LOG_PREFIX} ❌ ERROR:`, e);
     }
@@ -256,13 +263,13 @@ export default function LessonsScreen({ navigation }: any) {
   const getStatus = (surah: any, index: number) => {
     const p = progress[surah.id];
     const blocks = getBlocks(surah.id);
-    
+
     // Debug logs
     if (index <= 2) {
       console.log(`${LOG_PREFIX} 🔍 getStatus(${surah.name}, index=${index})`);
       console.log(`${LOG_PREFIX} 📊 Progress for surah ${surah.id}:`, JSON.stringify(p));
     }
-    
+
     if (p) {
       const pct = (p.done / surah.ayahs) * 100;
       console.log(`${LOG_PREFIX} 📊 Surah ${surah.id}: ${p.done}/${surah.ayahs} = ${pct.toFixed(1)}%`);
@@ -271,22 +278,22 @@ export default function LessonsScreen({ navigation }: any) {
       return { status: 'prog', pct, block: nextBlock, crown: 0 };
     }
     if (index === 0) return { status: 'open', pct: 0, block: blocks[0], crown: 0 };
-    
+
     const prev = SURAHS[index - 1];
     const pp = progress[prev.id];
-    
+
     // Debug unlock check
     if (index <= 2) {
       console.log(`${LOG_PREFIX} 🔐 Checking unlock for ${surah.name}:`);
       console.log(`${LOG_PREFIX} 🔐 Previous surah (${prev.name}): ${pp?.done || 0}/${prev.ayahs} = ${pp ? ((pp.done / prev.ayahs) * 100).toFixed(1) : 0}%`);
       console.log(`${LOG_PREFIX} 🔐 Need 50% to unlock, has ${pp ? ((pp.done / prev.ayahs) * 100).toFixed(1) : 0}%`);
     }
-    
+
     if (pp && (pp.done / prev.ayahs) >= 0.5) {
       console.log(`${LOG_PREFIX} ✅ UNLOCKED: ${surah.name}`);
       return { status: 'open', pct: 0, block: blocks[0], crown: 0 };
     }
-    
+
     return { status: 'lock', pct: 0, block: null, crown: 0 };
   };
 
@@ -299,7 +306,6 @@ export default function LessonsScreen({ navigation }: any) {
     console.log(`${LOG_PREFIX} 👆 ${surah.name} [${status}]`);
     if (status === 'lock') {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-      // ✅ AVANT: '🔒 مقفلة', 'أكمل 50% من السورة السابقة لفتح هذه السورة'
       Alert.alert(
         t('lessons.alerts.lockedTitle'),
         t('lessons.alerts.lockedMessage')
@@ -313,16 +319,16 @@ export default function LessonsScreen({ navigation }: any) {
   // Duolingo-style path node
   const renderPathNode = (surah: any, index: number) => {
     const { status, pct, block, crown } = getStatus(surah, index);
-    
+
     // Zigzag pattern
     const isLeft = index % 4 === 0 || index % 4 === 3;
     const offset = isLeft ? -40 : 40;
-    
+
     // Node colors based on status
     let bgColor = DUOLINGO_COLORS.gray;
     let borderColor = DUOLINGO_COLORS.grayLight;
     let iconColor = colors.surface;
-    
+
     if (status === 'done') {
       bgColor = DUOLINGO_COLORS.gold;
       borderColor = DUOLINGO_COLORS.goldDark;
@@ -333,14 +339,14 @@ export default function LessonsScreen({ navigation }: any) {
       bgColor = DUOLINGO_COLORS.green;
       borderColor = DUOLINGO_COLORS.greenDark;
     }
-    
+
     return (
       <View key={surah.id} style={[styles.pathNodeContainer, { marginLeft: offset }]}>
         {/* Connection line */}
         {index > 0 && (
           <View style={[styles.pathLine, { backgroundColor: status === 'lock' ? DUOLINGO_COLORS.grayLight : DUOLINGO_COLORS.green }]} />
         )}
-        
+
         <TouchableOpacity accessible accessibilityRole="button"
           style={[
             styles.pathNode,
@@ -354,12 +360,12 @@ export default function LessonsScreen({ navigation }: any) {
             <Ionicons name="lock-closed" size={28} color={colors.textSecondary} />
           ) : status === 'done' ? (
             <View style={styles.crownContainer}>
-              <Text style={styles.crownEmoji}>👑</Text>
+              <HizbStar size={18} quarters={4} color={fixedColors.gold} />
             </View>
           ) : (
             <Text style={styles.nodeNumber}>{surah.id}</Text>
           )}
-          
+
           {/* Progress ring for in-progress */}
           {status === 'prog' && (
             <View style={styles.progressRing}>
@@ -367,7 +373,7 @@ export default function LessonsScreen({ navigation }: any) {
             </View>
           )}
         </TouchableOpacity>
-        
+
         {/* Surah name label - Les noms de sourates restent en arabe */}
         <View style={[styles.nodeLabel, status === 'lock' && styles.nodeLabelLocked]}>
           <Text style={[styles.nodeLabelText, status === 'lock' && { color: colors.textSecondary }]}>{surah.name}</Text>
@@ -385,24 +391,23 @@ export default function LessonsScreen({ navigation }: any) {
     const done = ss.reduce((a, s) => a + (progress[s.id]?.done || 0), 0);
     const pct = total ? (done / total) * 100 : 0;
     const isComplete = pct >= 100;
-    
+
     return (
-      <TouchableOpacity accessible accessibilityRole="button" 
-        key={juz} 
+      <TouchableOpacity accessible accessibilityRole="button"
+        key={juz}
         style={[styles.juzCard, isComplete && styles.juzCardComplete]}
         onPress={() => setMode('path')}
       >
-        <LinearGradient 
+        <LinearGradient
           colors={isComplete ? [DUOLINGO_COLORS.gold, DUOLINGO_COLORS.goldDark] : ['#2A3F4A', '#1A2C34']}
           style={styles.juzCardGradient}
         >
-          {/* ✅ AVANT: 'الجزء X' */}
           <Text style={styles.juzNumber}>{t('lessons.juzNumber', { number: juz })}</Text>
           <View style={styles.juzProgressBar}>
             <View style={[styles.juzProgressFill, { width: `${pct}%` }]} />
           </View>
           <Text style={styles.juzPct}>{Math.round(pct)}%</Text>
-          {isComplete && <Text style={styles.juzCrown}>👑</Text>}
+          {isComplete && <HizbStar size={16} quarters={4} color={fixedColors.gold} />}
         </LinearGradient>
       </TouchableOpacity>
     );
@@ -413,10 +418,10 @@ export default function LessonsScreen({ navigation }: any) {
     const total = ss.reduce((a, s) => a + s.ayahs, 0);
     const done = ss.reduce((a, s) => a + (progress[s.id]?.done || 0), 0);
     const pct = total ? (done / total) * 100 : 0;
-    
+
     return (
-      <TouchableOpacity accessible accessibilityRole="button" 
-        key={hizb} 
+      <TouchableOpacity accessible accessibilityRole="button"
+        key={hizb}
         style={[styles.hizbCard, pct >= 100 && styles.hizbCardComplete]}
         onPress={() => setMode('path')}
       >
@@ -432,8 +437,7 @@ export default function LessonsScreen({ navigation }: any) {
     return (
       <View style={styles.container}>
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingEmoji}>📖</Text>
-          {/* ✅ AVANT: 'جاري التحميل...' */}
+          <IconeMushaf size={54} color={colors.primary} />
           <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
       </View>
@@ -446,48 +450,44 @@ export default function LessonsScreen({ navigation }: any) {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <TouchableOpacity accessible accessibilityRole="button" style={styles.headerIcon}>
-            <Text style={styles.flagEmoji}>🇸🇦</Text>
+            <HizbStar size={20} quarters={4} color={fixedColors.gold} />
           </TouchableOpacity>
-          
+
           <TouchableOpacity accessible accessibilityRole="button" style={styles.streakBadge}>
-            <Text style={styles.streakEmoji}>🔥</Text>
+            <IconeSerie size={16} color={colors.warning} />
             <Text style={styles.streakText}>{streak || 0}</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity accessible accessibilityRole="button" style={styles.gemsBadge}>
-            <Text style={styles.gemsEmoji}>💎</Text>
+            <IconeGemmes size={16} color={colors.info} />
             <Text style={styles.gemsText}>{stats.ayahs * 10}</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity accessible accessibilityRole="button" style={styles.heartsBadge}>
-            <Text style={styles.heartsEmoji}>❤️</Text>
+            <IconeCoeurs size={16} color={colors.error} />
             <Text style={styles.heartsText}>{hearts}</Text>
           </TouchableOpacity>
         </View>
-        
+
         {/* Stats bar */}
         <View style={styles.statsBar}>
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{stats.ayahs}</Text>
-            {/* ✅ AVANT: 'آية' */}
             <Text style={styles.statLabel}>{t('lessons.stats.ayah')}</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{stats.surahs}/114</Text>
-            {/* ✅ AVANT: 'سورة' */}
             <Text style={styles.statLabel}>{t('lessons.stats.surah')}</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{stats.juz}/30</Text>
-            {/* ✅ AVANT: 'جزء' */}
             <Text style={styles.statLabel}>{t('lessons.stats.juz')}</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{stats.hizb}/60</Text>
-            {/* ✅ AVANT: 'حزب' */}
             <Text style={styles.statLabel}>{t('lessons.stats.hizb')}</Text>
           </View>
         </View>
@@ -496,17 +496,21 @@ export default function LessonsScreen({ navigation }: any) {
       {/* Mode tabs */}
       <View style={styles.tabsContainer}>
         {[
-          { key: 'path', labelKey: 'lessons.tabs.path', icon: '🛤️' },
-          { key: 'juz', labelKey: 'lessons.tabs.juz', icon: '📚' },
-          { key: 'hizb', labelKey: 'lessons.tabs.hizb', icon: '📖' },
+          { key: 'path', labelKey: 'lessons.tabs.path', Icone: IconeLecons },
+          { key: 'juz', labelKey: 'lessons.tabs.juz', Icone: IconeMushaf },
+          { key: 'hizb', labelKey: 'lessons.tabs.hizb', Icone: IconeKhatam },
         ].map((tab) => (
           <TouchableOpacity accessible accessibilityRole="button"
             key={tab.key}
             style={[styles.tab, mode === tab.key && styles.tabActive]}
             onPress={() => setMode(tab.key as any)}
           >
-            <Text style={styles.tabIcon}>{tab.icon}</Text>
-            {/* ✅ AVANT: Labels hardcodés 'المسار', 'الأجزاء', 'الأحزاب' */}
+            <View style={styles.tabIcon}>
+              <tab.Icone
+                size={17}
+                color={mode === tab.key ? colors.primary : colors.textMuted}
+              />
+            </View>
             <Text style={[styles.tabText, mode === tab.key && styles.tabTextActive]}>
               {t(tab.labelKey)}
             </Text>
@@ -522,8 +526,8 @@ export default function LessonsScreen({ navigation }: any) {
           contentContainerStyle={styles.pathContent}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl 
-              refreshing={refreshing} 
+            <RefreshControl
+              refreshing={refreshing}
               onRefresh={() => { setRefreshing(true); loadProgress(); }}
               tintColor={DUOLINGO_COLORS.green}
             />
@@ -558,16 +562,16 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     flex: 1,
     backgroundColor: DUOLINGO_COLORS.background,
   },
-  
+
   // Loading
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  loadingEmoji: { fontSize: 60, marginBottom: 20 },
+  loadingEmoji: { marginBottom: 20 },
   loadingText: { color: c.onDeep, fontSize: 18 },
-  
+
   // Header
   header: {
     paddingTop: 50,
@@ -588,8 +592,8 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  flagEmoji: { fontSize: 24 },
-  
+  flagEmoji: {},
+
   streakBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -598,9 +602,9 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
   },
-  streakEmoji: { fontSize: 18, marginRight: 5 },
+  streakEmoji: { marginRight: 5 },
   streakText: { color: '#FF9600', fontWeight: 'bold', fontSize: 16 },
-  
+
   gemsBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -609,9 +613,9 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
   },
-  gemsEmoji: { fontSize: 18, marginRight: 5 },
+  gemsEmoji: { marginRight: 5 },
   gemsText: { color: DUOLINGO_COLORS.blue, fontWeight: 'bold', fontSize: 16 },
-  
+
   heartsBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -620,9 +624,9 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
   },
-  heartsEmoji: { fontSize: 18, marginRight: 5 },
+  heartsEmoji: { marginRight: 5 },
   heartsText: { color: DUOLINGO_COLORS.red, fontWeight: 'bold', fontSize: 16 },
-  
+
   // Stats bar
   statsBar: {
     flexDirection: 'row',
@@ -634,7 +638,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   statValue: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   statLabel: { color: c.textMuted, fontSize: 12, marginTop: 2 },
   statDivider: { width: 1, backgroundColor: '#2A3F4A' },
-  
+
   // Tabs
   tabsContainer: {
     flexDirection: 'row',
@@ -655,10 +659,10 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   tabActive: {
     backgroundColor: DUOLINGO_COLORS.green,
   },
-  tabIcon: { fontSize: 16, marginRight: 6 },
+  tabIcon: { marginRight: 6 },
   tabText: { color: c.textMuted, fontSize: 14, fontWeight: '600' },
   tabTextActive: { color: c.onDeep },
-  
+
   // Path
   pathContainer: { flex: 1 },
   pathContent: {
@@ -666,12 +670,12 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     paddingTop: 20,
     alignItems: 'center',
   },
-  
+
   pathNodeContainer: {
     alignItems: 'center',
     marginBottom: 20,
   },
-  
+
   pathLine: {
     position: 'absolute',
     top: -20,
@@ -679,7 +683,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     height: 20,
     borderRadius: 2,
   },
-  
+
   pathNode: {
     width: 70,
     height: 70,
@@ -695,19 +699,19 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   pathNodeLocked: {
     opacity: 0.6,
   },
-  
+
   nodeNumber: {
     color: c.onDeep,
     fontSize: 22,
     fontWeight: 'bold',
   },
-  
+
   crownContainer: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  crownEmoji: { fontSize: 30 },
-  
+  crownEmoji: {},
+
   progressRing: {
     position: 'absolute',
     bottom: -5,
@@ -722,7 +726,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     backgroundColor: c.surface,
     borderRadius: 3,
   },
-  
+
   nodeLabel: {
     marginTop: 8,
     alignItems: 'center',
@@ -739,17 +743,17 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 2,
   },
-  
+
   // Grid
   gridContainer: { flex: 1 },
   gridContent: { padding: 15, paddingBottom: 100 },
-  
+
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
-  
+
   juzCard: {
     width: (width - 50) / 3,
     marginBottom: 10,
@@ -773,8 +777,8 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   },
   juzProgressFill: { height: '100%', backgroundColor: DUOLINGO_COLORS.green },
   juzPct: { color: 'rgba(255,255,255,0.8)', fontSize: 11, marginTop: 5 },
-  juzCrown: { fontSize: 20, marginTop: 5 },
-  
+  juzCrown: { marginTop: 5 },
+
   hizbGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',

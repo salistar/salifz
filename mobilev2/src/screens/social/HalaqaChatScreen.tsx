@@ -35,7 +35,6 @@ import { halaqaAPI } from '../../services/api';
 import { useAuthStore } from '../../stores';
 import { socketService } from '../../services/socket';
 import { COLORS } from '../../config';
-// ✅ AJOUT: Import i18n
 import { t, getLocale } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
@@ -85,7 +84,6 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
       console.log(`${LOG_PREFIX} ⚡ useFocusEffect - halaqaId: ${halaqaId}`);
       
       if (!halaqaId) {
-        // ✅ AVANT: Alert.alert('خطأ', 'معرف الحلقة غير موجود')
         Alert.alert(t('common.error'), t('halaqaChat.errors.noHalaqaId'));
         navigation.goBack();
         return;
@@ -272,7 +270,6 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
 
     } catch (error: any) {
       console.error(`${LOG_PREFIX} ❌ Send error:`, error);
-      // ✅ AVANT: Alert.alert('خطأ', error?.error || error?.message || 'فشل في إرسال الرسالة')
       Alert.alert(
         t('common.error'), 
         error?.error || error?.message || t('halaqaChat.errors.sendFailed')
@@ -296,7 +293,6 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
       socketService.emit('halaqaTyping', {
         halaqaId,
         odileId: user?._id,
-        // ✅ AVANT: 'عضو' hardcodé
         username: user?.displayName || user?.username || t('halaqaChat.member'),
       });
 
@@ -314,7 +310,6 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
     }
   };
 
-  // ✅ Helper pour formater l'heure selon la locale
   const formatTime = (dateString: string): string => {
     try {
       const date = new Date(dateString);
@@ -333,7 +328,6 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
     }
   };
 
-  // ✅ Helper pour formater la date avec i18n
   const formatDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
@@ -342,10 +336,8 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
       yesterday.setDate(yesterday.getDate() - 1);
 
       if (date.toDateString() === today.toDateString()) {
-        // ✅ AVANT: 'اليوم'
         return t('halaqaChat.dates.today');
       } else if (date.toDateString() === yesterday.toDateString()) {
-        // ✅ AVANT: 'أمس'
         return t('halaqaChat.dates.yesterday');
       } else {
         const locale = getLocale();
@@ -380,7 +372,6 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
   };
 
   const getSenderName = (message: Message): string => {
-    // ✅ AVANT: 'أنت' / 'عضو' hardcodés
     if (isMyMessage(message)) return t('halaqaChat.you');
     return message.sender?.displayName || message.sender?.username || t('halaqaChat.member');
   };
@@ -450,7 +441,6 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
           <View style={[styles.dot, styles.dot2]} />
           <View style={[styles.dot, styles.dot3]} />
         </View>
-        {/* ✅ AVANT: '{names} يكتب...' */}
         <Text style={styles.typingText}>
           {t('halaqaChat.typing', { names })}
         </Text>
@@ -461,9 +451,7 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Ionicons name="chatbubbles-outline" size={60} color={colors.textMuted} />
-      {/* ✅ AVANT: 'لا توجد رسائل' */}
       <Text style={styles.emptyTitle}>{t('halaqaChat.empty.title')}</Text>
-      {/* ✅ AVANT: 'كن أول من يبدأ المحادثة!' */}
       <Text style={styles.emptyText}>{t('halaqaChat.empty.subtitle')}</Text>
     </View>
   );
@@ -477,13 +465,11 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
         </TouchableOpacity>
 
         <View style={styles.headerInfo}>
-          {/* ✅ AVANT: 'محادثة الحلقة' */}
           <Text style={styles.headerTitle} numberOfLines={1}>
             {halaqaName || t('halaqaChat.defaultTitle')}
           </Text>
           <View style={styles.statusRow}>
             <View style={[styles.statusDot, isConnected && styles.statusDotOnline]} />
-            {/* ✅ AVANT: 'متصل' / 'غير متصل' */}
             <Text style={styles.statusText}>
               {isConnected ? t('halaqaChat.status.connected') : t('halaqaChat.status.disconnected')}
             </Text>
@@ -531,7 +517,6 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
           <View style={styles.inputWrapper}>
             <TextInput
               style={styles.input}
-              // ✅ AVANT: 'اكتب رسالة...'
               placeholder={t('halaqaChat.input.placeholder')}
               placeholderTextColor={colors.textMuted}
               value={inputText}
