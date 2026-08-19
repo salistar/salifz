@@ -1493,6 +1493,10 @@
     "dueForReview": "À réviser",
     "minutes": "{{count}} minutes",
     "quickReview": "Révision rapide",
+    "recitationLive": {
+      "subtitle": "Récite de mémoire, chaque mot est vérifié",
+      "title": "Récitation suivie"
+    },
     "startReview": "Commencer la révision",
     "stats": {
       "consecutiveDays": "Jours consécutifs",

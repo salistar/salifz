@@ -12,7 +12,7 @@ import {
   Dimensions, RefreshControl
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useAuthStore, useGamificationStore } from '../../stores';
+import { useAuthStore, useGamificationStore, useStreakStore } from '../../stores';
 import { aiAPI } from '../../services/api';
 import { COLORS } from '../../config';
 import { t } from '../../services/i18n';
@@ -41,20 +41,27 @@ export default function InsightsScreen({ navigation }: any) {
 
   const { user } = useAuthStore();
   const { totalXP, level, streak, gems } = useGamificationStore();
+  const streakCalendar = useStreakStore((etat: any) => etat.calendar);
+  const chargerSerie = useStreakStore((etat: any) => etat.loadStreak);
   const [refreshing, setRefreshing] = useState(false);
   const [insights, setInsights] = useState<any>(null);
+  // Zéros tant qu'aucune donnée réelle n'existe. Les anciennes valeurs
+  // (45 versets, 120 révisions, 87 %) étaient des constantes jamais mises à
+  // jour : chaque utilisateur voyait la même semaine imaginaire. Un zéro
+  // honnête vaut mieux qu'une progression inventée.
   const [weeklyStats, setWeeklyStats] = useState({
-    ayahsMemorized: 45,
-    reviewsDone: 120,
-    timeSpent: 180,
-    accuracy: 87,
-    bestDay: 'friday', // ✅ CHANGÉ: clé au lieu de texte
-    worstDay: 'monday' // ✅ CHANGÉ: clé au lieu de texte
+    ayahsMemorized: 0,
+    reviewsDone: 0,
+    timeSpent: 0,
+    accuracy: 0,
+    bestDay: null as string | null,
+    worstDay: null as string | null
   });
 
   useEffect(() => {
     console.log(`${LOG_PREFIX} 🔄 useEffect: Loading insights...`);
     loadInsights();
+    chargerSerie();
   }, []);
 
   const loadInsights = async () => {
@@ -77,21 +84,24 @@ export default function InsightsScreen({ navigation }: any) {
     setRefreshing(false);
   };
 
-  const progressData = [
-    { dayKey: 'insights.days.sat', value: 30 },
-    { dayKey: 'insights.days.sun', value: 45 },
-    { dayKey: 'insights.days.mon', value: 20 },
-    { dayKey: 'insights.days.tue', value: 60 },
-    { dayKey: 'insights.days.wed', value: 55 },
-    { dayKey: 'insights.days.thu', value: 40 },
-    { dayKey: 'insights.days.fri', value: 80 }
-  ];
+  // L'activité de la semaine vient du calendrier de série — le seul relevé
+  // quotidien réel que le serveur tient. Les barres étaient auparavant sept
+  // constantes décoratives, identiques pour tout le monde.
+  const JOURS = ['insights.days.sun', 'insights.days.mon', 'insights.days.tue',
+    'insights.days.wed', 'insights.days.thu', 'insights.days.fri', 'insights.days.sat'];
+  const calendrier = (streakCalendar || []).slice(-7);
+  const progressData = calendrier.length
+    ? calendrier.map((jour: any) => ({
+        dayKey: JOURS[new Date(jour.date).getDay()] || 'insights.days.sun',
+        value: jour.xpEarned || 0,
+      }))
+    : JOURS.map((dayKey) => ({ dayKey, value: 0 }));
 
-  const maxValue = Math.max(...progressData.map(d => d.value));
+  const maxValue = Math.max(1, ...progressData.map((d: any) => d.value));
 
   // Get memorization stats from user.quranProgress
-  const totalAyahsMemorized = user?.quranProgress?.totalVersesMemorized || 156;
-  const totalSurahsCompleted = user?.quranProgress?.totalSurahCompleted || 5;
+  const totalAyahsMemorized = user?.quranProgress?.totalVersesMemorized || 0;
+  const totalSurahsCompleted = user?.quranProgress?.totalSurahCompleted || 0;
   const totalJuzCompleted = user?.quranProgress?.totalJuzCompleted || 0;
 
   const getDayName = (dayKey: string) => {
@@ -144,7 +154,7 @@ export default function InsightsScreen({ navigation }: any) {
         <View style={styles.card}>
           <Text style={styles.cardTitle}>{t('insights.weeklyActivity')}</Text>
           <View style={styles.chartContainer}>
-            {progressData.map((item, index) => (
+            {progressData.map((item: any, index: number) => (
               <View key={index} style={styles.barContainer}>
                 <View style={styles.barWrapper}>
                   <LinearGradient
@@ -188,12 +198,12 @@ export default function InsightsScreen({ navigation }: any) {
           <View style={[styles.dayCard, { backgroundColor: colors.primarySoft }]}>
             <HizbStar size={20} quarters={4} color={colors.accent} />
             <Text style={styles.dayTitle}>{t('insights.bestDay')}</Text>
-            <Text style={styles.dayValue}>{getDayName(weeklyStats.bestDay)}</Text>
+            <Text style={styles.dayValue}>{weeklyStats.bestDay ? getDayName(weeklyStats.bestDay) : '—'}</Text>
           </View>
           <View style={[styles.dayCard, { backgroundColor: colors.errorSoft }]}>
             <HizbStar size={20} quarters={1} color={colors.textMuted} />
             <Text style={styles.dayTitle}>{t('insights.needsImprovement')}</Text>
-            <Text style={styles.dayValue}>{getDayName(weeklyStats.worstDay)}</Text>
+            <Text style={styles.dayValue}>{weeklyStats.worstDay ? getDayName(weeklyStats.worstDay) : '—'}</Text>
           </View>
         </View>
 

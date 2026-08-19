@@ -1493,6 +1493,10 @@
     "dueForReview": "للمراجعة الآن",
     "minutes": "{{count}} دقيقة",
     "quickReview": "مراجعة سريعة",
+    "recitationLive": {
+      "subtitle": "اتلُ من حفظك وكل كلمة تُراجع",
+      "title": "التلاوة الموجهة"
+    },
     "startReview": "ابدأ المراجعة",
     "stats": {
       "consecutiveDays": "أيام متتالية",

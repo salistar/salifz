@@ -45,7 +45,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import * as Haptics from 'expo-haptics';
 
-import { recitationLiveAPI } from '../../services/api';
+import { quranAPI, recitationLiveAPI } from '../../services/api';
 import { t } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
@@ -92,7 +92,11 @@ export default function RecitationLiveScreen({ navigation, route }: any) {
 
   const surahNumber = Number(route?.params?.surahNumber) || 1;
   const ayahNumber = Number(route?.params?.ayahNumber) || 1;
-  const texteVerset: string = route?.params?.verseText || '';
+  // Le texte peut venir de l'appelant (Mushaf, leçon) ; sinon on le
+  // demande au serveur. Sans ce repli, l'écran exigeait un paramètre que
+  // rien ne fournissait — il était enregistré dans la navigation mais
+  // inatteignable, faute d'un seul bouton capable de préparer ses props.
+  const [texteVerset, setTexteVerset] = useState<string>(route?.params?.verseText || '');
 
   const [phase, setPhase] = useState<Phase>('verification');
   const [mode, setMode] = useState<Mode>('verdict');
@@ -126,6 +130,27 @@ export default function RecitationLiveScreen({ navigation, route }: any) {
       : resultat?.mots?.length
       ? resultat.mots
       : motsDuVerset;
+
+  useEffect(() => {
+    if (texteVerset) return;
+    let vivant = true;
+    (async () => {
+      try {
+        const reponse: any = await quranAPI.getWordByWord(surahNumber, ayahNumber);
+        const mots = (reponse?.data?.data?.words ?? reponse?.data?.words ?? [])
+          // Le dernier « mot » de Quran.com est le médaillon de fin de verset.
+          .filter((mot: any) => (mot.char_type_name || mot.charTypeName) !== 'end')
+          .map((mot: any) => mot.text_uthmani || mot.text || '')
+          .filter(Boolean);
+        if (vivant && mots.length) setTexteVerset(mots.join(' '));
+      } catch (e: any) {
+        console.error(`${LOG_PREFIX} ❌ verset`, e?.message);
+      }
+    })();
+    return () => {
+      vivant = false;
+    };
+  }, [surahNumber, ayahNumber]);
 
   /** Le moteur répond-il ? Sinon l'écran le dit au lieu d'offrir un bouton mort. */
   useEffect(() => {

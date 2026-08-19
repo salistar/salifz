@@ -1493,6 +1493,10 @@
     "dueForReview": "Due for Review",
     "minutes": "{{count}} minutes",
     "quickReview": "Quick Review",
+    "recitationLive": {
+      "subtitle": "Recite from memory, every word is checked",
+      "title": "Guided recitation"
+    },
     "startReview": "Start Review",
     "stats": {
       "consecutiveDays": "Consecutive Days",

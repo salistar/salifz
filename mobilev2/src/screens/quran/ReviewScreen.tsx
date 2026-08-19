@@ -262,6 +262,30 @@ export default function ReviewScreen({ navigation }: any) {
           ))}
         </View>
 
+        {/* Récitation suivie — l'écran existait dans la navigation sans
+            qu'aucun bouton n'y mène. C'est ici sa place : réciter de mémoire
+            et voir mot à mot ce qui a été retenu, c'est la révision même. */}
+        <TouchableOpacity
+          style={styles.recitationCard}
+          accessible
+          accessibilityRole="button"
+          accessibilityLabel={t('review.recitationLive.title')}
+          onPress={() => {
+            const cible = reviewData?.dueForReview?.[0];
+            navigation.navigate('RecitationLive', {
+              surahNumber: cible?.surahNumber || cible?.surah || 1,
+              ayahNumber: cible?.ayah || cible?.ayahNumber || 1,
+            });
+          }}
+        >
+          <Ionicons name="mic" size={26} color={colors.primary} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.recitationTitle}>{t('review.recitationLive.title')}</Text>
+            <Text style={styles.recitationSubtitle}>{t('review.recitationLive.subtitle')}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
+        </TouchableOpacity>
+
         {/* Carte de stats — uniquement des valeurs mesurées.
             L'ancienne carte affichait 12 révisions, 85 % de précision et
             156 révisions au total, codés en dur : un compte neuf à zéro verset
@@ -324,6 +348,19 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   quickIcon: { marginBottom: 8 },
   quickDuration: { color: c.text, fontWeight: '600' },
   statsCard: { backgroundColor: c.surface, borderRadius: 20, padding: 20, elevation: 2 },
+  recitationCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    backgroundColor: c.surface,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: c.primarySoft,
+    padding: 18,
+    marginBottom: 16,
+  },
+  recitationTitle: { color: c.text, fontSize: 16, fontWeight: '700' },
+  recitationSubtitle: { color: c.textSecondary, fontSize: 13, marginTop: 2 },
   statsTitle: { fontSize: 16, fontWeight: 'bold', color: c.text, marginBottom: 15 },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap' },
   statItem: { width: '50%', alignItems: 'center', paddingVertical: 10 },

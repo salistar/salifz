@@ -15,7 +15,7 @@ import RootNavigator from './src/navigation/RootNavigator';
 import { ThemeProvider } from './src/contexts/ThemeContext';
 import { registerForPushNotifications, addNotificationListeners } from './src/services/pushNotifications';
 import { useAuthStore } from './src/stores/authStore';
-import './src/services/i18n';
+import { initI18n } from './src/services/i18n';
 
 // Prevent auto-hide of native splash
 SplashScreen.preventAutoHideAsync();
@@ -38,8 +38,14 @@ export default function App() {
   useEffect(() => {
     async function prepare() {
       try {
-        // Just hide the native expo splash screen
-        // Auth loading is handled in SplashScreen.tsx
+        // La langue d'abord, avant de rendre quoi que ce soit. `initI18n`
+        // existait — elle lit le choix sauvegardé, sinon la langue du
+        // téléphone — mais AUCUN code ne l'appelait : la locale restait sur
+        // son défaut de module « ar » à chaque démarrage. Choisir Français
+        // dans les réglages marchait pendant la session, puis se perdait au
+        // redémarrage. L'import seul ne suffit pas ; il faut l'attendre ici,
+        // sinon le premier rendu part dans la mauvaise langue.
+        await initI18n();
         await SplashScreen.hideAsync();
       } catch (e) {
         console.warn('App preparation error:', e);
