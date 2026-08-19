@@ -95,6 +95,56 @@ bouton Retour système ; « التواصل » tombait sur le bouton Accueil.
 
 **Correction** : `insets.bottom` ajouté à la hauteur et au padding.
 
+## Découvertes de la vérification sur l'appareil (même soirée)
+
+Chaque correctif a été réinstallé et re-vérifié sur le téléphone. Cette
+vérification a mis au jour cinq défauts de plus.
+
+### 8. Un second système de traduction, mort-né — corrigé
+
+Les quatre écrans anglais appelaient `useTranslation()` de **react-i18next**,
+bibliothèque présente dans les dépendances mais jamais initialisée : son `t()`
+renvoyait la clé brute, son `i18n.language` restait indéfini. C'est l'origine
+réelle des ternaires arabe/anglais — leurs auteurs ont contourné un `t()` mort.
+Et son `t` local ombrageait le vrai : après ma première correction, les écrans
+affichaient `khatam.titre` au lieu des traductions. react-i18next retiré des
+quatre écrans ; un seul système subsiste.
+
+### 9. `initI18n` n'était appelée nulle part — corrigé
+
+La fonction qui relit la langue sauvegardée existait, était exportée — et
+aucun code ne l'invoquait. La locale repartait sur « ar » à chaque démarrage,
+et le choix fait dans les réglages se perdait. Branchée dans `App.tsx`,
+attendue avant le premier rendu. Vérifié : l'app démarre en français sur un
+téléphone en français, et le choix survit au redémarrage.
+
+### 10. L'écran Statistiques inventait une semaine entière — corrigé
+
+`weeklyStats` initialisé à 45 versets / 120 révisions / 87 % et jamais mis à
+jour ; sept barres d'activité constantes ; des replis `|| 156` qui inventaient
+des totaux. Zéros honnêtes, barres branchées sur le calendrier de série, replis
+à 0.
+
+### 11. La Récitation suivie était inatteignable — corrigé
+
+L'écran phare était enregistré dans la navigation, mais aucun bouton n'y
+menait. Entrée ajoutée dans Révision ; l'écran va chercher lui-même le texte du
+verset quand l'appelant ne le fournit pas. Vérifié sur l'appareil : les deux
+modes s'affichent, la basmala arrive du serveur.
+
+### 12. Les libellés de la barre d'onglets sont en dur en arabe — À FAIRE
+
+L'app entière passe au français, la barre d'onglets reste en arabe
+(الرئيسية، الدروس…) : chaînes en dur dans `RootNavigator`.
+
+### 13. Le serveur tient deux compteurs de série qui divergent — À FAIRE
+
+L'en-tête lit `gamification.currentStreak` (= 6) ; l'écran Série lit la
+collection `Streak` (= 0). Deux sources de vérité côté serveur, jamais
+synchronisées. Le correctif n° 3 a réparé le chargement côté client, mais la
+donnée chargée est celle d'un compteur que rien n'alimente. À unifier côté
+backend — une seule écriture, une seule lecture.
+
 ## Constat non corrigé, à traiter
 
 - **La session ne survit pas au redémarrage de l'app** : le jeton vit en
