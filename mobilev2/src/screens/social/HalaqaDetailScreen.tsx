@@ -45,6 +45,21 @@ import { COLORS } from '../../config';
 import { t } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
+import { HizbStar, MihrabArch, ZelligeField } from '../../components/common/Ornements';
+import {
+  IconeMushaf,
+  IconeRevision,
+  IconeDefis,
+  IconeLecons,
+  IconeRecitations,
+  IconeClassement,
+  IconeVersetDuJour,
+  IconeHalaqat,
+  IconeRecompense,
+  IconeAmis,
+  IconeProps,
+} from '../../components/common/Icones';
+import { getLocale } from '../../services/i18n';
 
 const LOG_PREFIX = '[HalaqaDetailScreen.tsx]';
 
@@ -52,20 +67,42 @@ console.log(`${LOG_PREFIX} 📁 File loaded`);
 
 const { width } = Dimensions.get('window');
 
-// ✅ Helper pour obtenir les types d'activités avec i18n
+/**
+ * Les douze types d'activite.
+ *
+ * Chacun portait un emoji. Un emoji se rend differemment sur chaque appareil,
+ * et douze styles de dessin cote a cote donnent l'impression d'un assemblage
+ * plutot que d'un produit. L'icone du jeu maison remplace le pictogramme, et
+ * elle est la meme que sur le web pour la meme notion.
+ */
+const ICONES_ACTIVITE: Record<string, React.ComponentType<IconeProps>> = {
+  memorize: IconeMushaf,
+  review: IconeRevision,
+  tajweed: IconeDefis,
+  tafseer: IconeLecons,
+  recitation: IconeRecitations,
+  competition: IconeClassement,
+  lesson: IconeLecons,
+  quiz: IconeVersetDuJour,
+  discussion: IconeHalaqat,
+  challenge: IconeDefis,
+  workshop: IconeAmis,
+  achievement: IconeRecompense,
+};
+
 const getActivityTypes = () => [
-  { id: 'memorize', name: t('halaqaDetail.activityTypes.memorize'), icon: '📖', description: t('halaqaDetail.activityTypes.memorizeDesc'), xpReward: 50 },
-  { id: 'review', name: t('halaqaDetail.activityTypes.review'), icon: '🔄', description: t('halaqaDetail.activityTypes.reviewDesc'), xpReward: 30 },
-  { id: 'tajweed', name: t('halaqaDetail.activityTypes.tajweed'), icon: '🎯', description: t('halaqaDetail.activityTypes.tajweedDesc'), xpReward: 40 },
-  { id: 'tafseer', name: t('halaqaDetail.activityTypes.tafseer'), icon: '📚', description: t('halaqaDetail.activityTypes.tafseerDesc'), xpReward: 35 },
-  { id: 'recitation', name: t('halaqaDetail.activityTypes.recitation'), icon: '🎙️', description: t('halaqaDetail.activityTypes.recitationDesc'), xpReward: 25 },
-  { id: 'competition', name: t('halaqaDetail.activityTypes.competition'), icon: '🏆', description: t('halaqaDetail.activityTypes.competitionDesc'), xpReward: 100 },
-  { id: 'lesson', name: t('halaqaDetail.activityTypes.lesson'), icon: '📝', description: t('halaqaDetail.activityTypes.lessonDesc'), xpReward: 45 },
-  { id: 'quiz', name: t('halaqaDetail.activityTypes.quiz'), icon: '❓', description: t('halaqaDetail.activityTypes.quizDesc'), xpReward: 60 },
-  { id: 'discussion', name: t('halaqaDetail.activityTypes.discussion'), icon: '💬', description: t('halaqaDetail.activityTypes.discussionDesc'), xpReward: 20 },
-  { id: 'challenge', name: t('halaqaDetail.activityTypes.challenge'), icon: '⚡', description: t('halaqaDetail.activityTypes.challengeDesc'), xpReward: 80 },
-  { id: 'workshop', name: t('halaqaDetail.activityTypes.workshop'), icon: '🛠️', description: t('halaqaDetail.activityTypes.workshopDesc'), xpReward: 55 },
-  { id: 'achievement', name: t('halaqaDetail.activityTypes.achievement'), icon: '🏅', description: t('halaqaDetail.activityTypes.achievementDesc'), xpReward: 70 },
+  { id: 'memorize', name: t('halaqaDetail.activityTypes.memorize'), description: t('halaqaDetail.activityTypes.memorizeDesc'), xpReward: 50 },
+  { id: 'review', name: t('halaqaDetail.activityTypes.review'), description: t('halaqaDetail.activityTypes.reviewDesc'), xpReward: 30 },
+  { id: 'tajweed', name: t('halaqaDetail.activityTypes.tajweed'), description: t('halaqaDetail.activityTypes.tajweedDesc'), xpReward: 40 },
+  { id: 'tafseer', name: t('halaqaDetail.activityTypes.tafseer'), description: t('halaqaDetail.activityTypes.tafseerDesc'), xpReward: 35 },
+  { id: 'recitation', name: t('halaqaDetail.activityTypes.recitation'), description: t('halaqaDetail.activityTypes.recitationDesc'), xpReward: 25 },
+  { id: 'competition', name: t('halaqaDetail.activityTypes.competition'), description: t('halaqaDetail.activityTypes.competitionDesc'), xpReward: 100 },
+  { id: 'lesson', name: t('halaqaDetail.activityTypes.lesson'), description: t('halaqaDetail.activityTypes.lessonDesc'), xpReward: 45 },
+  { id: 'quiz', name: t('halaqaDetail.activityTypes.quiz'), description: t('halaqaDetail.activityTypes.quizDesc'), xpReward: 60 },
+  { id: 'discussion', name: t('halaqaDetail.activityTypes.discussion'), description: t('halaqaDetail.activityTypes.discussionDesc'), xpReward: 20 },
+  { id: 'challenge', name: t('halaqaDetail.activityTypes.challenge'), description: t('halaqaDetail.activityTypes.challengeDesc'), xpReward: 80 },
+  { id: 'workshop', name: t('halaqaDetail.activityTypes.workshop'), description: t('halaqaDetail.activityTypes.workshopDesc'), xpReward: 55 },
+  { id: 'achievement', name: t('halaqaDetail.activityTypes.achievement'), description: t('halaqaDetail.activityTypes.achievementDesc'), xpReward: 70 },
 ];
 
 interface MemberUser {
@@ -262,12 +299,15 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
   const isChatAllowed = (): boolean => halaqa?.settings?.allowChat !== false;
   const getHalaqaActivityTypes = (): string[] => halaqa?.settings?.activityTypes || ['memorize', 'review'];
   
+  /** L'icone suit le type ; un type inconnu retombe sur l'etoile de hizb,
+   *  qui est neutre et reste dans le langage du produit. */
+  const IconeDuType = (id: string) => ICONES_ACTIVITE[id];
+
   const getActivityTypeInfo = (id: string) => {
     return ACTIVITY_TYPES.find((t) => t.id === id) || {
       id,
       // ✅ AVANT: 'نشاط'
       name: t('halaqaDetail.activity'),
-      icon: '📌',
       xpReward: 0,
       description: '',
     };
@@ -439,7 +479,9 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
     if (mins < 60) return t('halaqaDetail.time.minutesAgo', { count: mins });
     if (hrs < 24) return t('halaqaDetail.time.hoursAgo', { count: hrs });
     if (days < 7) return t('halaqaDetail.time.daysAgo', { count: days });
-    return new Date(d).toLocaleDateString('ar-SA');
+    // La locale de l'interface, pas `ar-SA` en dur : un francophone voyait
+    // une date au format arabe au milieu de son ecran.
+    return new Intl.DateTimeFormat(getLocale(), { dateStyle: 'medium' }).format(new Date(d));
   };
 
   // ✅ FIXED: Separate render functions with proper types
@@ -452,7 +494,14 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
     return (
       <View style={[styles.activityItem, isCompleted && styles.activityItemCompleted]}>
         <View style={[styles.activityIcon, isCompleted && styles.activityIconCompleted]}>
-          <Text style={styles.activityIconText}>{actType.icon}</Text>
+          {(() => {
+            const Icone = IconeDuType(item.type);
+            return Icone ? (
+              <Icone size={20} color={isCompleted ? colors.primary : colors.accent} />
+            ) : (
+              <HizbStar size={18} quarters={isCompleted ? 4 : 0} color={colors.accent} />
+            );
+          })()}
         </View>
         <View style={styles.activityContent}>
           <Text style={styles.activityTitle}>{item.title || actType.name}</Text>
@@ -460,7 +509,6 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
             {item.description || actType.description}
           </Text>
           <View style={styles.activityMeta}>
-            {/* ✅ AVANT: 'بواسطة: ' */}
             <Text style={styles.activityCreator}>{t('halaqaDetail.createdBy')}{creator}</Text>
             <Text style={styles.activityTime}>{formatTime(item.createdAt)}</Text>
           </View>
@@ -491,23 +539,20 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
       <View style={styles.memberItem}>
         <View style={styles.memberAvatar}>
           <Text style={styles.memberAvatarText}>{name.charAt(0).toUpperCase()}</Text>
-          {isAdmin && (
-            <View style={styles.memberAdminBadge}>
-              <Text>{'👑'}</Text>
-            </View>
-          )}
+          {/* La couronne faisait doublon avec la pastille « responsable »
+              affichee juste a cote, et disait « roi » la ou il s'agit d'un
+              enseignant. Un liseret dore suffit. */}
+          {isAdmin && <View style={styles.memberAdminRing} />}
         </View>
         <View style={styles.memberInfo}>
           <View style={styles.memberNameRow}>
             <Text style={styles.memberName}>{name}</Text>
             {isAdmin && (
               <View style={styles.adminBadge}>
-                {/* ✅ AVANT: 'مدير' */}
                 <Text style={styles.adminBadgeText}>{t('halaqaDetail.admin')}</Text>
               </View>
             )}
           </View>
-          {/* ✅ AVANT: 'آية • XP' */}
           <Text style={styles.memberStats}>
             {item.stats?.versesMemorized || 0} {t('halaqaDetail.stats.verses')} • {item.stats?.totalXP || 0} XP
           </Text>
@@ -520,20 +565,28 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
     // ✅ AVANT: 'عضو'
     const name = item.user?.displayName || item.user?.username || t('halaqaDetail.member');
     const rank = index + 1;
-    const rankIcon = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : String(rank);
     const rankStyle = rank === 1 ? styles.rank1 : rank === 2 ? styles.rank2 : rank === 3 ? styles.rank3 : {};
+    // Les trois premiers portent une etoile pleine plutot qu'une medaille :
+    // le rang reste ecrit, l'etoile marque le podium sans changer d'univers.
+    const podium = rank <= 3;
     
     return (
       <View style={[styles.leaderboardItem, rankStyle]}>
         <View style={styles.rankContainer}>
-          <Text style={styles.rankText}>{rankIcon}</Text>
+          {podium && (
+            <HizbStar
+              size={26}
+              quarters={4}
+              color={rank === 1 ? fixedColors.gold : rank === 2 ? fixedColors.silver : fixedColors.bronze}
+            />
+          )}
+          <Text style={[styles.rankText, podium && styles.rankTextPodium]}>{rank}</Text>
         </View>
         <View style={styles.leaderboardAvatar}>
           <Text style={styles.leaderboardAvatarText}>{name.charAt(0).toUpperCase()}</Text>
         </View>
         <View style={styles.leaderboardInfo}>
           <Text style={styles.leaderboardName}>{name}</Text>
-          {/* ✅ AVANT: 'نشاط' */}
           <Text style={styles.leaderboardActivities}>
             {item.stats?.activitiesCompleted || 0} {t('halaqaDetail.stats.activities')}
           </Text>
@@ -548,21 +601,21 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
 
   const renderEmptyState = (type: TabType) => {
     // ✅ AVANT: hardcoded
-    const config = {
-      activities: { icon: '📊', title: t('halaqaDetail.empty.activities') },
-      members: { icon: '👥', title: t('halaqaDetail.empty.members') },
-      leaderboard: { icon: '🏆', title: t('halaqaDetail.empty.leaderboard') },
+    const titres: Record<TabType, string> = {
+      activities: t('halaqaDetail.empty.activities'),
+      members: t('halaqaDetail.empty.members'),
+      leaderboard: t('halaqaDetail.empty.leaderboard'),
     };
-    const msg = config[type];
-    
+
     return (
       <View style={styles.emptyState}>
-        <Text style={styles.emptyIcon}>{msg.icon}</Text>
-        <Text style={styles.emptyTitle}>{msg.title}</Text>
+        {/* L'arche remplace l'emoji : c'est la meme forme que sur le web pour
+            le meme moment, et elle donne au vide une contenance. */}
+        <MihrabArch width={78} color={colors.border} />
+        <Text style={styles.emptyTitle}>{titres[type]}</Text>
         {type === 'activities' && isAdminUser() && (
           <TouchableOpacity accessible accessibilityRole="button" style={styles.createActivityButton} onPress={() => setShowCreateActivityModal(true)}>
             <Ionicons name="add" size={20} color={colors.onDeep} />
-            {/* ✅ AVANT: 'إنشاء نشاط' */}
             <Text style={styles.createActivityButtonText}>{t('halaqaDetail.createActivity.button')}</Text>
           </TouchableOpacity>
         )}
@@ -598,7 +651,6 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
           {isAdminUser() && (
             <TouchableOpacity accessible accessibilityRole="button" style={styles.addActivityButton} onPress={() => setShowCreateActivityModal(true)}>
               <Ionicons name="add-circle" size={24} color={colors.primary} />
-              {/* ✅ AVANT: 'إنشاء نشاط جديد' */}
               <Text style={styles.addActivityButtonText}>{t('halaqaDetail.createActivity.newButton')}</Text>
             </TouchableOpacity>
           )}
@@ -656,13 +708,11 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
           <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color={colors.onDeep} />
           </TouchableOpacity>
-          {/* ✅ AVANT: 'تفاصيل الحلقة' */}
           <Text style={styles.headerTitle}>{t('halaqaDetail.title')}</Text>
           <View style={{ width: 40 }} />
         </LinearGradient>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          {/* ✅ AVANT: 'جاري التحميل...' */}
           <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
       </SafeAreaView>
@@ -672,6 +722,9 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
+        {/* Le motif en filigrane : c'est le seul endroit de l'ecran ou la
+            couleur porte, et il rattache la banniere aux cartes du web. */}
+        <ZelligeField color={colors.onDeep} opacity={0.05} />
         <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color={colors.onDeep} />
         </TouchableOpacity>
@@ -689,7 +742,7 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
             <Text style={styles.halaqaAvatarText}>{getName().charAt(0).toUpperCase()}</Text>
             {isAdminUser() && (
               <View style={styles.adminCrown}>
-                <Text>{'👑'}</Text>
+                <HizbStar size={16} quarters={4} color={fixedColors.gold} />
               </View>
             )}
           </View>
@@ -697,10 +750,8 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
           <Text style={styles.halaqaDescription}>{getDescription()}</Text>
           
           <View style={styles.creatorRow}>
-            {/* ✅ AVANT: 'أنشأها: ' */}
             <Text style={styles.creatorLabel}>{t('halaqaDetail.createdByLabel')}</Text>
             <Text style={styles.creatorName}>{getCreatorName()}</Text>
-            {/* ✅ AVANT: '🌍 عامة' / '🔒 خاصة' */}
             <Text style={isPublicHalaqa() ? styles.publicBadge : styles.privateBadge}>
               {isPublicHalaqa() ? t('halaqaDetail.public') : t('halaqaDetail.private')}
             </Text>
@@ -712,7 +763,10 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
               const actType = getActivityTypeInfo(id);
               return (
                 <View key={i} style={styles.activityTypeBadge}>
-                  <Text style={styles.activityTypeBadgeIcon}>{actType.icon}</Text>
+                  {(() => {
+                    const Icone = IconeDuType(id);
+                    return Icone ? <Icone size={13} color={colors.onDeep} /> : null;
+                  })()}
                   <Text style={styles.activityTypeBadgeName}>{actType.name}</Text>
                 </View>
               );
@@ -723,13 +777,11 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Text style={styles.statValue}>{getMemberCount()}</Text>
-              {/* ✅ AVANT: 'عضو' */}
               <Text style={styles.statLabel}>{t('halaqaDetail.stats.member')}</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
               <Text style={styles.statValue}>{getTotalVerses()}</Text>
-              {/* ✅ AVANT: 'آية' */}
               <Text style={styles.statLabel}>{t('halaqaDetail.stats.verse')}</Text>
             </View>
             <View style={styles.statDivider} />
@@ -740,33 +792,33 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
               <Text style={styles.statValue}>{activities.length}</Text>
-              {/* ✅ AVANT: 'نشاط' */}
               <Text style={styles.statLabel}>{t('halaqaDetail.stats.activity')}</Text>
             </View>
           </View>
 
           {/* Invite Code */}
           <View style={styles.inviteSection}>
-            {/* ✅ AVANT: 'رمز الدعوة' */}
             <Text style={styles.inviteLabel}>{t('halaqaDetail.inviteCode.label')}</Text>
             <TouchableOpacity accessible accessibilityRole="button" onPress={copyInviteCode} style={styles.inviteCodeBox}>
-              <Text style={styles.inviteCode}>{getInviteCode()}</Text>
+              {/* Le code d'invitation est toujours latin : sans direction
+                  forcee, il s'inverse a l'affichage en interface arabe — le
+                  meme defaut que le web avait avant correction. */}
+              <Text style={styles.inviteCode} accessibilityLanguage="en">
+                {getInviteCode()}
+              </Text>
               <Ionicons name="copy-outline" size={20} color={colors.primary} />
             </TouchableOpacity>
             <TouchableOpacity accessible accessibilityRole="button" style={styles.shareButton} onPress={shareInviteCode}>
               <Ionicons name="share-social-outline" size={18} color={colors.onDeep} />
-              {/* ✅ AVANT: 'مشاركة' */}
               <Text style={styles.shareButtonText}>{t('common.share')}</Text>
             </TouchableOpacity>
           </View>
 
-          {/* ✅ Actions with Chat Button */}
           <View style={styles.actionsRow}>
             {/* Chat Button - Always visible if allowed */}
             {isChatAllowed() && (
               <TouchableOpacity accessible accessibilityRole="button" style={styles.chatButton} onPress={navigateToChat}>
                 <Ionicons name="chatbubbles-outline" size={18} color={colors.onDeep} />
-                {/* ✅ AVANT: 'محادثة' */}
                 <Text style={styles.chatButtonText}>{t('halaqaDetail.chat')}</Text>
               </TouchableOpacity>
             )}
@@ -774,14 +826,12 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
             {!isCreatorUser() && (
               <TouchableOpacity accessible accessibilityRole="button" style={styles.leaveButton} onPress={handleLeaveHalaqa}>
                 <Ionicons name="exit-outline" size={18} color={colors.error} />
-                {/* ✅ AVANT: 'مغادرة' */}
                 <Text style={styles.leaveButtonText}>{t('halaqaDetail.leave')}</Text>
               </TouchableOpacity>
             )}
             {isCreatorUser() && (
               <TouchableOpacity accessible accessibilityRole="button" style={styles.deleteButton} onPress={handleDeleteHalaqa}>
                 <Ionicons name="trash-outline" size={18} color={colors.error} />
-                {/* ✅ AVANT: 'حذف' */}
                 <Text style={styles.deleteButtonText}>{t('common.delete')}</Text>
               </TouchableOpacity>
             )}
@@ -801,7 +851,6 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
                 size={18}
                 color={activeTab === tab ? colors.primary : colors.textMuted}
               />
-              {/* ✅ AVANT: 'الأنشطة' / 'الأعضاء' / 'المتصدرين' */}
               <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
                 {tab === 'activities' 
                   ? t('halaqaDetail.tabs.activities') 
@@ -828,14 +877,12 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
           <View style={styles.modalContent}>
             <ScrollView>
               <View style={styles.modalHeader}>
-                {/* ✅ AVANT: 'إنشاء نشاط جديد' */}
                 <Text style={styles.modalTitle}>{t('halaqaDetail.createActivity.modalTitle')}</Text>
                 <TouchableOpacity accessible accessibilityRole="button" onPress={() => setShowCreateActivityModal(false)}>
                   <Ionicons name="close" size={24} color={colors.textSecondary} />
                 </TouchableOpacity>
               </View>
 
-              {/* ✅ AVANT: 'نوع النشاط *' */}
               <Text style={styles.sectionTitle}>{t('halaqaDetail.createActivity.typeLabel')}</Text>
               <View style={styles.activityTypesGrid}>
                 {ACTIVITY_TYPES.filter((actType) => getHalaqaActivityTypes().includes(actType.id)).map((type) => (
@@ -850,7 +897,15 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
                       if (!activityTitle) setActivityTitle(type.name);
                     }}
                   >
-                    <Text style={styles.activityTypeOptionIcon}>{type.icon}</Text>
+                    {(() => {
+                      const Icone = IconeDuType(type.id);
+                      return Icone ? (
+                        <Icone
+                          size={22}
+                          color={selectedActivityType === type.id ? colors.primary : colors.textSecondary}
+                        />
+                      ) : null;
+                    })()}
                     <Text
                       style={[
                         styles.activityTypeOptionName,
@@ -869,7 +924,6 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
                 ))}
               </View>
 
-              {/* ✅ AVANT: 'التفاصيل' */}
               <Text style={styles.sectionTitle}>{t('halaqaDetail.createActivity.detailsLabel')}</Text>
               <TextInput
                 style={styles.input}
@@ -901,7 +955,6 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
                     setActivityDescription('');
                   }}
                 >
-                  {/* ✅ AVANT: 'إلغاء' */}
                   <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity accessible accessibilityRole="button"
@@ -914,7 +967,6 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
                   ) : (
                     <>
                       <Ionicons name="add" size={20} color={colors.onDeep} />
-                      {/* ✅ AVANT: 'إنشاء' */}
                       <Text style={styles.confirmButtonText}>{t('common.create')}</Text>
                     </>
                   )}
@@ -949,7 +1001,6 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   privateBadge: { fontSize: 12, color: c.warning, marginLeft: 10 },
   activityTypesRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginBottom: 15 },
   activityTypeBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.backgroundAlt, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 15, gap: 4 },
-  activityTypeBadgeIcon: { fontSize: 14 },
   activityTypeBadgeName: { fontSize: 11, color: c.textSecondary },
   statsContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.surfaceAlt, borderRadius: 15, padding: 15, marginBottom: 20, width: '100%' },
   statItem: { flex: 1, alignItems: 'center' },
@@ -982,7 +1033,6 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   activityItemCompleted: { opacity: 0.7 },
   activityIcon: { width: 50, height: 50, borderRadius: 25, backgroundColor: c.primarySoft, justifyContent: 'center', alignItems: 'center' },
   activityIconCompleted: { backgroundColor: c.backgroundAlt },
-  activityIconText: { fontSize: 22 },
   activityContent: { flex: 1, marginLeft: 12 },
   activityTitle: { fontSize: 15, fontWeight: '600', color: c.text },
   activityDescription: { fontSize: 12, color: c.textSecondary, marginTop: 3 },
@@ -997,7 +1047,12 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   memberItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.surface, padding: 15, borderRadius: 12, marginBottom: 10 },
   memberAvatar: { width: 50, height: 50, borderRadius: 25, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center', position: 'relative' },
   memberAvatarText: { color: c.onDeep, fontSize: 20, fontWeight: 'bold' },
-  memberAdminBadge: { position: 'absolute', bottom: -4, right: -4, backgroundColor: c.surface, borderRadius: 10, padding: 1 },
+  memberAdminRing: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 999,
+    borderWidth: 2,
+    borderColor: c.accent,
+  },
   memberInfo: { flex: 1, marginLeft: 12 },
   memberNameRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   memberName: { fontSize: 16, fontWeight: '600', color: c.text },
@@ -1008,8 +1063,11 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   rank1: { borderWidth: 2, borderColor: fixedColors.gold },
   rank2: { borderWidth: 2, borderColor: fixedColors.silver },
   rank3: { borderWidth: 2, borderColor: fixedColors.bronze },
-  rankContainer: { width: 35, alignItems: 'center' },
+  rankContainer: { width: 35, alignItems: 'center', justifyContent: 'center' },
   rankText: { fontSize: 18, fontWeight: 'bold', color: c.textSecondary },
+  // Sur le podium, le chiffre se pose au centre de l'etoile : la couleur
+  // du metal reste lisible derriere lui.
+  rankTextPodium: { position: 'absolute', fontSize: 11, color: c.text },
   leaderboardAvatar: { width: 45, height: 45, borderRadius: 22.5, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center', marginLeft: 10 },
   leaderboardAvatarText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   leaderboardInfo: { flex: 1, marginLeft: 12 },
@@ -1019,8 +1077,8 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   leaderboardXPValue: { fontSize: 18, fontWeight: 'bold', color: c.primary },
   leaderboardXPLabel: { fontSize: 10, color: c.textMuted },
   emptyState: { alignItems: 'center', padding: 40 },
-  emptyIcon: { fontSize: 50, marginBottom: 15 },
-  emptyTitle: { fontSize: 18, fontWeight: 'bold', color: c.text, marginBottom: 15 },
+  emptyTitle: {
+    marginTop: 14, fontSize: 18, fontWeight: 'bold', color: c.text, marginBottom: 15 },
   createActivityButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: c.primary, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 25, gap: 8 },
   createActivityButtonText: { color: c.onDeep, fontWeight: '600' },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
