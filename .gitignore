@@ -36,7 +36,18 @@ ios/
 # --- Sous-projet IA : assets lourds (33 Go, conservés localement) ---
 salifz-ai-model/venv_hifz/
 salifz-ai-model/venv/
-salifz-ai-model/data/raw/quran/
+# Le jeu de donnees coranique reste hors du depot — 29 Go d'audio — sauf le
+# texte de reference, dont le service de suivi de recitation ne peut pas se
+# passer : c'est lui qui definit le verset attendu. Absent du depot, la
+# construction de l'image echoue sur srv3 alors qu'elle passe en local, ou le
+# fichier existe hors de git.
+#
+# Le chemin est rouvert niveau par niveau : git ne descend pas dans un
+# dossier exclu, une exception sur le seul fichier n'aurait donc aucun effet.
+salifz-ai-model/data/raw/quran/*
+!salifz-ai-model/data/raw/quran/text/
+salifz-ai-model/data/raw/quran/text/*
+!salifz-ai-model/data/raw/quran/text/quran_uthmani.json
 salifz-ai-model/data/raw/audio/
 salifz-ai-model/data/processed/
 # Modeles convertis par scripts/convertir_modele_ct2.py : produits par la
