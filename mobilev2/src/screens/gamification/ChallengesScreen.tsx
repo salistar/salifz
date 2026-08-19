@@ -90,7 +90,7 @@ export default function ChallengesScreen({ navigation }: any) {
       
       // ✅ AVANT: Alert.alert('🎉 مبروك!', `حصلت على ${...} XP و ${...} جواهر`);
       Alert.alert(
-        `🎉 ${t('challenges.congratulations')}`,
+        `${t('challenges.congratulations')}`,
         t('challenges.rewardMessage', { xp: xpReward, gems: gemsReward })
       );
       loadChallenges();
@@ -243,7 +243,7 @@ export default function ChallengesScreen({ navigation }: any) {
                 {isClaimed ? (
                   <View style={styles.claimedBadge}>
                     {/* ✅ AVANT: '✓ تم الاستلام' */}
-                    <Text style={styles.claimedText}>✓ {t('challenges.claimed')}</Text>
+                    <Text style={styles.claimedText}>{t('challenges.claimed')}</Text>
                   </View>
                 ) : isCompleted ? (
                   <TouchableOpacity accessible accessibilityRole="button" 
@@ -252,7 +252,7 @@ export default function ChallengesScreen({ navigation }: any) {
                   >
                     <LinearGradient colors={[fixedColors.gold, colors.warningStrong]} style={styles.claimGradient}>
                       {/* ✅ AVANT: 'استلم المكافأة 🎁' */}
-                      <Text style={styles.claimText}>{t('challenges.claimReward')} 🎁</Text>
+                      <Text style={styles.claimText}>{t('challenges.claimReward')}</Text>
                     </LinearGradient>
                   </TouchableOpacity>
                 ) : isInProgress ? (

@@ -33,7 +33,7 @@ export function LearnScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>📖 {t('learn.title')}</Text>
+        <Text style={styles.title}>{t('learn.title')}</Text>
         <Text style={styles.subtitle}>{t('learn.juzAmma')}</Text>
       </View>
       

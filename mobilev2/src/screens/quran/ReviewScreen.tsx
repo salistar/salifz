@@ -261,7 +261,7 @@ export default function ReviewScreen({ navigation }: any) {
 
         {/* Stats Card */}
         <View style={styles.statsCard}>
-          <Text style={styles.statsTitle}>📊 {t('review.stats.title')}</Text>
+          <Text style={styles.statsTitle}>{t('review.stats.title')}</Text>
           <View style={styles.statsGrid}>
             <View style={styles.statItem}>
               <Text style={styles.statValue}>12</Text>
