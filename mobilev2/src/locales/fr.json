@@ -1112,6 +1112,13 @@
     "tapToReveal": "touchez un mot pour le dévoiler",
     "title": "Mushaf"
   },
+  "navigation": {
+    "accueil": "Accueil",
+    "compte": "Compte",
+    "lecons": "Leçons",
+    "serie": "Série",
+    "social": "Social"
+  },
   "notifications": {
     "empty": "Pas de notifications",
     "emptySubtitle": "Les nouvelles notifications apparaîtront ici",
@@ -1254,6 +1261,7 @@
     "about": "À propos",
     "achievements": "Succès",
     "ayahsMemorized": "Versets mémorisés",
+    "changePhoto": "Changer la photo de profil",
     "dailyGoal": "Objectif quotidien",
     "defaultUsername": "Utilisateur",
     "help": "Aide",
@@ -1281,6 +1289,8 @@
     },
     "noAchievements": "Vos premiers succes apparaitront apres quelques jours de pratique.",
     "notifications": "Notifications",
+    "photoEchec": "L'envoi de la photo a échoué.",
+    "photoPermission": "L'accès aux photos a été refusé.",
     "premium": "Salifz+ Premium",
     "seeAll": "Voir tout",
     "settings": "Paramètres",

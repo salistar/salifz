@@ -49,6 +49,31 @@ const safeRequire = (path) => {
   }
 };
 
+// Photo de profil, lisible sans jeton : une balise <img> ne sait pas porter
+// d'Authorization, et l'avatar est une donnée de profil public au même titre
+// que le nom d'affichage. Les octets transitent par Node — les URL signées
+// de MinIO pointent sur l'hôte interne du réseau Docker, invisibles depuis
+// un téléphone ou un navigateur.
+router.get('/avatar/:userId', async (req, res) => {
+  try {
+    const User = require('../models/User');
+    const storage = require('../services/storage');
+    const utilisateur = await User.findById(req.params.userId).select('avatar');
+    const cle = utilisateur && utilisateur.avatar;
+    if (!cle || !cle.startsWith('avatars/')) {
+      return res.status(404).json({ success: false, error: 'Pas de photo de profil' });
+    }
+    const image = await storage.lire(cle);
+    if (!image) return res.status(404).json({ success: false, error: 'Image indisponible' });
+    res.set('Content-Type', image.contentType);
+    // Cache court : le client ajoute ?v=<horodatage> au changement de photo.
+    res.set('Cache-Control', 'public, max-age=300');
+    return res.send(image.corps);
+  } catch (e) {
+    return res.status(404).json({ success: false, error: 'Image indisponible' });
+  }
+});
+
 router.use('/prayer', safeRequire('./prayer'));
 router.use('/verse', safeRequire('./verse'));
 

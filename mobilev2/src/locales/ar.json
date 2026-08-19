@@ -1112,6 +1112,13 @@
     "tapToReveal": "المس الكلمة لإظهارها",
     "title": "المصحف"
   },
+  "navigation": {
+    "accueil": "الرئيسية",
+    "compte": "حسابي",
+    "lecons": "الدروس",
+    "serie": "السلسلة",
+    "social": "التواصل"
+  },
   "notifications": {
     "empty": "لا توجد إشعارات",
     "emptySubtitle": "ستظهر هنا الإشعارات الجديدة",
@@ -1254,6 +1261,7 @@
     "about": "حول التطبيق",
     "achievements": "الإنجازات",
     "ayahsMemorized": "آيات محفوظة",
+    "changePhoto": "تغيير صورة الملف الشخصي",
     "dailyGoal": "الهدف اليومي",
     "defaultUsername": "مستخدم",
     "help": "المساعدة",
@@ -1281,6 +1289,8 @@
     },
     "noAchievements": "تظهر إنجازاتك الأولى بعد أيام من الممارسة.",
     "notifications": "التنبيهات",
+    "photoEchec": "فشل رفع الصورة.",
+    "photoPermission": "تم رفض الوصول إلى الصور.",
     "premium": "سالفز+ بريميوم",
     "seeAll": "عرض الكل",
     "settings": "الإعدادات",

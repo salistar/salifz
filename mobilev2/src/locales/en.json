@@ -1112,6 +1112,13 @@
     "tapToReveal": "tap a word to reveal it",
     "title": "Mushaf"
   },
+  "navigation": {
+    "accueil": "Home",
+    "compte": "Account",
+    "lecons": "Lessons",
+    "serie": "Streak",
+    "social": "Social"
+  },
   "notifications": {
     "empty": "No notifications",
     "emptySubtitle": "New notifications will appear here",
@@ -1254,6 +1261,7 @@
     "about": "About",
     "achievements": "Achievements",
     "ayahsMemorized": "Ayahs Memorized",
+    "changePhoto": "Change profile photo",
     "dailyGoal": "Daily Goal",
     "defaultUsername": "User",
     "help": "Help",
@@ -1281,6 +1289,8 @@
     },
     "noAchievements": "Your first achievements appear after a few days of practice.",
     "notifications": "Notifications",
+    "photoEchec": "Photo upload failed.",
+    "photoPermission": "Photo access was denied.",
     "premium": "Salifz+ Premium",
     "seeAll": "See All",
     "settings": "Settings",

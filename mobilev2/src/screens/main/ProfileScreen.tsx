@@ -8,11 +8,13 @@
 
 import React, { useState } from 'react';
 import {
-  View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Image
+  View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Image, ActivityIndicator
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
+import * as ImagePicker from 'expo-image-picker';
 import { useAuthStore, useGamificationStore } from '../../stores';
+import { avatarAPI } from '../../services/api';
 import { COLORS } from '../../config';
 import { t } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
@@ -58,6 +60,46 @@ export default function ProfileScreen({ navigation }: any) {
   console.log(`${LOG_PREFIX} 🚀 Component mounting...`);
 
   const { user, logout } = useAuthStore();
+
+  // Photo de profil. `photoUrl` est null tant qu'aucune image n'existe : le
+  // serveur répond 404 et l'initiale reste affichée — l'app ne devine pas.
+  const [envoiPhoto, setEnvoiPhoto] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(
+    user?.avatar && String(user.avatar).startsWith('avatars/')
+      ? avatarAPI.url(String(user.id || user._id || ''))
+      : null
+  );
+
+  const choisirPhoto = async () => {
+    try {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert(t('common.error'), t('profile.photoPermission'));
+        return;
+      }
+      const resultat = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [1, 1],
+        // 0.7 : un avatar affiché en 100 px n'a pas besoin de 12 mégapixels,
+        // et le serveur plafonne à 5 Mo.
+        quality: 0.7,
+      });
+      if (resultat.canceled || !resultat.assets?.[0]?.uri) return;
+
+      setEnvoiPhoto(true);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      await avatarAPI.televerser(resultat.assets[0].uri);
+      // L'horodatage dans l'URL contourne le cache : sans lui, l'ancienne
+      // image resterait affichée jusqu'au prochain démarrage.
+      setPhotoUrl(avatarAPI.url(String(user?.id || user?._id || '')));
+    } catch (e: any) {
+      Alert.alert(t('common.error'), e?.message || t('profile.photoEchec'));
+    } finally {
+      setEnvoiPhoto(false);
+    }
+  };
+
   const { totalXP, level, gems, coins, hearts, streak, league } = useGamificationStore();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
@@ -127,14 +169,32 @@ export default function ProfileScreen({ navigation }: any) {
     <View style={styles.container}>
       {/* Header */}
       <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
-        <View style={styles.avatarContainer}>
-          {/* L'initiale identifie sans rien inventer : un emoji humain
-              attribuait a la personne un genre et un age qu'elle n'a pas
-              choisis. Meme correction que sur l'ecran Amis. */}
-          <Text style={styles.avatarEmoji}>
-            {(user?.displayName || user?.username || '?').charAt(0).toUpperCase()}
-          </Text>
-        </View>
+        {/* Un appui sur l'avatar ouvre la galerie. L'initiale reste le repli
+            quand aucune photo n'a été choisie — elle identifie sans rien
+            inventer. */}
+        <TouchableOpacity
+          style={styles.avatarContainer}
+          onPress={choisirPhoto}
+          disabled={envoiPhoto}
+          accessible
+          accessibilityRole="button"
+          accessibilityLabel={t('profile.changePhoto')}
+        >
+          {photoUrl ? (
+            <Image source={{ uri: photoUrl }} style={styles.avatarImage} />
+          ) : (
+            <Text style={styles.avatarEmoji}>
+              {(user?.displayName || user?.username || '?').charAt(0).toUpperCase()}
+            </Text>
+          )}
+          <View style={styles.avatarBadge}>
+            {envoiPhoto ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Ionicons name="camera" size={14} color="#fff" />
+            )}
+          </View>
+        </TouchableOpacity>
         <Text style={styles.username}>{user?.username || t('profile.defaultUsername')}</Text>
         <Text style={styles.email}>{user?.email || ''}</Text>
         <View style={styles.levelBadge}>
@@ -242,6 +302,12 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   header: { paddingTop: 50, paddingBottom: 30, alignItems: 'center' },
   avatarContainer: { width: 100, height: 100, borderRadius: 50, backgroundColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center', marginBottom: 15 },
   avatarEmoji: { fontSize: 50 },
+  avatarImage: { width: 100, height: 100, borderRadius: 50 },
+  avatarBadge: {
+    position: 'absolute', bottom: 2, right: 2, width: 28, height: 28,
+    borderRadius: 14, backgroundColor: 'rgba(0,0,0,0.55)',
+    justifyContent: 'center', alignItems: 'center',
+  },
   username: { color: c.onDeep, fontSize: 24, fontWeight: 'bold' },
   email: { color: 'rgba(255,255,255,0.8)', marginTop: 5 },
   levelBadge: { backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 20, paddingVertical: 8, borderRadius: 20, marginTop: 15 },

@@ -13,9 +13,10 @@
  * compte rejoignent les Réglages, où vit déjà la section « Données ».
  */
 
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { halaqaAPI, badgesAPI, progressAPI } from '../services/api';
+import { api, halaqaAPI, badgesAPI, progressAPI, API_URL } from '../services/api';
 import { useResource, asList, unwrap } from '../components/useResource';
 import { useAuth } from '../store';
 import { useLabel } from '../services/i18n';
@@ -56,6 +57,33 @@ export default function ProfilePage() {
   const nom = user?.displayName ?? user?.username ?? '';
   const initiale = nom ? nom[0].toUpperCase() : '';
 
+  // Photo de profil. Même contrat que le mobile : POST /users/avatar, lecture
+  // publique sur /avatar/:id, horodatage dans l'URL pour contourner le cache.
+  const fichierRef = useRef<HTMLInputElement>(null);
+  const [envoiPhoto, setEnvoiPhoto] = useState(false);
+  const idUtilisateur = String((user as any)?.id ?? (user as any)?._id ?? '');
+  const [photoUrl, setPhotoUrl] = useState<string | null>(
+    (user as any)?.avatar && String((user as any).avatar).startsWith('avatars/')
+      ? `${API_URL}/avatar/${idUtilisateur}?v=${Date.now()}`
+      : null
+  );
+
+  const televerserPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fichier = e.target.files?.[0];
+    if (!fichier) return;
+    const form = new FormData();
+    form.append('avatar', fichier);
+    setEnvoiPhoto(true);
+    try {
+      await api.post('/users/avatar', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+      setPhotoUrl(`${API_URL}/avatar/${idUtilisateur}?v=${Date.now()}`);
+    } finally {
+      setEnvoiPhoto(false);
+      e.target.value = '';
+    }
+  };
+
+
   return (
     <div style={{ display: 'grid', gap: 22 }}>
       {/* --- Identité ------------------------------------------------------- */}
@@ -68,22 +96,45 @@ export default function ProfilePage() {
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
           {/* L'arche encadre l'initiale : le même motif que l'accueil, à la
               taille d'un portrait. */}
-          <div style={{ position: 'relative', inlineSize: 76, blockSize: 76, flexShrink: 0 }}>
+          <button
+            type="button"
+            onClick={() => fichierRef.current?.click()}
+            title={t('changerPhoto', { defaultValue: 'Changer la photo de profil' })}
+            style={{
+              position: 'relative', inlineSize: 76, blockSize: 76, flexShrink: 0,
+              background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+            }}
+          >
             <MihrabArch style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />
-            <span
-              className="display-md"
-              style={{
-                position: 'absolute',
-                inset: 0,
-                display: 'grid',
-                placeItems: 'center',
-                color: 'var(--brand)',
-                paddingBlockStart: 8,
-              }}
-            >
-              {initiale}
-            </span>
-          </div>
+            {photoUrl ? (
+              <img
+                src={photoUrl}
+                alt={nom}
+                onError={() => setPhotoUrl(null)}
+                style={{
+                  position: 'absolute', inset: 6, width: 'calc(100% - 12px)',
+                  height: 'calc(100% - 12px)', borderRadius: '50%', objectFit: 'cover',
+                }}
+              />
+            ) : (
+              <span
+                className="display-md"
+                style={{
+                  position: 'absolute', inset: 0, display: 'grid',
+                  placeItems: 'center', color: 'var(--brand)', paddingBlockStart: 8,
+                }}
+              >
+                {envoiPhoto ? '…' : initiale}
+              </span>
+            )}
+            <input
+              ref={fichierRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={televerserPhoto}
+              style={{ display: 'none' }}
+            />
+          </button>
 
           <div style={{ flex: 1, minInlineSize: 180 }}>
             <h1 className="display-md" style={{ margin: '0 0 4px' }}>{nom}</h1>

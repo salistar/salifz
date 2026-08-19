@@ -586,6 +586,25 @@ export const recitationsAPI = {
  * ni avec l'analyse du tajwid : ici on constate quels mots ont ete prononces,
  * pas la maniere de les prononcer.
  */
+/** Photo de profil. */
+export const avatarAPI = {
+  /** Envoie une nouvelle photo (uri locale du téléphone). */
+  televerser: (uri: string): Promise<any> => {
+    const form = new FormData();
+    form.append('avatar', {
+      uri,
+      name: 'avatar.jpg',
+      type: 'image/jpeg',
+    } as any);
+    return api.post('/users/avatar', form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 30000,
+    });
+  },
+  /** URL publique de la photo d'un utilisateur (cache-bust par horodatage). */
+  url: (userId: string): string => `${API_URL}/avatar/${userId}?v=${Date.now()}`,
+};
+
 export const recitationLiveAPI = {
   /** Le moteur est-il joignable ? Sert a masquer l'entree plutot qu'a offrir un bouton qui echouera. */
   etat: (): Promise<any> => api.get('/recitation-live/etat'),

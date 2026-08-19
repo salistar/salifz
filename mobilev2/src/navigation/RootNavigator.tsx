@@ -15,6 +15,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useGamificationStore } from '../stores';
 import { COLORS } from '../config';
 import { isAuthenticated } from '../services/api';
+// Les libellés d'onglets étaient les cinq dernières chaînes arabes en dur :
+// l'app entière changeait de langue, la barre d'onglets restait figée.
+import { t } from '../services/i18n';
 
 // ============ AUTH SCREENS ============
 import SplashScreen from '../screens/auth/SplashScreen';
@@ -160,7 +163,7 @@ function MainTabs() {
         name="HomeTab"
         component={HomeScreen}
         options={{
-          tabBarLabel: 'الرئيسية',
+          tabBarLabel: t('navigation.accueil'),
           tabBarIcon: ({ color, size }) => (
             <Text style={{ fontSize: size, color }}>🏠</Text>
           ),
@@ -170,7 +173,7 @@ function MainTabs() {
         name="LessonsTab"
         component={LessonsScreen}
         options={{
-          tabBarLabel: 'الدروس',
+          tabBarLabel: t('navigation.lecons'),
           tabBarIcon: ({ color, size }) => (
             <Text style={{ fontSize: size, color }}>📖</Text>
           ),
@@ -180,7 +183,7 @@ function MainTabs() {
         name="SocialTab"
         component={SocialHubScreen}
         options={{
-          tabBarLabel: 'التواصل',
+          tabBarLabel: t('navigation.social'),
           tabBarIcon: ({ focused }) => (
             <View style={styles.socialTabIcon}>
               <Text style={{ fontSize: 22 }}>💬</Text>
@@ -199,7 +202,7 @@ function MainTabs() {
         name="StreakTab"
         component={StreakScreen}
         options={{
-          tabBarLabel: 'السلسلة',
+          tabBarLabel: t('navigation.serie'),
           tabBarIcon: ({ focused }) => (
             <View style={styles.streakTabIcon}>
               <Text style={{ fontSize: 22 }}>🔥</Text>
@@ -214,7 +217,7 @@ function MainTabs() {
         name="ProfileTab"
         component={ProfileScreen}
         options={{
-          tabBarLabel: 'حسابي',
+          tabBarLabel: t('navigation.compte'),
           tabBarIcon: ({ color, size }) => (
             <Text style={{ fontSize: size, color }}>👤</Text>
           ),

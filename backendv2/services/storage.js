@@ -110,6 +110,35 @@ async function url(key, expiresInSeconds = 3600) {
   return `/uploads/${key}`;
 }
 
+/**
+ * Lit un objet et le rend en mémoire (petits fichiers uniquement — avatars).
+ *
+ * Nécessaire parce que les URL signées de MinIO pointent sur l'hôte interne
+ * du réseau Docker (`http://minio:9000`) : valides depuis l'API, mortes
+ * depuis un téléphone ou un navigateur. Pour une image de profil de quelques
+ * dizaines de kilo-octets, faire transiter les octets par Node est plus sûr
+ * que d'exposer MinIO.
+ */
+async function lire(key) {
+  if (!key) return null;
+
+  if (useObjectStorage) {
+    const { GetObjectCommand } = require('@aws-sdk/client-s3');
+    const reponse = await s3().send(
+      new GetObjectCommand({ Bucket: config.bucket, Key: key })
+    );
+    const morceaux = [];
+    for await (const morceau of reponse.Body) morceaux.push(morceau);
+    return {
+      corps: Buffer.concat(morceaux),
+      contentType: reponse.ContentType || 'application/octet-stream',
+    };
+  }
+
+  const corps = await fs.readFile(path.join(LOCAL_ROOT, key));
+  return { corps, contentType: 'application/octet-stream' };
+}
+
 async function remove(key) {
   if (!key) return;
 
@@ -130,4 +159,4 @@ function describe() {
     : 'disque local (éphémère — à ne pas utiliser en production)';
 }
 
-module.exports = { save, url, remove, describe, useObjectStorage, LOCAL_ROOT };
+module.exports = { save, url, lire, remove, describe, useObjectStorage, LOCAL_ROOT };

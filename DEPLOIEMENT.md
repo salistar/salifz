@@ -74,7 +74,7 @@ voisin qui réclame plusieurs gigaoctets d'un coup.
 `docker-compose.yml` du dépôt s'y appliquent sans adaptation.
 
 Chemin d'installation, par cohérence avec les applications déjà présentes :
-`/home/deploy/apps/salifz-stack`.
+`/opt/salifz/stack`.
 
 ### 2. TURN et STUN → `turn.salistar.com` (`84.8.218.36`), sans rien déployer
 
@@ -140,7 +140,7 @@ compromis, pas une erreur.
 | `DEPLOY_HOST` | `46.225.77.64` |
 | `DEPLOY_USER` | un utilisateur **non-root** dédié |
 | `DEPLOY_SSH_KEY` | clé privée sans phrase de passe |
-| `DEPLOY_PATH` | `/home/deploy/apps/salifz-stack` |
+| `DEPLOY_PATH` | `/opt/salifz/stack` |
 
 Le relevé s'est fait en `root`, faute d'un compte dédié accessible. Le
 déploiement automatisé ne devrait pas s'exécuter en `root` : une CI compromise

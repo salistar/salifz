@@ -15,7 +15,8 @@ import RootNavigator from './src/navigation/RootNavigator';
 import { ThemeProvider } from './src/contexts/ThemeContext';
 import { registerForPushNotifications, addNotificationListeners } from './src/services/pushNotifications';
 import { useAuthStore } from './src/stores/authStore';
-import { initI18n } from './src/services/i18n';
+import { addLocaleChangeListener, getLocale, initI18n } from './src/services/i18n';
+import BoutonLangue from './src/components/common/BoutonLangue';
 
 // Prevent auto-hide of native splash
 SplashScreen.preventAutoHideAsync();
@@ -34,6 +35,12 @@ const queryClient = new QueryClient({
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
+  // La locale sert de clé de rendu : en changer remonte tout l'arbre, et
+  // chaque écran relit ses traductions. Sans cela, les écrans déjà montés
+  // gardaient l'ancienne langue jusqu'à une navigation.
+  const [locale, setLocale] = useState(getLocale());
+
+  useEffect(() => addLocaleChangeListener(setLocale), []);
 
   useEffect(() => {
     async function prepare() {
@@ -79,11 +86,12 @@ export default function App() {
   }
 
   return (
-    <GestureHandlerRootView style={styles.container}>
+    <GestureHandlerRootView style={styles.container} key={locale}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider>
             <RootNavigator />
+            <BoutonLangue />
             <StatusBar style="auto" />
           </ThemeProvider>
         </QueryClientProvider>

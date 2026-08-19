@@ -2,8 +2,56 @@
  * Users Routes - Salifz
  */
 const express = require('express');
+const multer = require('multer');
 const User = require('../models/User');
+const storage = require('../services/storage');
 const router = express.Router();
+
+// Photo de profil. En mémoire puis vers le stockage objet : le disque du
+// conteneur est éphémère, une image qui y resterait disparaîtrait au
+// prochain déploiement.
+const uploadAvatar = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    // Le type déclaré par le client n'est qu'un premier filtre — le
+    // navigateur et le téléphone l'envoient correctement, et le stockage
+    // ne sert jamais ce contenu comme du HTML.
+    cb(null, /^image\/(jpe?g|png|webp)$/i.test(file.mimetype));
+  },
+});
+
+/**
+ * POST /api/v1/users/avatar
+ * Remplace la photo de profil du compte connecté.
+ */
+router.post('/avatar', uploadAvatar.single('avatar'), async (req, res, next) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'Image requise (jpeg, png ou webp, 5 Mo max)' });
+    }
+
+    // storage.save renvoie la clé (chaîne), pas un objet.
+    const cle = await storage.save({
+      prefix: 'avatars',
+      originalName: req.file.originalname || 'avatar.jpg',
+      buffer: req.file.buffer,
+      contentType: req.file.mimetype,
+    });
+
+    // L'ancienne image est retirée du stockage — sinon chaque changement
+    // de photo laisse un orphelin facturé à vie.
+    const ancienne = req.user.avatar;
+    if (ancienne && ancienne.startsWith('avatars/')) {
+      storage.remove(ancienne).catch(() => {});
+    }
+
+    req.user.avatar = cle;
+    await req.user.save();
+
+    res.json({ success: true, data: { avatar: cle } });
+  } catch (error) { next(error); }
+});
 
 router.get('/me', (req, res) => {
   res.json({ success: true, data: { user: req.user } });
