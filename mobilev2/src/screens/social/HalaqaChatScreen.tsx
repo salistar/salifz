@@ -111,6 +111,19 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
       setMessages(prev => {
         // Avoid duplicates
         if (prev.find(m => m._id === message._id)) return prev;
+        // L'écho de notre propre envoi arrive souvent AVANT la réponse REST :
+        // il remplace alors le message optimiste au lieu de s'y ajouter.
+        const idx = prev.findIndex(
+          m =>
+            m._id.startsWith('temp-') &&
+            m.content === message.content &&
+            String(m.sender?._id) === String(message.sender?._id)
+        );
+        if (idx >= 0) {
+          const copie = [...prev];
+          copie[idx] = message;
+          return copie;
+        }
         return [...prev, message];
       });
       
