@@ -90,7 +90,11 @@ jobs:
 
             git fetch --all --tags
             git checkout "${{ inputs.reference }}"
-            git pull --ff-only || true
+            # Un pull qui échoue doit faire échouer le déploiement — le
+            # « || true » historique a laissé deux déploiements « réussis »
+            # livrer une version vieille de deux commits, un worktree sali
+            # bloquant le ff-only sans que rien ne le signale.
+            git pull --ff-only
 
             # La surcouche `srv3` est **indispensable** : sans elle, le fichier
             # de production publie le port 80 — pris par le Caddy qui sert

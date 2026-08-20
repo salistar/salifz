@@ -24,6 +24,14 @@ services:
   api:
     ports: !override
       - "8088:8088"
+    # Même piège que les ports, découvert une seconde fois : Compose FUSIONNE
+    # les listes de volumes entre fichiers. Le compose de production croit
+    # retirer le montage ./backendv2:/app du développement en ne déclarant que
+    # api-uploads — la fusion le garde. Conséquence vécue : un docker cp dans
+    # le conteneur a écrit SUR L'HÔTE à travers le bind, sali le worktree git,
+    # et gelé silencieusement deux déploiements de suite.
+    volumes: !override
+      - api-uploads:/app/uploads
     networks:
       - default
       - edge
