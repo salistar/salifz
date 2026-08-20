@@ -683,6 +683,18 @@ exports.sendMessage = async (req, res) => {
     
     try {
       const message = await halaqa.addMessage(userId, content, type);
+
+      // Diffuser aux membres connectés : l'envoi REST persistait mais restait
+      // invisible en temps réel — chaque client devait recharger la page.
+      const io = req.app.get('io');
+      if (io) {
+        const { formatHalaqaMessage } = require('../utils/halaqaMessage');
+        io.to(`halaqa:${halaqa._id}`).emit(
+          'halaqaMessage',
+          formatHalaqaMessage(halaqa._id, message, req.user)
+        );
+      }
+
       res.status(201).json({ success: true, data: message });
     } catch (e) {
       return res.status(400).json({ success: false, error: e.message });

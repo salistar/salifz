@@ -50,6 +50,27 @@ export default function HalaqaRoomPage() {
 
   useEffect(() => {
     halaqaAPI.detail(id).then((r: any) => setHalaqa(r?.data ?? r)).catch(() => {});
+
+    // L'historique vient de l'API (le serveur le renvoie du plus récent au
+    // plus ancien) ; le socket ne sert qu'aux messages qui arrivent ensuite.
+    halaqaAPI
+      .messages(id)
+      .then((r: any) => {
+        const docs: any[] = Array.isArray(r?.data) ? r.data : [];
+        setMessages(
+          docs
+            .map((m) => ({
+              id: String(m._id),
+              senderId: String(m.sender?._id ?? m.sender ?? ''),
+              senderName: m.sender?.displayName ?? m.sender?.username,
+              text: m.content ?? '',
+              type: m.type,
+              timestamp: m.createdAt,
+            }))
+            .reverse()
+        );
+      })
+      .catch(() => {});
   }, [id]);
 
   // Discussion : on rejoint le salon de la halaqa et on écoute ses messages.

@@ -252,21 +252,20 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
       setMessages(prev => [...prev, optimisticMessage]);
       setTimeout(scrollToBottom, 100);
 
-      // Send via API
+      // Envoi par l'API : le serveur persiste PUIS diffuse lui-même sur le
+      // socket (plus d'emit côté client — il produisait un doublon éphémère
+      // au texte vide, le serveur n'acceptant que les chaînes).
       const response = await halaqaAPI.sendMessage(halaqaId, text, 'text');
       console.log(`${LOG_PREFIX} ✅ Message sent`);
 
-      // Also emit via socket for real-time
-      socketService.emit('halaqaMessage', {
-        halaqaId,
-        message: {
-          _id: response?.data?._id || response?._id || optimisticMessage._id,
-          sender: optimisticMessage.sender,
-          content: text,
-          type: 'text',
-          createdAt: optimisticMessage.createdAt,
-        },
-      });
+      // Donner à l'optimiste son identifiant définitif : quand notre propre
+      // message revient par le socket, le dédoublonnage par _id le reconnaît.
+      const savedId = response?.data?._id || response?._id;
+      if (savedId) {
+        setMessages(prev =>
+          prev.map(m => (m._id === optimisticMessage._id ? { ...m, _id: String(savedId) } : m))
+        );
+      }
 
     } catch (error: any) {
       console.error(`${LOG_PREFIX} ❌ Send error:`, error);
@@ -457,7 +456,9 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    // `bottom` inclus : sans lui, la barre de saisie passait SOUS les
+    // boutons de navigation Android — le bouton Envoyer était intappable.
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* Header */}
       <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
         <TouchableOpacity accessible accessibilityRole="button" style={styles.backButton} onPress={() => navigation.goBack()}>

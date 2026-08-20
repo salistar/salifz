@@ -18,6 +18,7 @@ const { loadConfig } = require('./config/env');
 const { verifyAccessToken } = require('./utils/tokens');
 const { globalLimiter } = require('./middleware/rateLimit');
 const { resolveRoom, isHalaqaModerator, isKhatamModerator } = require('./sockets/authorization');
+const { formatHalaqaMessage } = require('./utils/halaqaMessage');
 
 // Charge et valide la configuration. Si un secret manque, est trop court ou
 // est resté à sa valeur d'exemple, le démarrage échoue ici — plutôt que de
@@ -361,23 +362,35 @@ io.on('connection', (socket) => {
     });
   });
   
-  socket.on('halaqaMessage', (data) => {
+  socket.on('halaqaMessage', async (data) => {
     const halaqaRoom = `halaqa:${data?.halaqaId}`;
     if (!socket.rooms.has(halaqaRoom)) {
       return socket.emit('message-rejected', { roomId: halaqaRoom, reason: 'NOT_IN_ROOM' });
     }
 
-    const messageData = {
-      id: Date.now().toString(),
-      senderId: userId,
-      senderName: socket.user.username,
-      text: typeof data.message === 'string' ? data.message.slice(0, 4000) : '',
-      type: data.type === 'audio' ? 'audio' : 'text',
-      timestamp: new Date()
-    };
+    // Le message peut arriver en chaîne (web) ou enveloppé (ancien mobile).
+    const brut = typeof data.message === 'string'
+      ? data.message
+      : (data.message?.content ?? data.message?.text ?? '');
+    const content = String(brut).slice(0, 4000).trim();
+    if (!content) {
+      return socket.emit('message-rejected', { roomId: halaqaRoom, reason: 'EMPTY' });
+    }
 
-    io.to(halaqaRoom).emit('halaqaMessage', messageData);
-    console.log(`[HALAQA] Message sent to halaqa ${data.halaqaId}`);
+    // Persister AVANT de diffuser : ce handler ne faisait que re-diffuser,
+    // les messages disparaissaient au premier rechargement (base vide).
+    try {
+      const Halaqa = require('./models/Halaqa');
+      const halaqa = await Halaqa.findById(data.halaqaId);
+      if (!halaqa) {
+        return socket.emit('message-rejected', { roomId: halaqaRoom, reason: 'NOT_FOUND' });
+      }
+      const saved = await halaqa.addMessage(userId, content, data.type === 'audio' ? 'audio' : 'text');
+      io.to(halaqaRoom).emit('halaqaMessage', formatHalaqaMessage(data.halaqaId, saved, socket.user));
+      console.log(`[HALAQA] Message persisted + sent to halaqa ${data.halaqaId}`);
+    } catch (e) {
+      return socket.emit('message-rejected', { roomId: halaqaRoom, reason: e.message });
+    }
   });
 
   socket.on('halaqaAnnouncement', async (data) => {

@@ -166,11 +166,13 @@ export const halaqaAPI = {
   detail: (id: string) => api.get(`/halaqa/${id}`),
   create: (payload: any) => api.post('/halaqa', payload),
   joinByCode: (code: string) => api.post('/halaqa/join', { code }),
+  messages: (id: string) => api.get(`/halaqa/${id}/messages`),
 };
 
 export const recitationsAPI = {
-  submit: (form: FormData) =>
-    api.post('/recitations', form, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  // Pas de Content-Type forcé : le navigateur pose lui-même le boundary
+  // multipart (le forcer produisait un envoi sans fichier — cf. ProfilePage).
+  submit: (form: FormData) => api.post('/recitations', form),
   mine: () => api.get('/recitations/mine'),
   pending: (halaqaId: string) => api.get(`/recitations/pending/${halaqaId}`),
   review: (id: string, payload: any) => api.post(`/recitations/${id}/review`, payload),
