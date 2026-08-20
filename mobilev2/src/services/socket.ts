@@ -7,7 +7,7 @@
  */
 
 import { io, Socket } from 'socket.io-client';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getSecureItem, TOKEN_KEY } from './secureStorage';
 import { ENV } from '../config';
 
 // ✅ FIXED: Use ENV configuration with fallback
@@ -73,7 +73,12 @@ class SocketService {
 
     this.connectionPromise = new Promise(async (resolve) => {
       try {
-        const token = await AsyncStorage.getItem('token');
+        // Le jeton vit dans le stockage sécurisé — le même que l'API. Ce
+        // service lisait encore AsyncStorage('token'), une clé que plus
+        // personne n'écrit : il concluait « pas de jeton » et abandonnait la
+        // connexion sans erreur. Le chat temps réel affichait « Déconnecté »
+        // sur un compte pourtant connecté.
+        const token = await getSecureItem(TOKEN_KEY);
         
         if (!token) {
           console.log('[SOCKET] No token available, skipping connection');

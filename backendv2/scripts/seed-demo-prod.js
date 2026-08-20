@@ -90,13 +90,14 @@ async function assurerCompte({ email, username, displayName, langue, niveau, xp,
  * et la file du serveur aient de la matière vraie.
  */
 async function assurerProgression(utilisateur, sourates) {
-  for (const { surahNumber, surahName, total, memorises, dus } of sourates) {
+  for (const { surahNumber, surahName, surahNameArabic, total, memorises, dus } of sourates) {
     let progression = await SurahProgress.findOne({ userId: utilisateur._id, surahNumber });
     if (!progression) {
       progression = new SurahProgress({
         userId: utilisateur._id,
         surahNumber,
         surahName,
+        surahNameArabic,
         totalAyat: total,
       });
     }
@@ -164,12 +165,12 @@ async function principal() {
   // Progression : al-Fatiha complète + un début d'al-Ikhlas pour test ;
   // al-Ikhlas complète pour Amina. Assez pour peupler révision et mushaf.
   await assurerProgression(test, [
-    { surahNumber: 1, surahName: 'Al-Fatiha', total: 7, memorises: 7, dus: 3 },
-    { surahNumber: 112, surahName: 'Al-Ikhlas', total: 4, memorises: 2, dus: 1 },
+    { surahNumber: 1, surahName: 'Al-Fatiha', surahNameArabic: 'الفاتحة', total: 7, memorises: 7, dus: 3 },
+    { surahNumber: 112, surahName: 'Al-Ikhlas', surahNameArabic: 'الإخلاص', total: 4, memorises: 2, dus: 1 },
   ]);
   await assurerProgression(amina, [
-    { surahNumber: 112, surahName: 'Al-Ikhlas', total: 4, memorises: 4, dus: 2 },
-    { surahNumber: 114, surahName: 'An-Nas', total: 6, memorises: 3, dus: 1 },
+    { surahNumber: 112, surahName: 'Al-Ikhlas', surahNameArabic: 'الإخلاص', total: 4, memorises: 4, dus: 2 },
+    { surahNumber: 114, surahName: 'An-Nas', surahNameArabic: 'الناس', total: 6, memorises: 3, dus: 1 },
   ]);
 
   await assurerHalaqa(test, amina);

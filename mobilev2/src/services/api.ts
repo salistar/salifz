@@ -596,10 +596,11 @@ export const avatarAPI = {
       name: 'avatar.jpg',
       type: 'image/jpeg',
     } as any);
-    return api.post('/users/avatar', form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      timeout: 30000,
-    });
+    // PAS de Content-Type forcé : sans le boundary qu'axios calcule,
+    // multer découpe mal les parties et le fichier arrive corrompu. La
+    // leçon était déjà écrite au-dessus de recitationsAPI — ffmpeg a dû
+    // refuser deux extraits pour qu'elle soit relue.
+    return api.post('/users/avatar', form, { timeout: 30000 });
   },
   /** URL publique de la photo d'un utilisateur (cache-bust par horodatage). */
   url: (userId: string): string => `${API_URL}/avatar/${userId}?v=${Date.now()}`,
@@ -619,8 +620,11 @@ export const recitationLiveAPI = {
    */
   suivre: (form: FormData, partiel: boolean): Promise<any> => {
     console.log(`${FILE_NAME} 🎙️ recitationLiveAPI.suivre(partiel=${partiel})`);
+    // Même règle que recitationsAPI : axios pose lui-même la frontière
+    // multipart. La forcer envoyait un corps que multer ne savait pas
+    // découper — le serveur recevait un blob corrompu et ffmpeg répondait
+    // « illisible » à des enregistrements pourtant valides.
     return api.post('/recitation-live/suivre', form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
       timeout: partiel ? 15000 : 60000,
     });
   },
