@@ -10,9 +10,11 @@ inventée.
 """
 
 import math
+import os
 import shutil
 import struct
 import subprocess
+import tempfile
 
 FREQUENCE = 16000
 
@@ -37,21 +39,34 @@ def decoder(donnees):
     if not ffmpeg_disponible():
         raise AudioIllisible("ffmpeg est absent de l'image.")
 
-    commande = [
-        "ffmpeg", "-hide_banner", "-loglevel", "error",
-        "-i", "pipe:0",
-        "-f", "s16le", "-acodec", "pcm_s16le",
-        "-ac", "1", "-ar", str(FREQUENCE),
-        "pipe:1",
-    ]
-    processus = subprocess.Popen(
-        commande, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    )
-    brut, erreur = processus.communicate(donnees)
+    # Fichier temporaire, PAS un pipe. Le conteneur MP4/M4A — celui
+    # qu'enregistrent les téléphones — range son index (l'atome moov) à la
+    # FIN du fichier ; en lecture de flux, ffmpeg ne peut pas revenir le
+    # chercher et échoue en « Invalid data found ». Les MP3 de test, eux,
+    # se lisent en flux : le défaut est resté invisible jusqu'au premier
+    # enregistrement réel envoyé par un téléphone.
+    temporaire = tempfile.NamedTemporaryFile(suffix=".audio", delete=False)
+    try:
+        temporaire.write(donnees)
+        temporaire.close()
 
-    if processus.returncode != 0 or not brut:
-        detail = (erreur or b"").decode("utf-8", "replace").strip().splitlines()
-        raise AudioIllisible(detail[-1] if detail else "ffmpeg n'a rien produit.")
+        commande = [
+            "ffmpeg", "-hide_banner", "-loglevel", "error",
+            "-i", temporaire.name,
+            "-f", "s16le", "-acodec", "pcm_s16le",
+            "-ac", "1", "-ar", str(FREQUENCE),
+            "pipe:1",
+        ]
+        processus = subprocess.Popen(
+            commande, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
+        brut, erreur = processus.communicate()
+
+        if processus.returncode != 0 or not brut:
+            detail = (erreur or b"").decode("utf-8", "replace").strip().splitlines()
+            raise AudioIllisible(detail[-1] if detail else "ffmpeg n'a rien produit.")
+    finally:
+        os.unlink(temporaire.name)
 
     # s16le -> flottants entre -1 et 1.
     nombre = len(brut) // 2

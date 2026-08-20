@@ -586,6 +586,46 @@ export const recitationsAPI = {
  * ni avec l'analyse du tajwid : ici on constate quels mots ont ete prononces,
  * pas la maniere de les prononcer.
  */
+/**
+ * Envoi multipart par fetch, pas axios.
+ *
+ * L'histoire complète, parce qu'elle coûte cher à réapprendre : axios sur
+ * React Native ne sait pas sérialiser un FormData portant un fichier
+ * `{uri, name, type}`. Avec un Content-Type forcé, il envoyait un corps
+ * multipart sans boundary annoncé — multer découpait au hasard, ffmpeg
+ * recevait un blob corrompu (« extrait illisible »). Sans le header, il
+ * n'envoyait plus de fichier du tout (« Fichier audio requis »). fetch,
+ * lui, pose le boundary correctement — c'est la voie native sur RN.
+ */
+async function envoyerMultipart(chemin: string, form: FormData, timeoutMs: number): Promise<any> {
+  const jeton = authToken || (await getSecureItem(TOKEN_KEY));
+  const controleur = new AbortController();
+  const minuterie = setTimeout(() => controleur.abort(), timeoutMs);
+  try {
+    const reponse = await fetch(`${API_URL}${chemin}`, {
+      method: 'POST',
+      headers: jeton ? { Authorization: `Bearer ${jeton}` } : undefined,
+      body: form,
+      signal: controleur.signal,
+    });
+    const corps = await reponse.json().catch(() => ({}));
+    if (!reponse.ok) {
+      // Même forme d'erreur que l'intercepteur axios, pour que les écrans
+      // gardent leur gestion (code, message, response.status).
+      throw {
+        ...corps,
+        status: reponse.status,
+        message: corps?.error ?? corps?.message ?? `HTTP ${reponse.status}`,
+        error: corps?.error ?? corps?.message ?? `HTTP ${reponse.status}`,
+        response: { status: reponse.status, data: corps },
+      };
+    }
+    return corps;
+  } finally {
+    clearTimeout(minuterie);
+  }
+}
+
 /** Photo de profil. */
 export const avatarAPI = {
   /** Envoie une nouvelle photo (uri locale du téléphone). */
@@ -596,11 +636,7 @@ export const avatarAPI = {
       name: 'avatar.jpg',
       type: 'image/jpeg',
     } as any);
-    // PAS de Content-Type forcé : sans le boundary qu'axios calcule,
-    // multer découpe mal les parties et le fichier arrive corrompu. La
-    // leçon était déjà écrite au-dessus de recitationsAPI — ffmpeg a dû
-    // refuser deux extraits pour qu'elle soit relue.
-    return api.post('/users/avatar', form, { timeout: 30000 });
+    return envoyerMultipart('/users/avatar', form, 30000);
   },
   /** URL publique de la photo d'un utilisateur (cache-bust par horodatage). */
   url: (userId: string): string => `${API_URL}/avatar/${userId}?v=${Date.now()}`,
@@ -620,13 +656,7 @@ export const recitationLiveAPI = {
    */
   suivre: (form: FormData, partiel: boolean): Promise<any> => {
     console.log(`${FILE_NAME} 🎙️ recitationLiveAPI.suivre(partiel=${partiel})`);
-    // Même règle que recitationsAPI : axios pose lui-même la frontière
-    // multipart. La forcer envoyait un corps que multer ne savait pas
-    // découper — le serveur recevait un blob corrompu et ffmpeg répondait
-    // « illisible » à des enregistrements pourtant valides.
-    return api.post('/recitation-live/suivre', form, {
-      timeout: partiel ? 15000 : 60000,
-    });
+    return envoyerMultipart('/recitation-live/suivre', form, partiel ? 15000 : 60000);
   },
 };
 

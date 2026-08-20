@@ -75,7 +75,8 @@ export default function ProfilePage() {
     form.append('avatar', fichier);
     setEnvoiPhoto(true);
     try {
-      await api.post('/users/avatar', form, { headers: { 'Content-Type': 'multipart/form-data' } });
+      // Pas de Content-Type forcé : le navigateur pose le boundary lui-même.
+      await api.post('/users/avatar', form);
       setPhotoUrl(`${API_URL}/avatar/${idUtilisateur}?v=${Date.now()}`);
     } finally {
       setEnvoiPhoto(false);
