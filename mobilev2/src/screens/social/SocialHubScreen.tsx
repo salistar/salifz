@@ -14,14 +14,14 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
-  FlatList,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { chatAPI, halaqaAPI, socialAPI } from '../../services/api';
-import { COLORS } from '../../config';
 import { t, getLocale } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
@@ -38,12 +38,14 @@ export default function SocialHubScreen({ navigation }: any) {
 
   console.log(`${LOG_PREFIX} 🚀 Component rendering`);
 
+  const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [conversations, setConversations] = useState<any[]>([]);
   const [halaqat, setHalaqat] = useState<any[]>([]);
   const [friends, setFriends] = useState<any[]>([]);
   const [friendRequests, setFriendRequests] = useState<any[]>([]);
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const [enTraitement, setEnTraitement] = useState<string | null>(null);
 
   useEffect(() => {
     console.log(`${LOG_PREFIX} ⚡ useEffect - Loading data`);
@@ -82,7 +84,27 @@ export default function SocialHubScreen({ navigation }: any) {
     } catch (error) {
       console.error(`${LOG_PREFIX} ❌ Load social data error:`, error);
     } finally {
+      setIsLoading(false);
       setRefreshing(false);
+    }
+  };
+
+  // Acceptation d'une demande d'ami : on attend la réponse serveur AVANT de
+  // retirer la carte (elle disparaissait même en cas d'échec), la promesse
+  // est correctement gérée, et un double-tap est verrouillé.
+  const handleAcceptRequest = async (request: any) => {
+    const userId = request.from?._id || request._id;
+    if (!userId || enTraitement) return;
+    setEnTraitement(request._id);
+    try {
+      await socialAPI.acceptFriendRequest(userId);
+      setFriendRequests((prev) => prev.filter((r) => r._id !== request._id));
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      loadData();
+    } catch (e: any) {
+      Alert.alert(t('common.error'), e?.error || e?.message || t('common.retry'));
+    } finally {
+      setEnTraitement(null);
     }
   };
 
@@ -107,13 +129,13 @@ export default function SocialHubScreen({ navigation }: any) {
     };
 
     if (days === 0) {
-      return date.toLocaleTimeString(localeMap[locale] || 'ar-SA', { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString(localeMap[locale] || 'fr-FR', { hour: '2-digit', minute: '2-digit' });
     } else if (days === 1) {
       return t('socialHub.time.yesterday');
     } else if (days < 7) {
       return t('socialHub.time.daysAgo', { count: days });
     } else {
-      return date.toLocaleDateString(localeMap[locale] || 'ar-SA', { month: 'short', day: 'numeric' });
+      return date.toLocaleDateString(localeMap[locale] || 'fr-FR', { month: 'short', day: 'numeric' });
     }
   };
 
@@ -125,6 +147,14 @@ export default function SocialHubScreen({ navigation }: any) {
         <Text style={styles.headerSubtitle}>{t('socialHub.subtitle')}</Text>
       </LinearGradient>
 
+      {isLoading ? (
+        // Un seul indicateur au montage, au lieu de trois états vides
+        // (« aucune conversation », « aucune halaqa »…) qui clignotaient
+        // avant la première réponse du serveur.
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+        </View>
+      ) : (
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={
@@ -188,7 +218,9 @@ export default function SocialHubScreen({ navigation }: any) {
             style={styles.quickAction}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              navigation.navigate('LeaderboardTab');
+              // La route s'appelle 'Leaderboard' (écran de pile), pas
+              // 'LeaderboardTab' : le raccourci ne faisait rien.
+              navigation.navigate('Leaderboard');
             }}
           >
             <View style={[styles.quickActionIcon, { backgroundColor: colors.accentSoft }]}>
@@ -223,12 +255,14 @@ export default function SocialHubScreen({ navigation }: any) {
                   <View style={styles.requestActions}>
                     <TouchableOpacity accessible accessibilityRole="button"
                       style={[styles.requestButton, styles.acceptButton]}
-                      onPress={() => {
-                        socialAPI.acceptFriendRequest(request.from?._id || request._id);
-                        setFriendRequests((prev) => prev.filter((r) => r._id !== request._id));
-                      }}
+                      disabled={enTraitement === request._id}
+                      onPress={() => handleAcceptRequest(request)}
                     >
-                      <Text style={styles.acceptButtonText}>{t('socialHub.accept')}</Text>
+                      {enTraitement === request._id ? (
+                        <ActivityIndicator size="small" color={colors.onDeep} />
+                      ) : (
+                        <Text style={styles.acceptButtonText}>{t('socialHub.accept')}</Text>
+                      )}
                     </TouchableOpacity>
                   </View>
                 </View>
@@ -390,6 +424,7 @@ export default function SocialHubScreen({ navigation }: any) {
 
         <View style={{ height: 100 }} />
       </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
@@ -397,6 +432,12 @@ export default function SocialHubScreen({ navigation }: any) {
 const makeStyles = (c: ThemeColors) => StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: c.background,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: c.background,
   },
   header: {

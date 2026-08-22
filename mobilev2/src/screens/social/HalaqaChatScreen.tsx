@@ -34,8 +34,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { halaqaAPI } from '../../services/api';
 import { useAuthStore } from '../../stores';
 import { socketService } from '../../services/socket';
-import { COLORS } from '../../config';
-import { t, getLocale } from '../../services/i18n';
+import { t, getLocale, isRTL } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
@@ -445,7 +444,9 @@ export default function HalaqaChatScreen({ route, navigation }: any) {
   const renderTypingIndicator = () => {
     if (typingUsers.length === 0) return null;
 
-    const names = typingUsers.map(u => u.name).join('، ');
+    // Séparateur suivant la langue : virgule arabe en arabe, virgule latine
+    // sinon (« Ali، Sara » apparaissait en français).
+    const names = typingUsers.map(u => u.name).join(isRTL() ? '، ' : ', ');
     return (
       <View style={styles.typingContainer}>
         <View style={styles.typingDots}>
@@ -650,11 +651,14 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   },
   dateText: {
     fontSize: 12,
-    color: c.textMuted,
-    backgroundColor: '#e8e8e8',
+    color: c.textSecondary,
+    // Suit le thème : la pastille gris clair figée disparaissait sur le
+    // fond sombre et cassait le contraste.
+    backgroundColor: c.surface,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 10,
+    overflow: 'hidden',
   },
   systemMessage: {
     alignItems: 'center',
@@ -717,7 +721,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     fontSize: 15,
     color: c.text,
     lineHeight: 22,
-    textAlign: 'right',
+    textAlign: isRTL() ? 'right' : 'left',
   },
   myMessageText: {
     color: c.onDeep,
@@ -732,13 +736,13 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     fontSize: 16,
     color: c.text,
     fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    textAlign: 'right',
+    textAlign: isRTL() ? 'right' : 'left',
   },
   messageTime: {
     fontSize: 10,
     color: c.textMuted,
     marginTop: 4,
-    textAlign: 'right',
+    textAlign: isRTL() ? 'right' : 'left',
   },
   myMessageTime: {
     color: 'rgba(255,255,255,0.7)',
@@ -780,7 +784,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     padding: 10,
     backgroundColor: c.surface,
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: c.border,
   },
   inputWrapper: {
     flex: 1,
@@ -794,7 +798,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   input: {
     fontSize: 16,
     color: c.text,
-    textAlign: 'right',
+    textAlign: isRTL() ? 'right' : 'left',
     minHeight: 24,
     maxHeight: 80,
   },

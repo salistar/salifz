@@ -31,6 +31,8 @@ import {
   TextInput,
   Dimensions,
   ListRenderItem,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -40,9 +42,8 @@ import * as Clipboard from 'expo-clipboard';
 import { useFocusEffect } from '@react-navigation/native';
 import { halaqaAPI } from '../../services/api';
 import { useAuthStore } from '../../stores';
-import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
-import { t } from '../../services/i18n';
+import { t, isRTL } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 import { HizbStar, MihrabArch, ZelligeField } from '../../components/common/Ornements';
@@ -509,7 +510,7 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
             {item.description || actType.description}
           </Text>
           <View style={styles.activityMeta}>
-            <Text style={styles.activityCreator}>{t('halaqaDetail.createdBy')}{creator}</Text>
+            <Text style={styles.activityCreator} numberOfLines={1}>{t('halaqaDetail.createdBy')} {creator}</Text>
             <Text style={styles.activityTime}>{formatTime(item.createdAt)}</Text>
           </View>
         </View>
@@ -519,7 +520,7 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
             <Text style={styles.activityXPLabel}>{'XP'}</Text>
           </View>
           {!isCompleted ? (
-            <TouchableOpacity accessible accessibilityRole="button" style={styles.completeButton} onPress={() => handleCompleteActivity(item)}>
+            <TouchableOpacity accessible accessibilityRole="button" style={styles.completeButton} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }} onPress={() => handleCompleteActivity(item)}>
               <Ionicons name="checkmark" size={16} color={colors.onDeep} />
             </TouchableOpacity>
           ) : (
@@ -546,7 +547,7 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
         </View>
         <View style={styles.memberInfo}>
           <View style={styles.memberNameRow}>
-            <Text style={styles.memberName}>{name}</Text>
+            <Text style={styles.memberName} numberOfLines={1}>{name}</Text>
             {isAdmin && (
               <View style={styles.adminBadge}>
                 <Text style={styles.adminBadgeText}>{t('halaqaDetail.admin')}</Text>
@@ -586,7 +587,7 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
           <Text style={styles.leaderboardAvatarText}>{name.charAt(0).toUpperCase()}</Text>
         </View>
         <View style={styles.leaderboardInfo}>
-          <Text style={styles.leaderboardName}>{name}</Text>
+          <Text style={styles.leaderboardName} numberOfLines={1}>{name}</Text>
           <Text style={styles.leaderboardActivities}>
             {item.stats?.activitiesCompleted || 0} {t('halaqaDetail.stats.activities')}
           </Text>
@@ -873,9 +874,12 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
         animationType="slide"
         onRequestClose={() => setShowCreateActivityModal(false)}
       >
-        <View style={styles.modalOverlay}>
+        <KeyboardAvoidingView
+          style={styles.modalOverlay}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
           <View style={styles.modalContent}>
-            <ScrollView>
+            <ScrollView keyboardShouldPersistTaps="handled">
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>{t('halaqaDetail.createActivity.modalTitle')}</Text>
                 <TouchableOpacity accessible accessibilityRole="button" onPress={() => setShowCreateActivityModal(false)}>
@@ -974,7 +978,7 @@ export default function HalaqaDetailScreen({ route, navigation }: any) {
               </View>
             </ScrollView>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </SafeAreaView>
   );
@@ -994,7 +998,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   adminCrown: { position: 'absolute', top: -8, right: -8 },
   halaqaName: { fontSize: 24, fontWeight: 'bold', color: c.text, marginBottom: 5 },
   halaqaDescription: { fontSize: 14, color: c.textSecondary, textAlign: 'center', marginBottom: 10 },
-  creatorRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
+  creatorRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 15 },
   creatorLabel: { fontSize: 13, color: c.textMuted },
   creatorName: { fontSize: 13, color: c.textSecondary, fontWeight: '500' },
   publicBadge: { fontSize: 12, color: c.primary, marginLeft: 10 },
@@ -1036,9 +1040,10 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   activityContent: { flex: 1, marginLeft: 12 },
   activityTitle: { fontSize: 15, fontWeight: '600', color: c.text },
   activityDescription: { fontSize: 12, color: c.textSecondary, marginTop: 3 },
-  activityMeta: { flexDirection: 'row', marginTop: 5, gap: 10 },
-  activityCreator: { fontSize: 10, color: c.textMuted },
-  activityTime: { fontSize: 10, color: c.textMuted },
+  activityMeta: { flexDirection: 'row', marginTop: 5, gap: 10, alignItems: 'center' },
+  // flexShrink:1 : un nom de créateur long ne pousse plus l'heure hors carte.
+  activityCreator: { fontSize: 10, color: c.textSecondary, flexShrink: 1 },
+  activityTime: { fontSize: 10, color: c.textSecondary },
   activityRight: { alignItems: 'center', gap: 8 },
   activityXP: { alignItems: 'center', backgroundColor: c.primarySoft, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10 },
   activityXPText: { fontSize: 14, fontWeight: 'bold', color: c.primary },
@@ -1055,7 +1060,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   },
   memberInfo: { flex: 1, marginLeft: 12 },
   memberNameRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  memberName: { fontSize: 16, fontWeight: '600', color: c.text },
+  memberName: { fontSize: 16, fontWeight: '600', color: c.text, flexShrink: 1 },
   adminBadge: { backgroundColor: c.warningSoft, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10 },
   adminBadgeText: { fontSize: 10, color: c.warning, fontWeight: '600' },
   memberStats: { fontSize: 12, color: c.textMuted, marginTop: 3 },
@@ -1071,7 +1076,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   leaderboardAvatar: { width: 45, height: 45, borderRadius: 22.5, backgroundColor: c.primary, justifyContent: 'center', alignItems: 'center', marginLeft: 10 },
   leaderboardAvatarText: { color: c.onDeep, fontSize: 18, fontWeight: 'bold' },
   leaderboardInfo: { flex: 1, marginLeft: 12 },
-  leaderboardName: { fontSize: 16, fontWeight: '600', color: c.text },
+  leaderboardName: { fontSize: 16, fontWeight: '600', color: c.text, flexShrink: 1 },
   leaderboardActivities: { fontSize: 11, color: c.textMuted, marginTop: 2 },
   leaderboardXP: { alignItems: 'center' },
   leaderboardXPValue: { fontSize: 18, fontWeight: 'bold', color: c.primary },
@@ -1094,7 +1099,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   activityTypeOptionNameSelected: { color: c.primary },
   activityTypeOptionXP: { fontSize: 9, color: c.textMuted, marginTop: 2 },
   selectedCheck: { position: 'absolute', top: 5, right: 5, backgroundColor: c.primary, borderRadius: 10, width: 18, height: 18, justifyContent: 'center', alignItems: 'center' },
-  input: { backgroundColor: c.background, borderRadius: 12, padding: 15, fontSize: 16, marginBottom: 10, textAlign: 'right', color: c.text },
+  input: { backgroundColor: c.background, borderRadius: 12, padding: 15, fontSize: 16, marginBottom: 10, textAlign: isRTL() ? 'right' : 'left', color: c.text },
   textArea: { height: 80, textAlignVertical: 'top' },
   modalButtons: { flexDirection: 'row', gap: 10, marginTop: 20, marginBottom: 30 },
   cancelButton: { flex: 1, paddingVertical: 15, borderRadius: 12, backgroundColor: c.background, alignItems: 'center' },

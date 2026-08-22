@@ -130,8 +130,8 @@ export default function LessonCompleteScreen({ route, navigation }: any) {
             routes: [
               { name: 'HomeTab' },
               { name: 'LessonsTab' },
+              { name: 'SocialTab' },
               { name: 'StreakTab' },
-              { name: 'LeaderboardTab' },
               { name: 'ProfileTab' },
             ],
             index: 1, // Index 1 = LessonsTab

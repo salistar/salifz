@@ -27,6 +27,8 @@ import {
   Dimensions,
   ActivityIndicator,
   Switch,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -35,8 +37,7 @@ import * as Haptics from 'expo-haptics';
 import { useFocusEffect } from '@react-navigation/native';
 import { halaqaAPI, isAuthenticated } from '../../services/api';
 import { useAuthStore } from '../../stores';
-import { COLORS } from '../../config';
-import { t } from '../../services/i18n';
+import { t, isRTL } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 import { HizbStar, MihrabArch } from '../../components/common/Ornements';
@@ -166,20 +167,13 @@ export default function HalaqaScreen({ navigation }: any) {
 
   const ACTIVITY_TYPES_LIST = getActivityTypes();
 
-  useFocusEffect(
-    useCallback(() => {
-      console.log(`${LOG_PREFIX} ⚡ useFocusEffect`);
-      loadHalaqat();
-    }, [])
-  );
-
-  const loadHalaqat = async () => {
+  // Dépend de user?._id : après un changement de compte, les badges
+  // « Responsable » doivent être recalculés pour le bon utilisateur.
+  const loadHalaqat = useCallback(async () => {
     console.log(`${LOG_PREFIX} 📥 loadHalaqat()`);
 
     try {
       setIsLoading(true);
-
-      await new Promise(resolve => setTimeout(resolve, 300));
 
       if (!isAuthenticated()) {
         console.log(`${LOG_PREFIX} ⚠️ Not authenticated`);
@@ -187,6 +181,12 @@ export default function HalaqaScreen({ navigation }: any) {
         setPublicHalaqat([]);
         return;
       }
+
+      // `mesIds` doit refléter le chargement EN COURS, pas l'état du rendu
+      // précédent : au premier affichage, l'état `myHalaqat` est encore vide,
+      // et l'onglet Publiques listait alors des halaqas déjà rejointes —
+      // « Rejoindre » y renvoyait une erreur serveur.
+      let mesIds: string[] = [];
 
       // Load my halaqat
       try {
@@ -206,6 +206,7 @@ export default function HalaqaScreen({ navigation }: any) {
           isMember: true
         }));
 
+        mesIds = myData.map(h => h._id);
         setMyHalaqat(myData);
         console.log(`${LOG_PREFIX} ✅ My halaqat loaded: ${myData.length}`);
       } catch (e) {
@@ -225,8 +226,7 @@ export default function HalaqaScreen({ navigation }: any) {
           publicData = publicResponse;
         }
 
-        const myIds = myHalaqat.map(h => h._id);
-        publicData = publicData.filter(h => !myIds.includes(h._id));
+        publicData = publicData.filter(h => !mesIds.includes(h._id));
 
         setPublicHalaqat(publicData);
         console.log(`${LOG_PREFIX} ✅ Public halaqat loaded: ${publicData.length}`);
@@ -241,7 +241,14 @@ export default function HalaqaScreen({ navigation }: any) {
       setIsLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [user?._id]);
+
+  useFocusEffect(
+    useCallback(() => {
+      console.log(`${LOG_PREFIX} ⚡ useFocusEffect`);
+      loadHalaqat();
+    }, [loadHalaqat])
+  );
 
   const onRefresh = async () => {
     console.log(`${LOG_PREFIX} 🔄 onRefresh()`);
@@ -507,6 +514,7 @@ export default function HalaqaScreen({ navigation }: any) {
           {isPublicList ? (
             <TouchableOpacity accessible accessibilityRole="button"
               style={styles.joinButtonSmall}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               onPress={() => handleJoinPublicHalaqa(item)}
             >
               <Text style={styles.joinButtonSmallText}>{t('halaqa.join.button')}</Text>
@@ -675,9 +683,14 @@ export default function HalaqaScreen({ navigation }: any) {
 
   const renderCreateModal = () => (
     <Modal visible={showCreateModal} transparent animationType="slide" onRequestClose={() => setShowCreateModal(false)}>
-      <View style={styles.modalOverlay}>
+      {/* Sans KeyboardAvoidingView, le clavier recouvrait l'objectif
+          quotidien, le nombre de membres et les boutons Créer/Annuler. */}
+      <KeyboardAvoidingView
+        style={styles.modalOverlay}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
         <View style={styles.createModalContent}>
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             <View style={styles.createModalHeader}>
               <Text style={styles.createModalTitle}>{t('halaqa.create.title')}</Text>
               <TouchableOpacity accessible accessibilityRole="button" onPress={() => setShowCreateModal(false)}>
@@ -792,7 +805,7 @@ export default function HalaqaScreen({ navigation }: any) {
             </View>
           </ScrollView>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 
@@ -869,13 +882,13 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   adminBadgeSmallText: { fontSize: 12 },
   halaqaInfo: { flex: 1 },
   halaqaNameRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  halaqaName: { fontSize: 17, fontWeight: 'bold', color: c.text, flex: 1, textAlign: 'right' },
+  halaqaName: { fontSize: 17, fontWeight: 'bold', color: c.text, flex: 1, textAlign: isRTL() ? 'right' : 'left' },
   adminLabel: { fontSize: 10, color: c.warning, backgroundColor: c.warningSoft, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 8, fontWeight: '600' },
-  halaqaDescription: { fontSize: 13, color: c.textSecondary, marginTop: 2, textAlign: 'right' },
+  halaqaDescription: { fontSize: 13, color: c.textSecondary, marginTop: 2, textAlign: isRTL() ? 'right' : 'left' },
   activityTypesPreview: { flexDirection: 'row', marginTop: 5, gap: 3 },
   activityTypeIcon: { marginRight: 4 },
   moreActivities: { fontSize: 10, color: c.textMuted, marginLeft: 3 },
-  halaqaStats: { flexDirection: 'row', justifyContent: 'flex-end', gap: 15, marginTop: 5 },
+  halaqaStats: { flexDirection: 'row', justifyContent: 'flex-start', gap: 15, marginTop: 5 },
   statLigne: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   halaqaStat: { fontSize: 12, color: c.textMuted },
   halaqaRight: { alignItems: 'center', marginLeft: 10 },
@@ -913,7 +926,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   createModalTitle: { fontSize: 22, fontWeight: 'bold', color: c.text },
   sectionTitle: { fontSize: 16, fontWeight: 'bold', color: c.text, marginTop: 20, marginBottom: 10 },
   sectionSubtitle: { fontSize: 12, color: c.textSecondary, marginBottom: 10 },
-  input: { backgroundColor: c.background, borderRadius: 12, padding: 15, fontSize: 16, marginBottom: 10, textAlign: 'right', color: c.text },
+  input: { backgroundColor: c.background, borderRadius: 12, padding: 15, fontSize: 16, marginBottom: 10, textAlign: isRTL() ? 'right' : 'left', color: c.text },
   textArea: { height: 80, textAlignVertical: 'top' },
   settingRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: c.backgroundAlt },
   settingInfo: { flex: 1, marginRight: 10 },

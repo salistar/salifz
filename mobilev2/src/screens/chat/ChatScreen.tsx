@@ -17,9 +17,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useAuthStore } from '../../stores';
 import { socketService } from '../../services/socket';
-import { COLORS } from '../../config';
 // ✅ AJOUT: Import i18n
-import { t } from '../../services/i18n';
+import { t, getLocale } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors } from '../../contexts/ThemeContext';
 
@@ -182,7 +181,11 @@ export default function ChatScreen({ route, navigation }: any) {
   };
 
   const formatTime = (date: Date) => {
-    return new Date(date).toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+    // La locale suit l'interface : l'heure était figée en chiffres arabes
+    // (ar-SA) même en français/anglais.
+    const carte: Record<string, string> = { ar: 'ar-SA', fr: 'fr-FR', en: 'en-US' };
+    const loc = carte[getLocale()] || 'fr-FR';
+    return new Date(date).toLocaleTimeString(loc, { hour: '2-digit', minute: '2-digit' });
   };
 
   // ✅ Helper function to get user status text
@@ -233,7 +236,7 @@ export default function ChatScreen({ route, navigation }: any) {
   console.log(`${LOG_PREFIX} 🎨 Rendering UI (${messages.length} messages)...`);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* Header */}
       <LinearGradient colors={[colors.primary, colors.primaryDark]} style={styles.header}>
         <TouchableOpacity accessible accessibilityRole="button" 

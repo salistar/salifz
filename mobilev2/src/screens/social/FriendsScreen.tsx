@@ -23,9 +23,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
-import { socialAPI, chatAPI } from '../../services/api';
-import { COLORS } from '../../config';
-import { t } from '../../services/i18n';
+import { socialAPI, chatAPI, avatarAPI } from '../../services/api';
+import { t, isRTL } from '../../services/i18n';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 import { useTheme, ThemeColors, fixedColors } from '../../contexts/ThemeContext';
 import { HizbStar, MihrabArch, ZelligeField } from '../../components/common/Ornements';
@@ -50,23 +49,35 @@ console.log(`${LOG_PREFIX} 📁 File loaded`);
  */
 const Avatar = ({
   nom,
+  userId,
   size = 50,
   isOnline = false,
 }: {
   nom?: string;
+  userId?: string;
   size?: number;
   isOnline?: boolean;
 }) => {
   const { colors } = useTheme();
   const styles = useThemedStyles(makeStyles);
+  // 404 = pas de photo : on retombe sur l'initiale sans re-tenter à chaque rendu.
+  const [photoAbsente, setPhotoAbsente] = useState(false);
 
-  const initiale = (nom ?? '').trim().charAt(0).toUpperCase();
+  const initiale = (nom ?? '').trim().charAt(0).toUpperCase() || '?';
 
   return (
     <View style={[styles.avatar, { width: size, height: size, borderRadius: size / 2 }]}>
-      <Text style={{ fontSize: size * 0.4, fontWeight: '700', color: colors.primary }}>
-        {initiale}
-      </Text>
+      {userId && !photoAbsente ? (
+        <Image
+          source={{ uri: avatarAPI.urlListe(userId) }}
+          onError={() => setPhotoAbsente(true)}
+          style={{ width: size, height: size, borderRadius: size / 2 }}
+        />
+      ) : (
+        <Text style={{ fontSize: size * 0.4, fontWeight: '700', color: colors.primary }}>
+          {initiale}
+        </Text>
+      )}
       {isOnline && (
         <View style={[styles.onlineIndicator, {
           width: size * 0.28,
@@ -345,13 +356,16 @@ export default function FriendsScreen({ navigation }: any) {
     >
       <Avatar
         nom={friend.displayName || friend.username}
+        userId={friend._id}
         size={55}
         isOnline={friend.isOnline}
       />
 
       <View style={styles.friendInfo}>
         <View style={styles.friendNameRow}>
-          <Text style={styles.friendName}>{friend.displayName || friend.username}</Text>
+          <Text style={styles.friendName} numberOfLines={1}>
+            {friend.displayName || friend.username}
+          </Text>
           <LeagueBadge league={friend.league} />
         </View>
         <Text style={styles.friendLevel}>
@@ -391,20 +405,26 @@ export default function FriendsScreen({ navigation }: any) {
     const userStreak = request.from?.currentStreak || request.currentStreak;
 
     return (
-      <View key={request._id} style={styles.requestItem}>
-        <Avatar nom={userName} size={55} />
+      // Cliquable comme la carte d'ami : on doit pouvoir consulter le profil
+      // de quelqu'un AVANT d'accepter sa demande.
+      <TouchableOpacity accessible accessibilityRole="button"
+        key={request._id}
+        style={styles.requestItem}
+        onPress={() => handleViewProfile(userId)}
+      >
+        <Avatar nom={userName} userId={userId} size={55} />
 
         <View style={styles.friendInfo}>
-          <Text style={styles.friendName}>{userName}</Text>
+          <Text style={styles.friendName} numberOfLines={1}>{userName}</Text>
           <Text style={styles.friendLevel}>
             {t('friends.level', { level: userLevel })}
           </Text>
           {userStreak ? (
             <View style={styles.statLigne}>
               <IconeSerie size={13} color={colors.warning} />
-              <Text style={styles.friendStreak}>
-                {t('friends.streakDays', { days: userStreak })}
-              </Text>
+              {/* Même forme que la liste d'amis : le nombre seul — la clé
+                  streakDays ajoutait « jours 🔥 », donc une seconde flamme. */}
+              <Text style={styles.friendStreak}>{userStreak}</Text>
             </View>
           ) : null}
         </View>
@@ -423,7 +443,7 @@ export default function FriendsScreen({ navigation }: any) {
             <Text style={styles.rejectText}>{t('friends.actions.reject')}</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -435,19 +455,19 @@ export default function FriendsScreen({ navigation }: any) {
 
     return (
       <View key={user._id} style={styles.friendItem}>
-        <Avatar nom={user.displayName || user.username} size={55} />
+        <Avatar nom={user.displayName || user.username} userId={user._id} size={55} />
 
         <View style={styles.friendInfo}>
-          <Text style={styles.friendName}>{user.displayName || user.username}</Text>
+          <Text style={styles.friendName} numberOfLines={1}>
+            {user.displayName || user.username}
+          </Text>
           <Text style={styles.friendLevel}>
             {t('friends.level', { level: user.level || 1 })}
           </Text>
           {user.currentStreak ? (
             <View style={styles.statLigne}>
               <IconeSerie size={13} color={colors.warning} />
-              <Text style={styles.friendStreak}>
-                {t('friends.streakDays', { days: user.currentStreak })}
-              </Text>
+              <Text style={styles.friendStreak}>{user.currentStreak}</Text>
             </View>
           ) : null}
         </View>
@@ -520,6 +540,7 @@ export default function FriendsScreen({ navigation }: any) {
         <ZelligeField color={colors.onDeep} opacity={0.05} />
         <TouchableOpacity accessible accessibilityRole="button"
           style={styles.backButton}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
           onPress={() => navigation.goBack()}
         >
           <Ionicons name="arrow-back" size={24} color={colors.onDeep} />
@@ -728,7 +749,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     borderRadius: 12,
   },
   tabActive: {
-    backgroundColor: c.info,
+    backgroundColor: c.primary,
   },
   tabIcon: {
     marginRight: 5,
@@ -742,7 +763,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     color: c.onDeep,
   },
   tabBadge: {
-    backgroundColor: c.info,
+    backgroundColor: c.primary,
     minWidth: 20,
     height: 20,
     borderRadius: 10,
@@ -833,7 +854,8 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     marginRight: 10,
   },
   friendXP: {
-    color: c.info,
+    // Assorti à l'étoile de hizb dorée qui le précède (c'était du bleu).
+    color: c.accent,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -885,7 +907,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     fontSize: 13,
   },
   addButton: {
-    backgroundColor: c.info,
+    backgroundColor: c.primary,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 10,
@@ -949,10 +971,12 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     paddingVertical: 15,
     fontSize: 16,
     color: c.text,
-    textAlign: 'right',
+    // L'alignement suit la langue de l'interface : à droite en arabe,
+    // à gauche en français/anglais (le champ était figé à droite).
+    textAlign: isRTL() ? 'right' : 'left',
   },
   searchButton: {
-    backgroundColor: c.info,
+    backgroundColor: c.primary,
     width: 50,
     height: 50,
     borderRadius: 15,
@@ -965,7 +989,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     shadowRadius: 2,
   },
   searchButtonDisabled: {
-    backgroundColor: '#90CAF9',
+    backgroundColor: c.border,
   },
   emptyState: {
     alignItems: 'center',
@@ -984,7 +1008,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     paddingHorizontal: 30,
   },
   emptyButton: {
-    backgroundColor: c.info,
+    backgroundColor: c.primary,
     paddingHorizontal: 25,
     paddingVertical: 12,
     borderRadius: 25,

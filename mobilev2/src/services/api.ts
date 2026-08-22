@@ -640,6 +640,12 @@ export const avatarAPI = {
   },
   /** URL publique de la photo d'un utilisateur (cache-bust par horodatage). */
   url: (userId: string): string => `${API_URL}/avatar/${userId}?v=${Date.now()}`,
+  /**
+   * Variante SANS cache-bust, pour les listes : `url()` change à chaque
+   * rendu (Date.now()), ce qui ferait retélécharger l'image de chaque ami
+   * à chaque re-render. Ici le cache HTTP du serveur (300 s) fait foi.
+   */
+  urlListe: (userId: string): string => `${API_URL}/avatar/${userId}`,
 };
 
 export const recitationLiveAPI = {
