@@ -230,24 +230,28 @@ router.delete('/friends/:userId', async (req, res) => {
 // Search users
 router.get('/search', async (req, res) => {
   try {
-    const { q } = req.query;
+    const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
     const userId = req.user?._id || req.userId;
-    
+
     if (!q || q.length < 2) {
       return res.json({ success: true, data: [] });
     }
-    
+
+    // Échapper les métacaractères regex : `q` partait brut dans $regex.
+    //  - `.*` ou `(a+)+$` provoquaient un balayage complet / un ReDoS.
+    //  - la recherche sur `email` faisait de cette route un oracle
+    //    d'existence d'adresse (on la retire : on cherche par pseudo/nom).
+    const motif = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const users = await User.find({
       _id: { $ne: userId },
       $or: [
-        { username: { $regex: q, $options: 'i' } },
-        { displayName: { $regex: q, $options: 'i' } },
-        { email: { $regex: q, $options: 'i' } }
+        { username: { $regex: motif, $options: 'i' } },
+        { displayName: { $regex: motif, $options: 'i' } }
       ]
     })
     .select('username displayName avatar gamification.totalXP gamification.level')
     .limit(20);
-    
+
     res.json({ success: true, data: users });
   } catch (error) {
     console.error('Search users error:', error);

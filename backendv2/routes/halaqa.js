@@ -8,47 +8,14 @@
 const express = require('express');
 const router = express.Router();
 
-// ✅ FIXED: Import with correct filename (halaqa.controller.js)
 const halaqaController = require('../controllers/halaqa.controller');
 
-// ✅ FIXED: Auth middleware with fallback
-let protect;
-try {
-  const authModule = require('../middleware/auth');
-  // Try different export names
-  protect = authModule.protect || authModule.authMiddleware || authModule.auth || authModule;
-  
-  // Check if it's a function
-  if (typeof protect !== 'function') {
-    // If it's an object with a default export
-    if (typeof authModule.default === 'function') {
-      protect = authModule.default;
-    } else {
-      throw new Error('protect is not a function');
-    }
-  }
-} catch (e) {
-  console.error('[HALAQA ROUTES] Auth middleware error:', e.message);
-  // Fallback middleware
-  protect = (req, res, next) => {
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    if (!token) {
-      return res.status(401).json({ success: false, error: 'No token provided' });
-    }
-    try {
-      const jwt = require('jsonwebtoken');
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
-      req.userId = decoded.id || decoded.userId || decoded._id;
-      req.user = { _id: req.userId };
-      next();
-    } catch (err) {
-      return res.status(401).json({ success: false, error: 'Invalid token' });
-    }
-  };
-}
-
-// All routes require authentication
-router.use(protect);
+// L'authentification est déjà appliquée en amont, dans routes/index.js
+// (`router.use('/halaqa', authMiddleware, …)`). L'ancien try/catch installait,
+// en cas d'erreur de require, un middleware de secours dangereux : secret en
+// dur `'your-secret-key'` (S7), aucune vérification du type de jeton (S2) ni
+// du statut banni (S10). Une simple erreur transitoire au chargement suffisait
+// à faire basculer tout /halaqa sur cette version dégradée. Supprimé.
 
 // ============================================
 // SPECIFIC ROUTES (MUST come BEFORE /:id)

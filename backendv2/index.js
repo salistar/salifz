@@ -225,6 +225,12 @@ io.use(async (socket, next) => {
 // ============================================
 // SOCKET.IO - Connection Events
 // ============================================
+// Brancher la présence sur la couche temps réel. Ce register() n'était
+// appelé que depuis sockets/index.js (code mort supprimé) : sans lui,
+// presence.isAvailable() restait false et la liste d'amis affichait
+// « présence inconnue » en permanence.
+require('./services/presence').register(io);
+
 io.on('connection', (socket) => {
   const userId = socket.user?._id?.toString() || socket.user?.id;
   
@@ -477,6 +483,10 @@ io.on('connection', (socket) => {
   // Hizb Assigned
   socket.on('khatamHizbAssigned', (data) => {
     const khatamRoom = `khatam:${data.khatamId}`;
+    // On ne peut diffuser que dans un salon qu'on a effectivement rejoint
+    // (donc passé le contrôle d'appartenance de joinKhatam). Sans ce garde,
+    // n'importe quel compte injectait des événements dans un khatam tiers.
+    if (!socket.rooms.has(khatamRoom)) return;
     io.to(khatamRoom).emit('khatamHizbAssigned', {
       khatamId: data.khatamId,
       hizbNumber: data.hizbNumber,
@@ -491,6 +501,7 @@ io.on('connection', (socket) => {
   // Hizb Completed
   socket.on('khatamHizbCompleted', (data) => {
     const khatamRoom = `khatam:${data.khatamId}`;
+    if (!socket.rooms.has(khatamRoom)) return;
     io.to(khatamRoom).emit('khatamHizbCompleted', {
       khatamId: data.khatamId,
       hizbNumber: data.hizbNumber,
@@ -506,6 +517,7 @@ io.on('connection', (socket) => {
   // Hizb Verified
   socket.on('khatamHizbVerified', (data) => {
     const khatamRoom = `khatam:${data.khatamId}`;
+    if (!socket.rooms.has(khatamRoom)) return;
     io.to(khatamRoom).emit('khatamHizbVerified', {
       khatamId: data.khatamId,
       hizbNumber: data.hizbNumber,
@@ -519,6 +531,7 @@ io.on('connection', (socket) => {
   // Khatam Progress Update
   socket.on('khatamProgressUpdate', (data) => {
     const khatamRoom = `khatam:${data.khatamId}`;
+    if (!socket.rooms.has(khatamRoom)) return;
     io.to(khatamRoom).emit('khatamProgressUpdate', {
       khatamId: data.khatamId,
       progress: data.progress,
@@ -531,6 +544,7 @@ io.on('connection', (socket) => {
   // Khatam Completed (all 60 hizb done)
   socket.on('khatamCompleted', (data) => {
     const khatamRoom = `khatam:${data.khatamId}`;
+    if (!socket.rooms.has(khatamRoom)) return;
     io.to(khatamRoom).emit('khatamCompleted', {
       khatamId: data.khatamId,
       khatamCount: data.khatamCount,
@@ -547,7 +561,11 @@ io.on('connection', (socket) => {
   // Start Live Reading Session
   socket.on('khatamSessionStart', (data) => {
     const khatamRoom = `khatam:${data.khatamId}`;
-    
+    // Ne créer/écraser une session que dans un khatam rejoint : sinon une
+    // boucle d'émissions gonflait khatamSessions avec des clés arbitraires,
+    // et on pouvait écraser la session en cours d'un groupe légitime.
+    if (!socket.rooms.has(khatamRoom)) return;
+
     // Initialize session
     khatamSessions.set(data.khatamId, {
       active: true,
@@ -764,38 +782,23 @@ io.on('connection', (socket) => {
   // ============================================
   // WEBRTC Signaling (Original + Enhanced)
   // ============================================
-  socket.on('webrtc-offer', (data) => {
-    socket.to(data.roomId).emit('webrtc-offer', {
+  // Signalisation WebRTC : `socket.to(x)` diffuse dans `x` que l'émetteur y
+  // soit ou non. Sans garde, connaissant le nom déterministe d'un salon
+  // d'appel, un tiers pouvait y injecter une offre et renégocier/couper la
+  // session. On n'autorise la signalisation que dans un salon rejoint.
+  const relayerSignal = (evenement) => (data) => {
+    if (!data?.roomId || !socket.rooms.has(data.roomId)) return;
+    socket.to(data.roomId).emit(evenement, {
       ...data,
       senderId: socket.id,
       userId: userId
     });
-  });
-  
-  socket.on('webrtc-answer', (data) => {
-    socket.to(data.roomId).emit('webrtc-answer', {
-      ...data,
-      senderId: socket.id,
-      userId: userId
-    });
-  });
-  
-  socket.on('webrtc-ice-candidate', (data) => {
-    socket.to(data.roomId).emit('webrtc-ice-candidate', {
-      ...data,
-      senderId: socket.id,
-      userId: userId
-    });
-  });
-  
-  socket.on('callSignal', (data) => {
-    // Generic WebRTC signal handler
-    socket.to(data.roomId).emit('callSignal', {
-      ...data,
-      senderId: socket.id,
-      userId: userId
-    });
-  });
+  };
+
+  socket.on('webrtc-offer', relayerSignal('webrtc-offer'));
+  socket.on('webrtc-answer', relayerSignal('webrtc-answer'));
+  socket.on('webrtc-ice-candidate', relayerSignal('webrtc-ice-candidate'));
+  socket.on('callSignal', relayerSignal('callSignal'));
   
   // ============================================
   // PRESENCE

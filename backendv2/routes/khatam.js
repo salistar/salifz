@@ -8,6 +8,20 @@ const router = express.Router();
 const Khatam = require('../models/Khatam');
 const User = require('../models/User');
 
+// Lecture autorisée : participant OU khatam public. Les routes de lecture
+// (fiche, grille, participants, tableau de bord) ne vérifiaient rien — on
+// pouvait lire la composition nominative d'un khatam PRIVÉ en devinant son
+// _id (exposé par /discover). Les écritures, elles, sont déjà gardées.
+const idUtilisateur = (req) => String(req.user?._id || req.userId || '');
+function peutConsulterKhatam(khatam, req) {
+  if (khatam.settings?.isPublic === true) return true;
+  const uid = idUtilisateur(req);
+  if (String(khatam.creator?._id || khatam.creator || '') === uid) return true;
+  return (khatam.participants || []).some(
+    (p) => String(p.user?._id || p.user || '') === uid
+  );
+}
+
 // ============================================
 // GET USER'S KHATAMS
 // ============================================
@@ -97,9 +111,13 @@ router.get('/:id', async (req, res) => {
     if (!khatam) {
       return res.status(404).json({ success: false, error: 'Khatam not found' });
     }
-    
-    res.json({ 
-      success: true, 
+
+    if (!peutConsulterKhatam(khatam, req)) {
+      return res.status(403).json({ success: false, error: 'Accès réservé aux participants' });
+    }
+
+    res.json({
+      success: true,
       data: {
         ...khatam.toObject(),
         dashboard: khatam.getDashboard()
@@ -325,10 +343,14 @@ router.post('/:id/assign', async (req, res) => {
       return res.status(404).json({ success: false, error: 'Khatam not found' });
     }
     
-    const assignToUser = targetUserId || userId;
+    // Normaliser en chaîne : sans targetUserId, `assignToUser` valait un
+    // ObjectId, et `ObjectId !== "68f…"` était TOUJOURS vrai — l'auto-
+    // assignation (cœur du produit) renvoyait un 403 systématique sauf si le
+    // client renvoyait explicitement son propre id.
+    const assignToUser = String(targetUserId || userId);
     const isAdmin = khatam.creator.toString() === userId.toString() ||
       khatam.participants.some(p => p.user.toString() === userId.toString() && p.isAdmin);
-    
+
     if (assignToUser !== userId.toString() && !isAdmin) {
       return res.status(403).json({ success: false, error: 'Only admin can assign to others' });
     }
@@ -433,7 +455,11 @@ router.get('/:id/grid', async (req, res) => {
     if (!khatam) {
       return res.status(404).json({ success: false, error: 'Khatam not found' });
     }
-    
+
+    if (!peutConsulterKhatam(khatam, req)) {
+      return res.status(403).json({ success: false, error: 'Accès réservé aux participants' });
+    }
+
     const grid = khatam.hizbTracking.map(h => ({
       number: h.hizbNumber,
       juz: h.juzNumber,
@@ -465,7 +491,11 @@ router.get('/:id/participants', async (req, res) => {
     if (!khatam) {
       return res.status(404).json({ success: false, error: 'Khatam not found' });
     }
-    
+
+    if (!peutConsulterKhatam(khatam, req)) {
+      return res.status(403).json({ success: false, error: 'Accès réservé aux participants' });
+    }
+
     const progress = khatam.participants.map(p => ({
       user: p.user,
       isAdmin: p.isAdmin,
@@ -534,7 +564,11 @@ router.get('/:id/dashboard', async (req, res) => {
     if (!khatam) {
       return res.status(404).json({ success: false, error: 'Khatam not found' });
     }
-    
+
+    if (!peutConsulterKhatam(khatam, req)) {
+      return res.status(403).json({ success: false, error: 'Accès réservé aux participants' });
+    }
+
     res.json({ success: true, data: khatam.getDashboard() });
   } catch (error) {
     console.error('Get dashboard error:', error);

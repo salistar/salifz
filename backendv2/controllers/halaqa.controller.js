@@ -8,6 +8,28 @@ const Halaqa = require('../models/Halaqa');
 const User = require('../models/User');
 
 // ============================================
+// AUTORISATION DE LECTURE
+// ============================================
+// Le contrôle d'appartenance était fait pour les écritures (via le modèle)
+// mais oublié en lecture : n'importe quel compte pouvait lire les membres,
+// les messages, les activités et le classement d'un cercle PRIVÉ en devinant
+// son identifiant (les _id sont exposés par /discover). On rétablit ici la
+// règle manquante.
+//
+//  - estMembre : accès aux données internes (messages, activités, classement).
+//  - peutConsulter : accès à la fiche (membre OU halaqa publique — la
+//    découverte d'un cercle public reste possible avant d'y entrer).
+const idUtilisateur = (req) => String(req.user?._id || req.userId || '');
+
+function estMembre(halaqa, req) {
+  return typeof halaqa.isMember === 'function' && halaqa.isMember(idUtilisateur(req));
+}
+
+function peutConsulter(halaqa, req) {
+  return estMembre(halaqa, req) || halaqa.settings?.isPublic === true;
+}
+
+// ============================================
 // GET USER'S HALAQAT
 // ============================================
 exports.getMyHalaqat = async (req, res) => {
@@ -95,7 +117,11 @@ exports.getHalaqaById = async (req, res) => {
     if (!halaqa) {
       return res.status(404).json({ success: false, error: 'Halaqa not found' });
     }
-    
+
+    if (!peutConsulter(halaqa, req)) {
+      return res.status(403).json({ success: false, error: 'Accès réservé aux membres' });
+    }
+
     res.json({ success: true, data: halaqa });
   } catch (error) {
     console.error('Get halaqa by ID error:', error);
@@ -338,7 +364,11 @@ exports.getMembers = async (req, res) => {
     if (!halaqa) {
       return res.status(404).json({ success: false, error: 'Halaqa not found' });
     }
-    
+
+    if (!peutConsulter(halaqa, req)) {
+      return res.status(403).json({ success: false, error: 'Accès réservé aux membres' });
+    }
+
     // Include creator info in members
     const allMembers = halaqa.members.map(m => ({
       ...m.toObject(),
@@ -421,7 +451,11 @@ exports.getLeaderboard = async (req, res) => {
     if (!halaqa) {
       return res.status(404).json({ success: false, error: 'Halaqa not found' });
     }
-    
+
+    if (!peutConsulter(halaqa, req)) {
+      return res.status(403).json({ success: false, error: 'Accès réservé aux membres' });
+    }
+
     const leaderboard = halaqa.getLeaderboard(20).map((member, index) => ({
       rank: index + 1,
       user: member.user,
@@ -449,9 +483,14 @@ exports.getActivities = async (req, res) => {
     if (!halaqa) {
       return res.status(404).json({ success: false, error: 'Halaqa not found' });
     }
-    
+
+    // Activités internes : réservées aux membres.
+    if (!estMembre(halaqa, req)) {
+      return res.status(403).json({ success: false, error: 'Accès réservé aux membres' });
+    }
+
     // Sort by date desc
-    const activities = [...(halaqa.activities || [])].sort((a, b) => 
+    const activities = [...(halaqa.activities || [])].sort((a, b) =>
       new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
     
@@ -576,7 +615,11 @@ exports.getStats = async (req, res) => {
     if (!halaqa) {
       return res.status(404).json({ success: false, error: 'Halaqa not found' });
     }
-    
+
+    if (!peutConsulter(halaqa, req)) {
+      return res.status(403).json({ success: false, error: 'Accès réservé aux membres' });
+    }
+
     res.json({
       success: true,
       data: {
@@ -608,27 +651,35 @@ exports.logActivity = async (req, res) => {
     if (!halaqa.isMember(userId)) {
       return res.status(403).json({ success: false, error: 'You must be a member' });
     }
-    
+
+    // Le XP et le nombre de versets venaient BRUTS du client : un
+    // `{"xpEarned": 999999999}` plaçait l'appelant en tête du classement, et
+    // `{"xpEarned": "abc"}` corrompait le compteur du groupe en NaN. On borne
+    // et on valide le type (bornes larges mais réalistes pour une session).
+    const borner = (v, max) => {
+      const n = Number(v);
+      if (!Number.isFinite(n) || n <= 0) return 0;
+      return Math.min(Math.floor(n), max);
+    };
+    const versets = borner(versesCount, 300);
+    const xp = borner(xpEarned, 1000);
+
     // Update member stats
     const member = halaqa.members.find(m => m.user?.toString() === userId.toString());
     if (member) {
       if (!member.stats) {
         member.stats = { weeklyXP: 0, totalXP: 0, versesMemorized: 0, activitiesCompleted: 0 };
       }
-      if (versesCount) member.stats.versesMemorized += versesCount;
-      if (xpEarned) {
-        member.stats.totalXP += xpEarned;
-        member.stats.weeklyXP += xpEarned;
-      }
+      member.stats.versesMemorized += versets;
+      member.stats.totalXP += xp;
+      member.stats.weeklyXP += xp;
     }
-    
+
     // Update halaqa stats
-    if (versesCount) halaqa.stats.totalVersesMemorized += versesCount;
-    if (xpEarned) {
-      halaqa.stats.totalXP += xpEarned;
-      halaqa.stats.weeklyXP += xpEarned;
-    }
-    
+    halaqa.stats.totalVersesMemorized += versets;
+    halaqa.stats.totalXP += xp;
+    halaqa.stats.weeklyXP += xp;
+
     await halaqa.save();
     
     res.json({ success: true, message: 'Activity logged' });
@@ -651,19 +702,32 @@ exports.getMessages = async (req, res) => {
     if (!halaqa) {
       return res.status(404).json({ success: false, error: 'Halaqa not found' });
     }
-    
+
+    // Les messages sont réservés aux membres, quel que soit le caractère
+    // public de la halaqa : c'était le trou le plus exploitable (lecture de
+    // toute conversation privée en devinant l'_id).
+    if (!estMembre(halaqa, req)) {
+      return res.status(403).json({ success: false, error: 'Accès réservé aux membres' });
+    }
+
     if (!halaqa.settings.allowChat) {
       return res.status(403).json({ success: false, error: 'Chat is disabled' });
     }
-    
+
+    // page/limit bornés : évite un slice absurde ou un NaN via ?page=-1.
+    const p = Math.max(1, parseInt(page, 10) || 1);
+    const l = Math.min(100, Math.max(1, parseInt(limit, 10) || 50));
+
     const messages = [...(halaqa.messages || [])]
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice((page - 1) * limit, page * limit);
-    
+      .slice((p - 1) * l, p * l);
+
     res.json({ success: true, data: messages });
   } catch (error) {
+    // Une panne ne doit PAS se lire comme « aucun message » : on renvoie une
+    // vraie erreur pour que le client (et la supervision) la voient.
     console.error('Get messages error:', error);
-    res.json({ success: true, data: [] });
+    res.status(500).json({ success: false, error: 'Impossible de charger les messages' });
   }
 };
 

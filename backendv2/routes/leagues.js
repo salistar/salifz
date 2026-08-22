@@ -59,10 +59,16 @@ router.get('/current', async (req, res, next) => {
 router.get('/leaderboard', async (req, res, next) => {
   try {
     const user = req.user;
-    const { league = user.gamification.league, limit = 30 } = req.query;
-    
+    // `league` partait brut dans une requête Mongo : `?league[$ne]=x` devenait
+    // un opérateur et renvoyait tous les comptes, ligues confondues. On
+    // n'accepte qu'une ligue connue (chaîne), et on borne `limit`.
+    const LIGUES = ['bronze', 'silver', 'gold', 'diamond', 'hafiz'];
+    const demandee = typeof req.query.league === 'string' ? req.query.league : '';
+    const league = LIGUES.includes(demandee) ? demandee : (user.gamification.league || 'bronze');
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 30));
+
     const leagueKey = `leaderboard:league:${league}:weekly`;
-    
+
     // Get leaderboard from Redis
     let leaderboard = await RedisService.getLeaderboard(leagueKey, 0, limit - 1);
     

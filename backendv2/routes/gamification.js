@@ -71,12 +71,18 @@ router.post('/add-xp', async (req, res, next) => {
     const { amount, source } = req.body;
     const user = req.user;
 
-    if (!amount || amount <= 0) {
+    const montant = Number(amount);
+    if (!Number.isFinite(montant) || montant <= 0) {
       throw new AppError('Invalid XP amount', 400);
     }
+    // Plafond par appel : le client pouvait envoyer `{"amount": 1000000}` et
+    // dominer le classement global. Une leçon rapporte au plus quelques
+    // dizaines de points ; 500 laisse une marge confortable sans permettre la
+    // triche. (Un calcul du XP côté serveur reste le correctif de fond.)
+    const gagne = Math.min(Math.floor(montant), 500);
 
     // Add XP
-    await user.addXP(amount, source);
+    await user.addXP(gagne, source);
 
     // Update streak
     await user.updateStreak();
