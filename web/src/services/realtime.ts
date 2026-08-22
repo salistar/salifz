@@ -16,12 +16,19 @@ import { WS_URL, tokenStore } from './api';
 let socket: Socket | null = null;
 
 export function connectRealtime(): Socket {
-  if (socket?.connected) return socket;
+  // On teste l'EXISTENCE, pas l'état `connected` : pendant une reconnexion
+  // automatique, le socket existe mais `connected` est false. Tester
+  // `.connected` créait alors un SECOND socket sans fermer le premier —
+  // messages en double, puis listeners attachés au socket orphelin pendant
+  // que l'envoi partait sur le nouveau (le salon paraissait muet).
+  if (socket) return socket;
 
   socket = io(WS_URL, {
     // Le serveur lit le jeton dans `auth` ; sans lui la connexion est rejetée.
     auth: { token: tokenStore.get() },
-    transports: ['websocket'],
+    // Repli `polling` : derrière un proxy qui casse l'Upgrade WebSocket, le
+    // temps réel ne démarrait jamais, en silence.
+    transports: ['websocket', 'polling'],
     reconnection: true,
     reconnectionDelay: 1000,
     reconnectionDelayMax: 5000,
@@ -72,7 +79,13 @@ export function joinRoom(
 export function joinHalaqa(halaqaId: string, onDenied?: (reason: string) => void): () => void {
   const s = connectRealtime();
 
-  const denied = (payload: { reason: string }) => onDenied?.(payload.reason);
+  // Ne réagir qu'au refus DE CETTE halaqa : le serveur nomme le salon
+  // `halaqa:<id>`. Sans ce filtre, un refus concernant un autre salon (ou
+  // l'appel WebRTC) affichait « accès refusé » sur une halaqa accessible.
+  const room = `halaqa:${halaqaId}`;
+  const denied = (payload: { roomId?: string; reason: string }) => {
+    if (!payload.roomId || payload.roomId === room) onDenied?.(payload.reason);
+  };
   s.on('room-denied', denied);
   s.emit('joinHalaqa', { halaqaId });
 

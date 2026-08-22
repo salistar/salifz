@@ -17,5 +17,10 @@
   "emptyTitle": "Your friends will appear here",
   "emptyBody": "Search someone by username, or share yours.",
   "copyUsername": "Copy my username",
-  "noRequests": "No pending requests."
+  "noRequests": "No pending requests.",
+  "accepted": "Request accepted",
+  "declined": "Request declined",
+  "removed": "Friend removed",
+  "confirmRemove": "Remove this friend?",
+  "noResults": "No user found"
 }

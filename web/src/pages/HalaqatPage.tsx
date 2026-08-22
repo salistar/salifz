@@ -46,13 +46,17 @@ export default function HalaqatPage() {
   const [miennes, setMiennes] = useState<Halaqa[]>([]);
   const [publiques, setPubliques] = useState<Halaqa[]>([]);
   const [chargement, setChargement] = useState(true);
+  const [erreur, setErreur] = useState(false);
   const [code, setCode] = useState('');
   const [nom, setNom] = useState('');
   const [avis, setAvis] = useState<string | null>(null);
 
   const charger = async () => {
     setChargement(true);
+    setErreur(false);
     try {
+      // Un échec ici ne doit PAS s'afficher comme « aucune halaqa » : sinon
+      // une API en panne se lit comme un compte sans cercle, sans recours.
       setMiennes(deballer(await halaqaAPI.mine()));
       try {
         setPubliques(deballer(await halaqaAPI.discover()));
@@ -61,6 +65,8 @@ export default function HalaqatPage() {
         // soit : on n'invalide pas l'écran entier pour autant.
         setPubliques([]);
       }
+    } catch {
+      setErreur(true);
     } finally {
       setChargement(false);
     }
@@ -70,8 +76,10 @@ export default function HalaqatPage() {
     charger();
   }, []);
 
-  const creer = async () => {
+  const creer = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!nom.trim()) return;
+    setAvis(null);
     try {
       await halaqaAPI.create({ name: nom.trim(), description: '', isPublic: true });
       setNom('');
@@ -81,8 +89,10 @@ export default function HalaqatPage() {
     }
   };
 
-  const rejoindre = async () => {
+  const rejoindre = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!code.trim()) return;
+    setAvis(null);
     try {
       await halaqaAPI.joinByCode(code.trim().toUpperCase());
       setCode('');
@@ -118,23 +128,24 @@ export default function HalaqatPage() {
 
       {/* --- Créer ou rejoindre -------------------------------------------- */}
       <section className="card" style={{ display: 'grid', gap: 12 }}>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        {/* Formulaires : la touche Entrée valide chaque champ. */}
+        <form onSubmit={creer} style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <input
             style={{ flex: 1, minWidth: 200 }}
-            placeholder={t('create')}
+            placeholder={t('namePlaceholder')}
             aria-label={t('create')}
             value={nom}
             onChange={(e) => setNom(e.target.value)}
           />
-          <button className="btn-primary" onClick={creer} disabled={!nom.trim()}>
+          <button className="btn-primary" type="submit" disabled={!nom.trim()}>
             {t('create')}
           </button>
-        </div>
+        </form>
 
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <form onSubmit={rejoindre} style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <input
             style={{ flex: 1, minWidth: 200 }}
-            placeholder={t('joinByCode')}
+            placeholder={t('codePlaceholder')}
             aria-label={t('joinByCode')}
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
@@ -142,14 +153,32 @@ export default function HalaqatPage() {
             // qu'il s'inverse à l'affichage en interface arabe.
             dir="ltr"
           />
-          <button className="btn-ghost" onClick={rejoindre} disabled={!code.trim()}>
+          <button className="btn-ghost" type="submit" disabled={!code.trim()}>
             {t('join')}
           </button>
-        </div>
+        </form>
       </section>
 
-      {/* --- État vide ------------------------------------------------------ */}
-      {!chargement && affichees.length === 0 && onglet === 'miennes' && (
+      {/* --- Chargement ----------------------------------------------------- */}
+      {chargement && (
+        <p className="caption" role="status" style={{ textAlign: 'center', padding: 24 }}>
+          {t('common:loading')}
+        </p>
+      )}
+
+      {/* --- Erreur de chargement (distincte de l'état vide) ---------------- */}
+      {!chargement && erreur && (
+        <section
+          className="card"
+          style={{ display: 'grid', gap: 12, justifyItems: 'center', padding: 32, textAlign: 'center' }}
+        >
+          <p style={{ margin: 0, color: 'var(--text-secondary)' }}>{t('common:errorGeneric')}</p>
+          <button className="btn-primary" onClick={charger}>{t('common:retry')}</button>
+        </section>
+      )}
+
+      {/* --- État vide « mes halaqat » ------------------------------------- */}
+      {!chargement && !erreur && affichees.length === 0 && onglet === 'miennes' && (
         <section
           className="sacred-card"
           style={{ display: 'grid', gap: 16, justifyItems: 'center', padding: 40, textAlign: 'center' }}
@@ -163,6 +192,13 @@ export default function HalaqatPage() {
             {t('discover')}
           </button>
         </section>
+      )}
+
+      {/* --- État vide « découvrir » (page blanche auparavant) ------------- */}
+      {!chargement && !erreur && affichees.length === 0 && onglet === 'decouvrir' && (
+        <p className="caption" style={{ textAlign: 'center', padding: 24, color: 'var(--text-muted)' }}>
+          {t('discoverEmpty')}
+        </p>
       )}
 
       {/* --- Cartes de halaqa ----------------------------------------------- */}
@@ -267,11 +303,17 @@ function EtatSession({ halaqa }: { halaqa: Halaqa }) {
   }
 
   if (halaqa.nextSessionAt) {
+    const date = new Date(halaqa.nextSessionAt);
+    // Une date non parsable ferait lever Intl.format (RangeError) et, faute
+    // d'ErrorBoundary, blanchirait toute la page Halaqat. On dégrade en silence.
+    if (Number.isNaN(date.getTime())) {
+      return <span style={{ fontSize: 13, opacity: 0.75 }}>{t('noSession')}</span>;
+    }
     const quand = new Intl.DateTimeFormat(i18n.resolvedLanguage ?? 'fr', {
       weekday: 'long',
       hour: '2-digit',
       minute: '2-digit',
-    }).format(new Date(halaqa.nextSessionAt));
+    }).format(date);
     return <span style={{ fontSize: 13, opacity: 0.9 }}>{t('nextSession', { when: quand })}</span>;
   }
 

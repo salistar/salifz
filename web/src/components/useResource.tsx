@@ -9,6 +9,7 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Resource<T> {
   data: T | null;
@@ -85,15 +86,20 @@ export function StateBlock({
   emptyText?: string;
   onRetry?: () => void;
 }) {
-  if (loading) return <p style={{ color: 'var(--text-secondary)' }}>Chargement…</p>;
+  // Ce bloc est monté par dix écrans : ses libellés étaient en français en
+  // dur, donc affichés tels quels en mode arabe/anglais. Les clés existaient
+  // déjà dans common.json.
+  const { t } = useTranslation('common');
+
+  if (loading) return <p style={{ color: 'var(--text-secondary)' }}>{t('loading')}</p>;
 
   if (error) {
     return (
       <div className="card" role="alert" style={{ background: 'var(--error-soft)', color: 'var(--error)' }}>
         {error}
         {onRetry && (
-          <button className="btn-ghost" style={{ marginLeft: 12 }} onClick={onRetry}>
-            Réessayer
+          <button className="btn-ghost" style={{ marginInlineStart: 12 }} onClick={onRetry}>
+            {t('retry')}
           </button>
         )}
       </div>
@@ -102,7 +108,7 @@ export function StateBlock({
 
   if (empty) {
     return (
-      <p style={{ color: 'var(--text-secondary)' }}>{emptyText ?? 'Rien à afficher pour l’instant.'}</p>
+      <p style={{ color: 'var(--text-secondary)' }}>{emptyText ?? t('empty')}</p>
     );
   }
 

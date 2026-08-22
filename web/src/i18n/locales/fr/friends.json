@@ -17,5 +17,10 @@
   "emptyTitle": "Vos amis apparaîtront ici",
   "emptyBody": "Cherchez quelqu’un par son nom d’utilisateur, ou partagez le vôtre.",
   "copyUsername": "Copier mon nom d’utilisateur",
-  "noRequests": "Aucune demande en attente."
+  "noRequests": "Aucune demande en attente.",
+  "accepted": "Demande acceptée",
+  "declined": "Demande refusée",
+  "removed": "Ami retiré",
+  "confirmRemove": "Retirer cet ami ?",
+  "noResults": "Aucun utilisateur trouvé"
 }

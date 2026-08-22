@@ -10,8 +10,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { socialAPI } from '../services/api';
 import { useResource, asList, StateBlock } from '../components/useResource';
-import { HizbStar } from '../components/Ornements';
-import { IconeAmis } from '../components/Icones';
 
 type Onglet = 'amis' | 'demandes' | 'recherche';
 
@@ -22,12 +20,17 @@ export default function FriendsPage() {
   const [resultats, setResultats] = useState<any[]>([]);
   const [chercheEnCours, setChercheEnCours] = useState(false);
   const [avis, setAvis] = useState<string | null>(null);
+  // Identifiant de l'action en cours : verrouille le bouton concerné et
+  // évite qu'un double-clic parte en double requête.
+  const [enCours, setEnCours] = useState<string | null>(null);
 
   const amis = useResource<any>(() => socialAPI.friends(), []);
   const demandes = useResource<any>(() => socialAPI.requests(), []);
 
   const listeAmis = asList(amis.data, 'friends', 'items');
   const recues = asList(demandes.data, 'received');
+
+  const [aCherche, setACherche] = useState(false);
 
   const chercher = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +41,7 @@ export default function FriendsPage() {
       const r: any = await socialAPI.search(recherche.trim());
       const data = r?.data ?? r;
       setResultats(Array.isArray(data) ? data : data?.users ?? data?.results ?? []);
+      setACherche(true);
     } catch (err: any) {
       setAvis(err?.error ?? t('common:errorGeneric'));
       setResultats([]);
@@ -46,7 +50,10 @@ export default function FriendsPage() {
     }
   };
 
-  const action = async (fn: () => Promise<any>, message: string) => {
+  const action = async (cle: string, fn: () => Promise<any>, message: string) => {
+    if (enCours) return;
+    setEnCours(cle);
+    setAvis(null);
     try {
       await fn();
       setAvis(message);
@@ -54,6 +61,8 @@ export default function FriendsPage() {
       demandes.reload();
     } catch (err: any) {
       setAvis(err?.error ?? t('common:errorGeneric'));
+    } finally {
+      setEnCours(null);
     }
   };
 
@@ -111,9 +120,13 @@ export default function FriendsPage() {
               actions={
                 <button
                   className="btn-danger"
-                  onClick={() => action(() => socialAPI.remove(a._id ?? a.id), t('common:saved'))}
+                  disabled={enCours === (a._id ?? a.id)}
+                  onClick={() => {
+                    if (!window.confirm(t('confirmRemove'))) return;
+                    action(a._id ?? a.id, () => socialAPI.remove(a._id ?? a.id), t('removed'));
+                  }}
                 >
-                  {t('remove')}
+                  {enCours === (a._id ?? a.id) ? t('common:loading') : t('remove')}
                 </button>
               }
             />
@@ -131,15 +144,17 @@ export default function FriendsPage() {
                 <>
                   <button
                     className="btn-ghost"
-                    onClick={() => action(() => socialAPI.reject(d._id ?? d.id), t('decline'))}
+                    disabled={enCours === (d._id ?? d.id)}
+                    onClick={() => action(d._id ?? d.id, () => socialAPI.reject(d._id ?? d.id), t('declined'))}
                   >
                     {t('decline')}
                   </button>
                   <button
                     className="btn-primary"
-                    onClick={() => action(() => socialAPI.accept(d._id ?? d.id), t('accept'))}
+                    disabled={enCours === (d._id ?? d.id)}
+                    onClick={() => action(d._id ?? d.id, () => socialAPI.accept(d._id ?? d.id), t('accepted'))}
                   >
-                    {t('accept')}
+                    {enCours === (d._id ?? d.id) ? t('common:loading') : t('accept')}
                   </button>
                 </>
               }
@@ -167,6 +182,11 @@ export default function FriendsPage() {
             <small style={{ color: 'var(--text-muted)' }}>{t('searchPlaceholder')}</small>
           )}
 
+          {/* Aucun résultat : la zone restait blanche, indiscernable d'un bug. */}
+          {aCherche && !chercheEnCours && resultats.length === 0 && (
+            <p style={{ color: 'var(--text-secondary)' }}>{t('noResults')}</p>
+          )}
+
           <div style={{ display: 'grid', gap: 8 }}>
             {resultats.map((u: any, i: number) => (
               <Personne
@@ -175,9 +195,10 @@ export default function FriendsPage() {
                 actions={
                   <button
                     className="btn-ghost"
-                    onClick={() => action(() => socialAPI.sendRequest(u._id ?? u.id), t('requestSent'))}
+                    disabled={enCours === (u._id ?? u.id)}
+                    onClick={() => action(u._id ?? u.id, () => socialAPI.sendRequest(u._id ?? u.id), t('requestSent'))}
                   >
-                    {t('add')}
+                    {enCours === (u._id ?? u.id) ? t('common:loading') : t('add')}
                   </button>
                 }
               />

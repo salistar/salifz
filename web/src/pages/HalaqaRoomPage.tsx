@@ -8,8 +8,9 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { halaqaAPI } from '../services/api';
-import { connectRealtime, joinHalaqa, sendHalaqaMessage } from '../services/realtime';
+import { connectRealtime, getSocket, joinHalaqa, sendHalaqaMessage } from '../services/realtime';
 import { GroupCall, RemoteStream } from '../services/groupCall';
 import { useAuth } from '../store';
 import {
@@ -30,6 +31,7 @@ interface Message {
 }
 
 export default function HalaqaRoomPage() {
+  const { t } = useTranslation('halaqaRoom');
   const { id = '' } = useParams();
   const user = useAuth((s) => s.user);
 
@@ -70,8 +72,8 @@ export default function HalaqaRoomPage() {
             .reverse()
         );
       })
-      .catch(() => {});
-  }, [id]);
+      .catch(() => setNotice(t('loadFailed')));
+  }, [id, t]);
 
   // Discussion : on rejoint le salon de la halaqa et on écoute ses messages.
   useEffect(() => {
@@ -115,6 +117,12 @@ export default function HalaqaRoomPage() {
   const send = () => {
     const text = draft.trim();
     if (!text) return;
+    // Ne pas vider le champ si le socket est coupé : le message serait
+    // effacé de l'écran sans jamais partir. On prévient et on garde le texte.
+    if (!getSocket()?.connected) {
+      setNotice(t('notConnected'));
+      return;
+    }
     sendHalaqaMessage(id, text);
     setDraft('');
   };
@@ -133,14 +141,10 @@ export default function HalaqaRoomPage() {
         setMicOn(true);
         setCamOn(video);
       } catch (e: any) {
-        setNotice(
-          e?.name === 'NotAllowedError'
-            ? 'Accès au micro ou à la caméra refusé.'
-            : 'Impossible de démarrer l’appel.'
-        );
+        setNotice(e?.name === 'NotAllowedError' ? t('micDenied') : t('callFailed'));
       }
     },
-    [call, id]
+    [call, id, t]
   );
 
   const stopCall = () => {
@@ -153,17 +157,17 @@ export default function HalaqaRoomPage() {
     <div style={{ display: 'grid', gap: 16 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
         <Link to="/halaqat" className="btn-ghost" style={{ textDecoration: 'none' }}>
-          ← Halaqat
+          ← {t('back')}
         </Link>
-        <h1 style={{ margin: 0, flex: 1 }}>{halaqa?.name ?? 'Halaqa'}</h1>
+        <h1 style={{ margin: 0, flex: 1 }}>{halaqa?.name ?? t('back')}</h1>
 
         {!call ? (
           <>
             <button className="btn-ghost" onClick={() => startCall(false)}>
-              <IconeAppel size={16} /> Appel audio
+              <IconeAppel size={16} /> {t('audioCall')}
             </button>
             <button className="btn-primary" onClick={() => startCall(true)}>
-              <IconeVideo size={16} /> Appel vidéo
+              <IconeVideo size={16} /> {t('videoCall')}
             </button>
           </>
         ) : (
@@ -176,7 +180,7 @@ export default function HalaqaRoomPage() {
               }}
             >
               {micOn ? <IconeMicro size={16} /> : <IconeMicroCoupe size={16} />}
-              <span>{micOn ? 'Micro' : 'Muet'}</span>
+              <span>{micOn ? t('mic') : t('muted')}</span>
             </button>
             <button
               className="btn-ghost"
@@ -186,10 +190,10 @@ export default function HalaqaRoomPage() {
               }}
             >
               {camOn ? <IconeVideo size={16} /> : <IconeVideoCoupee size={16} />}
-              <span>Caméra</span>
+              <span>{t('camera')}</span>
             </button>
             <button className="btn-danger" onClick={stopCall}>
-              Raccrocher
+              {t('hangUp')}
             </button>
           </>
         )}
@@ -197,7 +201,7 @@ export default function HalaqaRoomPage() {
 
       {denied && (
         <div className="card" role="alert" style={{ background: 'var(--error-soft)', color: 'var(--error)' }}>
-          Accès au salon refusé ({denied}). Vous devez être membre de cette halaqa.
+          {t('denied', { reason: denied })}
         </div>
       )}
 
@@ -225,7 +229,7 @@ export default function HalaqaRoomPage() {
               style={{ width: '100%', borderRadius: 10, background: '#000' }}
             />
             <figcaption style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-              Vous {micOn ? '' : '· muet'}
+              {micOn ? t('you') : t('youMuted')}
             </figcaption>
           </figure>
 
@@ -240,21 +244,21 @@ export default function HalaqaRoomPage() {
                 style={{ width: '100%', borderRadius: 10, background: '#000' }}
               />
               <figcaption style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-                Participant
+                {t('participant')}
               </figcaption>
             </figure>
           ))}
 
           {remotes.length === 0 && (
             <p style={{ color: 'var(--text-secondary)', alignSelf: 'center' }}>
-              En attente d’autres participants…
+              {t('waiting')}
             </p>
           )}
         </section>
       )}
 
       <section className="card" style={{ display: 'grid', gap: 10 }}>
-        <strong>Discussion</strong>
+        <strong>{t('discussion')}</strong>
 
         <div
           style={{
@@ -267,7 +271,7 @@ export default function HalaqaRoomPage() {
           }}
         >
           {messages.length === 0 && (
-            <p style={{ color: 'var(--text-secondary)' }}>Aucun message pour le moment.</p>
+            <p style={{ color: 'var(--text-secondary)' }}>{t('noMessages')}</p>
           )}
 
           {messages.map((m) => {
@@ -285,9 +289,9 @@ export default function HalaqaRoomPage() {
                 }}
               >
                 {!mine && (
-                  <div style={{ fontSize: 11, opacity: 0.8 }}>{m.senderName ?? 'Membre'}</div>
+                  <div style={{ fontSize: 11, opacity: 0.8 }}>{m.senderName ?? t('member')}</div>
                 )}
-                <div>{m.text}</div>
+                <div style={{ overflowWrap: 'anywhere' }}>{m.text}</div>
               </div>
             );
           })}
@@ -297,14 +301,14 @@ export default function HalaqaRoomPage() {
         <div style={{ display: 'flex', gap: 8 }}>
           <input
             style={{ flex: 1 }}
-            placeholder="Votre message"
-            aria-label="Votre message"
+            placeholder={t('messagePlaceholder')}
+            aria-label={t('messagePlaceholder')}
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && send()}
           />
           <button className="btn-primary" onClick={send} disabled={!draft.trim()}>
-            Envoyer
+            {t('send')}
           </button>
         </div>
       </section>

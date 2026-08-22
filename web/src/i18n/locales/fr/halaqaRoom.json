@@ -1,0 +1,23 @@
+{
+  "back": "Halaqat",
+  "audioCall": "Appel audio",
+  "videoCall": "Appel vidéo",
+  "mic": "Micro",
+  "muted": "Muet",
+  "camera": "Caméra",
+  "hangUp": "Raccrocher",
+  "denied": "Accès au salon refusé ({{reason}}). Vous devez être membre de cette halaqa.",
+  "micDenied": "Accès au micro ou à la caméra refusé.",
+  "callFailed": "Impossible de démarrer l’appel.",
+  "you": "Vous",
+  "youMuted": "Vous · muet",
+  "participant": "Participant",
+  "waiting": "En attente d’autres participants…",
+  "discussion": "Discussion",
+  "noMessages": "Aucun message pour le moment.",
+  "member": "Membre",
+  "messagePlaceholder": "Votre message",
+  "send": "Envoyer",
+  "notConnected": "Connexion perdue : message non envoyé.",
+  "loadFailed": "Impossible de charger la discussion."
+}

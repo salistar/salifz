@@ -13,7 +13,7 @@
  * l'application mobile.
  */
 
-import { connectRealtime } from './realtime';
+import { connectRealtime, getSocket } from './realtime';
 import { rtcAPI } from './api';
 
 export const MESH_COMFORT_LIMIT = 6;
@@ -62,9 +62,15 @@ export class GroupCall {
       audio: true,
       video: video ? { width: 640, height: 480 } : false,
     });
-    this.listener.onLocal(this.local);
 
-    const socket = connectRealtime();
+    // À partir d'ici la caméra/le micro sont ACTIFS : toute erreur ensuite
+    // (socket indisponible, emit qui jette) doit libérer le matériel, sinon
+    // le voyant reste allumé jusqu'au rechargement de l'onglet — l'appelant
+    // n'a pas encore reçu l'instance pour appeler stop() lui-même.
+    try {
+      this.listener.onLocal(this.local);
+
+      const socket = connectRealtime();
 
     const onOffer = async (data: any) => {
       if (data.roomId !== this.roomId || !data.senderId) return;
@@ -119,15 +125,19 @@ export class GroupCall {
     socket.on('user-joined', onJoined);
     socket.on('user-left', onLeft);
 
-    this.detach = [
-      () => socket.off('webrtc-offer', onOffer),
-      () => socket.off('webrtc-answer', onAnswer),
-      () => socket.off('webrtc-ice-candidate', onCandidate),
-      () => socket.off('user-joined', onJoined),
-      () => socket.off('user-left', onLeft),
-    ];
+      this.detach = [
+        () => socket.off('webrtc-offer', onOffer),
+        () => socket.off('webrtc-answer', onAnswer),
+        () => socket.off('webrtc-ice-candidate', onCandidate),
+        () => socket.off('user-joined', onJoined),
+        () => socket.off('user-left', onLeft),
+      ];
 
-    socket.emit('join-room', this.roomId);
+      socket.emit('join-room', this.roomId);
+    } catch (e) {
+      this.stop();
+      throw e;
+    }
   }
 
   private ensurePeer(peerId: string, userId?: string): RTCPeerConnection {
@@ -185,7 +195,10 @@ export class GroupCall {
     this.detach.forEach((off) => off());
     this.detach = [];
 
-    connectRealtime().emit('leave-room', this.roomId);
+    // N'émettre que si un socket vivant existe : appeler connectRealtime()
+    // ici en recréerait un juste pour un « leave-room » inutile.
+    const s = getSocket();
+    if (s?.connected) s.emit('leave-room', this.roomId);
 
     this.peers.forEach((pc) => pc.close());
     this.peers.clear();
